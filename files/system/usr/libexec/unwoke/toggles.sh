@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Overlay toggles. Stock secureblue ujust commands still apply; this only
-# covers origin Brave extras we added.
+# covers Brave Origin extras we added.
 set -euo pipefail
 
 HARDEN_SRC="/usr/share/unwoke/brave-hardening.json"
 JITLESS_SRC="/usr/share/unwoke/brave-jitless.json"
-POLICY_DIR="/etc/brave/policies/managed"
+POLICY_DIR="/etc/brave-origin/policies/managed"
 HARDEN_DST="${POLICY_DIR}/10-unwoke-hardening.json"
 JITLESS_DST="${POLICY_DIR}/20-unwoke-jitless.json"
 OPT_OUT="/etc/unwoke/brave-hardening.off"
@@ -47,13 +47,16 @@ for d in j.get("deployments") or []:
   else
     bad "unwoke_brave module not listed"
   fi
-  if [[ -e /opt/brave.com/brave/brave ]]; then
-    ok "origin Brave binary present"
+  if [[ -e /opt/brave.com/brave-origin/brave ]]; then
+    ok "Brave Origin binary present (/opt/brave.com/brave-origin/brave)"
   else
-    bad "Brave ELF missing"
+    bad "Brave Origin ELF missing"
   fi
-  if [[ -f "${HARDEN_DST}" ]] || [[ -f /usr/etc/brave/policies/managed/10-unwoke-hardening.json && ! -f "${OPT_OUT}" ]]; then
-    ok "Brave managed hardening policy on (restart Brave after changes)"
+  if [[ -e /opt/brave.com/brave/brave ]]; then
+    bad "full brave-browser is also installed; this overlay wants brave-origin only"
+  fi
+  if [[ -f "${HARDEN_DST}" ]] || [[ -f /usr/etc/brave-origin/policies/managed/10-unwoke-hardening.json && ! -f "${OPT_OUT}" ]]; then
+    ok "Brave Origin managed hardening policy on (restart the browser after changes)"
   else
     info "Brave managed hardening policy off"
   fi
@@ -88,7 +91,8 @@ cmd_audit() {
   fail=0
   command -v semodule >/dev/null && semodule -l 2>/dev/null | grep -qx harden_userns || fail=1
   command -v semodule >/dev/null && semodule -l 2>/dev/null | grep -qx unwoke_brave || fail=1
-  [[ -e /opt/brave.com/brave/brave ]] || fail=1
+  [[ -e /opt/brave.com/brave-origin/brave ]] || fail=1
+  [[ ! -e /opt/brave.com/brave/brave ]] || fail=1
   if [[ -e /opt/brave.com ]] && find /opt/brave.com -xdev -perm -4000 -type f 2>/dev/null | grep -q .; then
     fail=1
   fi
@@ -113,13 +117,13 @@ cmd_hardening() {
       policy_on "${HARDEN_SRC}" "${HARDEN_DST}"
       as_root mkdir -p /etc/unwoke
       as_root rm -f "${OPT_OUT}"
-      echo "Brave hardening policy ON. Restart Brave."
+      echo "Brave Origin hardening policy ON. Restart Brave Origin."
       ;;
     off|disable)
       policy_off "${HARDEN_DST}"
       as_root mkdir -p /etc/unwoke
       as_root touch "${OPT_OUT}"
-      echo "Brave hardening policy OFF. Restart Brave."
+      echo "Brave Origin hardening policy OFF. Restart Brave Origin."
       ;;
     status)
       if [[ -f "${HARDEN_DST}" ]]; then
@@ -140,11 +144,11 @@ cmd_jitless() {
   case "${action}" in
     on|enable)
       policy_on "${JITLESS_SRC}" "${JITLESS_DST}"
-      echo "Brave JavaScript JIT blocked. Some sites will break. Restart Brave."
+      echo "Brave Origin JavaScript JIT blocked. Some sites will break. Restart Brave Origin."
       ;;
     off|disable)
       policy_off "${JITLESS_DST}"
-      echo "Brave JavaScript JIT allowed. Restart Brave."
+      echo "Brave Origin JavaScript JIT allowed. Restart Brave Origin."
       ;;
     status)
       if [[ -f "${JITLESS_DST}" ]]; then

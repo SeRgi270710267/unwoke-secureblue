@@ -9,16 +9,17 @@ POLICY_SRC="/usr/share/unwoke/selinux"
   exit 1
 }
 
-if [[ ! -e /opt/brave.com/brave/brave ]]; then
-  echo "Brave ELF missing at /opt/brave.com/brave/brave" >&2
-  ls -la /opt/brave.com/brave 2>/dev/null || true
+if [[ ! -e /opt/brave.com/brave-origin/brave ]]; then
+  echo "Brave Origin ELF missing at /opt/brave.com/brave-origin/brave" >&2
+  ls -la /opt/brave.com 2>/dev/null || true
+  ls -la /opt/brave.com/brave-origin 2>/dev/null || true
   exit 1
 fi
 
-# Origin Brave RPM often ships chrome-sandbox SUID. Keep the image SUID-less;
+# Brave Origin RPM often ships chrome-sandbox SUID. Keep the image SUID-less;
 # Chromium then uses the namespace sandbox inside brave_t.
-if [[ -e /opt/brave.com/brave ]]; then
-  find /opt/brave.com -xdev \( -perm -4000 -o -perm -2000 \) -type f -exec chmod a-s {} + 2>/dev/null || true
+if [[ -e /opt/brave.com/brave-origin ]]; then
+  find /opt/brave.com/brave-origin -xdev \( -perm -4000 -o -perm -2000 \) -type f -exec chmod a-s {} + 2>/dev/null || true
 fi
 
 # rpm-ostree compose leaves rpm -q unusable (malformed Name db). Detect by files.
@@ -40,12 +41,12 @@ cp -a "${POLICY_SRC}/unwoke_brave.te" "${POLICY_SRC}/unwoke_brave.fc" "${work}/"
 semodule -v -X 300 -i "${work}/unwoke_brave.pp" "${POLICY_SRC}/unwoke_brave_userns.cil"
 
 if command -v restorecon >/dev/null; then
-  restorecon -FR /opt/brave.com /usr/bin/brave-browser /usr/bin/brave-browser-stable 2>/dev/null || true
+  restorecon -FR /opt/brave.com/brave-origin /usr/bin/brave-origin 2>/dev/null || true
 fi
 
 if [[ "${installed_devel}" -eq 1 ]]; then
   dnf5 -y remove selinux-policy-devel || true
 fi
 
-echo "unwoke: Brave SELinux domain loaded; harden_userns left enabled"
+echo "unwoke: Brave Origin SELinux domain loaded; harden_userns left enabled"
 semodule -l | grep -E '^(unwoke_brave|harden_userns)$' || true

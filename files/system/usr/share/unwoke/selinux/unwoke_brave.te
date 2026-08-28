@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright 2026 unwoke-secureblue
 # SPDX-License-Identifier: MIT
 #
-# Fat Brave domain: unconfined-like permissions so origin Brave can actually
+# Fat domain: unconfined-like permissions so Brave Origin can actually
 # run, plus a distinct type so harden_userns can stay on. The userns allow-list
 # add is in unwoke_brave_userns.cil (secureblue attributes are not in Fedora's
 # devel headers, so they cannot be required from this .te).

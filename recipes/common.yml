@@ -16,8 +16,8 @@ modules:
     scripts:
       - remove-stock.sh
 
-  # Official Brave RPM from Brave's own repo. Do not pin `repo: brave-browser`
-  # or dnf cannot pull Fedora deps (liberation-fonts, libappindicator, libXss).
+  # Brave Origin standalone RPM (not full brave-browser). Same official repo.
+  # Do not pin `repo: brave-browser` or dnf cannot pull Fedora deps.
   - type: dnf
     repos:
       files:
@@ -33,7 +33,7 @@ modules:
         - liberation-mono-fonts
         - libappindicator-gtk3
         - libXScrnSaver
-        - brave-browser
+        - brave-origin
 
   - type: script
     scripts:

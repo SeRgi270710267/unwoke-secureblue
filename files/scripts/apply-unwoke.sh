@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Runs at image build time. Makes Brave the default browser, hides leftover
-# Trivalent/Bazaar/store launchers. Does not touch harden_userns.
+# Runs at image build time. Makes Brave Origin the default browser, hides leftover
+# Trivalent/Bazaar/store/full-Brave launchers. Does not touch harden_userns.
 set -oue pipefail
 
 swap_desktop() {
@@ -14,18 +14,28 @@ swap_desktop() {
   done < <(grep -rlF "$search" /usr /etc 2>/dev/null || true)
 }
 
-swap_desktop "trivalent.desktop" "brave-browser.desktop"
-swap_desktop "org.mozilla.firefox.desktop" "brave-browser.desktop"
+ORIGIN_DESKTOP="brave-origin.desktop"
+if [[ ! -f "/usr/share/applications/${ORIGIN_DESKTOP}" ]]; then
+  for d in /usr/share/applications/brave-origin*.desktop /usr/share/applications/com.brave.Origin*.desktop; do
+    [[ -f "$d" ]] || continue
+    ORIGIN_DESKTOP="$(basename "$d")"
+    break
+  done
+fi
+
+swap_desktop "trivalent.desktop" "${ORIGIN_DESKTOP}"
+swap_desktop "brave-browser.desktop" "${ORIGIN_DESKTOP}"
+swap_desktop "org.mozilla.firefox.desktop" "${ORIGIN_DESKTOP}"
 
 mkdir -p /usr/share/applications /usr/etc/xdg
-cat > /usr/share/applications/mimeapps.list <<'EOF'
+cat > /usr/share/applications/mimeapps.list <<EOF
 [Default Applications]
-text/html=brave-browser.desktop
-application/xhtml+xml=brave-browser.desktop
-x-scheme-handler/http=brave-browser.desktop
-x-scheme-handler/https=brave-browser.desktop
-x-scheme-handler/about=brave-browser.desktop
-x-scheme-handler/unknown=brave-browser.desktop
+text/html=${ORIGIN_DESKTOP}
+application/xhtml+xml=${ORIGIN_DESKTOP}
+x-scheme-handler/http=${ORIGIN_DESKTOP}
+x-scheme-handler/https=${ORIGIN_DESKTOP}
+x-scheme-handler/about=${ORIGIN_DESKTOP}
+x-scheme-handler/unknown=${ORIGIN_DESKTOP}
 EOF
 cp /usr/share/applications/mimeapps.list /usr/etc/xdg/mimeapps.list
 
@@ -37,16 +47,17 @@ for kg in \
 do
   [[ -f "$kg" ]] || continue
   if grep -q '^BrowserApplication=' "$kg"; then
-    sed -i 's/^BrowserApplication=.*/BrowserApplication=brave-browser.desktop/' "$kg"
+    sed -i "s/^BrowserApplication=.*/BrowserApplication=${ORIGIN_DESKTOP}/" "$kg"
   elif grep -q '^\[General\]' "$kg"; then
-    sed -i '/^\[General\]/a BrowserApplication=brave-browser.desktop' "$kg"
+    sed -i "/^\\[General\\]/a BrowserApplication=${ORIGIN_DESKTOP}" "$kg"
   else
-    printf '\n[General]\nBrowserApplication=brave-browser.desktop\n' >> "$kg"
+    printf '\n[General]\nBrowserApplication=%s\n' "${ORIGIN_DESKTOP}" >> "$kg"
   fi
 done
 
 for d in trivalent.desktop io.github.kolunmi.Bazaar.desktop \
-         org.gnome.Software.desktop org.kde.discover.desktop; do
+         org.gnome.Software.desktop org.kde.discover.desktop \
+         brave-browser.desktop; do
   if [[ -f "/usr/share/applications/${d}" ]]; then
     grep -q '^Hidden=' "/usr/share/applications/${d}" || echo 'Hidden=true' >> "/usr/share/applications/${d}"
   fi

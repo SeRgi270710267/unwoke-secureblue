@@ -1,6 +1,6 @@
 # unwoke-secureblue
 
-**secureblue’s hardening. Origin Brave. Terminal, no curator store.**
+**secureblue’s hardening. Brave Origin. Terminal, no curator store.**
 
 This is a daily overlay on official [secureblue](https://secureblue.dev) images. It is **not** a fork and **not** affiliated with them. Their kernel hardening, `hardened_malloc`, SELinux, no Xwayland by default, and automatic updates stay. We only strip the two product decisions that lock the desktop: **Trivalent** and **Bazaar**. No GUI software store is added back.
 
@@ -14,20 +14,20 @@ Stock secureblue is a serious hardened Fedora Atomic. It also ships a house brow
 
 | | Stock [secureblue](https://secureblue.dev) | This overlay |
 | --- | --- | --- |
-| Browser | [Trivalent](https://github.com/secureblue/Trivalent) — their Chromium, default, SELinux-confined | **Official Brave RPM** from [brave.com/linux](https://brave.com/linux/). Default browser. Runs in `brave_t`. |
+| Browser | [Trivalent](https://github.com/secureblue/Trivalent) — their Chromium, default, SELinux-confined | **[Brave Origin](https://brave.com/origin/linux/)** standalone RPM (`brave-origin`, not full `brave-browser`). Default browser. Runs in `brave_t`. |
 | App store | [Bazaar](https://github.com/secureblue/bazaar-rpm) — curated catalog, most Flathub browsers blocklisted ([PR #1898](https://github.com/secureblue/secureblue/pull/1898)) | **None.** Flathub remote is added for `flatpak` CLI. Use `brew` / `rpm-ostree` for the rest. |
 | User namespaces | Off for unconfined; on only for Flatpak and Trivalent | **Same.** `harden_userns` stays on. `brave_t` is added to their userns allow-list so Brave’s Chromium sandbox can start. Other unconfined apps stay blocked. |
 
-`brave_t` is an unconfined-like domain (so origin Brave can actually run) that is allowed to create user namespaces. It is **not** Trivalent’s tight confinement, and you do not get Trivalent’s Chromium patches. Those patches live in their browser source. Origin Brave cannot grow them.
+`brave_t` is an unconfined-like domain (so Brave Origin can actually run) that is allowed to create user namespaces. It is **not** Trivalent’s tight confinement, and you do not get Trivalent’s Chromium patches. Those patches live in their browser source. Brave Origin cannot grow them.
 
-What we *can* do on origin Brave is force Chromium enterprise policies and keep their `ujust` surface. Stock commands still work (`ujust set-unconfined-userns`, `ujust set-kargs-hardening`, `ujust audit-secureblue`, …). Overlay extras:
+What we *can* do on Brave Origin is force Chromium enterprise policies and keep their `ujust` surface. Stock commands still work (`ujust set-unconfined-userns`, `ujust set-kargs-hardening`, `ujust audit-secureblue`, …). Overlay extras:
 
 ```bash
 ujust unwoke-status
 ujust audit-unwoke
-ujust set-brave-hardening on    # default: HTTPS-only, no WebRTC IP leak, no metrics. Restart Brave.
+ujust set-brave-hardening on    # default: HTTPS-only, no WebRTC IP leak, no metrics. Restart Brave Origin.
 ujust set-brave-hardening off
-ujust set-brave-jitless on      # optional, Trivalent-like; breaks some sites. Restart Brave.
+ujust set-brave-jitless on      # optional; breaks some sites. Restart Brave Origin.
 ```
 
 We did **not** gut SELinux, kernel args, `hardened_malloc`, disk encryption, or Secure Boot enrollment. Calling this “insecure Fedora” is false. Calling it “identical to secureblue” is also false.
@@ -96,7 +96,7 @@ image-version: latest
 
 1. secureblue builds and **cosign-signs** `ghcr.io/secureblue/…-hardened`.
 2. Our CI downloads [their public key](https://github.com/secureblue/secureblue/blob/live/cosign.pub), checks it still matches `keys/secureblue.pub` in this repo, **`cosign verify`s the base**, then **pins that digest** so `:latest` cannot swap mid-build.
-3. We layer origin Brave, drop Trivalent+Bazaar+GUI stores, load a Brave SELinux domain, and **cosign-sign our image** with `cosign.pub` in this repo.
+3. We layer **Brave Origin** (`brave-origin`), drop Trivalent+Bazaar+GUI stores+full `brave-browser`, load a Brave Origin SELinux domain, and **cosign-sign our image** with `cosign.pub` in this repo.
 4. Your PC pulls `ghcr.io/sergi270710267/unwoke-…` and, after the signed rebase, verifies **our** signature.
 
 That is as close as an overlay gets to “updating from their source” without merging their git. We do **not** rebuild their kernel or re-run their SLSA pipeline; we inherit whatever they already shipped, after checking their signature.

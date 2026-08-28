@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# First boot: keep harden_userns on, relabel Brave, add Flathub (CLI), then
-# lock the update origin onto our signed image.
+# First boot: keep harden_userns on, relabel Brave Origin, add Flathub (CLI),
+# then lock the update origin onto our signed image.
 set -euo pipefail
 
 if command -v semodule >/dev/null; then
@@ -9,7 +9,7 @@ if command -v semodule >/dev/null; then
 fi
 
 if command -v restorecon >/dev/null; then
-  restorecon -FR /opt/brave.com /usr/bin/brave-browser /usr/bin/brave-browser-stable 2>/dev/null || true
+  restorecon -FR /opt/brave.com/brave-origin /usr/bin/brave-origin 2>/dev/null || true
 fi
 
 if command -v flatpak >/dev/null; then
@@ -17,10 +17,10 @@ if command -v flatpak >/dev/null; then
 fi
 
 if [[ ! -f /etc/unwoke/brave-hardening.off ]]; then
-  mkdir -p /etc/brave/policies/managed
+  mkdir -p /etc/brave-origin/policies/managed
   if [[ -f /usr/share/unwoke/brave-hardening.json ]]; then
     cp -a /usr/share/unwoke/brave-hardening.json \
-      /etc/brave/policies/managed/10-unwoke-hardening.json || true
+      /etc/brave-origin/policies/managed/10-unwoke-hardening.json || true
   fi
 fi
 
