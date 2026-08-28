@@ -8,10 +8,3 @@ image-version: latest
 
 modules:
   - from-file: common.yml
-  - type: dnf
-    install:
-      skip-unavailable: true
-      packages:
-        - plasma-discover
-        - plasma-discover-notifier
-        - plasma-discover-flatpak

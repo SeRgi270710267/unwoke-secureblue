@@ -6,11 +6,11 @@ set -oue pipefail
 swap_desktop() {
   local search="$1"
   local replace="$2"
-  local f
-  # grep -F so dots in desktop IDs are literal
+  local f escaped
+  escaped="$(printf '%s' "$search" | sed 's/[.[\*^$]/\\&/g')"
   while IFS= read -r f; do
     [[ -n "$f" ]] || continue
-    sed -i "s/${search}/${replace}/g" "$f"
+    sed -i "s/${escaped}/${replace}/g" "$f"
   done < <(grep -rlF "$search" /usr /etc 2>/dev/null || true)
 }
 

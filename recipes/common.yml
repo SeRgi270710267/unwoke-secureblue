@@ -38,5 +38,6 @@ modules:
   - type: script
     scripts:
       - apply-unwoke.sh
+      - install-stock-store.sh
 
   - type: signing
