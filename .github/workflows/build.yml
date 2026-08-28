@@ -19,6 +19,7 @@ concurrency:
 jobs:
   bluebuild:
     name: Build ${{ matrix.recipe }}
+    if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -68,13 +69,15 @@ jobs:
           set -euo pipefail
           NAME="${{ matrix.recipe }}"
           NAME="${NAME%.yml}"
-          IMAGE="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/${NAME}:latest"
-          DIGEST="$(cosign verify --key cosign.pub "${IMAGE}" 2>/dev/null | python3 -c 'import json,sys; print(json.load(sys.stdin)[0]["critical"]["image"]["docker-manifest-digest"])')"
+          # GHCR path for pulling (with tag) vs attest subject (no tag — GitHub rejects :latest)
+          REF="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/${NAME}:latest"
+          SUBJECT="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/${NAME}"
+          DIGEST="$(cosign verify --key cosign.pub "${REF}" 2>/dev/null | python3 -c 'import json,sys; print(json.load(sys.stdin)[0]["critical"]["image"]["docker-manifest-digest"])')"
           [[ "${DIGEST}" == sha256:* ]]
           echo "name=${NAME}" >> "${GITHUB_OUTPUT}"
-          echo "image=${IMAGE}" >> "${GITHUB_OUTPUT}"
+          echo "image=${SUBJECT}" >> "${GITHUB_OUTPUT}"
           echo "digest=${DIGEST}" >> "${GITHUB_OUTPUT}"
-          echo "Signed digest ${IMAGE}@${DIGEST}"
+          echo "Signed digest ${SUBJECT}@${DIGEST}"
 
       - name: Attest build provenance
         if: github.event_name != 'pull_request'
