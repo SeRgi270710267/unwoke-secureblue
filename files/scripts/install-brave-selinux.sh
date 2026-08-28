@@ -11,7 +11,6 @@ POLICY_SRC="/usr/share/unwoke/selinux"
 
 if [[ ! -e /opt/brave.com/brave/brave ]]; then
   echo "Brave ELF missing at /opt/brave.com/brave/brave" >&2
-  rpm -qa 2>/dev/null | grep -i brave || true
   ls -la /opt/brave.com/brave 2>/dev/null || true
   exit 1
 fi
@@ -22,16 +21,11 @@ if [[ -e /opt/brave.com/brave ]]; then
   find /opt/brave.com -xdev \( -perm -4000 -o -perm -2000 \) -type f -exec chmod a-s {} + 2>/dev/null || true
 fi
 
+# rpm-ostree compose leaves rpm -q unusable (malformed Name db). Detect by files.
 installed_devel=0
-if ! rpm -q selinux-policy-devel >/dev/null 2>&1; then
-  ver="$(rpm -q --qf '%{version}-%{release}' selinux-policy)"
-  if dnf5 -y --setopt=install_weak_deps=False --setopt=skip_if_unavailable=true \
-      install "selinux-policy-devel-${ver}"; then
-    installed_devel=1
-  else
-    dnf5 -y --setopt=install_weak_deps=False install selinux-policy-devel
-    installed_devel=1
-  fi
+if [[ ! -f /usr/share/selinux/devel/Makefile ]]; then
+  dnf5 -y --setopt=install_weak_deps=False install selinux-policy-devel
+  installed_devel=1
 fi
 
 work="$(mktemp -d)"
