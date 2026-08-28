@@ -1,10 +1,34 @@
-/* Unwoke SecureBlue site.
-   Accent is a real blue (hue ~221), not teal/cyan (green in it) and not
-   Bootstrap/SaaS #0d6efd. Dark navy from Old Glory Blue (#002868) family.
-   We used lime before so we would not clone secureblue.dev's Material cyan. */
+/* Unwoke SecureBlue.
+   One palette: real blue (hue ~224), not lime, not teal/cyan, not Bootstrap.
+   Dark navy from Old Glory Blue (#002868). Warning/caution stay amber on purpose. */
+
+:root {
+  --bg: #050a16;
+  --bg-nav: #0a1328;
+  --bg-card: #101c38;
+  --bg-code: #101c38;
+  --bg-table: #070d1c;
+  --border: #1c2d52;
+  --border-soft: rgba(59, 108, 255, 0.18);
+  --text: #e8edf8;
+  --text-muted: #8b9bb8;
+  --text-dim: #7b8aa6;
+  --accent: #3b6cff;
+  --accent-hover: #6b91ff;
+  --accent-pressed: #2554e8;
+  --accent-visited: #8aa0d8;
+  --accent-soft: rgba(59, 108, 255, 0.10);
+  --on-accent: #050a16;
+  --warn: #e0b36a;
+  --warn-soft: rgba(224, 179, 106, 0.08);
+  --important: #ab7df8;
+  --important-soft: rgba(171, 125, 248, 0.08);
+  --white-08: rgba(255, 255, 255, 0.08);
+}
 
 html {
   height: -webkit-fill-available;
+  color-scheme: dark;
 }
 
 body {
@@ -18,22 +42,22 @@ body {
   font-family: Roboto, "Segoe UI", system-ui, sans-serif;
   line-height: 1.5;
   letter-spacing: 0.009375rem;
-  background: #080c16;
-  color: #e6eaf4;
+  background: var(--bg);
+  color: var(--text);
 }
 
 a {
-  color: #5b8cff;
+  color: var(--accent);
 }
 
 a:visited {
-  color: #8a9bcf;
+  color: var(--accent-visited);
 }
 
 h1 a, h1 a:visited,
 h2 a, h2 a:visited,
 h3 a, h3 a:visited {
-  color: #e6eaf4;
+  color: var(--text);
   text-decoration: none;
 }
 
@@ -64,13 +88,13 @@ p, li {
 }
 
 .accent {
-  color: #5b8cff;
+  color: var(--accent);
 }
 
 h1 a .accent,
 h1 a:visited .accent,
 footer .brand .accent {
-  color: #5b8cff;
+  color: var(--accent);
 }
 
 h1 a .sb,
@@ -94,7 +118,7 @@ code, pre {
   font-size: 0.875rem;
   letter-spacing: 0.015625rem;
   line-height: 1.25rem;
-  background: #101828;
+  background: var(--bg-code);
   color: #c5d4f5;
 }
 
@@ -105,7 +129,7 @@ code {
 
 pre {
   border-radius: 12px;
-  border: 1px solid #243044;
+  border: 1px solid var(--border);
   overflow-x: auto;
   padding: 0.875rem;
 }
@@ -116,9 +140,9 @@ pre code {
 }
 
 #site-menu {
-  background: #0b1220;
+  background: var(--bg-nav);
   white-space: nowrap;
-  border-bottom: 1px solid #1a2740;
+  border-bottom: 1px solid var(--border);
 }
 
 #site-menu ul {
@@ -135,11 +159,11 @@ pre code {
 }
 
 #site-menu ul li:hover {
-  background: #152038;
+  background: #122048;
 }
 
 #site-menu ul li a {
-  color: #e6eaf4;
+  color: var(--text);
   display: flex;
   align-items: center;
   text-decoration: none;
@@ -152,15 +176,15 @@ pre code {
 }
 
 #site-menu ul li a:visited {
-  color: #e6eaf4;
+  color: var(--text);
 }
 
 #site-menu ul li[aria-current] a {
-  color: #5b8cff;
+  color: var(--accent);
 }
 
 #site-menu ul li[aria-current]:hover a {
-  color: #8eb4ff;
+  color: var(--accent-hover);
 }
 
 #site-menu img {
@@ -217,7 +241,7 @@ main img {
 .hero p {
   margin: 0.85rem 0 1.25rem;
   max-width: 28rem;
-  color: #9aa6bc;
+  color: var(--text-muted);
 }
 
 .device-img {
@@ -227,7 +251,6 @@ main img {
 
 .laptop-img {
   display: block;
-  filter: invert(100%) hue-rotate(180deg) saturate(1.75);
 }
 
 .laptop-logo-img {
@@ -240,8 +263,8 @@ main img {
 
 .button, .button:visited {
   display: inline-block;
-  color: #0b1220;
-  background: #5b8cff;
+  color: var(--on-accent);
+  background: var(--accent);
   font-size: 0.95rem;
   font-weight: 700;
   letter-spacing: 0.009375rem;
@@ -252,55 +275,55 @@ main img {
 }
 
 .button:hover {
-  background: #7aa3ff;
+  background: var(--accent-hover);
 }
 
 .button:focus {
-  background: #4a78e8;
-  outline: 2px solid #5b8cff;
+  background: var(--accent-pressed);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
 .notice {
   border-radius: 12px;
-  border: 1px solid #243044;
-  background: #121c30;
+  border: 1px solid var(--border);
+  background: #0e1a36;
   color: #c5d0e0;
   padding: 1em;
   margin-block: 1em;
 }
 
 .notice strong {
-  color: #5b8cff;
+  color: var(--accent);
 }
 
 .alert {
   border-radius: 4px;
-  border-left: 4px solid #e0b36a;
-  background: rgba(224, 179, 106, 0.08);
+  border-left: 4px solid var(--warn);
+  background: var(--warn-soft);
   padding: 12px 16px;
   margin: 1em 0;
 }
 
 .alert.note,
 .alert.tip {
-  border-left-color: #5b8cff;
-  background: rgba(91, 140, 255, 0.08);
+  border-left-color: var(--accent);
+  background: var(--accent-soft);
 }
 
 .alert.caution,
 .alert.warning {
-  border-left-color: #e0b36a;
+  border-left-color: var(--warn);
 }
 
 .alert.important {
-  border-left-color: #ab7df8;
-  background: rgba(171, 125, 248, 0.08);
+  border-left-color: var(--important);
+  background: var(--important-soft);
 }
 
 .mirror-meta {
   margin-top: 2.5rem;
-  color: #8b96a8;
+  color: var(--text-dim);
   font-size: 0.85rem;
 }
 
@@ -308,8 +331,8 @@ main img {
   overflow-x: auto;
   margin: 1.5rem 0;
   border-radius: 12px;
-  background: #070b14;
-  border: 1px solid rgba(91, 140, 255, 0.14);
+  background: var(--bg-table);
+  border: 1px solid var(--border-soft);
 }
 
 .table-container table {
@@ -320,9 +343,9 @@ main img {
 .table-container th,
 .table-container td {
   padding: 12px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-  color: #e6eaf4;
+  border-bottom: 1px solid var(--white-08);
+  border-right: 1px solid var(--white-08);
+  color: var(--text);
   font-size: 0.9rem;
   text-align: left;
   vertical-align: top;
@@ -338,9 +361,9 @@ main img {
 }
 
 .table-container th {
-  background: #101828;
+  background: var(--bg-card);
   font-weight: 600;
-  color: #9aa6bc;
+  color: var(--text-muted);
 }
 
 .select-group {
@@ -355,9 +378,9 @@ select {
   font-family: inherit;
   font-size: 0.95rem;
   font-weight: 600;
-  color: #0b1220;
-  background-color: #5b8cff;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%230b1220'><path d='M7 10l5 5 5-5z'/></svg>");
+  color: var(--on-accent);
+  background-color: var(--accent);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23050a16'><path d='M7 10l5 5 5-5z'/></svg>");
   background-position: right 12px center;
   background-repeat: no-repeat;
   border: none;
@@ -367,7 +390,7 @@ select {
 }
 
 select:hover {
-  background-color: #7aa3ff;
+  background-color: var(--accent-hover);
 }
 
 .cards {
@@ -378,8 +401,8 @@ select:hover {
 }
 
 .card {
-  background: #101828;
-  border: 1px solid rgba(91, 140, 255, 0.14);
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
   border-radius: 12px;
   padding: 1.1rem 1.15rem;
 }
@@ -391,7 +414,7 @@ select:hover {
 
 .card p {
   margin: 0;
-  color: #9aa6bc;
+  color: var(--text-muted);
   font-size: 0.95rem;
 }
 
@@ -399,11 +422,11 @@ footer {
   margin-top: auto;
   padding: 1.5em 1em 2em;
   text-align: center;
-  color: #8b96a8;
+  color: var(--text-dim);
 }
 
 footer a, footer a:visited {
-  color: #8b96a8;
+  color: var(--text-dim);
 }
 
 footer .brand {
@@ -411,13 +434,13 @@ footer .brand {
   align-items: center;
   gap: 0.45rem;
   text-decoration: none;
-  color: #e6eaf4;
+  color: var(--text);
   font-weight: 700;
   letter-spacing: -0.02em;
 }
 
 footer .brand:visited {
-  color: #e6eaf4;
+  color: var(--text);
 }
 
 footer .brand img {
@@ -448,8 +471,8 @@ footer .brand img {
   left: 8px;
   top: 8px;
   z-index: 20;
-  background: #5b8cff;
-  color: #0b1220;
+  background: var(--accent);
+  color: var(--on-accent);
   padding: 0.5rem 0.75rem;
   border-radius: 8px;
 }
