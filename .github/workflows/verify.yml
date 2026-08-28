@@ -12,6 +12,7 @@ on:
           - unwoke-silverblue-nvidia-open
           - unwoke-kinoite
           - unwoke-kinoite-nvidia-open
+permissions: {}
 jobs:
   inspect:
     name: Inspect ${{ inputs.image }}
@@ -19,6 +20,11 @@ jobs:
     permissions:
       packages: read
     steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
+        with:
+          egress-policy: audit
+
       - name: Log in to GHCR
         run: echo "${{ github.token }}" | podman login ghcr.io -u "${{ github.actor }}" --password-stdin
 

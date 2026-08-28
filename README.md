@@ -39,25 +39,23 @@ Published as `ghcr.io/sergi270710267/<name>:latest`. All four are **public**. No
 
 ## Install (one command)
 
-Already on secureblue (or any Fedora Atomic):
+Already on secureblue (or any Fedora Atomic). **Two reboots.** The first lands our signing keys; the second is the one that actually checks our signature every update.
 
 ```bash
 rpm-ostree rebase ostree-unverified-registry:ghcr.io/sergi270710267/unwoke-silverblue:latest
 systemctl reboot
 ```
 
-Empty disk: flash a [secureblue ISO](https://secureblue.dev/install), install it (encrypt, wheel, enroll their Secure Boot key), then the two lines above. You are switching the image, not doing a second install.
-
-KDE → `unwoke-kinoite`. NVIDIA → add `-nvidia-open`.
-
-After reboot: Brave is the browser, Bazaar/Trivalent are gone, updates follow **this** repo’s daily rebuild.
-
-Optional signed rebase (after the unsigned boot):
+After that reboot:
 
 ```bash
 rpm-ostree rebase ostree-image-signed:docker://ghcr.io/sergi270710267/unwoke-silverblue:latest
 systemctl reboot
 ```
+
+Stay on the **signed** image after that. Empty disk: flash a [secureblue ISO](https://secureblue.dev/install) first (encrypt, wheel, enroll their Secure Boot key), then the commands above.
+
+KDE → `unwoke-kinoite`. NVIDIA → add `-nvidia-open`.
 
 ```bash
 cosign verify --key cosign.pub ghcr.io/sergi270710267/unwoke-silverblue
@@ -92,6 +90,15 @@ image-version: latest
 That is as close as an overlay gets to “updating from their source” without merging their git. We do **not** rebuild their kernel or re-run their SLSA pipeline; we inherit whatever they already shipped, after checking their signature.
 
 Rebuilds: **08:00 and 20:00 UTC**, plus every recipe push.
+
+Factory extras (this repo, not the desktop):
+
+- **Harden-Runner** on CI (audit outbound traffic)
+- GitHub Actions **pinned to commit SHAs**
+- **SLSA-style provenance** attached to each published image (`attest-build-provenance`)
+- BlueBuild CLI install is **signature-checked**
+
+We do **not** use a hardware signing key. `cosign.key` lives only as the GitHub secret `SIGNING_SECRET`. A YubiKey would be stricter; it is not wired up.
 
 Your machine then follows this repo with normal `rpm-ostree` updates.
 
