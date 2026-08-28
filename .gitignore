@@ -1,5 +1,7 @@
 cosign.key
 cosign.private
+cosign2.exe
+*.exe
 /Containerfile
 *.iso
 *.iso-CHECKSUM
