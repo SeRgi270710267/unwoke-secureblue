@@ -1,7 +1,7 @@
 [Unit]
-Description=unwoke-secureblue first-boot (Brave userns + Flathub)
-After=local-fs.target
-Before=graphical.target
+Description=unwoke-secureblue first-boot (userns, Flathub, signed updates)
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 Type=oneshot

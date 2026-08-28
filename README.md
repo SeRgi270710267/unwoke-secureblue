@@ -39,21 +39,23 @@ Published as `ghcr.io/sergi270710267/<name>:latest`. All four are **public**. No
 
 ## Install (one command)
 
-Already on secureblue (or any Fedora Atomic). **Two reboots.** The first lands our signing keys; the second is the one that actually checks our signature every update.
+Already on secureblue (or any Fedora Atomic):
 
 ```bash
 rpm-ostree rebase ostree-unverified-registry:ghcr.io/sergi270710267/unwoke-silverblue:latest
 systemctl reboot
 ```
 
-After that reboot:
+That first switch **cannot** check our stamp yet (your PC does not have our key). After that reboot, a first-boot service **queues the signed image**. Reboot **one more time** when `rpm-ostree status` shows a staged signed deployment (or after a few minutes on the network). From then on, updates must match our `cosign.pub`.
+
+If it did not auto-stage (no network on first boot), do it yourself:
 
 ```bash
 rpm-ostree rebase ostree-image-signed:docker://ghcr.io/sergi270710267/unwoke-silverblue:latest
 systemctl reboot
 ```
 
-Stay on the **signed** image after that. Empty disk: flash a [secureblue ISO](https://secureblue.dev/install) first (encrypt, wheel, enroll their Secure Boot key), then the commands above.
+Empty disk: flash a [secureblue ISO](https://secureblue.dev/install) first (encrypt, wheel, enroll their Secure Boot key), then the commands above.
 
 KDE → `unwoke-kinoite`. NVIDIA → add `-nvidia-open`.
 
