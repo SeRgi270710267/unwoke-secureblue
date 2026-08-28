@@ -84,6 +84,7 @@ Stock `ujust` still works.
 5. Reversible overlay toggles (Flathub, policies, lockdown, JIT-less default on)
 6. Default wallpaper / lock / accent
 7. Site updated to document all of the above + Brand tab
+8. Auto changelog tab: Pages job runs `docs/_tools/generate-changelog.py` from public git subjects (no bodies/diffs). Output gitignored `docs/changelog/`. Pages runs on every `main` push so overlay commits show up without waiting for the daily mirror cron.
 
 Image-side theme and toggles land on the **next image rebuild**, not Pages. Docs-only pushes should not rebuild images (`build.yml` paths-ignore).
 

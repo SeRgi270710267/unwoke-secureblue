@@ -573,6 +573,31 @@ footer .brand img {
   margin-bottom: 0.2rem;
 }
 
+.log h2 {
+  font-size: 1.05rem;
+  color: var(--accent);
+  margin: 1.75rem 0 0.35rem;
+}
+
+.log ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.log li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--white-08);
+  font-size: 0.95rem;
+}
+
+.log .hash {
+  background: none;
+  padding: 0;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+}
+
 @media only screen and (max-width: 735px) {
   .hero {
     flex-flow: column nowrap;

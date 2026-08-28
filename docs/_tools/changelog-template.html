@@ -5,10 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#050a16">
   <meta name="color-scheme" content="dark">
-  <title>__TITLE__</title>
-  <meta name="description" content="__DESCRIPTION__">
+  <title>Changelog | Unwoke SecureBlue</title>
+  <meta name="description" content="Public overlay changes. Subjects only; secrets and internal notes are dropped. Rebuilt with the site.">
   <base href="/unwoke-secureblue/">
-  <link rel="canonical" href="__CANONICAL__">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css?v=4">
 </head>
@@ -20,7 +19,7 @@
         <li><a href="./"><img src="assets/logo.svg?v=4" alt="">Unwoke SecureBlue</a></li>
         <li><a href="features/">Features</a></li>
         <li><a href="brand/">Brand</a></li>
-        <li><a href="changelog/">Changelog</a></li>
+        <li aria-current="page"><a href="changelog/">Changelog</a></li>
         <li><a href="images/">Images</a></li>
         <li><a href="install/">Install</a></li>
         <li><a href="post-install/">Post-install</a></li>
@@ -28,22 +27,25 @@
         <li><a href="contributing/">Contributing</a></li>
         <li><a href="conduct/">Conduct</a></li>
         <li><a href="donate/">Donate</a></li>
-        <li aria-current="page"><a href="secureblue/">Their docs</a></li>
+        <li><a href="secureblue/">Their docs</a></li>
         <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
       </ul>
     </nav>
   </header>
-  <main id="content" class="mirror">
-    <p class="notice mirror-banner"><strong>Mirrored from <a href="__CANONICAL__">secureblue.dev</a>.</strong> This is stock secureblue documentation (Apache-2.0), not Unwoke SecureBlue’s overlay notes. Our FAQ / Features / Install stay on the main nav and are never overwritten. Canonical: <a href="__CANONICAL__">__CANONICAL__</a></p>
+  <main id="content">
+    <h1>Changelog</h1>
+    <p>Public git subjects from <code>main</code>, grouped by day. Built at Pages deploy. No commit bodies, no diffs, no file lists. Subjects that look like secrets, keys, tokens, or passwords are dropped.</p>
+    <p class="notice">This is not a CVE feed and not stock secureblue’s changelog. Full public history: <a href="https://github.com/SeRgi270710267/unwoke-secureblue/commits/main">GitHub commits</a>.</p>
     __BODY__
-    <p class="mirror-meta">Source: <a href="https://github.com/secureblue/secureblue.dev">secureblue/secureblue.dev</a> <code>__SHA__</code>. Fetched __FETCHED__. Redistributed under Apache License 2.0. Unwoke SecureBlue is not affiliated with secureblue.</p>
+    <p class="mirror-meta">Generated __FETCHED__ from <code>__SHA__</code>. __COUNT__ public entries. Overlay files MIT. Not affiliated with secureblue.</p>
   </main>
   <footer>
     <a class="brand" href="./"><img src="assets/logo.svg?v=4" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
     <ul id="social">
-      <li><a href="https://secureblue.dev">secureblue.dev</a></li>
-      <li><a href="https://github.com/secureblue/secureblue.dev">Their site source</a></li>
+      <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commits/main">GitHub commits</a></li>
+      <li><a href="features/">Features</a></li>
     </ul>
+    <p>Not affiliated with secureblue.</p>
   </footer>
 </body>
 </html>
