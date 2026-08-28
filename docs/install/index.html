@@ -18,6 +18,7 @@
         <li><a href="features/">Features</a></li>
         <li><a href="images/">Images</a></li>
         <li aria-current="page"><a href="install/">Install</a></li>
+        <li><a href="post-install/">Post-install</a></li>
         <li><a href="faq/">FAQ</a></li>
         <li><a href="conduct/">Conduct</a></li>
         <li><a href="donate/">Donate</a></li>
@@ -64,7 +65,7 @@ systemctl reboot</code></pre>
     </div>
 
     <h2 id="after"><a href="#after">After install</a></h2>
-    <p>Stock secureblue post-install still applies: enroll their Secure Boot key if needed, <code>ujust set-kargs-hardening</code> if you rebased rather than installed from their ISO, <code>ujust audit-secureblue</code>, USBGuard, separate wheel account. See <a href="https://secureblue.dev/post-install">their post-install</a>.</p>
+    <p>Stock secureblue post-install still applies. Full overlay + their steps: <a href="post-install/">Post-install</a>. Their page only (mirrored daily): <a href="secureblue/post-install/">secureblue/post-install</a>.</p>
     <p>Overlay extras:</p>
 <pre><code>ujust unwoke-status
 ujust audit-unwoke

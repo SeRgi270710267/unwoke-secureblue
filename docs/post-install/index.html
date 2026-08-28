@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Post-install | Unwoke SecureBlue</title>
+  <meta name="description" content="After rebasing: signed deployment, overlay ujust, then stock secureblue post-install (mirrored).">
+  <base href="/unwoke-secureblue/">
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="./"><img src="assets/logo.svg" alt="">Unwoke SecureBlue</a></li>
+        <li><a href="features/">Features</a></li>
+        <li><a href="images/">Images</a></li>
+        <li><a href="install/">Install</a></li>
+        <li aria-current="page"><a href="post-install/">Post-install</a></li>
+        <li><a href="faq/">FAQ</a></li>
+        <li><a href="conduct/">Conduct</a></li>
+        <li><a href="donate/">Donate</a></li>
+        <li><a href="secureblue/">Their docs</a></li>
+        <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="content">
+    <h1>Post-install</h1>
+    <p>Same slot as on <a href="https://secureblue.dev/post-install">secureblue.dev</a>. Do the overlay steps first, then theirs.</p>
+
+    <h2 id="overlay"><a href="#overlay">Unwoke SecureBlue</a></h2>
+    <ol>
+      <li>After the first rebase reboot, wait until first-boot stages the <em>signed</em> image (<code>rpm-ostree status</code>). Reboot once more.</li>
+      <li>Confirm the overlay:</li>
+    </ol>
+<pre><code>ujust unwoke-status
+ujust audit-unwoke
+ujust audit-secureblue</code></pre>
+    <p>Origin images (Brave Origin policies; restart the browser after):</p>
+<pre><code>ujust set-brave-hardening on
+ujust set-brave-jitless on</code></pre>
+    <p>Browserless images — host browsers stay blocked until you opt in:</p>
+<pre><code>ujust set-allow-browsers on ALLOW</code></pre>
+
+    <h2 id="stock"><a href="#stock">Stock secureblue (mirrored)</a></h2>
+    <p>You still do their post-install: enroll their Secure Boot key if the prompt did not appear, <code>ujust set-kargs-hardening</code> if you rebased instead of installing from their ISO, USBGuard, optional separate wheel account. Full text, updated daily from their repo:</p>
+    <p><a class="button" href="secureblue/post-install/">Their post-install (mirrored)</a></p>
+    <p>Canonical: <a href="https://secureblue.dev/post-install">https://secureblue.dev/post-install</a></p>
+  </main>
+
+  <footer>
+    <a class="brand" href="./"><img src="assets/logo.svg" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="install/">Install</a></li>
+      <li><a href="secureblue/post-install/">Their post-install</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>
