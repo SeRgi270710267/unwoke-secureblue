@@ -1,0 +1,10 @@
+;; SPDX-FileCopyrightText: Copyright 2026 unwoke-secureblue
+;; SPDX-License-Identifier: MIT
+;;
+;; Put brave_t on secureblue's userns allow-list and protect brave_exec_t from
+;; unconfined relabel (same trick they use for trivalent_exec_t).
+
+(typeattributeset userns_privileged_domain (brave_t))
+
+(optional brave_userns_privileged_file_type
+          (typeattributeset userns_privileged_file_type (brave_exec_t)))

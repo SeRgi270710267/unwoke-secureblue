@@ -1,5 +1,5 @@
 [Unit]
-Description=unwoke-secureblue first-boot (userns, Flathub, signed updates)
+Description=unwoke-secureblue first-boot (Brave labels, Flathub CLI, signed updates)
 After=network-online.target
 Wants=network-online.target
 

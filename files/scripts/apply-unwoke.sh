@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Runs at image build time. Makes Brave the default browser, hides leftover
-# Trivalent/Bazaar launchers, and enables the first-boot userns helper.
+# Trivalent/Bazaar/store launchers. Does not touch harden_userns.
 set -oue pipefail
 
 swap_desktop() {
@@ -15,7 +15,6 @@ swap_desktop() {
 }
 
 swap_desktop "trivalent.desktop" "brave-browser.desktop"
-swap_desktop "io.github.kolunmi.Bazaar.desktop" "org.gnome.Software.desktop"
 swap_desktop "org.mozilla.firefox.desktop" "brave-browser.desktop"
 
 mkdir -p /usr/share/applications /usr/etc/xdg
@@ -46,7 +45,8 @@ do
   fi
 done
 
-for d in trivalent.desktop io.github.kolunmi.Bazaar.desktop; do
+for d in trivalent.desktop io.github.kolunmi.Bazaar.desktop \
+         org.gnome.Software.desktop org.kde.discover.desktop; do
   if [[ -f "/usr/share/applications/${d}" ]]; then
     grep -q '^Hidden=' "/usr/share/applications/${d}" || echo 'Hidden=true' >> "/usr/share/applications/${d}"
   fi
@@ -56,12 +56,6 @@ rm -rf /usr/share/bazaar || true
 
 if command -v systemctl >/dev/null; then
   systemctl enable unwoke-first-boot.service || true
-fi
-
-# Best-effort here. The first-boot unit is what actually sticks on ostree
-# because semodule state lives under /etc and /var.
-if command -v semodule >/dev/null; then
-  semodule --disable=harden_userns || true
 fi
 
 if command -v glib-compile-schemas >/dev/null && [[ -d /usr/share/glib-2.0/schemas ]]; then

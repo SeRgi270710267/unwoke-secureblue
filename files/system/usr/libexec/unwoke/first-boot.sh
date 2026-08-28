@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
-# First boot: Brave userns, unfiltered Flathub, then lock the update origin
-# onto our signed image so later rpm-ostree upgrades check our cosign stamp.
+# First boot: keep harden_userns on, relabel Brave, add Flathub (CLI), then
+# lock the update origin onto our signed image.
 set -euo pipefail
 
 if command -v semodule >/dev/null; then
-  if semodule -l 2>/dev/null | grep -qx 'harden_userns'; then
-    semodule --disable=harden_userns || true
-  fi
+  # Older overlay builds disabled this. Put it back; Brave userns is brave_t.
+  semodule --enable=harden_userns || true
+fi
+
+if command -v restorecon >/dev/null; then
+  restorecon -FR /opt/brave.com /usr/bin/brave-browser /usr/bin/brave-browser-stable 2>/dev/null || true
 fi
 
 if command -v flatpak >/dev/null; then

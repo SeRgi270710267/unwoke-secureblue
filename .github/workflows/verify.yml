@@ -31,20 +31,29 @@ jobs:
       - name: Pull
         run: podman pull "ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/${{ inputs.image }}:latest"
 
-      - name: Check Brave in, Trivalent/Bazaar out
+      - name: Check Brave in, store/Trivalent/Bazaar out, userns policy on
         env:
           IMAGE: ghcr.io/${{ github.repository_owner }}/${{ inputs.image }}:latest
         run: |
           set -euo pipefail
           IMAGE="${IMAGE,,}"
           podman run --rm --entrypoint /usr/bin/rpm "$IMAGE" -q brave-browser
-          if podman run --rm --entrypoint /usr/bin/rpm "$IMAGE" -q trivalent; then
-            echo "FAIL: trivalent still installed"
-            exit 1
-          fi
-          if podman run --rm --entrypoint /usr/bin/rpm "$IMAGE" -q bazaar; then
-            echo "FAIL: bazaar still installed"
-            exit 1
-          fi
+          for pkg in trivalent bazaar gnome-software plasma-discover; do
+            if podman run --rm --entrypoint /usr/bin/rpm "$IMAGE" -q "$pkg"; then
+              echo "FAIL: $pkg still installed"
+              exit 1
+            fi
+          done
           podman run --rm --entrypoint /usr/bin/test "$IMAGE" -f /usr/share/applications/brave-browser.desktop
-          echo "OK: Brave present, Trivalent and Bazaar absent"
+          podman run --rm --entrypoint /usr/bin/test "$IMAGE" -f /usr/share/unwoke/selinux/unwoke_brave.te
+          podman run --rm --entrypoint /usr/bin/bash "$IMAGE" -lc '
+            set -euo pipefail
+            grep -q brave_exec_t /etc/selinux/targeted/contexts/files/file_contexts
+            if find /opt/brave.com -xdev -perm -4000 -type f | grep -q .; then
+              echo "FAIL: SUID remains under /opt/brave.com"
+              find /opt/brave.com -xdev -perm -4000 -type f
+              exit 1
+            fi
+            echo "OK: brave_exec_t in file_contexts, no SUID under /opt/brave.com"
+          '
+          echo "OK: Brave present; Trivalent, Bazaar, and GUI stores absent"

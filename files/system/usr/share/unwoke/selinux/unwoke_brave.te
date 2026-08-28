@@ -1,0 +1,24 @@
+# SPDX-FileCopyrightText: Copyright 2026 unwoke-secureblue
+# SPDX-License-Identifier: MIT
+#
+# Fat Brave domain: unconfined-like permissions so origin Brave can actually
+# run, plus a distinct type so harden_userns can stay on. The userns allow-list
+# add is in unwoke_brave_userns.cil (secureblue attributes are not in Fedora's
+# devel headers, so they cannot be required from this .te).
+policy_module(unwoke_brave, 1.0.0)
+
+require {
+	type unconfined_t;
+	role unconfined_r;
+}
+
+type brave_t;
+type brave_exec_t;
+application_domain(brave_t, brave_exec_t)
+unconfined_domain(brave_t)
+role unconfined_r types brave_t;
+
+domtrans_pattern(unconfined_t, brave_exec_t, brave_t)
+
+allow brave_t self:user_namespace create;
+allow brave_t self:cap_userns { sys_admin sys_chroot sys_ptrace setpcap sys_nice dac_override dac_read_search };

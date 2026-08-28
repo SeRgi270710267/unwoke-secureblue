@@ -1,0 +1,4 @@
+# ELF entry points only. /usr/bin/brave-browser is a wrapper script and must
+# stay bin_t so it runs unconfined, then execs these and transitions to brave_t.
+/opt/brave\.com/brave/brave		--	gen_context(system_u:object_r:brave_exec_t,s0)
+/opt/brave\.com/brave/brave-browser	--	gen_context(system_u:object_r:brave_exec_t,s0)
