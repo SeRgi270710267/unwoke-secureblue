@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Unwoke SecureBlue">
-  <rect width="128" height="128" rx="28" fill="#121a14"/>
-  <path d="M64 18 108 42v44L64 110 20 86V42Z" fill="none" stroke="#c4e07a" stroke-width="8" stroke-linejoin="round"/>
-  <path d="M64 46v36" stroke="#c4e07a" stroke-width="8" stroke-linecap="round"/>
-  <circle cx="64" cy="64" r="9" fill="#e8eadf"/>
+  <rect width="128" height="128" rx="28" fill="#0b1220"/>
+  <path d="M64 18 108 42v44L64 110 20 86V42Z" fill="none" stroke="#5b8cff" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M64 46v36" stroke="#5b8cff" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="64" cy="64" r="9" fill="#e6eaf4"/>
 </svg>

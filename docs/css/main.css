@@ -1,4 +1,7 @@
-/* Unwoke SecureBlue site. GrapheneOS/secureblue.dev layout; our wordmark and palette. */
+/* Unwoke SecureBlue site.
+   Accent is a real blue (hue ~221), not teal/cyan (green in it) and not
+   Bootstrap/SaaS #0d6efd. Dark navy from Old Glory Blue (#002868) family.
+   We used lime before so we would not clone secureblue.dev's Material cyan. */
 
 html {
   height: -webkit-fill-available;
@@ -15,22 +18,22 @@ body {
   font-family: Roboto, "Segoe UI", system-ui, sans-serif;
   line-height: 1.5;
   letter-spacing: 0.009375rem;
-  background: #0e1110;
-  color: #e8eadf;
+  background: #080c16;
+  color: #e6eaf4;
 }
 
 a {
-  color: #c4e07a;
+  color: #5b8cff;
 }
 
 a:visited {
-  color: #a9c48a;
+  color: #8a9bcf;
 }
 
 h1 a, h1 a:visited,
 h2 a, h2 a:visited,
 h3 a, h3 a:visited {
-  color: #e8eadf;
+  color: #e6eaf4;
   text-decoration: none;
 }
 
@@ -61,13 +64,13 @@ p, li {
 }
 
 .accent {
-  color: #c4e07a;
+  color: #5b8cff;
 }
 
 h1 a .accent,
 h1 a:visited .accent,
 footer .brand .accent {
-  color: #c4e07a;
+  color: #5b8cff;
 }
 
 h1 a .sb,
@@ -91,8 +94,8 @@ code, pre {
   font-size: 0.875rem;
   letter-spacing: 0.015625rem;
   line-height: 1.25rem;
-  background: #1a2218;
-  color: #d5e8b8;
+  background: #101828;
+  color: #c5d4f5;
 }
 
 code {
@@ -102,7 +105,7 @@ code {
 
 pre {
   border-radius: 12px;
-  border: 1px solid #3a4634;
+  border: 1px solid #243044;
   overflow-x: auto;
   padding: 0.875rem;
 }
@@ -113,9 +116,9 @@ pre code {
 }
 
 #site-menu {
-  background: #121a14;
+  background: #0b1220;
   white-space: nowrap;
-  border-bottom: 1px solid #243022;
+  border-bottom: 1px solid #1a2740;
 }
 
 #site-menu ul {
@@ -132,11 +135,11 @@ pre code {
 }
 
 #site-menu ul li:hover {
-  background: #1c2a1c;
+  background: #152038;
 }
 
 #site-menu ul li a {
-  color: #e8eadf;
+  color: #e6eaf4;
   display: flex;
   align-items: center;
   text-decoration: none;
@@ -149,15 +152,15 @@ pre code {
 }
 
 #site-menu ul li a:visited {
-  color: #e8eadf;
+  color: #e6eaf4;
 }
 
 #site-menu ul li[aria-current] a {
-  color: #c4e07a;
+  color: #5b8cff;
 }
 
 #site-menu ul li[aria-current]:hover a {
-  color: #d7f09a;
+  color: #8eb4ff;
 }
 
 #site-menu img {
@@ -214,7 +217,7 @@ main img {
 .hero p {
   margin: 0.85rem 0 1.25rem;
   max-width: 28rem;
-  color: #b4bba8;
+  color: #9aa6bc;
 }
 
 .device-img {
@@ -237,8 +240,8 @@ main img {
 
 .button, .button:visited {
   display: inline-block;
-  color: #121a14;
-  background: #c4e07a;
+  color: #0b1220;
+  background: #5b8cff;
   font-size: 0.95rem;
   font-weight: 700;
   letter-spacing: 0.009375rem;
@@ -249,26 +252,26 @@ main img {
 }
 
 .button:hover {
-  background: #d4ee96;
+  background: #7aa3ff;
 }
 
 .button:focus {
-  background: #b5d166;
-  outline: 2px solid #c4e07a;
+  background: #4a78e8;
+  outline: 2px solid #5b8cff;
   outline-offset: 2px;
 }
 
 .notice {
   border-radius: 12px;
-  border: 1px solid #3a4634;
-  background: #182018;
-  color: #cfd6c4;
+  border: 1px solid #243044;
+  background: #121c30;
+  color: #c5d0e0;
   padding: 1em;
   margin-block: 1em;
 }
 
 .notice strong {
-  color: #c4e07a;
+  color: #5b8cff;
 }
 
 .alert {
@@ -281,8 +284,8 @@ main img {
 
 .alert.note,
 .alert.tip {
-  border-left-color: #76c9f6;
-  background: rgba(118, 201, 246, 0.08);
+  border-left-color: #5b8cff;
+  background: rgba(91, 140, 255, 0.08);
 }
 
 .alert.caution,
@@ -297,7 +300,7 @@ main img {
 
 .mirror-meta {
   margin-top: 2.5rem;
-  color: #8b9284;
+  color: #8b96a8;
   font-size: 0.85rem;
 }
 
@@ -305,8 +308,8 @@ main img {
   overflow-x: auto;
   margin: 1.5rem 0;
   border-radius: 12px;
-  background: #0c0f0b;
-  border: 1px solid rgba(196, 224, 122, 0.12);
+  background: #070b14;
+  border: 1px solid rgba(91, 140, 255, 0.14);
 }
 
 .table-container table {
@@ -319,7 +322,7 @@ main img {
   padding: 12px 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   border-right: 1px solid rgba(255, 255, 255, 0.08);
-  color: #e8eadf;
+  color: #e6eaf4;
   font-size: 0.9rem;
   text-align: left;
   vertical-align: top;
@@ -335,9 +338,9 @@ main img {
 }
 
 .table-container th {
-  background: #1a2218;
+  background: #101828;
   font-weight: 600;
-  color: #b4bba8;
+  color: #9aa6bc;
 }
 
 .select-group {
@@ -352,9 +355,9 @@ select {
   font-family: inherit;
   font-size: 0.95rem;
   font-weight: 600;
-  color: #121a14;
-  background-color: #c4e07a;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23121a14'><path d='M7 10l5 5 5-5z'/></svg>");
+  color: #0b1220;
+  background-color: #5b8cff;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%230b1220'><path d='M7 10l5 5 5-5z'/></svg>");
   background-position: right 12px center;
   background-repeat: no-repeat;
   border: none;
@@ -364,7 +367,7 @@ select {
 }
 
 select:hover {
-  background-color: #d4ee96;
+  background-color: #7aa3ff;
 }
 
 .cards {
@@ -375,8 +378,8 @@ select:hover {
 }
 
 .card {
-  background: #141a14;
-  border: 1px solid rgba(196, 224, 122, 0.12);
+  background: #101828;
+  border: 1px solid rgba(91, 140, 255, 0.14);
   border-radius: 12px;
   padding: 1.1rem 1.15rem;
 }
@@ -388,7 +391,7 @@ select:hover {
 
 .card p {
   margin: 0;
-  color: #b4bba8;
+  color: #9aa6bc;
   font-size: 0.95rem;
 }
 
@@ -396,11 +399,11 @@ footer {
   margin-top: auto;
   padding: 1.5em 1em 2em;
   text-align: center;
-  color: #8b9284;
+  color: #8b96a8;
 }
 
 footer a, footer a:visited {
-  color: #8b9284;
+  color: #8b96a8;
 }
 
 footer .brand {
@@ -408,13 +411,13 @@ footer .brand {
   align-items: center;
   gap: 0.45rem;
   text-decoration: none;
-  color: #e8eadf;
+  color: #e6eaf4;
   font-weight: 700;
   letter-spacing: -0.02em;
 }
 
 footer .brand:visited {
-  color: #e8eadf;
+  color: #e6eaf4;
 }
 
 footer .brand img {
@@ -445,8 +448,8 @@ footer .brand img {
   left: 8px;
   top: 8px;
   z-index: 20;
-  background: #c4e07a;
-  color: #121a14;
+  background: #5b8cff;
+  color: #0b1220;
   padding: 0.5rem 0.75rem;
   border-radius: 8px;
 }
