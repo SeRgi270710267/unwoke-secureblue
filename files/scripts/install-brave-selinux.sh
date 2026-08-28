@@ -9,8 +9,10 @@ POLICY_SRC="/usr/share/unwoke/selinux"
   exit 1
 }
 
-if ! rpm -q brave-browser >/dev/null 2>&1; then
-  echo "brave-browser is not installed; cannot label it" >&2
+if [[ ! -e /opt/brave.com/brave/brave ]]; then
+  echo "Brave ELF missing at /opt/brave.com/brave/brave" >&2
+  rpm -qa 2>/dev/null | grep -i brave || true
+  ls -la /opt/brave.com/brave 2>/dev/null || true
   exit 1
 fi
 
