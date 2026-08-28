@@ -16,6 +16,14 @@ if command -v flatpak >/dev/null; then
   flatpak remote-add --if-not-exists --system flathub https://dl.flathub.org/repo/flathub.flatpakrepo || true
 fi
 
+if [[ ! -f /etc/unwoke/brave-hardening.off ]]; then
+  mkdir -p /etc/brave/policies/managed
+  if [[ -f /usr/share/unwoke/brave-hardening.json ]]; then
+    cp -a /usr/share/unwoke/brave-hardening.json \
+      /etc/brave/policies/managed/10-unwoke-hardening.json || true
+  fi
+fi
+
 promote_signed_origin() {
   command -v rpm-ostree >/dev/null || return 0
   command -v python3 >/dev/null || return 0

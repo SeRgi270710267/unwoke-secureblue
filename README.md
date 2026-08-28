@@ -18,7 +18,17 @@ Stock secureblue is a serious hardened Fedora Atomic. It also ships a house brow
 | App store | [Bazaar](https://github.com/secureblue/bazaar-rpm) — curated catalog, most Flathub browsers blocklisted ([PR #1898](https://github.com/secureblue/secureblue/pull/1898)) | **None.** Flathub remote is added for `flatpak` CLI. Use `brew` / `rpm-ostree` for the rest. |
 | User namespaces | Off for unconfined; on only for Flatpak and Trivalent | **Same.** `harden_userns` stays on. `brave_t` is added to their userns allow-list so Brave’s Chromium sandbox can start. Other unconfined apps stay blocked. |
 
-`brave_t` is an unconfined-like domain (so origin Brave can actually run) that is allowed to create user namespaces. It is **not** Trivalent’s tight confinement, and you do not get Trivalent’s Chromium patches. It is still a real win vs turning `harden_userns` off for the whole desktop.
+`brave_t` is an unconfined-like domain (so origin Brave can actually run) that is allowed to create user namespaces. It is **not** Trivalent’s tight confinement, and you do not get Trivalent’s Chromium patches. Those patches live in their browser source. Origin Brave cannot grow them.
+
+What we *can* do on origin Brave is force Chromium enterprise policies and keep their `ujust` surface. Stock commands still work (`ujust set-unconfined-userns`, `ujust set-kargs-hardening`, `ujust audit-secureblue`, …). Overlay extras:
+
+```bash
+ujust unwoke-status
+ujust audit-unwoke
+ujust set-brave-hardening on    # default: HTTPS-only, no WebRTC IP leak, no metrics. Restart Brave.
+ujust set-brave-hardening off
+ujust set-brave-jitless on      # optional, Trivalent-like; breaks some sites. Restart Brave.
+```
 
 We did **not** gut SELinux, kernel args, `hardened_malloc`, disk encryption, or Secure Boot enrollment. Calling this “insecure Fedora” is false. Calling it “identical to secureblue” is also false.
 
@@ -109,6 +119,7 @@ Your machine then follows this repo with normal `rpm-ostree` updates.
 | Packages | `recipes/common.yml` |
 | Browser / first-boot | `files/scripts/apply-unwoke.sh` |
 | Brave SELinux / userns | `files/scripts/install-brave-selinux.sh`, `files/system/usr/share/unwoke/selinux/` |
+| ujust extras | `files/justfiles/unwoke.just`, `files/system/usr/libexec/unwoke/toggles.sh` |
 | GNOME favorites | `files/gschema-overrides/zz2-unwoke.gschema.override` |
 
 ---

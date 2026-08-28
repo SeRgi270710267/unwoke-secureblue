@@ -40,4 +40,8 @@ modules:
       - apply-unwoke.sh
       - install-brave-selinux.sh
 
+  # Appends to 60-custom.just. Stock secureblue ujust recipes stay.
+  - type: justfiles
+    validate: false
+
   - type: signing
