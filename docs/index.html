@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>unwoke-secureblue</title>
+  <meta name="description" content="secureblue overlay: Brave Origin, no curator store. Not affiliated with secureblue.">
+  <base href="/unwoke-secureblue/">
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      --bg: #0d0f0c;
+      --fg: #e8eadf;
+      --muted: #9aa392;
+      --line: #2a3126;
+      --card: #141814;
+      --accent: #c4e07a;
+      --warn: #e0b36a;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--bg); color: var(--fg); }
+    body {
+      font: 16px/1.5 ui-sans-serif, system-ui, sans-serif;
+      max-width: 40rem;
+      margin: 0 auto;
+      padding: 2.5rem 1.25rem 4rem;
+    }
+    h1 { font-size: 1.75rem; letter-spacing: -0.03em; margin: 0 0 0.35rem; }
+    h2 { font-size: 1.05rem; margin: 2rem 0 0.6rem; }
+    p, li { color: var(--fg); }
+    .lede { color: var(--muted); margin: 0 0 1.25rem; }
+    a { color: var(--accent); }
+    .note {
+      border: 1px solid var(--line);
+      background: var(--card);
+      padding: 0.85rem 1rem;
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    .note strong { color: var(--warn); font-weight: 600; }
+    pre {
+      background: #0a0c09;
+      border: 1px solid var(--line);
+      padding: 0.85rem 1rem;
+      overflow-x: auto;
+      border-radius: 8px;
+      font: 0.85rem/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+    th, td { text-align: left; padding: 0.4rem 0.35rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--muted); font-weight: 500; }
+    ul { padding-left: 1.15rem; }
+    footer { margin-top: 2.5rem; color: var(--muted); font-size: 0.85rem; }
+    nav { margin: 1rem 0 1.75rem; }
+    nav a { margin-right: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>unwoke-secureblue</h1>
+  <p class="lede">secureblue’s hardening. Brave Origin. No curator store.</p>
+  <nav>
+    <a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a>
+    <a href="https://github.com/SeRgi270710267/unwoke-secureblue/pkgs/container/unwoke-silverblue">Images</a>
+    <a href="https://brave.com/origin/linux/">Brave Origin</a>
+  </nav>
+
+  <p class="note"><strong>Not affiliated with secureblue.</strong> This is a personal overlay on their signed images. Stock secureblue is at <a href="https://secureblue.dev">secureblue.dev</a>.</p>
+
+  <h2>What it is</h2>
+  <p>A daily BlueBuild overlay on official secureblue Fedora Atomic images. Kernel hardening, SELinux, <code>hardened_malloc</code>, and their <code>ujust</code> commands stay. Trivalent and Bazaar are gone. There is no GUI software store.</p>
+  <p>The browser is the standalone <strong>Brave Origin</strong> RPM (<code>brave-origin</code>), not full <code>brave-browser</code>. User namespaces stay off for unconfined apps; Brave Origin runs in its own <code>brave_t</code> domain so its Chromium sandbox can start.</p>
+
+  <h2>Install</h2>
+  <p>Already on secureblue or Fedora Atomic:</p>
+<pre>rpm-ostree rebase ostree-unverified-registry:ghcr.io/sergi270710267/unwoke-silverblue:latest
+systemctl reboot</pre>
+  <p>After that reboot, first-boot stages the <em>signed</em> image. Reboot once more. KDE: <code>unwoke-kinoite</code>. NVIDIA: add <code>-nvidia-open</code>.</p>
+
+  <h2>Images</h2>
+  <table>
+    <tr><th>Image</th><th>Desktop</th><th>GPU</th></tr>
+    <tr><td><code>unwoke-silverblue</code></td><td>GNOME</td><td>Nouveau</td></tr>
+    <tr><td><code>unwoke-silverblue-nvidia-open</code></td><td>GNOME</td><td>NVIDIA open</td></tr>
+    <tr><td><code>unwoke-kinoite</code></td><td>KDE Plasma</td><td>Nouveau</td></tr>
+    <tr><td><code>unwoke-kinoite-nvidia-open</code></td><td>KDE Plasma</td><td>NVIDIA open</td></tr>
+  </table>
+  <p>Registry: <code>ghcr.io/sergi270710267/&lt;name&gt;:latest</code></p>
+
+  <h2>Toggles</h2>
+  <p>All stock secureblue <code>ujust</code> commands still work. Overlay extras:</p>
+<pre>ujust unwoke-status
+ujust audit-unwoke
+ujust set-brave-hardening on
+ujust set-brave-jitless on</pre>
+
+  <h2>Honest limits</h2>
+  <ul>
+    <li>This is not as locked down as stock secureblue + Trivalent.</li>
+    <li>Brave Origin is not Trivalent. No Vanadium-style Chromium patches, no tight Trivalent SELinux jail.</li>
+    <li>Signing key is a GitHub secret, not a hardware key.</li>
+  </ul>
+
+  <footer>
+    Overlay files MIT. Fedora, secureblue, BlueBuild, Brave Origin: their licenses.
+  </footer>
+</body>
+</html>

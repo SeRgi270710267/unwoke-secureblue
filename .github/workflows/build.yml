@@ -8,8 +8,10 @@ on:
       - "**.md"
       - "LICENSE"
       - ".gitignore"
+      - "docs/**"
       - ".github/workflows/iso.yml"
       - ".github/workflows/verify.yml"
+      - ".github/workflows/pages.yml"
   pull_request:
   workflow_dispatch:
 permissions: {}
