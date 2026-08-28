@@ -29,13 +29,18 @@ jobs:
       - name: Lowercase registry
         run: echo "IMAGE_REF=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/${{ inputs.image }}:latest" >> "$GITHUB_ENV"
 
+      - name: Log in to GHCR
+        run: echo "${{ github.token }}" | podman login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Pull image
+        run: podman pull "${{ env.IMAGE_REF }}"
+
       - name: Build ISO
         id: build
         uses: ublue-os/titanoboa@main
         with:
           image-ref: ${{ env.IMAGE_REF }}
           iso-dest: ${{ github.workspace }}/${{ inputs.image }}.iso
-          builder-distro: fedora
 
       - name: Checksum
         run: |
