@@ -12,6 +12,8 @@ on:
       - ".github/workflows/iso.yml"
       - ".github/workflows/verify.yml"
       - ".github/workflows/pages.yml"
+      - ".github/scripts/mirror-secureblue-docs.py"
+      - ".github/scripts/mirror-template.html"
   pull_request:
   workflow_dispatch:
 permissions: {}

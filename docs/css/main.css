@@ -279,6 +279,28 @@ main img {
   margin: 1em 0;
 }
 
+.alert.note,
+.alert.tip {
+  border-left-color: #76c9f6;
+  background: rgba(118, 201, 246, 0.08);
+}
+
+.alert.caution,
+.alert.warning {
+  border-left-color: #e0b36a;
+}
+
+.alert.important {
+  border-left-color: #ab7df8;
+  background: rgba(171, 125, 248, 0.08);
+}
+
+.mirror-meta {
+  margin-top: 2.5rem;
+  color: #8b9284;
+  font-size: 0.85rem;
+}
+
 .table-container {
   overflow-x: auto;
   margin: 1.5rem 0;

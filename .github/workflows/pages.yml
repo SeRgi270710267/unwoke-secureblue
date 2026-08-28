@@ -1,10 +1,14 @@
 name: pages
 on:
+  schedule:
+    - cron: "30 09 * * *"
   push:
     branches: [main]
     paths:
       - "docs/**"
       - ".github/workflows/pages.yml"
+      - ".github/scripts/mirror-secureblue-docs.py"
+      - ".github/scripts/mirror-template.html"
   workflow_dispatch:
 permissions: {}
 concurrency:
@@ -32,6 +36,12 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
+
+      - name: Mirror stock secureblue.dev docs
+        run: |
+          python3 -m venv /tmp/sbdocs
+          /tmp/sbdocs/bin/pip install "markdown==3.8.2"
+          /tmp/sbdocs/bin/python .github/scripts/mirror-secureblue-docs.py
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3

@@ -7,3 +7,4 @@ cosign2.exe
 *.iso-CHECKSUM
 .DS_Store
 Thumbs.db
+docs/secureblue/
