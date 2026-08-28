@@ -74,9 +74,17 @@ cmd_lift() {
   touch "${STAMP}"
   unmask_flatpak --system
   rm -f "${DNF_DROP}"
-  if command -v flatpak >/dev/null; then
-    flatpak remote-add --if-not-exists --system flathub \
-      https://dl.flathub.org/repo/flathub.flatpakrepo || true
+  local mode="verified"
+  if [[ -f /etc/unwoke/flathub ]]; then
+    mode="$(tr -d '[:space:]' < /etc/unwoke/flathub)"
+  fi
+  if [[ "${mode}" == "off" ]]; then
+    echo "unwoke: Flathub was off; switching to verified so Flatpak browsers can install"
+    echo "        ujust set-flathub off  if you only wanted rpm-ostree"
+    mode="verified"
+  fi
+  if [[ -x /usr/libexec/unwoke/flathub.sh ]]; then
+    /usr/libexec/unwoke/flathub.sh apply-root "${mode}" || true
   fi
 }
 

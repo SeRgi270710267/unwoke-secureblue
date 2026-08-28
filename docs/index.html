@@ -51,7 +51,7 @@
 
     <h2 id="about"><a href="#about">About</a></h2>
     <p><strong>Unwoke SecureBlue</strong> is a daily <a href="https://blue-build.org/">BlueBuild</a> overlay on official <a href="https://secureblue.dev">secureblue</a> Fedora Atomic images. Kernel hardening, SELinux, <code>hardened_malloc</code>, closed firewall, and their <code>ujust</code> commands stay. We only change two product decisions: the house browser and the house app store.</p>
-    <p>Default images ship the standalone <strong>Brave Origin</strong> RPM (<code>brave-origin</code>), not full <code>brave-browser</code> and not <a href="https://github.com/secureblue/Trivalent">Trivalent</a>. <strong>Browserless</strong> images (<code>*-browserless</code>) strip Trivalent and install nothing in its place: no Origin, no <code>brave_t</code>, stock <code>harden_userns</code>. There is no GUI software store. Origin images add Flathub as a CLI remote; browserless does not.</p>
+    <p>Default images ship the standalone <strong>Brave Origin</strong> RPM (<code>brave-origin</code>), not full <code>brave-browser</code> and not <a href="https://github.com/secureblue/Trivalent">Trivalent</a>. <strong>Browserless</strong> images (<code>*-browserless</code>) strip Trivalent and install nothing in its place: no Origin, no <code>brave_t</code>, stock <code>harden_userns</code>. There is no GUI software store. Origin images add the Flathub-<strong>verified</strong> CLI remote; browserless does not. Every extra lock has a <code>ujust</code> to turn it off.</p>
     <p>It is shipped as OCI bootable container images. Rebase onto one of them from secureblue or any Fedora Atomic desktop. For details, see the <a href="features/">features list</a>.</p>
 
     <div class="cards">

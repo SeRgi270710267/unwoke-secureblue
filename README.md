@@ -19,7 +19,7 @@ Stock secureblue is a serious hardened Fedora Atomic. It also ships a house brow
 | | Stock [secureblue](https://secureblue.dev) | Origin images | Browserless images (`*-browserless`) |
 | --- | --- | --- | --- |
 | Browser | [Trivalent](https://github.com/secureblue/Trivalent) — their Chromium, default, SELinux-confined | **[Brave Origin](https://brave.com/origin/linux/)** standalone RPM (`brave-origin`). Default browser. Runs in `brave_t`. | **None.** No Trivalent, no Origin. `harden_userns` is stock (Flatpak only). |
-| App store | [Bazaar](https://github.com/secureblue/bazaar-rpm) — curated catalog | **None.** Flathub remote is added for `flatpak` CLI. | **None.** Flathub is **not** added. Use `brew` / `rpm-ostree`. |
+| App store | [Bazaar](https://github.com/secureblue/bazaar-rpm) — curated catalog | **None.** Flathub-**verified** CLI remote (`ujust set-flathub full\|off`). | **None.** Flathub is **not** added. Use `brew` / `rpm-ostree`. |
 | User namespaces | Off for unconfined; on for Flatpak and Trivalent | Same, plus `brave_t` on their userns allow-list so Origin’s sandbox can start | Same as stock with Trivalent gone: unconfined blocked, Flatpak allowed, no extra domain |
 
 `brave_t` (Origin images only) is an unconfined-like domain so Brave Origin can run. It is **not** Trivalent’s tight confinement. Browserless does not load it.
@@ -31,9 +31,20 @@ What we *can* do on Brave Origin is force Chromium enterprise policies and keep 
 ```bash
 ujust unwoke-status
 ujust audit-unwoke
-ujust set-brave-hardening on    # Origin images. Restart Brave Origin.
-ujust set-brave-jitless on      # Origin images; breaks some sites.
-ujust set-allow-browsers on ALLOW   # browserless only; unlocks Flatpak/rpm-ostree browsers
+
+# Origin (each has on/off; restart Brave Origin after policy changes)
+ujust set-brave-hardening on|off     # HTTPS, no metrics, no autofill/passwords (default on)
+ujust set-brave-devices on|off       # camera/mic/geo/USB/BT/serial blocked (default on)
+ujust set-brave-jitless on|off       # no JS JIT; breaks some sites (default on)
+ujust set-brave-extensions block|allow
+ujust set-brave-bubblejail on|off    # experimental; default off
+
+# Both flavors
+ujust set-flathub verified|full|off  # Origin default verified; browserless default off
+ujust set-flatpak-lockdown on|off    # default on; apps need Flatseal
+
+# Browserless only
+ujust set-allow-browsers on ALLOW
 ujust set-allow-browsers off
 ```
 

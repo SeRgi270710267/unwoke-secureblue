@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Desktop launcher for Brave Origin. Jails only if the bubblejail stamp is on.
+set -euo pipefail
+
+REAL="/opt/brave.com/brave-origin/brave"
+STAMP="/etc/unwoke/brave-bubblejail"
+INSTANCE="brave-origin"
+
+if [[ ! -x "${REAL}" ]]; then
+  echo "Brave Origin binary missing: ${REAL}" >&2
+  exit 127
+fi
+
+if [[ -f "${STAMP}" ]] && command -v bubblejail >/dev/null; then
+  if bubblejail list 2>/dev/null | grep -qx "${INSTANCE}"; then
+    exec bubblejail run "${INSTANCE}" "$@"
+  fi
+fi
+
+exec "${REAL}" "$@"

@@ -43,9 +43,14 @@
 <pre><code>ujust unwoke-status
 ujust audit-unwoke
 ujust audit-secureblue</code></pre>
-    <p>Origin images (Brave Origin policies; restart the browser after):</p>
-<pre><code>ujust set-brave-hardening on
-ujust set-brave-jitless on</code></pre>
+    <p>Origin images ship the tighter policy packs <em>on</em> (HTTPS/metrics, devices, JIT-less, no extensions). Restart the browser after you change them:</p>
+<pre><code>ujust set-brave-hardening off     # if a site needs passwords/autofill
+ujust set-brave-devices off       # if you need camera/mic
+ujust set-brave-jitless off       # if a site needs JIT
+ujust set-brave-extensions allow
+ujust set-flathub full            # unfiltered Flathub
+ujust set-flatpak-lockdown off    # if Flatpaks are broken
+ujust set-brave-bubblejail on     # experimental extra sandbox</code></pre>
     <p>Browserless images — host browsers stay blocked until you opt in:</p>
 <pre><code>ujust set-allow-browsers on ALLOW</code></pre>
 

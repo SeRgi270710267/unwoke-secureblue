@@ -64,7 +64,7 @@
           <tr>
             <td>App store</td>
             <td>Bazaar — curated catalog</td>
-            <td>None. Full Flathub CLI remote.</td>
+            <td>None. Flathub-verified CLI remote (toggle to full/off).</td>
             <td>None. Flathub is not added.</td>
           </tr>
           <tr>
@@ -80,27 +80,36 @@
     <h2 id="brave-origin"><a href="#brave-origin">Brave Origin</a></h2>
     <p>Not full <code>brave-browser</code>. The Origin package is a separate RPM with extras compiled out, installed under <code>/opt/brave.com/brave-origin/</code>. Policies live in <code>/etc/brave-origin/policies/managed/</code>.</p>
     <p><code>brave_t</code> is an unconfined-like domain so the browser can actually run. It is <em>not</em> Trivalent’s tight jail, and you do not get Trivalent’s Chromium patches. Those patches live in their browser source. Brave Origin cannot grow them.</p>
-    <p>What we can force are Chromium enterprise policies:</p>
+    <p>What we can force are Chromium enterprise policies (each pack is a <code>ujust</code>, default on except Bubblejail):</p>
     <ul>
-      <li>HTTPS-only, no WebRTC IP leak, no metrics — on by default.</li>
-      <li>JIT-less — optional; breaks some sites.</li>
+      <li>Hardening — HTTPS-only, no WebRTC IP leak, no metrics, no autofill/password manager, no translate.</li>
+      <li>Devices — camera, mic, geolocation, WebUSB/Bluetooth/serial/HID, file-system access: blocked.</li>
+      <li>JIT-less — JavaScript JIT off. Breaks some sites. <code>ujust set-brave-jitless off</code>.</li>
+      <li>Extensions — install blocklist <code>*</code>. <code>ujust set-brave-extensions allow</code>.</li>
+      <li>Bubblejail around the desktop launcher — off until <code>ujust set-brave-bubblejail on</code>.</li>
     </ul>
+    <p>That is still not Trivalent’s Chromium patches or tight SELinux. <code>brave_t</code> stays a fat domain on purpose.</p>
 
     <h2 id="toggles"><a href="#toggles">Overlay ujust extras</a></h2>
-    <p>Stock secureblue commands still work. Added on top:</p>
+    <p>Stock secureblue commands still work. Every overlay switch below reverts. Restart Brave Origin after policy changes.</p>
 <pre><code>ujust unwoke-status
 ujust audit-unwoke
-ujust set-brave-hardening on
-ujust set-brave-hardening off
-ujust set-brave-jitless on</code></pre>
-    <p>Restart Brave Origin after policy changes.</p>
+ujust set-flathub verified|full|off
+ujust set-flatpak-lockdown on|off
+ujust set-brave-hardening on|off
+ujust set-brave-devices on|off
+ujust set-brave-jitless on|off
+ujust set-brave-extensions block|allow
+ujust set-brave-bubblejail on|off
+ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
 
     <h2 id="limits"><a href="#limits">Honest limits</a></h2>
     <div class="alert">
       <p>Calling this “insecure Fedora” is false. Calling it “identical to secureblue” is also false. It is weaker than stock + Trivalent and stronger than the earlier overlay that disabled <code>harden_userns</code> globally.</p>
     </div>
     <ul>
-      <li>No Vanadium-style Chromium patches.</li>
+      <li>No Vanadium-style Chromium patches. Policies and JIT-less are not a substitute.</li>
+      <li><code>brave_t</code> is still unconfined-like. No tight SELinux jail is shipped.</li>
       <li>Signing key is a GitHub secret, not a hardware key.</li>
       <li>We inherit their signed image; we do not rebuild their kernel.</li>
     </ul>

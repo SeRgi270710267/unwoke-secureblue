@@ -1,0 +1,12 @@
+[Unit]
+Description=Unwoke SecureBlue: user Flatpak lockdown unless toggled off
+After=default.target
+ConditionPathExists=/usr/share/unwoke/flavor
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash /usr/libexec/unwoke/toggles.sh apply-user
+RemainAfterExit=yes
+
+[Install]
+WantedBy=default.target

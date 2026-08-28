@@ -25,6 +25,14 @@ if [[ ! -f "/usr/share/applications/${ORIGIN_DESKTOP}" ]]; then
   done
 fi
 
+# Desktop Exec goes through the wrapper so Bubblejail can be toggled later.
+if [[ -f "/usr/share/applications/${ORIGIN_DESKTOP}" ]]; then
+  sed -i -E \
+    -e 's|^Exec=.*/brave-origin/brave|Exec=/usr/libexec/unwoke/brave-origin-launch|' \
+    -e 's|^Exec=/usr/bin/brave-origin|Exec=/usr/libexec/unwoke/brave-origin-launch|' \
+    "/usr/share/applications/${ORIGIN_DESKTOP}" || true
+fi
+
 swap_desktop "trivalent.desktop" "${ORIGIN_DESKTOP}"
 swap_desktop "brave-browser.desktop" "${ORIGIN_DESKTOP}"
 swap_desktop "org.mozilla.firefox.desktop" "${ORIGIN_DESKTOP}"

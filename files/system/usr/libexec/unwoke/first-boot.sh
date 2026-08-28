@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# First boot: keep harden_userns on, then flavor-specific work, then lock
-# the update origin onto our signed image.
+# Every boot: keep harden_userns on, apply overlay defaults unless the user
+# stamped them off, then lock the update origin onto our signed image.
 set -euo pipefail
 
 FLAVOR="brave-origin"
@@ -14,7 +14,6 @@ if command -v semodule >/dev/null; then
 fi
 
 if [[ "${FLAVOR}" == "browserless" ]]; then
-  echo "unwoke: browserless flavor — no Origin policies, no Flathub remote"
   if [[ -x /usr/libexec/unwoke/browser-guard.sh ]]; then
     /usr/libexec/unwoke/browser-guard.sh apply || true
   fi
@@ -22,18 +21,10 @@ else
   if command -v restorecon >/dev/null; then
     restorecon -FR /opt/brave.com/brave-origin /usr/bin/brave-origin 2>/dev/null || true
   fi
+fi
 
-  if command -v flatpak >/dev/null; then
-    flatpak remote-add --if-not-exists --system flathub https://dl.flathub.org/repo/flathub.flatpakrepo || true
-  fi
-
-  if [[ ! -f /etc/unwoke/brave-hardening.off ]]; then
-    mkdir -p /etc/brave-origin/policies/managed
-    if [[ -f /usr/share/unwoke/brave-hardening.json ]]; then
-      cp -a /usr/share/unwoke/brave-hardening.json \
-        /etc/brave-origin/policies/managed/10-unwoke-hardening.json || true
-    fi
-  fi
+if [[ -x /usr/libexec/unwoke/toggles.sh ]]; then
+  /usr/libexec/unwoke/toggles.sh apply-boot || true
 fi
 
 promote_signed_origin() {

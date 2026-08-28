@@ -17,6 +17,7 @@ if command -v systemctl >/dev/null; then
   systemctl enable unwoke-first-boot.service || true
   systemctl enable unwoke-browser-guard.service || true
   systemctl --global enable unwoke-browser-guard.service || true
+  systemctl --global enable unwoke-user-defaults.service || true
 fi
 
 if command -v glib-compile-schemas >/dev/null && [[ -d /usr/share/glib-2.0/schemas ]]; then
