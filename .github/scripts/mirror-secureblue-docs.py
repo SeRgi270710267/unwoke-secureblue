@@ -29,13 +29,20 @@ SKIP = {
     "INDEX.md",
     "IMAGES.md",
     "CODE_OF_CONDUCT.md",
-    "CONTRIBUTING.md",
     "REPORTING.md",
     "404.md",
 }
 
 DONATE_NOTICE = """
 <p class="alert caution"><strong>This money goes to secureblue. Not Unwoke SecureBlue.</strong> Open Collective, GitHub Sponsors, Monero, Coinbase — all theirs. We do not take donations and never will. <a href="donate/">Our donate page</a> exists to say that.</p>
+"""
+
+POSTINSTALL_NOTICE = """
+<p class="alert note"><strong>Stock secureblue post-install.</strong> After you rebase onto Unwoke SecureBlue you still do most of this (their Secure Boot key, kargs, <code>ujust audit-secureblue</code>, USBGuard). Overlay extras are on our <a href="install/">Install</a> page. Canonical: <a href="https://secureblue.dev/post-install">secureblue.dev/post-install</a>.</p>
+"""
+
+CONTRIBUTING_NOTICE = """
+<p class="alert caution"><strong>This is how you contribute to <em>secureblue</em>, not Unwoke SecureBlue.</strong> PRs against their repo, their AI ban, their Discord, their Covenant — all them. Overlay bugs and patches go to <a href="https://github.com/SeRgi270710267/unwoke-secureblue">our GitHub</a>. We do not use their CoC; see <a href="conduct/">Conduct</a>.</p>
 """
 
 INCLUDE_RE = re.compile(
@@ -180,8 +187,13 @@ def main() -> int:
             extensions=["extra", "sane_lists", "toc"],
         )
         body_html = rewrite_html(body_html, permalinks)
-        if permalink.rstrip("/") == "/donate":
-            body_html = DONATE_NOTICE + body_html
+        extra = {
+            "/donate": DONATE_NOTICE,
+            "/post-install": POSTINSTALL_NOTICE,
+            "/contributing": CONTRIBUTING_NOTICE,
+        }.get(permalink.rstrip("/"), "")
+        if extra:
+            body_html = extra + body_html
         canonical = "https://secureblue.dev" + permalink
         dest = out_dir_for(permalink)
         dest.mkdir(parents=True, exist_ok=True)
@@ -202,7 +214,7 @@ def main() -> int:
     <h1>Stock secureblue docs</h1>
     <p>These pages are pulled daily from <a href="https://secureblue.dev">secureblue.dev</a> and wrapped in our chrome. Unwoke SecureBlue’s own FAQ, Features, Images, and Install are the main nav — this tree cannot overwrite them.</p>
     <ul>{items}</ul>
-    <p>Not mirrored on purpose: their homepage, image catalog, contributing, and code of conduct. Their donate page <em>is</em> mirrored so the wallets stay obviously theirs. Use <a href="https://secureblue.dev">secureblue.dev</a> for the rest.</p>
+    <p>Not mirrored on purpose: their homepage, image catalog, and code of conduct. Donate and contributing are mirrored with banners so you cannot confuse their wallets or their PR process with ours. Use <a href="https://secureblue.dev">secureblue.dev</a> for the rest.</p>
     """
     (OUT / "index.html").write_text(
         render_page(
