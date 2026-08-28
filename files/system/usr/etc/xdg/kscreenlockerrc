@@ -1,0 +1,6 @@
+[Greeter]
+WallpaperPlugin=org.kde.image
+
+[Greeter][Wallpaper][org.kde.image][General]
+Image=/usr/share/backgrounds/unwoke/unwoke-lock.jpg
+PreviewImage=/usr/share/backgrounds/unwoke/unwoke-lock.jpg

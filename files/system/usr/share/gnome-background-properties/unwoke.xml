@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE wallpapers SYSTEM "gnome-wp-list.dtd">
+<wallpapers>
+  <wallpaper deleted="false">
+    <name>Unwoke SecureBlue</name>
+    <filename>/usr/share/backgrounds/unwoke/unwoke-desktop.jpg</filename>
+    <filename-dark>/usr/share/backgrounds/unwoke/unwoke-desktop.jpg</filename-dark>
+    <options>zoom</options>
+    <shade_type>solid</shade_type>
+    <pcolor>#050a16</pcolor>
+    <scolor>#0a1328</scolor>
+  </wallpaper>
+  <wallpaper deleted="false">
+    <name>Unwoke SecureBlue Lock</name>
+    <filename>/usr/share/backgrounds/unwoke/unwoke-lock.jpg</filename>
+    <filename-dark>/usr/share/backgrounds/unwoke/unwoke-lock.jpg</filename-dark>
+    <options>zoom</options>
+    <shade_type>solid</shade_type>
+    <pcolor>#050a16</pcolor>
+    <scolor>#050a16</scolor>
+  </wallpaper>
+</wallpapers>

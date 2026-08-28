@@ -1,0 +1,10 @@
+{
+    "KPackageStructure": "Plasma/Wallpaper",
+    "KPlugin": {
+        "Authors": [{"Name": "Unwoke SecureBlue"}],
+        "Description": "Navy field, electric blue shield",
+        "Id": "UnwokeSecureBlue",
+        "License": "MIT",
+        "Name": "Unwoke SecureBlue"
+    }
+}

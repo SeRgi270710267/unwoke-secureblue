@@ -1,0 +1,21 @@
+# Unwoke SecureBlue GNOME defaults. User Settings still win if they change them.
+# accent-color only accepts named values; GTK CSS supplies the exact #3b6cff.
+
+[org.gnome.desktop.interface]
+color-scheme = 'prefer-dark'
+accent-color = 'blue'
+
+[org.gnome.desktop.background]
+picture-uri = 'file:///usr/share/backgrounds/unwoke/unwoke-desktop.jpg'
+picture-uri-dark = 'file:///usr/share/backgrounds/unwoke/unwoke-desktop.jpg'
+picture-options = 'zoom'
+primary-color = '#050a16'
+secondary-color = '#0a1328'
+color-shading-type = 'solid'
+
+[org.gnome.desktop.screensaver]
+picture-uri = 'file:///usr/share/backgrounds/unwoke/unwoke-lock.jpg'
+picture-options = 'zoom'
+primary-color = '#050a16'
+lock-enabled = true
+idle-activation-enabled = true

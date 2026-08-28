@@ -42,6 +42,7 @@
       <li>Kernel hardening via sysctl and kernel arguments, with their <code>ujust set-kargs-hardening</code>.</li>
       <li>SELinux enforcing. Unprivileged user namespaces off for the unconfined domain, on for Flatpak.</li>
       <li>Xwayland off by default. GNOME user extensions off. KDE GHNS off.</li>
+      <li>Unwoke wallpaper + lock screen, dark style, GNOME accent <code>blue</code> plus GTK <code>#3b6cff</code>, KDE accent the same blue. Change it in Settings; <code>ujust set-unwoke-theme apply</code> puts it back.</li>
       <li><code>sudo</code> / <code>su</code> / <code>pkexec</code> replaced with <code>run0</code> on their images. SUID stripped from many binaries.</li>
       <li>USBGuard with their <code>ujust</code> helpers. firewalld closed by default. NTS for time. HTTPS rpm mirrors.</li>
       <li>Automatic updates. Their full <code>ujust</code> surface still works.</li>

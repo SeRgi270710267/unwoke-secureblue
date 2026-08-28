@@ -89,6 +89,13 @@ for d in j.get("deployments") or []:
     bad "harden_userns missing or disabled — run: ujust set-unconfined-userns off"
   fi
 
+  echo "  -- theme --"
+  if [[ -f /usr/share/backgrounds/unwoke/unwoke-desktop.jpg ]]; then
+    ok "Unwoke wallpaper + lock screen"
+  else
+    info "Unwoke wallpaper not in this image yet"
+  fi
+  info "GNOME accent named blue; GTK #3b6cff; KDE 59,108,255"
   echo "  -- remotes / lockdown --"
   if [[ -x /usr/libexec/unwoke/flathub.sh ]]; then
     /usr/libexec/unwoke/flathub.sh status | while IFS= read -r line; do info "flathub ${line}"; done
@@ -357,6 +364,9 @@ cmd_apply_boot() {
 cmd_apply_user() {
   if [[ -x /usr/libexec/unwoke/flatpak-lockdown.sh ]]; then
     /usr/libexec/unwoke/flatpak-lockdown.sh apply-user || true
+  fi
+  if [[ -x /usr/libexec/unwoke/theme.sh ]]; then
+    /usr/libexec/unwoke/theme.sh apply-user-once || true
   fi
 }
 

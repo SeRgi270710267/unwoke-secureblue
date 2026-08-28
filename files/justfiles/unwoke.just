@@ -54,6 +54,12 @@ set-brave-bubblejail *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh bubblejail "$@"
 
+# Re-apply Unwoke wallpaper + accent (GNOME schema / KDE wallpaper). Settings still override.
+[positional-arguments]
+set-unwoke-theme *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/theme.sh "${1:-apply}"
+
 # Browserless only. Default off. Unlocks Flatpak/rpm-ostree browser installs.
 # Confirm with: ujust set-allow-browsers on ALLOW
 [positional-arguments]

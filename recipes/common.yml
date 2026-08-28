@@ -8,11 +8,16 @@ modules:
       - source: system
         destination: /
 
+  - type: gschema-overrides
+    include:
+      - zz1-unwoke-theme.gschema.override
+
   # Drop Trivalent, Bazaar, and any GUI software store.
   - type: script
     scripts:
       - remove-stock.sh
       - apply-unwoke.sh
+      - apply-theme.sh
 
   # Appends to 60-custom.just. Stock secureblue ujust recipes stay.
   - type: justfiles

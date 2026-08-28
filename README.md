@@ -46,6 +46,9 @@ ujust set-flatpak-lockdown on|off    # default on; apps need Flatseal
 # Browserless only
 ujust set-allow-browsers on ALLOW
 ujust set-allow-browsers off
+
+# Theme
+ujust set-unwoke-theme apply     # wallpaper + accent again
 ```
 
 We did **not** gut SELinux, kernel args, `hardened_malloc`, disk encryption, or Secure Boot enrollment. Calling this “insecure Fedora” is false. Calling it “identical to secureblue” is also false.
