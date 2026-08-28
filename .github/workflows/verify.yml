@@ -1,0 +1,44 @@
+name: verify
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: Image to inspect
+        required: true
+        type: choice
+        default: unwoke-silverblue
+        options:
+          - unwoke-silverblue
+          - unwoke-silverblue-nvidia-open
+          - unwoke-kinoite
+          - unwoke-kinoite-nvidia-open
+jobs:
+  inspect:
+    name: Inspect ${{ inputs.image }}
+    runs-on: ubuntu-24.04
+    permissions:
+      packages: read
+    steps:
+      - name: Log in to GHCR
+        run: echo "${{ github.token }}" | podman login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Pull
+        run: podman pull "ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/${{ inputs.image }}:latest"
+
+      - name: Check Brave in, Trivalent/Bazaar out
+        env:
+          IMAGE: ghcr.io/${{ github.repository_owner }}/${{ inputs.image }}:latest
+        run: |
+          set -euo pipefail
+          IMAGE="${IMAGE,,}"
+          podman run --rm --entrypoint /usr/bin/rpm "$IMAGE" -q brave-browser
+          if podman run --rm --entrypoint /usr/bin/rpm "$IMAGE" -q trivalent; then
+            echo "FAIL: trivalent still installed"
+            exit 1
+          fi
+          if podman run --rm --entrypoint /usr/bin/rpm "$IMAGE" -q bazaar; then
+            echo "FAIL: bazaar still installed"
+            exit 1
+          fi
+          podman run --rm --entrypoint /usr/bin/test "$IMAGE" -f /usr/share/applications/brave-browser.desktop
+          echo "OK: Brave present, Trivalent and Bazaar absent"
