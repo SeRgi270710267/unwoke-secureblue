@@ -1,6 +1,15 @@
 # Unwoke SecureBlue — development handoff
 
-Use this file to resume after a closed chat. Local clone: `C:\Users\UsEr1002\.grok\bin\unwoke-secureblue`. GitHub: `SeRgi270710267/unwoke-secureblue`. Site: https://sergi270710267.github.io/unwoke-secureblue/
+**Read this first** if continuing in a new chat. Working tree was clean and pushed.
+
+- Branch: `main`, synced to `origin/main` when this file was last committed.
+- Local clone: `C:\Users\UsEr1002\.grok\bin\unwoke-secureblue`
+- GitHub: `SeRgi270710267/unwoke-secureblue`
+- Site: https://sergi270710267.github.io/unwoke-secureblue/
+- Brand: https://sergi270710267.github.io/unwoke-secureblue/brand/
+- Changelog: https://sergi270710267.github.io/unwoke-secureblue/changelog/ (generated at Pages deploy; gitignored)
+
+**How to resume:** open the clone, say you are continuing Unwoke SecureBlue from `PROGRESS.md`, and do not rebuild images for docs-only work.
 
 **Not affiliated with secureblue.** Overlay on their signed Fedora Atomic images. Not a fork.
 
@@ -88,9 +97,11 @@ Stock `ujust` still works.
 
 Image-side theme and toggles land on the **next image rebuild**, not Pages. Docs-only pushes should not rebuild images (`build.yml` paths-ignore).
 
-## Tomorrow
+## Tomorrow / next chat
 
-- Confirm GHCR images after CI actually contain wallpaper + policy packs (`ujust unwoke-status` on a rebase).
-- Hard-refresh Pages if Brand wallpapers look cached.
+- Confirm GHCR images after CI actually contain wallpaper + policy packs (`ujust unwoke-status` on a rebase). Theme and toggles are in the overlay; they are not live on an old local image until rebuild + rebase.
+- Hard-refresh Pages if Brand / Changelog look cached.
+- Changelog: `docs/_tools/generate-changelog.py`; output `docs/changelog/` is gitignored. Pages workflow now runs on every `main` push (`fetch-depth: 0`).
 - Do not start a tight `brave_t` jail unless the owner asks again and accepts breakage.
 - Do not put Trivalent back. Do not add a GUI store. Do not add xscreensaver.
+- Overlay-on-signed-stock is still the architecture. Do not fork.
