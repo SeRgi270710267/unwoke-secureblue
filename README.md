@@ -1,117 +1,97 @@
 # unwoke-secureblue
 
-A personal [secureblue](https://secureblue.dev) overlay. It is **not** official secureblue.
+**secureblue’s hardening. Your browser. Your store. No curator.**
 
-You keep secureblue’s hardening (hardened kernel settings, `hardened_malloc`, SELinux, no Xwayland by default, automatic updates, and the rest). This repo only changes the parts you asked for, and **rebuilds every day from the latest official secureblue images**, so you stay current without forking their tree.
+This is a daily overlay on official [secureblue](https://secureblue.dev) images. It is **not** a fork and **not** affiliated with them. Their kernel hardening, `hardened_malloc`, SELinux, no Xwayland by default, and automatic updates stay. We only strip the two product decisions that lock the desktop: **Trivalent** and **Bazaar**.
 
-## What this image changes
+Images: `ghcr.io/sergi270710267/unwoke-silverblue` · `unwoke-kinoite` · `*-nvidia-open`
 
-| Stock secureblue | This overlay |
-| --- | --- |
-| [Trivalent](https://github.com/secureblue/Trivalent) as the browser | **Official Brave RPM** from [brave.com/linux](https://brave.com/linux/) (`brave-browser`, default browser) |
-| [Bazaar](https://github.com/secureblue/bazaar-rpm) (curated store + browser blocklist) | Bazaar removed. **GNOME Software** (Silverblue) or **Plasma Discover** (Kinoite) + unfiltered Flathub |
-| Unprivileged user namespaces only for Trivalent | Unconfined userns **on by default**, so Brave’s Chromium sandbox can start |
+---
 
-Everything else is still secureblue.
+## Why this exists (receipts, not vibes)
 
-Brave is not SELinux-confined the way Trivalent is. Turning unconfined user namespaces on is the tradeoff that lets a normal Chromium browser run. That is a real security reduction versus stock secureblue. You wanted origin Brave; this is how that works on this OS.
+Stock secureblue is a serious hardened Fedora Atomic. It also ships a house browser and a house app store that decide what you may install.
 
-## Images (built daily)
+| | Stock [secureblue](https://secureblue.dev) | This overlay |
+| --- | --- | --- |
+| Browser | [Trivalent](https://github.com/secureblue/Trivalent) — their Chromium, default, SELinux-confined | **Official Brave RPM** from [brave.com/linux](https://brave.com/linux/) (`brave-browser` 1.94+ in the last bake). Default browser. |
+| App store | [Bazaar](https://github.com/secureblue/bazaar-rpm) — they **removed GNOME Software and Plasma Discover**, added a curated catalog, and **blocklisted every Flathub browser except GNOME Web** ([PR #1898](https://github.com/secureblue/secureblue/pull/1898)) | Bazaar gone. **GNOME Software** or **Plasma Discover** back. **Unfiltered Flathub**. |
+| User namespaces | Off for normal apps; Trivalent is the special case | **On**, so Brave’s Chromium sandbox can start |
 
-Published to GHCR as `ghcr.io/sergi270710267/<name>:latest`:
+That last row is a real security trade. Brave is **not** SELinux-confined like Trivalent. You get origin Brave; you do not get their extra confinement. Everything else is still their hardened OS.
+
+We did **not** gut SELinux, kernel args, `hardened_malloc`, disk encryption, or Secure Boot enrollment. Calling this “insecure Fedora” is false. Calling it “identical to secureblue” is also false.
+
+---
+
+## Images (rebuilt every day, 08:00 UTC)
 
 | Image | Desktop | GPU |
 | --- | --- | --- |
 | `unwoke-silverblue` | GNOME | Nouveau |
-| `unwoke-silverblue-nvidia-open` | GNOME | NVIDIA open kernel modules (Turing / GTX 16xx and newer, including RTX) |
+| `unwoke-silverblue-nvidia-open` | GNOME | NVIDIA open modules (GTX 16xx / RTX and newer) |
 | `unwoke-kinoite` | KDE Plasma | Nouveau |
-| `unwoke-kinoite-nvidia-open` | KDE Plasma | NVIDIA open kernel modules (Turing+) |
+| `unwoke-kinoite-nvidia-open` | KDE Plasma | NVIDIA open modules (GTX 16xx / RTX and newer) |
 
-Pick **nvidia-open** if you have a modern NVIDIA GPU. Use the non-nvidia image on Intel/AMD.
+Published as `ghcr.io/sergi270710267/<name>:latest`. All four are **public**. No GitHub login to pull.
 
-## Easiest install (one command)
+---
 
-**If you already have secureblue installed**, this is the whole thing. Pick the name that matches your box (KDE / NVIDIA below). Open a terminal:
+## Install (one command)
+
+Already on secureblue (or any Fedora Atomic):
 
 ```bash
 rpm-ostree rebase ostree-unverified-registry:ghcr.io/sergi270710267/unwoke-silverblue:latest
 systemctl reboot
 ```
 
-After reboot you are on this image. Brave is the browser. Bazaar and Trivalent are gone. Daily updates keep following this repo.
+Empty disk: flash a [secureblue ISO](https://secureblue.dev/install), install it (encrypt, wheel, enroll their Secure Boot key), then the two lines above. You are switching the image, not doing a second install.
 
-**If the PC is empty:** flash a normal [secureblue ISO](https://secureblue.dev/install) (same desktop/GPU), install it (encrypt disk, wheel group, enroll their Secure Boot key), then run the two lines above. You are not reinstalling the OS a second time — you just switch the image.
+KDE → `unwoke-kinoite`. NVIDIA → add `-nvidia-open`.
 
-**One GitHub click so that command can pull:** repo → **Packages** → each `unwoke-*` package → Package settings → Change visibility → **Public**. Until that is public, Linux cannot download the image.
+After reboot: Brave is the browser, Bazaar/Trivalent are gone, updates follow **this** repo’s daily rebuild.
 
-Names: `unwoke-kinoite` for KDE, add `-nvidia-open` if you have a modern NVIDIA GPU (GTX 16xx / RTX).
-
-## Your own ISO
-
-When you want a USB installer of *this* image, not stock secureblue:
-
-### From GitHub Actions (no Linux box needed)
-
-1. Wait until the **bluebuild** workflow has published the image you want.
-2. Actions → **iso** → Run workflow → pick the image.
-3. Download the artifact (ISO + SHA256). Artifacts expire; this is for flashing, not long-term hosting.
-
-### On a Linux machine
+Optional signed rebase (after the unsigned boot):
 
 ```bash
-# after the image exists on GHCR
-sudo bluebuild generate-iso --iso-name unwoke-silverblue.iso \
-  image ghcr.io/sergi270710267/unwoke-silverblue
+rpm-ostree rebase ostree-image-signed:docker://ghcr.io/sergi270710267/unwoke-silverblue:latest
+systemctl reboot
 ```
 
-Flash that ISO the same way as a secureblue ISO.
+```bash
+cosign verify --key cosign.pub ghcr.io/sergi270710267/unwoke-silverblue
+```
 
-## How updates stay in sync with secureblue
+---
 
-This is **not** a git fork of `secureblue/secureblue`. Forks rot.
+## USB ISO
 
-Each recipe’s `base-image` is the official image, for example:
+The OS **is** the GHCR image. A flashable ISO is optional.
+
+Actions → **iso** → Run workflow → pick the image → download the artifact (kept 14 days). GitHub will not host a 3 GB ISO as a normal release.
+
+---
+
+## How it stays current
+
+Not a git fork. Forks rot.
 
 ```yaml
 base-image: ghcr.io/secureblue/silverblue-main-hardened
 image-version: latest
 ```
 
-GitHub Actions rebuilds **every day at 08:00 UTC** (and on every push). That pulls the newest secureblue image, then re-applies only this overlay (Brave, no Trivalent, no Bazaar, GNOME Software/Discover, userns). Your installed machine then picks it up with secureblue’s normal automatic `rpm-ostree` updates.
+GitHub Actions pulls that every day, then re-applies only this overlay. Your machine updates with normal `rpm-ostree`.
 
-To change behavior, edit files in this repo. Do not merge secureblue’s git history.
-
-| Want to… | Edit |
+| Change | File |
 | --- | --- |
-| Drop/add a package | `recipes/common.yml` or the DE recipe |
-| Change default browser / first-boot | `files/scripts/apply-unwoke.sh`, `files/system/usr/libexec/unwoke/first-boot.sh` |
-| Change GNOME favorites | `files/gschema-overrides/zz2-unwoke.gschema.override` |
-| Add another DE / GPU flavor | New file under `recipes/` + a line in `.github/workflows/build.yml` |
+| Packages | `recipes/common.yml` |
+| Browser / first-boot | `files/scripts/apply-unwoke.sh` |
+| GNOME favorites | `files/gschema-overrides/zz2-unwoke.gschema.override` |
 
-## One-time GitHub setup (signing + Actions)
-
-New GitHub repos start with Actions off and no signing key.
-
-1. Open the repo **Actions** tab and enable workflows if GitHub asks.
-2. Generate a cosign key **with an empty password**:
-   ```bash
-   cosign generate-key-pair
-   ```
-3. Put `cosign.pub` in the repo root (already done if this file is here).
-4. Repo **Settings → Secrets and variables → Actions → New repository secret**
-   - Name: `SIGNING_SECRET`
-   - Value: full contents of `cosign.key`
-5. Re-run the **bluebuild** workflow.
-6. After the first successful package publish, set each GHCR package to **Public**.
-
-`cosign.key` must never be committed. It is in `.gitignore`.
-
-## Verify a signed image
-
-```bash
-cosign verify --key cosign.pub ghcr.io/sergi270710267/unwoke-silverblue
-```
+---
 
 ## License
 
-Overlay files in this repository are MIT. Upstream secureblue, Fedora, BlueBuild, Brave, and Trivalent remain under their own licenses. This project is unaffiliated with secureblue.
+Overlay files: MIT. Fedora, secureblue, BlueBuild, Brave, Trivalent: their licenses. Unaffiliated with secureblue.
