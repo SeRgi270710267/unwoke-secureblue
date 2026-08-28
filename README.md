@@ -29,48 +29,22 @@ Published to GHCR as `ghcr.io/sergi270710267/<name>:latest`:
 
 Pick **nvidia-open** if you have a modern NVIDIA GPU. Use the non-nvidia image on Intel/AMD.
 
-## Install (this is the path that actually works)
+## Easiest install (one command)
 
-GitHub cannot host full Fedora-sized ISOs in Releases (they are over the 2 GB file cap). The OS is the **container image**. You install a normal secureblue ISO once, then rebase onto this image. After that, updates are automatic and come from *this* repo’s daily rebuilds.
-
-### 1. Install official secureblue
-
-1. Get the matching ISO from [secureblue.dev/install](https://secureblue.dev/install) (Silverblue or Kinoite, nvidia-open if you need it).
-2. Flash it (Fedora Media Writer or Rufus).
-3. Install with disk encryption, a strong password, and **wheel** group membership.
-4. Finish [post-install](https://secureblue.dev/post-install) (enroll the secureblue Secure Boot key when asked).
-
-### 2. Rebase onto this image
-
-Replace the image name if you want KDE or NVIDIA.
+**If you already have secureblue installed**, this is the whole thing. Pick the name that matches your box (KDE / NVIDIA below). Open a terminal:
 
 ```bash
-# First boot onto the unsigned image so signing keys land
 rpm-ostree rebase ostree-unverified-registry:ghcr.io/sergi270710267/unwoke-silverblue:latest
 systemctl reboot
 ```
 
-After reboot, if image signing is set up on the repo:
+After reboot you are on this image. Brave is the browser. Bazaar and Trivalent are gone. Daily updates keep following this repo.
 
-```bash
-rpm-ostree rebase ostree-image-signed:docker://ghcr.io/sergi270710267/unwoke-silverblue:latest
-systemctl reboot
-```
+**If the PC is empty:** flash a normal [secureblue ISO](https://secureblue.dev/install) (same desktop/GPU), install it (encrypt disk, wheel group, enroll their Secure Boot key), then run the two lines above. You are not reinstalling the OS a second time — you just switch the image.
 
-Check:
+**One GitHub click so that command can pull:** repo → **Packages** → each `unwoke-*` package → Package settings → Change visibility → **Public**. Until that is public, Linux cannot download the image.
 
-```bash
-rpm-ostree status
-brave-browser --version
-```
-
-You should see `ghcr.io/sergi270710267/unwoke-…` as the booted image, Brave as the browser, and no Bazaar/Trivalent.
-
-If GHCR packages are still **private** (GitHub’s default on first publish), make each package public: GitHub → Packages → the image → Package settings → Change visibility → Public. Until then, `podman login ghcr.io` with a GitHub token is required to pull.
-
-### Already on Fedora Atomic / uBlue / stock secureblue?
-
-Same rebase commands. You do not need to reinstall the disk.
+Names: `unwoke-kinoite` for KDE, add `-nvidia-open` if you have a modern NVIDIA GPU (GTX 16xx / RTX).
 
 ## Your own ISO
 
