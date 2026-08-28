@@ -22,16 +22,17 @@ Stock secureblue is a serious hardened Fedora Atomic. It also ships a house brow
 
 `brave_t` (Origin images only) is an unconfined-like domain so Brave Origin can run. It is **not** Trivalent’s tight confinement. Browserless does not load it.
 
-Browserless is safer than Origin **until you install a browser**. It is not a Trivalent replacement. The first Flatpak/rpm browser you add is usually sloppier than stock Trivalent.
+Browserless is safer than Origin **until you install a browser**. Easy host installs are blocked until `ujust set-allow-browsers on ALLOW` (Flatpak mask + rpm-ostree exclude). That is a seatbelt: toolbox, brew, AppImage, and `rpm-ostree --disableexcludes` still work. It is not a Trivalent replacement.
 
 What we *can* do on Brave Origin is force Chromium enterprise policies and keep their `ujust` surface. Stock commands still work (`ujust set-unconfined-userns`, `ujust set-kargs-hardening`, `ujust audit-secureblue`, …). Overlay extras:
 
 ```bash
 ujust unwoke-status
 ujust audit-unwoke
-ujust set-brave-hardening on    # default: HTTPS-only, no WebRTC IP leak, no metrics. Restart Brave Origin.
-ujust set-brave-hardening off
-ujust set-brave-jitless on      # optional; breaks some sites. Restart Brave Origin.
+ujust set-brave-hardening on    # Origin images. Restart Brave Origin.
+ujust set-brave-jitless on      # Origin images; breaks some sites.
+ujust set-allow-browsers on ALLOW   # browserless only; unlocks Flatpak/rpm-ostree browsers
+ujust set-allow-browsers off
 ```
 
 We did **not** gut SELinux, kernel args, `hardened_malloc`, disk encryption, or Secure Boot enrollment. Calling this “insecure Fedora” is false. Calling it “identical to secureblue” is also false.

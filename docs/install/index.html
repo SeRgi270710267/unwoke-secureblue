@@ -66,7 +66,9 @@ systemctl reboot</code></pre>
 <pre><code>ujust unwoke-status
 ujust audit-unwoke
 ujust set-brave-hardening on
-ujust set-brave-jitless on</code></pre>
+ujust set-brave-jitless on
+ujust set-allow-browsers on ALLOW</code></pre>
+    <p>The last one is <strong>browserless only</strong> and is off by default. It is the opt-in to install a host browser.</p>
 
     <h2 id="verify"><a href="#verify">Verify an image</a></h2>
 <pre><code id="cmd-verify">cosign verify --key cosign.pub ghcr.io/sergi270710267/unwoke-silverblue</code></pre>

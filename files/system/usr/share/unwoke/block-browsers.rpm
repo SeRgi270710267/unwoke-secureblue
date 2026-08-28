@@ -1,0 +1,27 @@
+# Layered RPM names/globs for dnf excludepkgs. Not a hard kernel lock.
+firefox
+firefox-esr
+chromium
+chromium-browser
+google-chrome-stable
+google-chrome-beta
+google-chrome-unstable
+brave-browser
+brave-origin
+microsoft-edge-stable
+microsoft-edge-beta
+microsoft-edge-dev
+opera
+vivaldi-stable
+epiphany
+gnome-web
+falkon
+konqueror
+midori
+qutebrowser
+torbrowser-launcher
+librewolf
+ungoogled-chromium
+floorp
+waterfox
+zen-browser

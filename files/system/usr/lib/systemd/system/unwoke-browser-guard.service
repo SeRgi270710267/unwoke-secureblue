@@ -1,0 +1,12 @@
+[Unit]
+Description=unwoke: remask host browsers unless allow-browsers is on
+After=local-fs.target
+ConditionPathExists=/usr/share/unwoke/flavor
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash /usr/libexec/unwoke/browser-guard.sh apply
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

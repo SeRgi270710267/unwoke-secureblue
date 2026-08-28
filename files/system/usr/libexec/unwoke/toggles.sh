@@ -67,6 +67,11 @@ for d in j.get("deployments") or []:
       ok "no full brave-browser"
     fi
     info "Brave Origin policies: n/a"
+    if [[ -f /etc/unwoke/allow-browsers ]]; then
+      bad "allow-browsers ON — easy host browser installs are unlocked"
+    else
+      ok "allow-browsers OFF — ujust set-allow-browsers on ALLOW to unlock"
+    fi
   else
     if command -v semodule >/dev/null && semodule -l 2>/dev/null | grep -qx unwoke_brave; then
       ok "unwoke_brave SELinux module loaded (Brave userns via brave_t)"
@@ -112,6 +117,9 @@ for d in j.get("deployments") or []:
   echo "Stock secureblue toggles still work, e.g.:"
   echo "  ujust set-unconfined-userns   ujust set-kargs-hardening"
   echo "  ujust audit-secureblue        ujust set-ptrace"
+  if is_browserless; then
+    echo "Browserless: ujust set-allow-browsers on ALLOW"
+  fi
 }
 
 cmd_audit() {
@@ -209,8 +217,56 @@ cmd_jitless() {
   esac
 }
 
+confirm_allow() {
+  local extra="${1:-}"
+  if [[ "${extra}" == "ALLOW" ]]; then
+    return 0
+  fi
+  if [[ -t 0 ]]; then
+    echo "This unlocks easy host browser installs (Flatpak + rpm-ostree)."
+    echo "A random Firefox/Chrome is usually worse than stock Trivalent."
+    echo "Toolbox, brew, and AppImage are not blocked either way."
+    echo "Type ALLOW to continue:"
+    local ans=""
+    read -r ans || true
+    [[ "${ans}" == "ALLOW" ]] || { echo "aborted" >&2; exit 1; }
+    return 0
+  fi
+  echo "usage: ujust set-allow-browsers on ALLOW" >&2
+  exit 2
+}
+
+cmd_allow_browsers() {
+  if ! is_browserless; then
+    echo "This toggle is for -browserless images. Origin images already ship Brave Origin." >&2
+    exit 1
+  fi
+  local action="${1:-status}"
+  case "${action}" in
+    on|enable)
+      confirm_allow "${2:-}"
+      as_root /usr/libexec/unwoke/browser-guard.sh lift
+      /usr/libexec/unwoke/browser-guard.sh unmask-user || true
+      echo "Host browser installs unlocked. Flathub CLI remote added."
+      echo "This does not make the box as tight as stock secureblue + Trivalent."
+      ;;
+    off|disable)
+      as_root /usr/libexec/unwoke/browser-guard.sh block
+      /usr/libexec/unwoke/browser-guard.sh apply --user || true
+      echo "Easy host browser installs blocked again. Already-installed browsers stay until you remove them."
+      ;;
+    status)
+      /usr/libexec/unwoke/browser-guard.sh status
+      ;;
+    *)
+      echo "usage: ujust set-allow-browsers on ALLOW|off|status" >&2
+      exit 2
+      ;;
+  esac
+}
+
 usage() {
-  echo "usage: toggles.sh status|audit|hardening|jitless [on|off|status]" >&2
+  echo "usage: toggles.sh status|audit|hardening|jitless|allow-browsers [on|off|status]" >&2
   exit 2
 }
 
@@ -221,5 +277,6 @@ case "${main}" in
   audit) cmd_audit ;;
   hardening) cmd_hardening "${1:-status}" ;;
   jitless) cmd_jitless "${1:-status}" ;;
+  allow-browsers) cmd_allow_browsers "${1:-status}" "${2:-}" ;;
   *) usage ;;
 esac

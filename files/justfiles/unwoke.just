@@ -22,3 +22,10 @@ set-brave-hardening *args:
 set-brave-jitless *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh jitless "$@"
+
+# Browserless only. Default off. Unlocks Flatpak/rpm-ostree browser installs.
+# Confirm with: ujust set-allow-browsers on ALLOW
+[positional-arguments]
+set-allow-browsers *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh allow-browsers "$@"

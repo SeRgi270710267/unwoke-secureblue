@@ -34,13 +34,16 @@
     <p>Origin images: no. Stock + Trivalent is tighter. Browserless images: tighter than Origin because there is no fat <code>brave_t</code> and no Chromium in the image. That only lasts until you install a browser. It is not “safer than Trivalent while browsing.”</p>
 
     <h2 id="browserless"><a href="#browserless">What is the browserless flavor?</a></h2>
-    <p>Same overlay: Trivalent, Bazaar, and GUI stores are gone. Unlike the default images, we do <em>not</em> install Brave Origin, do not load <code>brave_t</code>, and do not add Flathub. Rebase to <code>unwoke-silverblue-browserless</code> (or kinoite / nvidia-open variants). If you then <code>flatpak install</code> Firefox, you are usually worse off than stock Trivalent.</p>
+    <p>Same overlay: Trivalent, Bazaar, and GUI stores are gone. Unlike the default images, we do <em>not</em> install Brave Origin, do not load <code>brave_t</code>, and do not add Flathub. Rebase to <code>unwoke-silverblue-browserless</code> (or kinoite / nvidia-open variants).</p>
+    <p>Easy host browser installs are blocked until you opt in:</p>
+<pre><code>ujust set-allow-browsers on ALLOW</code></pre>
+    <p>That unmasks common Flatpak browsers, drops the rpm-ostree exclude list, and adds the Flathub CLI remote. A random Firefox is usually worse than stock Trivalent. Toolbox, brew, AppImage, and <code>rpm-ostree --disableexcludes</code> are not blocked — this is a seatbelt, not a prison.</p>
 
     <h2 id="origin"><a href="#origin">What is Brave Origin, and is it “full Brave”?</a></h2>
     <p>Brave Origin is a separate Linux package (<code>brave-origin</code>) with extras compiled out. Binary path: <code>/opt/brave.com/brave-origin/brave</code>. We do not install <code>brave-browser</code>. It is still Chromium-family software, not Trivalent.</p>
 
     <h2 id="store"><a href="#store">Where is the software store?</a></h2>
-    <p>There isn’t one. Bazaar, GNOME Software, and Plasma Discover are removed. Origin images add Flathub as a CLI remote. Browserless images do not; add it yourself if you want it. Use <code>brew</code> or <code>rpm-ostree</code> for the rest.</p>
+    <p>There isn’t one. Bazaar, GNOME Software, and Plasma Discover are removed. Origin images add Flathub as a CLI remote. Browserless images do not until <code>ujust set-allow-browsers on ALLOW</code>.</p>
 
     <h2 id="userns"><a href="#userns">Did you turn user namespaces back on?</a></h2>
     <p>Not globally. <code>harden_userns</code> stays on. On Origin images, Brave Origin is labeled <code>brave_t</code> and that domain is on secureblue’s userns allow-list. Browserless images do not add that exception — same as stock with Trivalent removed. Unconfined apps still cannot create user namespaces.</p>

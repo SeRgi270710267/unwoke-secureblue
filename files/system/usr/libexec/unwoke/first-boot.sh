@@ -15,6 +15,9 @@ fi
 
 if [[ "${FLAVOR}" == "browserless" ]]; then
   echo "unwoke: browserless flavor — no Origin policies, no Flathub remote"
+  if [[ -x /usr/libexec/unwoke/browser-guard.sh ]]; then
+    /usr/libexec/unwoke/browser-guard.sh apply || true
+  fi
 else
   if command -v restorecon >/dev/null; then
     restorecon -FR /opt/brave.com/brave-origin /usr/bin/brave-origin 2>/dev/null || true
