@@ -28,12 +28,15 @@ RAW = "https://raw.githubusercontent.com/secureblue/secureblue.dev/live"
 SKIP = {
     "INDEX.md",
     "IMAGES.md",
-    "DONATE.md",
     "CODE_OF_CONDUCT.md",
     "CONTRIBUTING.md",
     "REPORTING.md",
     "404.md",
 }
+
+DONATE_NOTICE = """
+<p class="alert caution"><strong>This money goes to secureblue. Not Unwoke SecureBlue.</strong> Open Collective, GitHub Sponsors, Monero, Coinbase — all theirs. We do not take donations and never will. <a href="donate/">Our donate page</a> exists to say that.</p>
+"""
 
 INCLUDE_RE = re.compile(
     r"\{%\s*include\s+alert\.html\s+type='([^']+)'\s+content='((?:\\'|[^'])*)'\s*%\}",
@@ -177,6 +180,8 @@ def main() -> int:
             extensions=["extra", "sane_lists", "toc"],
         )
         body_html = rewrite_html(body_html, permalinks)
+        if permalink.rstrip("/") == "/donate":
+            body_html = DONATE_NOTICE + body_html
         canonical = "https://secureblue.dev" + permalink
         dest = out_dir_for(permalink)
         dest.mkdir(parents=True, exist_ok=True)
@@ -197,7 +202,7 @@ def main() -> int:
     <h1>Stock secureblue docs</h1>
     <p>These pages are pulled daily from <a href="https://secureblue.dev">secureblue.dev</a> and wrapped in our chrome. Unwoke SecureBlue’s own FAQ, Features, Images, and Install are the main nav — this tree cannot overwrite them.</p>
     <ul>{items}</ul>
-    <p>Not mirrored on purpose: their homepage, image catalog, donate, contributing, and code of conduct. Use <a href="https://secureblue.dev">secureblue.dev</a> for those.</p>
+    <p>Not mirrored on purpose: their homepage, image catalog, contributing, and code of conduct. Their donate page <em>is</em> mirrored so the wallets stay obviously theirs. Use <a href="https://secureblue.dev">secureblue.dev</a> for the rest.</p>
     """
     (OUT / "index.html").write_text(
         render_page(
