@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Images | unwoke-secureblue</title>
+  <meta name="description" content="Four public GHCR images: Silverblue and Kinoite, with and without NVIDIA open modules.">
+  <base href="/unwoke-secureblue/">
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="./"><img src="assets/logo.svg" alt="">unwoke-secureblue</a></li>
+        <li><a href="features/">Features</a></li>
+        <li aria-current="page"><a href="images/">Images</a></li>
+        <li><a href="install/">Install</a></li>
+        <li><a href="faq/">FAQ</a></li>
+        <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="content">
+    <h1>Images</h1>
+    <p>Published as <code>ghcr.io/sergi270710267/&lt;name&gt;:latest</code>. All four are public. No GitHub login to pull. Rebuilt twice a day, 08:00 and 20:00 UTC, plus every recipe push.</p>
+
+    <p class="notice"><code>nvidia-open</code> images are for NVIDIA GPUs Turing or newer (GTX 16xx / RTX 20xx and later): proprietary driver with NVIDIA’s open kernel modules, not Nouveau. The non-NVIDIA images use Nouveau and are a poor choice for those GPUs.</p>
+
+    <h2 id="desktop"><a href="#desktop">Desktop</a></h2>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr><th>Image</th><th>Desktop</th><th>GPU</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>unwoke-silverblue</code></td>
+            <td>GNOME</td>
+            <td>Nouveau</td>
+          </tr>
+          <tr>
+            <td><code>unwoke-silverblue-nvidia-open</code></td>
+            <td>GNOME</td>
+            <td>NVIDIA open modules</td>
+          </tr>
+          <tr>
+            <td><code>unwoke-kinoite</code></td>
+            <td>KDE Plasma</td>
+            <td>Nouveau</td>
+          </tr>
+          <tr>
+            <td><code>unwoke-kinoite-nvidia-open</code></td>
+            <td>KDE Plasma</td>
+            <td>NVIDIA open modules</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="base"><a href="#base">What they sit on</a></h2>
+    <p>Each overlay is built from the matching official secureblue image, after <code>cosign verify</code> with their public key:</p>
+    <ul>
+      <li><code>ghcr.io/secureblue/silverblue-main-hardened</code></li>
+      <li><code>ghcr.io/secureblue/silverblue-nvidia-open-hardened</code></li>
+      <li><code>ghcr.io/secureblue/kinoite-main-hardened</code></li>
+      <li><code>ghcr.io/secureblue/kinoite-nvidia-open-hardened</code></li>
+    </ul>
+    <p>No Sway, COSMIC, CoreOS, or IoT images here. Those stay on <a href="https://secureblue.dev/images">their image list</a>.</p>
+
+    <h2 id="verify"><a href="#verify">Verify</a></h2>
+<pre><code>cosign verify --key cosign.pub ghcr.io/sergi270710267/unwoke-silverblue</code></pre>
+    <p><code>cosign.pub</code> is in the <a href="https://github.com/SeRgi270710267/unwoke-secureblue">git repo</a>. After the first-boot signed rebase, rpm-ostree checks that stamp on updates.</p>
+  </main>
+
+  <footer>
+    <a class="brand" href="./"><img src="assets/logo.svg" width="128" height="128" alt="">unwoke-secureblue</a>
+    <ul id="social">
+      <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue/pkgs/container/unwoke-silverblue">GHCR</a></li>
+      <li><a href="install/">Install</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

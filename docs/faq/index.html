@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FAQ | unwoke-secureblue</title>
+  <meta name="description" content="Affiliation, security tradeoffs, Brave Origin, stores, user namespaces, and how updates are signed.">
+  <base href="/unwoke-secureblue/">
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="./"><img src="assets/logo.svg" alt="">unwoke-secureblue</a></li>
+        <li><a href="features/">Features</a></li>
+        <li><a href="images/">Images</a></li>
+        <li><a href="install/">Install</a></li>
+        <li aria-current="page"><a href="faq/">FAQ</a></li>
+        <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="content">
+    <h1>FAQ</h1>
+
+    <h2 id="affiliated"><a href="#affiliated">Are you affiliated with secureblue?</a></h2>
+    <p>No. Personal overlay. Their project is <a href="https://secureblue.dev">secureblue.dev</a>. Use that if you want the official images, Trivalent, and Bazaar.</p>
+
+    <h2 id="safer"><a href="#safer">Is this more secure than stock secureblue?</a></h2>
+    <p>No. Stock + Trivalent is tighter. This overlay is for people who will not run Trivalent and do not want a curated store. The earlier overlay that disabled <code>harden_userns</code> globally was worse than this one. This one is still weaker than stock.</p>
+
+    <h2 id="origin"><a href="#origin">What is Brave Origin, and is it “full Brave”?</a></h2>
+    <p>Brave Origin is a separate Linux package (<code>brave-origin</code>) with extras compiled out. Binary path: <code>/opt/brave.com/brave-origin/brave</code>. We do not install <code>brave-browser</code>. It is still Chromium-family software, not Trivalent.</p>
+
+    <h2 id="store"><a href="#store">Where is the software store?</a></h2>
+    <p>There isn’t one. Bazaar, GNOME Software, and Plasma Discover are removed. Flathub is added as a remote for the <code>flatpak</code> CLI. Use <code>brew</code> or <code>rpm-ostree</code> for the rest.</p>
+
+    <h2 id="userns"><a href="#userns">Did you turn user namespaces back on?</a></h2>
+    <p>Not globally. <code>harden_userns</code> stays on. Brave Origin is labeled <code>brave_t</code> and that domain is on secureblue’s userns allow-list, same idea as Flatpak and Trivalent. Unconfined apps still cannot create user namespaces.</p>
+
+    <h2 id="updates"><a href="#updates">How do updates work?</a></h2>
+    <p>Not a git fork. CI pulls their signed image, verifies it with their public key, pins the digest, layers this overlay, and cosign-signs the result. Your machine follows <code>ghcr.io/sergi270710267/…</code> with rpm-ostree after the signed rebase. Rebuilds at 08:00 and 20:00 UTC.</p>
+
+    <h2 id="key"><a href="#key">Can I trust the signing key?</a></h2>
+    <p>You can verify with <code>cosign.pub</code> in the repo. The private key is a GitHub Actions secret, not a YubiKey. That is weaker than a hardware key. It is stated on the home page on purpose.</p>
+
+    <h2 id="iso"><a href="#iso">Where is the USB ISO?</a></h2>
+    <p>The OS is the GHCR image. For a blank disk, install <a href="https://secureblue.dev/install">secureblue</a> first, then rebase. Optional ISOs can be built from the <code>iso</code> workflow; GitHub will not host a 3 GB file as a normal release.</p>
+  </main>
+
+  <footer>
+    <a class="brand" href="./"><img src="assets/logo.svg" width="128" height="128" alt="">unwoke-secureblue</a>
+    <ul id="social">
+      <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
+      <li><a href="https://secureblue.dev/faq">secureblue FAQ</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

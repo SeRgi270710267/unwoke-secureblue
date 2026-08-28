@@ -3,106 +3,87 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>unwoke-secureblue</title>
-  <meta name="description" content="secureblue overlay: Brave Origin, no curator store. Not affiliated with secureblue.">
+  <title>unwoke-secureblue: secureblue hardening, Brave Origin, no curator store</title>
+  <meta name="description" content="A personal overlay on official secureblue images. Brave Origin instead of Trivalent. No GUI software store. Not affiliated with secureblue.">
   <base href="/unwoke-secureblue/">
-  <link rel="icon" href="data:,">
-  <style>
-    :root {
-      --bg: #0d0f0c;
-      --fg: #e8eadf;
-      --muted: #9aa392;
-      --line: #2a3126;
-      --card: #141814;
-      --accent: #c4e07a;
-      --warn: #e0b36a;
-    }
-    * { box-sizing: border-box; }
-    html, body { margin: 0; background: var(--bg); color: var(--fg); }
-    body {
-      font: 16px/1.5 ui-sans-serif, system-ui, sans-serif;
-      max-width: 40rem;
-      margin: 0 auto;
-      padding: 2.5rem 1.25rem 4rem;
-    }
-    h1 { font-size: 1.75rem; letter-spacing: -0.03em; margin: 0 0 0.35rem; }
-    h2 { font-size: 1.05rem; margin: 2rem 0 0.6rem; }
-    p, li { color: var(--fg); }
-    .lede { color: var(--muted); margin: 0 0 1.25rem; }
-    a { color: var(--accent); }
-    .note {
-      border: 1px solid var(--line);
-      background: var(--card);
-      padding: 0.85rem 1rem;
-      border-radius: 8px;
-      color: var(--muted);
-      font-size: 0.92rem;
-    }
-    .note strong { color: var(--warn); font-weight: 600; }
-    pre {
-      background: #0a0c09;
-      border: 1px solid var(--line);
-      padding: 0.85rem 1rem;
-      overflow-x: auto;
-      border-radius: 8px;
-      font: 0.85rem/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    }
-    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
-    th, td { text-align: left; padding: 0.4rem 0.35rem; border-bottom: 1px solid var(--line); vertical-align: top; }
-    th { color: var(--muted); font-weight: 500; }
-    ul { padding-left: 1.15rem; }
-    footer { margin-top: 2.5rem; color: var(--muted); font-size: 0.85rem; }
-    nav { margin: 1rem 0 1.75rem; }
-    nav a { margin-right: 1rem; }
-  </style>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css">
+  <meta property="og:title" content="unwoke-secureblue">
+  <meta property="og:description" content="secureblue’s hardening. Brave Origin. No curator store.">
+  <meta property="og:type" content="website">
 </head>
 <body>
-  <h1>unwoke-secureblue</h1>
-  <p class="lede">secureblue’s hardening. Brave Origin. No curator store.</p>
-  <nav>
-    <a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a>
-    <a href="https://github.com/SeRgi270710267/unwoke-secureblue/pkgs/container/unwoke-silverblue">Images</a>
-    <a href="https://brave.com/origin/linux/">Brave Origin</a>
-  </nav>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li aria-current="page"><a href="./"><img src="assets/logo.svg" alt="">unwoke-secureblue</a></li>
+        <li><a href="features/">Features</a></li>
+        <li><a href="images/">Images</a></li>
+        <li><a href="install/">Install</a></li>
+        <li><a href="faq/">FAQ</a></li>
+        <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
 
-  <p class="note"><strong>Not affiliated with secureblue.</strong> This is a personal overlay on their signed images. Stock secureblue is at <a href="https://secureblue.dev">secureblue.dev</a>.</p>
+  <div class="hero">
+    <div>
+      <h1 id="unwoke-secureblue"><a href="#unwoke-secureblue">unwoke-secureblue</a></h1>
+      <p>A security-focused Fedora Atomic desktop: secureblue’s hardening, with Brave Origin and no curator store.</p>
+      <a class="button" href="install/">Get the overlay</a>
+    </div>
+    <figure class="device-img">
+      <img class="laptop-img" width="288" height="171" src="assets/laptop.svg" alt="">
+      <img class="laptop-logo-img" width="96" height="96" src="assets/logo.svg" alt="">
+    </figure>
+  </div>
 
-  <h2>What it is</h2>
-  <p>A daily BlueBuild overlay on official secureblue Fedora Atomic images. Kernel hardening, SELinux, <code>hardened_malloc</code>, and their <code>ujust</code> commands stay. Trivalent and Bazaar are gone. There is no GUI software store.</p>
-  <p>The browser is the standalone <strong>Brave Origin</strong> RPM (<code>brave-origin</code>), not full <code>brave-browser</code>. User namespaces stay off for unconfined apps; Brave Origin runs in its own <code>brave_t</code> domain so its Chromium sandbox can start.</p>
+  <main id="content">
+    <p class="notice"><strong>Not affiliated with secureblue.</strong> This is a personal overlay on their signed images. Stock secureblue is at <a href="https://secureblue.dev">secureblue.dev</a>.</p>
 
-  <h2>Install</h2>
-  <p>Already on secureblue or Fedora Atomic:</p>
-<pre>rpm-ostree rebase ostree-unverified-registry:ghcr.io/sergi270710267/unwoke-silverblue:latest
-systemctl reboot</pre>
-  <p>After that reboot, first-boot stages the <em>signed</em> image. Reboot once more. KDE: <code>unwoke-kinoite</code>. NVIDIA: add <code>-nvidia-open</code>.</p>
+    <h2 id="about"><a href="#about">About</a></h2>
+    <p>unwoke-secureblue is a daily <a href="https://blue-build.org/">BlueBuild</a> overlay on official <a href="https://secureblue.dev">secureblue</a> Fedora Atomic images. Kernel hardening, SELinux, <code>hardened_malloc</code>, closed firewall, and their <code>ujust</code> commands stay. We only change two product decisions: the house browser and the house app store.</p>
+    <p>The browser is the standalone <strong>Brave Origin</strong> RPM (<code>brave-origin</code>), not full <code>brave-browser</code> and not <a href="https://github.com/secureblue/Trivalent">Trivalent</a>. There is no GUI software store. Flathub is a CLI remote. User namespaces stay off for unconfined apps; Brave Origin runs in its own <code>brave_t</code> domain so its Chromium sandbox can start.</p>
+    <p>It is shipped as OCI bootable container images. Rebase onto one of them from secureblue or any Fedora Atomic desktop. For details, see the <a href="features/">features list</a>.</p>
 
-  <h2>Images</h2>
-  <table>
-    <tr><th>Image</th><th>Desktop</th><th>GPU</th></tr>
-    <tr><td><code>unwoke-silverblue</code></td><td>GNOME</td><td>Nouveau</td></tr>
-    <tr><td><code>unwoke-silverblue-nvidia-open</code></td><td>GNOME</td><td>NVIDIA open</td></tr>
-    <tr><td><code>unwoke-kinoite</code></td><td>KDE Plasma</td><td>Nouveau</td></tr>
-    <tr><td><code>unwoke-kinoite-nvidia-open</code></td><td>KDE Plasma</td><td>NVIDIA open</td></tr>
-  </table>
-  <p>Registry: <code>ghcr.io/sergi270710267/&lt;name&gt;:latest</code></p>
+    <div class="cards">
+      <div class="card">
+        <h3>Their hardening</h3>
+        <p>Kernel args, SELinux, hardened_malloc, no Xwayland by default, USBGuard, run0. Inherited, not reimplemented.</p>
+      </div>
+      <div class="card">
+        <h3>Brave Origin</h3>
+        <p>Standalone RPM. Compiled-out extras. Default browser. Not Trivalent, not full Brave.</p>
+      </div>
+      <div class="card">
+        <h3>No curator store</h3>
+        <p>Bazaar, GNOME Software, and Plasma Discover are gone. Use the terminal: flatpak, brew, rpm-ostree.</p>
+      </div>
+    </div>
 
-  <h2>Toggles</h2>
-  <p>All stock secureblue <code>ujust</code> commands still work. Overlay extras:</p>
-<pre>ujust unwoke-status
-ujust audit-unwoke
-ujust set-brave-hardening on
-ujust set-brave-jitless on</pre>
+    <h2 id="who"><a href="#who">Who this is for</a></h2>
+    <p>People who already want Linux, already want secureblue’s hardening, and do not want Trivalent or a curated app catalog deciding which browsers exist.</p>
+    <p>This is <em>not</em> as locked down as stock secureblue + Trivalent. If maximum desktop confinement is your first priority, use <a href="https://secureblue.dev">stock secureblue</a>. If you want their kernel and SELinux with Brave Origin and a terminal-only install path, this overlay is for you.</p>
 
-  <h2>Honest limits</h2>
-  <ul>
-    <li>This is not as locked down as stock secureblue + Trivalent.</li>
-    <li>Brave Origin is not Trivalent. No Vanadium-style Chromium patches, no tight Trivalent SELinux jail.</li>
-    <li>Signing key is a GitHub secret, not a hardware key.</li>
-  </ul>
+    <h2 id="honest-limits"><a href="#honest-limits">Honest limits</a></h2>
+    <ul>
+      <li>Brave Origin is not Trivalent. No Vanadium-style Chromium patches, no tight Trivalent SELinux jail.</li>
+      <li><code>brave_t</code> is an unconfined-like domain on the userns allow-list so the sandbox can start. Other unconfined apps stay blocked.</li>
+      <li>The signing key is a GitHub secret, not a hardware key.</li>
+      <li>We do not rebuild their kernel or re-run their SLSA pipeline. We inherit whatever they already shipped, after checking their signature.</li>
+    </ul>
+  </main>
 
   <footer>
-    Overlay files MIT. Fedora, secureblue, BlueBuild, Brave Origin: their licenses.
+    <a class="brand" href="./"><img src="assets/logo.svg" width="128" height="128" alt="">unwoke-secureblue</a>
+    <ul id="social">
+      <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
+      <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue/pkgs/container/unwoke-silverblue">Packages</a></li>
+      <li><a href="https://secureblue.dev">secureblue.dev</a></li>
+      <li><a href="https://brave.com/origin/linux/">Brave Origin</a></li>
+    </ul>
+    <p>Overlay files MIT. Fedora, secureblue, BlueBuild, Brave Origin: their licenses. Not affiliated with secureblue.</p>
   </footer>
 </body>
 </html>
