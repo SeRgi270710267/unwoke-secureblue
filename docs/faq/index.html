@@ -6,18 +6,19 @@
   <meta name="theme-color" content="#050a16">
   <meta name="color-scheme" content="dark">
   <title>FAQ | Unwoke SecureBlue</title>
-  <meta name="description" content="Affiliation, security tradeoffs, Brave Origin, stores, user namespaces, and how updates are signed.">
+  <meta name="description" content="Affiliation, Origin vs browserless, toggles, Flathub, Flatpak lockdown, theme, signing.">
   <base href="/unwoke-secureblue/">
-  <link rel="icon" href="assets/logo.svg?v=3" type="image/svg+xml">
-  <link rel="stylesheet" href="css/main.css?v=3">
+  <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css?v=4">
 </head>
 <body>
   <a class="skip" href="#content">Skip to content</a>
   <header>
     <nav id="site-menu" aria-label="Primary">
       <ul>
-        <li><a href="./"><img src="assets/logo.svg?v=3" alt="">Unwoke SecureBlue</a></li>
+        <li><a href="./"><img src="assets/logo.svg?v=4" alt="">Unwoke SecureBlue</a></li>
         <li><a href="features/">Features</a></li>
+        <li><a href="brand/">Brand</a></li>
         <li><a href="images/">Images</a></li>
         <li><a href="install/">Install</a></li>
         <li><a href="post-install/">Post-install</a></li>
@@ -53,8 +54,40 @@
     <h2 id="store"><a href="#store">Where is the software store?</a></h2>
     <p>There isn’t one. Bazaar, GNOME Software, and Plasma Discover are removed. Origin images add the <strong>Flathub-verified</strong> CLI remote (stock’s default). <code>ujust set-flathub full</code> or <code>off</code> to change it. Browserless images add nothing until <code>ujust set-allow-browsers on ALLOW</code>.</p>
 
+    <h2 id="toggles"><a href="#toggles">What ujust commands did you add?</a></h2>
+    <p>Stock secureblue commands stay. Overlay extras, all reversible, are listed on <a href="features/#toggles">Features</a>. Short list:</p>
+<pre><code>ujust unwoke-status
+ujust audit-unwoke
+ujust set-flathub verified|full|off
+ujust set-flatpak-lockdown on|off
+ujust set-brave-hardening on|off
+ujust set-brave-devices on|off
+ujust set-brave-jitless on|off
+ujust set-brave-extensions block|allow
+ujust set-brave-bubblejail on|off
+ujust set-unwoke-theme apply
+ujust set-allow-browsers on ALLOW</code></pre>
+
+    <h2 id="jitless"><a href="#jitless">A site broke after install</a></h2>
+    <p>JIT-less is <strong>on</strong> by default on Origin. Turn it off and restart Brave Origin:</p>
+<pre><code>ujust set-brave-jitless off</code></pre>
+    <p>Camera/mic/USB in the browser: <code>ujust set-brave-devices off</code>. Passwords/autofill: <code>ujust set-brave-hardening off</code>. Extensions: <code>ujust set-brave-extensions allow</code>.</p>
+
+    <h2 id="lockdown"><a href="#lockdown">Flatpaks do nothing / need a million permissions</a></h2>
+    <p>Permission lockdown is <strong>on</strong> by default (stock ships it as opt-in). Grant per-app in Flatseal, or:</p>
+<pre><code>ujust set-flatpak-lockdown off</code></pre>
+
+    <h2 id="theme"><a href="#theme">Wallpaper, lock screen, accent</a></h2>
+    <p>Default Unwoke navy wallpaper, a darker lock image, dark style, GNOME named accent <code>blue</code>, GTK/KDE <code>#3b6cff</code>. Gallery: <a href="brand/">Brand</a>. GNOME has no classic screensaver; the lock screen is that image. Re-apply: <code>ujust set-unwoke-theme apply</code>.</p>
+
+    <h2 id="bubblejail"><a href="#bubblejail">What is set-brave-bubblejail?</a></h2>
+    <p>Optional extra sandbox around Origin’s desktop launcher. Default <strong>off</strong>. GPU, PipeWire, and portals may break. Turn it off if the window will not start.</p>
+
     <h2 id="userns"><a href="#userns">Did you turn user namespaces back on?</a></h2>
     <p>Not globally. <code>harden_userns</code> stays on. On Origin images, Brave Origin is labeled <code>brave_t</code> and that domain is on secureblue’s userns allow-list. Browserless images do not add that exception — same as stock with Trivalent removed. Unconfined apps still cannot create user namespaces.</p>
+
+    <h2 id="name"><a href="#name">Why Unwoke SecureBlue that way?</a></h2>
+    <p><em>Unwoke</em> is the adjective/verb modifier. <em>SecureBlue</em> is one proper name (S and B capped), not “Secure Blue”. Repo and GHCR slugs stay lowercase because registries do.</p>
 
     <h2 id="updates"><a href="#updates">How do updates work?</a></h2>
     <p>Not a git fork. CI pulls their signed image, verifies it with their public key, pins the digest, layers this overlay, and cosign-signs the result. Your machine follows <code>ghcr.io/sergi270710267/…</code> with rpm-ostree after the signed rebase. Rebuilds at 08:00 and 20:00 UTC.</p>
@@ -70,7 +103,7 @@
   </main>
 
   <footer>
-    <a class="brand" href="./"><img src="assets/logo.svg?v=3" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <a class="brand" href="./"><img src="assets/logo.svg?v=4" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
     <ul id="social">
       <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
       <li><a href="https://secureblue.dev/faq">secureblue FAQ</a></li>

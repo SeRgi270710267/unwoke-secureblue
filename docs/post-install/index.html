@@ -8,16 +8,17 @@
   <title>Post-install | Unwoke SecureBlue</title>
   <meta name="description" content="After rebasing: signed deployment, overlay ujust, then stock secureblue post-install (mirrored).">
   <base href="/unwoke-secureblue/">
-  <link rel="icon" href="assets/logo.svg?v=3" type="image/svg+xml">
-  <link rel="stylesheet" href="css/main.css?v=3">
+  <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css?v=4">
 </head>
 <body>
   <a class="skip" href="#content">Skip to content</a>
   <header>
     <nav id="site-menu" aria-label="Primary">
       <ul>
-        <li><a href="./"><img src="assets/logo.svg?v=3" alt="">Unwoke SecureBlue</a></li>
+        <li><a href="./"><img src="assets/logo.svg?v=4" alt="">Unwoke SecureBlue</a></li>
         <li><a href="features/">Features</a></li>
+        <li><a href="brand/">Brand</a></li>
         <li><a href="images/">Images</a></li>
         <li><a href="install/">Install</a></li>
         <li aria-current="page"><a href="post-install/">Post-install</a></li>
@@ -43,19 +44,26 @@
 <pre><code>ujust unwoke-status
 ujust audit-unwoke
 ujust audit-secureblue</code></pre>
-    <p>Origin images ship the tighter policy packs <em>on</em> (HTTPS/metrics, devices, JIT-less, no extensions). Restart the browser after you change them:</p>
-<pre><code>ujust set-brave-hardening off     # if a site needs passwords/autofill
-ujust set-brave-devices off       # if you need camera/mic
-ujust set-brave-jitless off       # if a site needs JIT
-ujust set-brave-extensions allow
-ujust set-flathub full            # unfiltered Flathub
-ujust set-flatpak-lockdown off    # if Flatpaks are broken
-ujust set-brave-bubblejail on     # experimental extra sandbox</code></pre>
-    <p>Theme (already default): navy wallpaper, lock-screen image, dark mode, blue accent. GNOME Shell only accepts named accents, so the shell chrome is stock <code>blue</code> and GTK apps get <code>#3b6cff</code>. Re-apply:</p>
-<pre><code>ujust set-unwoke-theme apply</code></pre>
-    <p>GNOME has no classic screensaver; the lock screen is that vault wallpaper. Plasma uses the same image on the screen locker.</p>
-    <p>Browserless images — host browsers stay blocked until you opt in:</p>
-<pre><code>ujust set-allow-browsers on ALLOW</code></pre>
+    <p>Full toggle table: <a href="features/#toggles">Features</a>. Defaults are already on except Bubblejail and allow-browsers. Restart Brave Origin after policy changes.</p>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr><th>If this happens</th><th>Run</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Site needs JIT</td><td><code>ujust set-brave-jitless off</code></td></tr>
+          <tr><td>Need camera / mic / USB in Origin</td><td><code>ujust set-brave-devices off</code></td></tr>
+          <tr><td>Need passwords / autofill</td><td><code>ujust set-brave-hardening off</code></td></tr>
+          <tr><td>Need extensions</td><td><code>ujust set-brave-extensions allow</code></td></tr>
+          <tr><td>Need unfiltered Flathub</td><td><code>ujust set-flathub full</code></td></tr>
+          <tr><td>Flatpaks are broken</td><td><code>ujust set-flatpak-lockdown off</code></td></tr>
+          <tr><td>Want wallpaper / accent back</td><td><code>ujust set-unwoke-theme apply</code></td></tr>
+          <tr><td>Experimental Origin jail</td><td><code>ujust set-brave-bubblejail on</code></td></tr>
+          <tr><td>Browserless: install a host browser</td><td><code>ujust set-allow-browsers on ALLOW</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Lock screen / wallpaper gallery: <a href="brand/">Brand</a>.</p>
 
     <h2 id="stock"><a href="#stock">Stock secureblue (mirrored)</a></h2>
     <p>You still do their post-install: enroll their Secure Boot key if the prompt did not appear, <code>ujust set-kargs-hardening</code> if you rebased instead of installing from their ISO, USBGuard, optional separate wheel account. Full text, updated daily from their repo:</p>
@@ -64,7 +72,7 @@ ujust set-brave-bubblejail on     # experimental extra sandbox</code></pre>
   </main>
 
   <footer>
-    <a class="brand" href="./"><img src="assets/logo.svg?v=3" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <a class="brand" href="./"><img src="assets/logo.svg?v=4" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
     <ul id="social">
       <li><a href="install/">Install</a></li>
       <li><a href="secureblue/post-install/">Their post-install</a></li>

@@ -6,7 +6,7 @@ The product name is **Unwoke SecureBlue**. *Unwoke* is the modifier (adjective/v
 
 This is a daily overlay on official [secureblue](https://secureblue.dev) images. It is **not** a fork and **not** affiliated with them. Their kernel hardening, `hardened_malloc`, SELinux, no Xwayland by default, and automatic updates stay. We only strip the two product decisions that lock the desktop: **Trivalent** and **Bazaar**. No GUI software store is added back. Two flavors: **Brave Origin**, or **browserless** (no Trivalent, no Origin, no `brave_t`).
 
-Site: [sergi270710267.github.io/unwoke-secureblue](https://sergi270710267.github.io/unwoke-secureblue/). Stock secureblue FAQ/features/install are mirrored daily under `/secureblue/` (Apache-2.0, not affiliated); our FAQ/Features/Install are never overwritten.
+Site: [sergi270710267.github.io/unwoke-secureblue](https://sergi270710267.github.io/unwoke-secureblue/). Overlay delta and toggles: [Features](https://sergi270710267.github.io/unwoke-secureblue/features/). Wallpaper/lock/accent: [Brand](https://sergi270710267.github.io/unwoke-secureblue/brand/). Stock secureblue FAQ/features/install are mirrored daily under `/secureblue/` (Apache-2.0, not affiliated); our pages are never overwritten.
 
 Images: `ghcr.io/sergi270710267/unwoke-silverblue` · `unwoke-kinoite` · `*-nvidia-open` · `*-browserless`
 

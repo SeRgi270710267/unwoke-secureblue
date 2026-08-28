@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>Brand | Unwoke SecureBlue</title>
+  <meta name="description" content="Default Unwoke SecureBlue look: navy wallpaper, lock screen, logo, and the real-blue accent on GNOME and KDE.">
+  <base href="/unwoke-secureblue/">
+  <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css?v=4">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="./"><img src="assets/logo.svg?v=4" alt="">Unwoke SecureBlue</a></li>
+        <li><a href="features/">Features</a></li>
+        <li aria-current="page"><a href="brand/">Brand</a></li>
+        <li><a href="images/">Images</a></li>
+        <li><a href="install/">Install</a></li>
+        <li><a href="post-install/">Post-install</a></li>
+        <li><a href="faq/">FAQ</a></li>
+        <li><a href="contributing/">Contributing</a></li>
+        <li><a href="conduct/">Conduct</a></li>
+        <li><a href="donate/">Donate</a></li>
+        <li><a href="secureblue/">Their docs</a></li>
+        <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="content">
+    <h1>Brand</h1>
+    <p>This is the default look on every Unwoke image after the next rebuild. Settings can change it. <code>ujust set-unwoke-theme apply</code> puts it back.</p>
+
+    <div class="brand-mark">
+      <img src="assets/logo.svg?v=4" width="128" height="128" alt="">
+      <div>
+        <p class="wordmark"><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></p>
+        <p><em>Unwoke</em> is the modifier. <em>SecureBlue</em> is one word, S and B capped. Git and GHCR stay lowercase slugs.</p>
+      </div>
+    </div>
+
+    <h2 id="palette"><a href="#palette">Palette</a></h2>
+    <p>Real blue, hue ~224. Not lime, not teal, not Bootstrap. Dark navy from Old Glory Blue. Warning amber stays for alerts only.</p>
+    <div class="palette">
+      <div class="swatch"><div class="chip" style="background:#050a16"></div><p>Background<br><code>#050a16</code></p></div>
+      <div class="swatch"><div class="chip" style="background:#0a1328"></div><p>Surface<br><code>#0a1328</code></p></div>
+      <div class="swatch"><div class="chip" style="background:#3b6cff"></div><p>Accent<br><code>#3b6cff</code></p></div>
+      <div class="swatch"><div class="chip" style="background:#6b91ff"></div><p>Hover<br><code>#6b91ff</code></p></div>
+      <div class="swatch"><div class="chip" style="background:#e8edf8"></div><p>Text<br><code>#e8edf8</code></p></div>
+    </div>
+
+    <h2 id="wallpaper"><a href="#wallpaper">Desktop wallpaper</a></h2>
+    <p>Shipped at <code>/usr/share/backgrounds/unwoke/unwoke-desktop.jpg</code>. GNOME schema default. KDE wallpaper plugin <code>UnwokeSecureBlue</code>.</p>
+    <div class="gallery">
+      <figure class="shot">
+        <img src="assets/wallpaper-desktop.jpg" width="1280" height="720" alt="Navy desktop wallpaper with a glowing blue shield">
+        <figcaption><strong>Desktop</strong> Default background on Silverblue and Kinoite.</figcaption>
+      </figure>
+    </div>
+
+    <h2 id="lock"><a href="#lock">Lock screen</a></h2>
+    <p>GNOME has no classic screensaver. This image is the lock screen and idle lock (<code>org.gnome.desktop.screensaver</code>). Plasma uses it on the screen locker. Path: <code>/usr/share/backgrounds/unwoke/unwoke-lock.jpg</code>.</p>
+    <div class="gallery">
+      <figure class="shot">
+        <img src="assets/wallpaper-lock.jpg" width="1280" height="720" alt="Darker lock-screen wallpaper with a concentric blue shield">
+        <figcaption><strong>Lock</strong> Vault-quiet variant. Not xscreensaver — we did not add a saver daemon.</figcaption>
+      </figure>
+    </div>
+
+    <h2 id="accent"><a href="#accent">Accent</a></h2>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr><th>Surface</th><th>What you get</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>GNOME Shell (top bar, overview)</td>
+            <td>Named accent <code>blue</code> only. GNOME does not take a custom hex here.</td>
+          </tr>
+          <tr>
+            <td>GTK 3 / 4 apps</td>
+            <td>Exact <code>#3b6cff</code> via <code>/etc/gtk-4.0/gtk.css</code> and gtk-3.</td>
+          </tr>
+          <tr>
+            <td>KDE Plasma</td>
+            <td><code>AccentColor=59,108,255</code> in kdeglobals. Same blue.</td>
+          </tr>
+          <tr>
+            <td>This site / GDM</td>
+            <td>Navy + <code>#3b6cff</code>. Login screen on GNOME uses the desktop wallpaper.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>User extensions stay off (stock). There is no custom GNOME Shell theme. Dark style is default.</p>
+
+    <h2 id="put-back"><a href="#put-back">Put it back</a></h2>
+<pre><code>ujust set-unwoke-theme apply</code></pre>
+    <p>GNOME Settings and Plasma Appearance still override after that if you pick something else.</p>
+  </main>
+
+  <footer>
+    <a class="brand" href="./"><img src="assets/logo.svg?v=4" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="features/">Features</a></li>
+      <li><a href="post-install/">Post-install</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

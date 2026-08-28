@@ -6,18 +6,19 @@
   <meta name="theme-color" content="#050a16">
   <meta name="color-scheme" content="dark">
   <title>Features | Unwoke SecureBlue</title>
-  <meta name="description" content="What this overlay keeps from secureblue, and what it changes: Brave Origin, no curator store, brave_t userns exception.">
+  <meta name="description" content="Overlay delta: Brave Origin or browserless, no store, reversible ujust packs, Flathub-verified, Flatpak lockdown, Unwoke theme.">
   <base href="/unwoke-secureblue/">
-  <link rel="icon" href="assets/logo.svg?v=3" type="image/svg+xml">
-  <link rel="stylesheet" href="css/main.css?v=3">
+  <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css?v=4">
 </head>
 <body>
   <a class="skip" href="#content">Skip to content</a>
   <header>
     <nav id="site-menu" aria-label="Primary">
       <ul>
-        <li><a href="./"><img src="assets/logo.svg?v=3" alt="">Unwoke SecureBlue</a></li>
+        <li><a href="./"><img src="assets/logo.svg?v=4" alt="">Unwoke SecureBlue</a></li>
         <li aria-current="page"><a href="features/">Features</a></li>
+        <li><a href="brand/">Brand</a></li>
         <li><a href="images/">Images</a></li>
         <li><a href="install/">Install</a></li>
         <li><a href="post-install/">Post-install</a></li>
@@ -33,7 +34,7 @@
 
   <main id="content">
     <h1>Features</h1>
-    <p>Most of the security story is still <a href="https://secureblue.dev/features">secureblue’s</a> (also <a href="secureblue/features/">mirrored here</a>, updates daily). This page is the overlay delta.</p>
+    <p>Most of the security story is still <a href="https://secureblue.dev/features">secureblue’s</a> (also <a href="secureblue/features/">mirrored here</a>, updates daily). This page is everything <strong>this overlay</strong> adds or changes. Look is on <a href="brand/">Brand</a>.</p>
 
     <h2 id="inherited"><a href="#inherited">Inherited from secureblue</a></h2>
     <p>We layer on their already-built, already-signed images. We do not reimplement these:</p>
@@ -42,9 +43,9 @@
       <li>Kernel hardening via sysctl and kernel arguments, with their <code>ujust set-kargs-hardening</code>.</li>
       <li>SELinux enforcing. Unprivileged user namespaces off for the unconfined domain, on for Flatpak.</li>
       <li>Xwayland off by default. GNOME user extensions off. KDE GHNS off.</li>
-      <li>Unwoke wallpaper + lock screen, dark style, GNOME accent <code>blue</code> plus GTK <code>#3b6cff</code>, KDE accent the same blue. Change it in Settings; <code>ujust set-unwoke-theme apply</code> puts it back.</li>
-      <li><code>sudo</code> / <code>su</code> / <code>pkexec</code> replaced with <code>run0</code> on their images. SUID stripped from many binaries.</li>
-      <li>USBGuard with their <code>ujust</code> helpers. firewalld closed by default. NTS for time. HTTPS rpm mirrors.</li>
+      <li><code>sudo</code> / <code>su</code> / <code>pkexec</code> replaced with <code>run0</code> on their images. SUID stripped from many binaries. fuse2 gone.</li>
+      <li>USBGuard with their <code>ujust</code> helpers. firewalld closed by default. NTS for time. HTTPS rpm mirrors. DoT via <code>ujust dns-selector</code>.</li>
+      <li>Module blacklist, ptrace off, MAC randomization, coredumps off, brew-proxy, Bubblejail as a tool, LUKS TPM/FIDO helpers, <code>ujust audit-secureblue</code>.</li>
       <li>Automatic updates. Their full <code>ujust</code> surface still works.</li>
     </ul>
     <p>Read their list if you want the complete inventory. We did not gut SELinux, kernel args, disk encryption, or Secure Boot enrollment.</p>
@@ -59,14 +60,14 @@
           <tr>
             <td>Browser</td>
             <td><a href="https://github.com/secureblue/Trivalent">Trivalent</a> — confined Chromium</td>
-            <td><a href="https://brave.com/origin/linux/">Brave Origin</a> RPM. Runs in fat <code>brave_t</code>.</td>
-            <td>None. No Trivalent, no Origin.</td>
+            <td><a href="https://brave.com/origin/linux/">Brave Origin</a> RPM. Fat <code>brave_t</code>. Policy packs on.</td>
+            <td>None. No Trivalent, no Origin, no <code>brave_t</code>.</td>
           </tr>
           <tr>
             <td>App store</td>
             <td>Bazaar — curated catalog</td>
-            <td>None. Flathub-verified CLI remote (toggle to full/off).</td>
-            <td>None. Flathub is not added.</td>
+            <td>None. Flathub-<strong>verified</strong> CLI remote.</td>
+            <td>None. No Flathub until you opt in.</td>
           </tr>
           <tr>
             <td>User namespaces</td>
@@ -74,25 +75,123 @@
             <td>Same, plus <code>brave_t</code> on the allow-list</td>
             <td>Stock with Trivalent gone: unconfined blocked, Flatpak only</td>
           </tr>
+          <tr>
+            <td>Host browser installs</td>
+            <td>Trivalent is already there</td>
+            <td>Origin is the house browser</td>
+            <td>Blocked until <code>ujust set-allow-browsers on ALLOW</code></td>
+          </tr>
+          <tr>
+            <td>Flatpak permissions</td>
+            <td>Opt-in lockdown</td>
+            <td colspan="2">Lockdown <strong>on</strong> by default; <code>ujust set-flatpak-lockdown off</code></td>
+          </tr>
+          <tr>
+            <td>Look</td>
+            <td>Their defaults</td>
+            <td colspan="2">Unwoke wallpaper, lock screen, dark, blue accent. <a href="brand/">Brand</a></td>
+          </tr>
         </tbody>
       </table>
     </div>
 
-    <h2 id="brave-origin"><a href="#brave-origin">Brave Origin</a></h2>
-    <p>Not full <code>brave-browser</code>. The Origin package is a separate RPM with extras compiled out, installed under <code>/opt/brave.com/brave-origin/</code>. Policies live in <code>/etc/brave-origin/policies/managed/</code>.</p>
-    <p><code>brave_t</code> is an unconfined-like domain so the browser can actually run. It is <em>not</em> Trivalent’s tight jail, and you do not get Trivalent’s Chromium patches. Those patches live in their browser source. Brave Origin cannot grow them.</p>
-    <p>What we can force are Chromium enterprise policies (each pack is a <code>ujust</code>, default on except Bubblejail):</p>
+    <h2 id="overlay-list"><a href="#overlay-list">Everything we add on top</a></h2>
     <ul>
-      <li>Hardening — HTTPS-only, no WebRTC IP leak, no metrics, no autofill/password manager, no translate.</li>
-      <li>Devices — camera, mic, geolocation, WebUSB/Bluetooth/serial/HID, file-system access: blocked.</li>
-      <li>JIT-less — JavaScript JIT off. Breaks some sites. <code>ujust set-brave-jitless off</code>.</li>
-      <li>Extensions — install blocklist <code>*</code>. <code>ujust set-brave-extensions allow</code>.</li>
-      <li>Bubblejail around the desktop launcher — off until <code>ujust set-brave-bubblejail on</code>.</li>
+      <li>Strip Trivalent, Bazaar, GNOME Software, Plasma Discover. Hide leftover launchers.</li>
+      <li><strong>Origin flavor:</strong> standalone <code>brave-origin</code> RPM (not <code>brave-browser</code>). Binary <code>/opt/brave.com/brave-origin/brave</code>. Default browser. Leo/Rewards/Wallet/VPN/Tor compiled out by Brave.</li>
+      <li><strong>SELinux:</strong> fat <code>brave_t</code> (<code>unconfined_domain</code>) plus CIL allow-list so Chromium’s userns sandbox can start while <code>harden_userns</code> stays on. SUID stripped under <code>/opt/brave.com/brave-origin</code>.</li>
+      <li><strong>Browserless flavor:</strong> nothing put back. systemd units remask Flatpak browsers and rpm-ostree-exclude them until the allow toggle.</li>
+      <li><strong>Chromium managed policies</strong> in <code>/etc/brave-origin/policies/managed/</code>, split into reversible packs (hardening, devices, JIT-less, extensions).</li>
+      <li>Flathub <code>verified</code> / <code>full</code> / <code>off</code>. Origin default verified (stock). Browserless default off.</li>
+      <li>Flatpak permission lockdown (same cuts as their <code>ujust flatpak-permissions-lockdown</code>) default <strong>on</strong>.</li>
+      <li>Optional Bubblejail wrapper on the Origin desktop launcher (default off).</li>
+      <li>First-boot: re-enable <code>harden_userns</code>, apply defaults unless you stamped them off, promote <code>ostree-unverified-registry</code> → <code>ostree-image-signed</code>.</li>
+      <li>Unwoke wallpaper, lock image, GTK <code>#3b6cff</code>, GNOME named <code>blue</code>, KDE accent, GDM wallpaper. See <a href="brand/">Brand</a>.</li>
+      <li>This site. Daily mirror of <em>their</em> markdown under <code>/secureblue/</code> (Apache-2.0). Our FAQ/Features/Install/Brand are never overwritten.</li>
+      <li>Conduct, donate, contributing, post-install pages that are Unwoke’s, not theirs.</li>
     </ul>
-    <p>That is still not Trivalent’s Chromium patches or tight SELinux. <code>brave_t</code> stays a fat domain on purpose.</p>
+
+    <h2 id="brave-origin"><a href="#brave-origin">Brave Origin</a></h2>
+    <p>Not full <code>brave-browser</code>. Policies live in <code>/etc/brave-origin/policies/managed/</code>. Restart the browser after a toggle. <code>brave_t</code> is unconfined-like on purpose. You do not get Trivalent’s Chromium patches or tight SELinux.</p>
+    <p>Origin compiled out Leo, Rewards, Wallet, VPN, Tor, Talk, News, P3A. What we add on top is enterprise policy, not a new browser.</p>
 
     <h2 id="toggles"><a href="#toggles">Overlay ujust extras</a></h2>
-    <p>Stock secureblue commands still work. Every overlay switch below reverts. Restart Brave Origin after policy changes.</p>
+    <p>Stock secureblue commands still work. Every overlay switch reverts. Defaults apply on each boot unless you stamped them off.</p>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr><th>Command</th><th>Default</th><th>What it does</th><th>Revert</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>ujust unwoke-status</code></td>
+            <td>—</td>
+            <td>Flavor, remotes, policies, theme, stores.</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><code>ujust audit-unwoke</code></td>
+            <td>—</td>
+            <td>Fail if <code>harden_userns</code> / Origin / <code>brave_t</code> / SUID invariants break.</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><code>ujust set-flathub</code></td>
+            <td>Origin: <code>verified</code>. Browserless: <code>off</code></td>
+            <td>System Flathub remote.</td>
+            <td><code>verified</code> / <code>full</code> / <code>off</code></td>
+          </tr>
+          <tr>
+            <td><code>ujust set-flatpak-lockdown</code></td>
+            <td><code>on</code></td>
+            <td>Reject most Flatpak permissions (Wayland+DRI kept). Apps need Flatseal.</td>
+            <td><code>off</code></td>
+          </tr>
+          <tr>
+            <td><code>ujust set-brave-hardening</code></td>
+            <td><code>on</code> (Origin)</td>
+            <td>HTTPS-only, no WebRTC IP leak, no metrics/sync/autofill/passwords/translate.</td>
+            <td><code>off</code></td>
+          </tr>
+          <tr>
+            <td><code>ujust set-brave-devices</code></td>
+            <td><code>on</code> (Origin)</td>
+            <td>Block camera, mic, geo, WebUSB/Bluetooth/serial/HID, file-system API.</td>
+            <td><code>off</code></td>
+          </tr>
+          <tr>
+            <td><code>ujust set-brave-jitless</code></td>
+            <td><code>on</code> (Origin)</td>
+            <td>JavaScript JIT off. Breaks some sites.</td>
+            <td><code>off</code></td>
+          </tr>
+          <tr>
+            <td><code>ujust set-brave-extensions</code></td>
+            <td><code>block</code> (Origin)</td>
+            <td>Extension install blocklist <code>*</code>.</td>
+            <td><code>allow</code></td>
+          </tr>
+          <tr>
+            <td><code>ujust set-brave-bubblejail</code></td>
+            <td><code>off</code></td>
+            <td>Wrap Origin’s desktop launcher in Bubblejail. Experimental. GPU/audio may break.</td>
+            <td><code>off</code></td>
+          </tr>
+          <tr>
+            <td><code>ujust set-allow-browsers</code></td>
+            <td><code>off</code> (browserless)</td>
+            <td>Unmask Flatpak browsers, drop rpm exclude. Needs <code>ALLOW</code>. Seatbelt, not a prison.</td>
+            <td><code>off</code></td>
+          </tr>
+          <tr>
+            <td><code>ujust set-unwoke-theme</code></td>
+            <td>applied</td>
+            <td>Wallpaper, lock, accent again.</td>
+            <td>Use GNOME/KDE Settings</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 <pre><code>ujust unwoke-status
 ujust audit-unwoke
 ujust set-flathub verified|full|off
@@ -102,22 +201,25 @@ ujust set-brave-devices on|off
 ujust set-brave-jitless on|off
 ujust set-brave-extensions block|allow
 ujust set-brave-bubblejail on|off
+ujust set-unwoke-theme apply
 ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
 
     <h2 id="limits"><a href="#limits">Honest limits</a></h2>
     <div class="alert">
-      <p>Calling this “insecure Fedora” is false. Calling it “identical to secureblue” is also false. It is weaker than stock + Trivalent and stronger than the earlier overlay that disabled <code>harden_userns</code> globally.</p>
+      <p>Calling this “insecure Fedora” is false. Calling it “identical to secureblue” is also false. Origin is weaker than stock + Trivalent. Browserless is tighter than Origin until a browser is installed. Policies are not Vanadium patches.</p>
     </div>
     <ul>
-      <li>No Vanadium-style Chromium patches. Policies and JIT-less are not a substitute.</li>
-      <li><code>brave_t</code> is still unconfined-like. No tight SELinux jail is shipped.</li>
+      <li>No Vanadium-style Chromium compiler/seccomp patches. JIT-less and enterprise policy are not a substitute.</li>
+      <li><code>brave_t</code> is still unconfined-like. A tight jail is not shipped — Origin updates would break it, and it would still not be Trivalent.</li>
       <li>Signing key is a GitHub secret, not a hardware key.</li>
-      <li>We inherit their signed image; we do not rebuild their kernel.</li>
+      <li>We inherit their signed image; we do not rebuild their kernel or SLSA pipeline.</li>
+      <li>Toolbox, brew, AppImage, and <code>rpm-ostree --disableexcludes</code> bypass the browserless seatbelt.</li>
+      <li>GNOME Shell cannot take a custom accent hex. GTK and KDE can. See <a href="brand/">Brand</a>.</li>
     </ul>
   </main>
 
   <footer>
-    <a class="brand" href="./"><img src="assets/logo.svg?v=3" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <a class="brand" href="./"><img src="assets/logo.svg?v=4" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
     <ul id="social">
       <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
       <li><a href="https://secureblue.dev/features">secureblue features</a></li>
