@@ -73,16 +73,27 @@ Actions → **iso** → Run workflow → pick the image → download the artifac
 
 ---
 
-## How it stays current
+## How it stays current (and how the signatures work)
 
-Not a git fork. Forks rot.
+Not a git fork of `secureblue/secureblue`. Forks rot. We pull their **already-built, already-signed** images.
 
 ```yaml
 base-image: ghcr.io/secureblue/silverblue-main-hardened
 image-version: latest
 ```
 
-GitHub Actions pulls that every day, then re-applies only this overlay. Your machine updates with normal `rpm-ostree`.
+**Trust chain**
+
+1. secureblue builds and **cosign-signs** `ghcr.io/secureblue/…-hardened`.
+2. Our CI downloads [their public key](https://github.com/secureblue/secureblue/blob/live/cosign.pub), checks it still matches `keys/secureblue.pub` in this repo, **`cosign verify`s the base**, then **pins that digest** so `:latest` cannot swap mid-build.
+3. We layer Brave / drop Trivalent+Bazaar and **cosign-sign our image** with `cosign.pub` in this repo.
+4. Your PC pulls `ghcr.io/sergi270710267/unwoke-…` and, after the signed rebase, verifies **our** signature.
+
+That is as close as an overlay gets to “updating from their source” without merging their git. We do **not** rebuild their kernel or re-run their SLSA pipeline; we inherit whatever they already shipped, after checking their signature.
+
+Rebuilds: **08:00 and 20:00 UTC**, plus every recipe push.
+
+Your machine then follows this repo with normal `rpm-ostree` updates.
 
 | Change | File |
 | --- | --- |

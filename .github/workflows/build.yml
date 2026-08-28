@@ -1,8 +1,9 @@
 name: bluebuild
 on:
   schedule:
-    # After secureblue's daily images usually land.
+    # Twice a day, after secureblue's usual rebuilds.
     - cron: "00 08 * * *"
+    - cron: "00 20 * * *"
   push:
     paths-ignore:
       - "**.md"
@@ -32,6 +33,17 @@ jobs:
           - unwoke-kinoite.yml
           - unwoke-kinoite-nvidia-open.yml
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3
+
+      - name: Verify and pin official secureblue base
+        run: bash .github/scripts/verify-pin-base.sh "recipes/${{ matrix.recipe }}"
+
       - name: Build Custom Image
         uses: blue-build/github-action@v1.11
         with:
@@ -40,3 +52,5 @@ jobs:
           registry_token: ${{ github.token }}
           pr_event_number: ${{ github.event.number }}
           maximize_build_space: true
+          skip_checkout: true
+          verify_install: true
