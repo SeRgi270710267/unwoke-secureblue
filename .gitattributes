@@ -1,0 +1,10 @@
+* text=auto eol=lf
+*.sh text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.service text eol=lf
+*.preset text eol=lf
+*.override text eol=lf
+*.md text eol=lf
+*.pub text eol=lf
+*.ps1 text eol=crlf

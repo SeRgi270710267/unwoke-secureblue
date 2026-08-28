@@ -1,0 +1,37 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+# Shared overlay applied on top of every official secureblue desktop image.
+modules:
+  - type: files
+    files:
+      - source: system
+        destination: /
+
+  - type: gschema-overrides
+    include:
+      - zz2-unwoke.gschema.override
+
+  # Drop secureblue's browser and curated store (script so missing names do not fail the build).
+  - type: script
+    scripts:
+      - remove-stock.sh
+
+  # Official Brave (origin RPM), not a Flatpak and not Trivalent.
+  - type: dnf
+    repos:
+      files:
+        - https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
+      keys:
+        - https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
+    install:
+      skip-unavailable: false
+      packages:
+        - repo: brave-browser
+          packages:
+            - brave-browser
+
+  - type: script
+    scripts:
+      - apply-unwoke.sh
+
+  - type: signing

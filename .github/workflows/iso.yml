@@ -1,0 +1,55 @@
+name: iso
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: Image to wrap in a live/installer ISO
+        required: true
+        type: choice
+        default: unwoke-silverblue
+        options:
+          - unwoke-silverblue
+          - unwoke-silverblue-nvidia-open
+          - unwoke-kinoite
+          - unwoke-kinoite-nvidia-open
+jobs:
+  iso:
+    name: ISO ${{ inputs.image }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - name: Maximize build space
+        uses: ublue-os/remove-unwanted-software@v9
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Lowercase registry
+        run: echo "IMAGE_REF=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/${{ inputs.image }}:latest" >> "$GITHUB_ENV"
+
+      - name: Build ISO
+        id: build
+        uses: ublue-os/titanoboa@main
+        with:
+          image-ref: ${{ env.IMAGE_REF }}
+          iso-dest: ${{ github.workspace }}/${{ inputs.image }}.iso
+          builder-distro: fedora
+
+      - name: Checksum
+        run: |
+          set -euo pipefail
+          IMAGE_NAME="${{ inputs.image }}"
+          DATE_SUFFIX="$(date -u +%Y%m%d)"
+          mkdir -p output
+          mv "${IMAGE_NAME}.iso" "output/unwoke-${IMAGE_NAME}-${DATE_SUFFIX}.iso"
+          (cd output && sha256sum *.iso | tee SHA256SUMS)
+
+      - name: Upload ISO
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.image }}-iso
+          path: output/
+          if-no-files-found: error
+          retention-days: 14

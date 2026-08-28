@@ -1,0 +1,15 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+name: unwoke-silverblue-nvidia-open
+description: "secureblue Silverblue nvidia-open overlay — official Brave, no Bazaar, no Trivalent"
+
+base-image: ghcr.io/secureblue/silverblue-nvidia-open-hardened
+image-version: latest
+
+modules:
+  - from-file: common.yml
+  - type: dnf
+    install:
+      skip-unavailable: true
+      packages:
+        - gnome-software

@@ -1,0 +1,12 @@
+[Unit]
+Description=unwoke-secureblue first-boot (Brave userns + Flathub)
+After=local-fs.target
+Before=graphical.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash /usr/libexec/unwoke/first-boot.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
