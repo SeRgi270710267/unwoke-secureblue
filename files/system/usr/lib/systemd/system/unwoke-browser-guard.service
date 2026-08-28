@@ -1,5 +1,5 @@
 [Unit]
-Description=unwoke: remask host browsers unless allow-browsers is on
+Description=Unwoke SecureBlue: remask host browsers unless allow-browsers is on
 After=local-fs.target
 ConditionPathExists=/usr/share/unwoke/flavor
 

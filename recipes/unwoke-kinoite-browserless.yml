@@ -1,7 +1,7 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 name: unwoke-kinoite-browserless
-description: "secureblue Kinoite overlay — no browser, no Bazaar, no Trivalent"
+description: "Unwoke SecureBlue — KDE, browserless, no Bazaar, no Trivalent"
 
 base-image: ghcr.io/secureblue/kinoite-main-hardened
 image-version: latest

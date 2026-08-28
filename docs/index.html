@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>unwoke-secureblue: secureblue hardening, Brave Origin, no curator store</title>
-  <meta name="description" content="A personal overlay on official secureblue images. Brave Origin instead of Trivalent. No GUI software store. Not affiliated with secureblue.">
+  <title>Unwoke SecureBlue — hardening, Brave Origin or no browser</title>
+  <meta name="description" content="Unwoke SecureBlue: a personal overlay on official secureblue images. Brave Origin or browserless. No GUI software store. Not affiliated with secureblue.">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css">
-  <meta property="og:title" content="unwoke-secureblue">
-  <meta property="og:description" content="secureblue’s hardening. Brave Origin. No curator store.">
+  <meta property="og:title" content="Unwoke SecureBlue">
+  <meta property="og:description" content="secureblue’s hardening. Brave Origin or no browser. No curator store.">
   <meta property="og:type" content="website">
 </head>
 <body>
@@ -17,7 +17,7 @@
   <header>
     <nav id="site-menu" aria-label="Primary">
       <ul>
-        <li aria-current="page"><a href="./"><img src="assets/logo.svg" alt="">unwoke-secureblue</a></li>
+        <li aria-current="page"><a href="./"><img src="assets/logo.svg" alt="">Unwoke SecureBlue</a></li>
         <li><a href="features/">Features</a></li>
         <li><a href="images/">Images</a></li>
         <li><a href="install/">Install</a></li>
@@ -29,9 +29,9 @@
 
   <div class="hero">
     <div>
-      <h1 id="unwoke-secureblue"><a href="#unwoke-secureblue">unwoke-secureblue</a></h1>
+      <h1 id="name" class="wordmark"><a href="#name">Unwoke <span class="accent">SecureBlue</span></a></h1>
       <p>A security-focused Fedora Atomic desktop: secureblue’s hardening, Brave Origin or no browser, no curator store.</p>
-      <a class="button" href="install/">Get the overlay</a>
+      <a class="button" href="install/">Get Unwoke SecureBlue</a>
     </div>
     <figure class="device-img">
       <img class="laptop-img" width="288" height="171" src="assets/laptop.svg" alt="">
@@ -43,7 +43,7 @@
     <p class="notice"><strong>Not affiliated with secureblue.</strong> This is a personal overlay on their signed images. Stock secureblue is at <a href="https://secureblue.dev">secureblue.dev</a>.</p>
 
     <h2 id="about"><a href="#about">About</a></h2>
-    <p>unwoke-secureblue is a daily <a href="https://blue-build.org/">BlueBuild</a> overlay on official <a href="https://secureblue.dev">secureblue</a> Fedora Atomic images. Kernel hardening, SELinux, <code>hardened_malloc</code>, closed firewall, and their <code>ujust</code> commands stay. We only change two product decisions: the house browser and the house app store.</p>
+    <p><strong>Unwoke SecureBlue</strong> is a daily <a href="https://blue-build.org/">BlueBuild</a> overlay on official <a href="https://secureblue.dev">secureblue</a> Fedora Atomic images. Kernel hardening, SELinux, <code>hardened_malloc</code>, closed firewall, and their <code>ujust</code> commands stay. We only change two product decisions: the house browser and the house app store.</p>
     <p>Default images ship the standalone <strong>Brave Origin</strong> RPM (<code>brave-origin</code>), not full <code>brave-browser</code> and not <a href="https://github.com/secureblue/Trivalent">Trivalent</a>. <strong>Browserless</strong> images (<code>*-browserless</code>) strip Trivalent and install nothing in its place: no Origin, no <code>brave_t</code>, stock <code>harden_userns</code>. There is no GUI software store. Origin images add Flathub as a CLI remote; browserless does not.</p>
     <p>It is shipped as OCI bootable container images. Rebase onto one of them from secureblue or any Fedora Atomic desktop. For details, see the <a href="features/">features list</a>.</p>
 
@@ -76,7 +76,7 @@
   </main>
 
   <footer>
-    <a class="brand" href="./"><img src="assets/logo.svg" width="128" height="128" alt="">unwoke-secureblue</a>
+    <a class="brand" href="./"><img src="assets/logo.svg" width="128" height="128" alt="">Unwoke <span class="accent">SecureBlue</span></a>
     <ul id="social">
       <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
       <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue/pkgs/container/unwoke-silverblue">Packages</a></li>

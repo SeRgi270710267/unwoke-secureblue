@@ -1,7 +1,7 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 name: unwoke-kinoite-nvidia-open-browserless
-description: "secureblue Kinoite nvidia-open overlay — no browser, no Bazaar, no Trivalent"
+description: "Unwoke SecureBlue — KDE, NVIDIA open, browserless, no Bazaar, no Trivalent"
 
 base-image: ghcr.io/secureblue/kinoite-nvidia-open-hardened
 image-version: latest

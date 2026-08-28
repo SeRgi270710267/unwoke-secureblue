@@ -1,5 +1,5 @@
 [Unit]
-Description=unwoke-secureblue first-boot (signed updates, flavor setup)
+Description=Unwoke SecureBlue first-boot (signed updates, flavor setup)
 After=network-online.target
 Wants=network-online.target
 

@@ -30,7 +30,7 @@ info() { printf '  [--]  %s\n' "$*"; }
 is_browserless() { [[ "${FLAVOR}" == "browserless" ]]; }
 
 cmd_status() {
-  echo "unwoke-secureblue (${FLAVOR})"
+  echo "Unwoke SecureBlue (${FLAVOR})"
   if [[ -f /usr/share/ublue-os/image-info.json ]]; then
     info "image-info: $(tr -d '\n' < /usr/share/ublue-os/image-info.json | head -c 200)"
   fi
