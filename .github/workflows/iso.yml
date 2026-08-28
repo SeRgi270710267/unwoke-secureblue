@@ -29,11 +29,12 @@ jobs:
       - name: Lowercase registry
         run: echo "IMAGE_REF=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/${{ inputs.image }}:latest" >> "$GITHUB_ENV"
 
-      - name: Log in to GHCR
-        run: echo "${{ github.token }}" | podman login ghcr.io -u "${{ github.actor }}" --password-stdin
+      # titanoboa uses `sudo podman`; root has a separate image store
+      - name: Log in to GHCR (root)
+        run: echo "${{ github.token }}" | sudo podman login ghcr.io -u "${{ github.actor }}" --password-stdin
 
-      - name: Pull image
-        run: podman pull "${{ env.IMAGE_REF }}"
+      - name: Pull image (root)
+        run: sudo podman pull "${{ env.IMAGE_REF }}"
 
       - name: Build ISO
         id: build
