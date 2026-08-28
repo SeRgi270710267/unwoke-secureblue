@@ -1,6 +1,7 @@
 # Overlay extras. All stock secureblue ujust commands still exist.
+# Brave policy commands apply only on Origin images, not -browserless.
 
-# Show this overlay's Brave Origin / userns / store status
+# Show this overlay's flavor / userns / store status
 unwoke-status:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh status

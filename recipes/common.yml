@@ -1,47 +1,19 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
-# Shared overlay applied on top of every official secureblue desktop image.
+# Shared overlay: strip Trivalent, Bazaar, GUI stores. No browser here —
+# recipes add either Brave Origin (brave.yml) or nothing (browserless.yml).
 modules:
   - type: files
     files:
       - source: system
         destination: /
 
-  - type: gschema-overrides
-    include:
-      - zz2-unwoke.gschema.override
-
   # Drop Trivalent, Bazaar, and any GUI software store.
   - type: script
     scripts:
       - remove-stock.sh
-
-  # Brave Origin standalone RPM (not full brave-browser). Same official repo.
-  # Do not pin `repo: brave-browser` or dnf cannot pull Fedora deps.
-  - type: dnf
-    repos:
-      files:
-        - https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
-      keys:
-        - https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
-    install:
-      skip-unavailable: false
-      packages:
-        - liberation-fonts
-        - liberation-serif-fonts
-        - liberation-sans-fonts
-        - liberation-mono-fonts
-        - libappindicator-gtk3
-        - libXScrnSaver
-        - brave-origin
-
-  - type: script
-    scripts:
       - apply-unwoke.sh
-      - install-brave-selinux.sh
 
   # Appends to 60-custom.just. Stock secureblue ujust recipes stay.
   - type: justfiles
     validate: false
-
-  - type: signing

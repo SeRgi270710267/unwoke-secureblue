@@ -30,7 +30,7 @@
   <div class="hero">
     <div>
       <h1 id="unwoke-secureblue"><a href="#unwoke-secureblue">unwoke-secureblue</a></h1>
-      <p>A security-focused Fedora Atomic desktop: secureblue’s hardening, with Brave Origin and no curator store.</p>
+      <p>A security-focused Fedora Atomic desktop: secureblue’s hardening, Brave Origin or no browser, no curator store.</p>
       <a class="button" href="install/">Get the overlay</a>
     </div>
     <figure class="device-img">
@@ -44,7 +44,7 @@
 
     <h2 id="about"><a href="#about">About</a></h2>
     <p>unwoke-secureblue is a daily <a href="https://blue-build.org/">BlueBuild</a> overlay on official <a href="https://secureblue.dev">secureblue</a> Fedora Atomic images. Kernel hardening, SELinux, <code>hardened_malloc</code>, closed firewall, and their <code>ujust</code> commands stay. We only change two product decisions: the house browser and the house app store.</p>
-    <p>The browser is the standalone <strong>Brave Origin</strong> RPM (<code>brave-origin</code>), not full <code>brave-browser</code> and not <a href="https://github.com/secureblue/Trivalent">Trivalent</a>. There is no GUI software store. Flathub is a CLI remote. User namespaces stay off for unconfined apps; Brave Origin runs in its own <code>brave_t</code> domain so its Chromium sandbox can start.</p>
+    <p>Default images ship the standalone <strong>Brave Origin</strong> RPM (<code>brave-origin</code>), not full <code>brave-browser</code> and not <a href="https://github.com/secureblue/Trivalent">Trivalent</a>. <strong>Browserless</strong> images (<code>*-browserless</code>) strip Trivalent and install nothing in its place: no Origin, no <code>brave_t</code>, stock <code>harden_userns</code>. There is no GUI software store. Origin images add Flathub as a CLI remote; browserless does not.</p>
     <p>It is shipped as OCI bootable container images. Rebase onto one of them from secureblue or any Fedora Atomic desktop. For details, see the <a href="features/">features list</a>.</p>
 
     <div class="cards">
@@ -54,7 +54,7 @@
       </div>
       <div class="card">
         <h3>Brave Origin</h3>
-        <p>Standalone RPM. Compiled-out extras. Default browser. Not Trivalent, not full Brave.</p>
+        <p>Default flavor. Standalone RPM. Not Trivalent, not full Brave. Optional <code>-browserless</code> images have no browser at all.</p>
       </div>
       <div class="card">
         <h3>No curator store</h3>
@@ -64,12 +64,12 @@
 
     <h2 id="who"><a href="#who">Who this is for</a></h2>
     <p>People who already want Linux, already want secureblue’s hardening, and do not want Trivalent or a curated app catalog deciding which browsers exist.</p>
-    <p>This is <em>not</em> as locked down as stock secureblue + Trivalent. If maximum desktop confinement is your first priority, use <a href="https://secureblue.dev">stock secureblue</a>. If you want their kernel and SELinux with Brave Origin and a terminal-only install path, this overlay is for you.</p>
+    <p>Origin images are <em>not</em> as locked down as stock secureblue + Trivalent. Browserless is tighter than Origin until you install a browser; it is not a Trivalent replacement. If maximum desktop confinement <em>and</em> a web browser is your first priority, use <a href="https://secureblue.dev">stock secureblue</a>.</p>
 
     <h2 id="honest-limits"><a href="#honest-limits">Honest limits</a></h2>
     <ul>
       <li>Brave Origin is not Trivalent. No Vanadium-style Chromium patches, no tight Trivalent SELinux jail.</li>
-      <li><code>brave_t</code> is an unconfined-like domain on the userns allow-list so the sandbox can start. Other unconfined apps stay blocked.</li>
+      <li>On Origin images, <code>brave_t</code> is an unconfined-like domain on the userns allow-list. Browserless does not add that exception.</li>
       <li>The signing key is a GitHub secret, not a hardware key.</li>
       <li>We do not rebuild their kernel or re-run their SLSA pipeline. We inherit whatever they already shipped, after checking their signature.</li>
     </ul>

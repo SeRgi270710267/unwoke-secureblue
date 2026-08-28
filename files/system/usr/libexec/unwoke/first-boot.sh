@@ -1,26 +1,35 @@
 #!/usr/bin/env bash
-# First boot: keep harden_userns on, relabel Brave Origin, add Flathub (CLI),
-# then lock the update origin onto our signed image.
+# First boot: keep harden_userns on, then flavor-specific work, then lock
+# the update origin onto our signed image.
 set -euo pipefail
 
+FLAVOR="brave-origin"
+if [[ -f /usr/share/unwoke/flavor ]]; then
+  FLAVOR="$(tr -d '[:space:]' < /usr/share/unwoke/flavor)"
+fi
+
 if command -v semodule >/dev/null; then
-  # Older overlay builds disabled this. Put it back; Brave userns is brave_t.
+  # Older overlay builds disabled this. Put it back; Origin userns is brave_t.
   semodule --enable=harden_userns || true
 fi
 
-if command -v restorecon >/dev/null; then
-  restorecon -FR /opt/brave.com/brave-origin /usr/bin/brave-origin 2>/dev/null || true
-fi
+if [[ "${FLAVOR}" == "browserless" ]]; then
+  echo "unwoke: browserless flavor — no Origin policies, no Flathub remote"
+else
+  if command -v restorecon >/dev/null; then
+    restorecon -FR /opt/brave.com/brave-origin /usr/bin/brave-origin 2>/dev/null || true
+  fi
 
-if command -v flatpak >/dev/null; then
-  flatpak remote-add --if-not-exists --system flathub https://dl.flathub.org/repo/flathub.flatpakrepo || true
-fi
+  if command -v flatpak >/dev/null; then
+    flatpak remote-add --if-not-exists --system flathub https://dl.flathub.org/repo/flathub.flatpakrepo || true
+  fi
 
-if [[ ! -f /etc/unwoke/brave-hardening.off ]]; then
-  mkdir -p /etc/brave-origin/policies/managed
-  if [[ -f /usr/share/unwoke/brave-hardening.json ]]; then
-    cp -a /usr/share/unwoke/brave-hardening.json \
-      /etc/brave-origin/policies/managed/10-unwoke-hardening.json || true
+  if [[ ! -f /etc/unwoke/brave-hardening.off ]]; then
+    mkdir -p /etc/brave-origin/policies/managed
+    if [[ -f /usr/share/unwoke/brave-hardening.json ]]; then
+      cp -a /usr/share/unwoke/brave-hardening.json \
+        /etc/brave-origin/policies/managed/10-unwoke-hardening.json || true
+    fi
   fi
 fi
 

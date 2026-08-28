@@ -1,0 +1,14 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+# Browserless flavor: no Trivalent, no Brave Origin, no brave_t, no default browser.
+# harden_userns stays stock (Flatpak only). Do not add full Flathub.
+modules:
+  - type: gschema-overrides
+    include:
+      - zz2-unwoke-browserless.gschema.override
+
+  - type: script
+    scripts:
+      - apply-browserless.sh
+
+  - type: signing

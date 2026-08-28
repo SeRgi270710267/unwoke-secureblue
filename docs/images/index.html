@@ -26,7 +26,7 @@
 
   <main id="content">
     <h1>Images</h1>
-    <p>Published as <code>ghcr.io/sergi270710267/&lt;name&gt;:latest</code>. All four are public. No GitHub login to pull. Rebuilt twice a day, 08:00 and 20:00 UTC, plus every recipe push.</p>
+    <p>Published as <code>ghcr.io/sergi270710267/&lt;name&gt;:latest</code>. All are public. No GitHub login to pull. Rebuilt twice a day, 08:00 and 20:00 UTC, plus every recipe push. Names ending in <code>-browserless</code> have no image browser.</p>
 
     <p class="notice"><code>nvidia-open</code> images are for NVIDIA GPUs Turing or newer (GTX 16xx / RTX 20xx and later): proprietary driver with NVIDIA’s open kernel modules, not Nouveau. The non-NVIDIA images use Nouveau and are a poor choice for those GPUs.</p>
 
@@ -34,28 +34,56 @@
     <div class="table-container">
       <table>
         <thead>
-          <tr><th>Image</th><th>Desktop</th><th>GPU</th></tr>
+          <tr><th>Image</th><th>Desktop</th><th>GPU</th><th>Browser</th></tr>
         </thead>
         <tbody>
           <tr>
             <td><code>unwoke-silverblue</code></td>
             <td>GNOME</td>
             <td>Nouveau</td>
+            <td>Brave Origin</td>
           </tr>
           <tr>
             <td><code>unwoke-silverblue-nvidia-open</code></td>
             <td>GNOME</td>
             <td>NVIDIA open modules</td>
+            <td>Brave Origin</td>
           </tr>
           <tr>
             <td><code>unwoke-kinoite</code></td>
             <td>KDE Plasma</td>
             <td>Nouveau</td>
+            <td>Brave Origin</td>
           </tr>
           <tr>
             <td><code>unwoke-kinoite-nvidia-open</code></td>
             <td>KDE Plasma</td>
             <td>NVIDIA open modules</td>
+            <td>Brave Origin</td>
+          </tr>
+          <tr>
+            <td><code>unwoke-silverblue-browserless</code></td>
+            <td>GNOME</td>
+            <td>Nouveau</td>
+            <td>none</td>
+          </tr>
+          <tr>
+            <td><code>unwoke-silverblue-nvidia-open-browserless</code></td>
+            <td>GNOME</td>
+            <td>NVIDIA open modules</td>
+            <td>none</td>
+          </tr>
+          <tr>
+            <td><code>unwoke-kinoite-browserless</code></td>
+            <td>KDE Plasma</td>
+            <td>Nouveau</td>
+            <td>none</td>
+          </tr>
+          <tr>
+            <td><code>unwoke-kinoite-nvidia-open-browserless</code></td>
+            <td>KDE Plasma</td>
+            <td>NVIDIA open modules</td>
+            <td>none</td>
           </tr>
         </tbody>
       </table>

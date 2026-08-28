@@ -1,12 +1,12 @@
 # unwoke-secureblue
 
-**secureblue’s hardening. Brave Origin. Terminal, no curator store.**
+**secureblue’s hardening. Brave Origin *or* no browser. Terminal, no curator store.**
 
-This is a daily overlay on official [secureblue](https://secureblue.dev) images. It is **not** a fork and **not** affiliated with them. Their kernel hardening, `hardened_malloc`, SELinux, no Xwayland by default, and automatic updates stay. We only strip the two product decisions that lock the desktop: **Trivalent** and **Bazaar**. No GUI software store is added back.
+This is a daily overlay on official [secureblue](https://secureblue.dev) images. It is **not** a fork and **not** affiliated with them. Their kernel hardening, `hardened_malloc`, SELinux, no Xwayland by default, and automatic updates stay. We only strip the two product decisions that lock the desktop: **Trivalent** and **Bazaar**. No GUI software store is added back. Two flavors: **Brave Origin**, or **browserless** (no Trivalent, no Origin, no `brave_t`).
 
 Site: [sergi270710267.github.io/unwoke-secureblue](https://sergi270710267.github.io/unwoke-secureblue/)
 
-Images: `ghcr.io/sergi270710267/unwoke-silverblue` · `unwoke-kinoite` · `*-nvidia-open`
+Images: `ghcr.io/sergi270710267/unwoke-silverblue` · `unwoke-kinoite` · `*-nvidia-open` · `*-browserless`
 
 ---
 
@@ -14,13 +14,15 @@ Images: `ghcr.io/sergi270710267/unwoke-silverblue` · `unwoke-kinoite` · `*-nvi
 
 Stock secureblue is a serious hardened Fedora Atomic. It also ships a house browser and a house app store that decide what you may install.
 
-| | Stock [secureblue](https://secureblue.dev) | This overlay |
-| --- | --- | --- |
-| Browser | [Trivalent](https://github.com/secureblue/Trivalent) — their Chromium, default, SELinux-confined | **[Brave Origin](https://brave.com/origin/linux/)** standalone RPM (`brave-origin`, not full `brave-browser`). Default browser. Runs in `brave_t`. |
-| App store | [Bazaar](https://github.com/secureblue/bazaar-rpm) — curated catalog, most Flathub browsers blocklisted ([PR #1898](https://github.com/secureblue/secureblue/pull/1898)) | **None.** Flathub remote is added for `flatpak` CLI. Use `brew` / `rpm-ostree` for the rest. |
-| User namespaces | Off for unconfined; on only for Flatpak and Trivalent | **Same.** `harden_userns` stays on. `brave_t` is added to their userns allow-list so Brave’s Chromium sandbox can start. Other unconfined apps stay blocked. |
+| | Stock [secureblue](https://secureblue.dev) | Origin images | Browserless images (`*-browserless`) |
+| --- | --- | --- | --- |
+| Browser | [Trivalent](https://github.com/secureblue/Trivalent) — their Chromium, default, SELinux-confined | **[Brave Origin](https://brave.com/origin/linux/)** standalone RPM (`brave-origin`). Default browser. Runs in `brave_t`. | **None.** No Trivalent, no Origin. `harden_userns` is stock (Flatpak only). |
+| App store | [Bazaar](https://github.com/secureblue/bazaar-rpm) — curated catalog | **None.** Flathub remote is added for `flatpak` CLI. | **None.** Flathub is **not** added. Use `brew` / `rpm-ostree`. |
+| User namespaces | Off for unconfined; on for Flatpak and Trivalent | Same, plus `brave_t` on their userns allow-list so Origin’s sandbox can start | Same as stock with Trivalent gone: unconfined blocked, Flatpak allowed, no extra domain |
 
-`brave_t` is an unconfined-like domain (so Brave Origin can actually run) that is allowed to create user namespaces. It is **not** Trivalent’s tight confinement, and you do not get Trivalent’s Chromium patches. Those patches live in their browser source. Brave Origin cannot grow them.
+`brave_t` (Origin images only) is an unconfined-like domain so Brave Origin can run. It is **not** Trivalent’s tight confinement. Browserless does not load it.
+
+Browserless is safer than Origin **until you install a browser**. It is not a Trivalent replacement. The first Flatpak/rpm browser you add is usually sloppier than stock Trivalent.
 
 What we *can* do on Brave Origin is force Chromium enterprise policies and keep their `ujust` surface. Stock commands still work (`ujust set-unconfined-userns`, `ujust set-kargs-hardening`, `ujust audit-secureblue`, …). Overlay extras:
 
@@ -38,14 +40,18 @@ We did **not** gut SELinux, kernel args, `hardened_malloc`, disk encryption, or 
 
 ## Images (rebuilt every day, 08:00 UTC)
 
-| Image | Desktop | GPU |
-| --- | --- | --- |
-| `unwoke-silverblue` | GNOME | Nouveau |
-| `unwoke-silverblue-nvidia-open` | GNOME | NVIDIA open modules (GTX 16xx / RTX and newer) |
-| `unwoke-kinoite` | KDE Plasma | Nouveau |
-| `unwoke-kinoite-nvidia-open` | KDE Plasma | NVIDIA open modules (GTX 16xx / RTX and newer) |
+| Image | Desktop | GPU | Browser |
+| --- | --- | --- | --- |
+| `unwoke-silverblue` | GNOME | Nouveau | Brave Origin |
+| `unwoke-silverblue-nvidia-open` | GNOME | NVIDIA open (GTX 16xx / RTX+) | Brave Origin |
+| `unwoke-kinoite` | KDE Plasma | Nouveau | Brave Origin |
+| `unwoke-kinoite-nvidia-open` | KDE Plasma | NVIDIA open (GTX 16xx / RTX+) | Brave Origin |
+| `unwoke-silverblue-browserless` | GNOME | Nouveau | none |
+| `unwoke-silverblue-nvidia-open-browserless` | GNOME | NVIDIA open | none |
+| `unwoke-kinoite-browserless` | KDE Plasma | Nouveau | none |
+| `unwoke-kinoite-nvidia-open-browserless` | KDE Plasma | NVIDIA open | none |
 
-Published as `ghcr.io/sergi270710267/<name>:latest`. All four are **public**. No GitHub login to pull.
+Published as `ghcr.io/sergi270710267/<name>:latest`. All are **public**. No GitHub login to pull.
 
 ---
 
@@ -69,7 +75,7 @@ systemctl reboot
 
 Empty disk: flash a [secureblue ISO](https://secureblue.dev/install) first (encrypt, wheel, enroll their Secure Boot key), then the commands above.
 
-KDE → `unwoke-kinoite`. NVIDIA → add `-nvidia-open`.
+KDE → `unwoke-kinoite`. NVIDIA → add `-nvidia-open`. No browser → add `-browserless` (e.g. `unwoke-silverblue-browserless`).
 
 ```bash
 cosign verify --key cosign.pub ghcr.io/sergi270710267/unwoke-silverblue
@@ -98,7 +104,7 @@ image-version: latest
 
 1. secureblue builds and **cosign-signs** `ghcr.io/secureblue/…-hardened`.
 2. Our CI downloads [their public key](https://github.com/secureblue/secureblue/blob/live/cosign.pub), checks it still matches `keys/secureblue.pub` in this repo, **`cosign verify`s the base**, then **pins that digest** so `:latest` cannot swap mid-build.
-3. We layer **Brave Origin** (`brave-origin`), drop Trivalent+Bazaar+GUI stores+full `brave-browser`, load a Brave Origin SELinux domain, and **cosign-sign our image** with `cosign.pub` in this repo.
+3. We drop Trivalent+Bazaar+GUI stores+full `brave-browser`. Origin images then layer **Brave Origin** (`brave-origin`) and a `brave_t` SELinux domain. Browserless images skip that. Then we **cosign-sign our image** with `cosign.pub` in this repo.
 4. Your PC pulls `ghcr.io/sergi270710267/unwoke-…` and, after the signed rebase, verifies **our** signature.
 
 That is as close as an overlay gets to “updating from their source” without merging their git. We do **not** rebuild their kernel or re-run their SLSA pipeline; we inherit whatever they already shipped, after checking their signature.

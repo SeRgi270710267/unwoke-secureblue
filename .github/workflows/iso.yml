@@ -12,6 +12,10 @@ on:
           - unwoke-silverblue-nvidia-open
           - unwoke-kinoite
           - unwoke-kinoite-nvidia-open
+          - unwoke-silverblue-browserless
+          - unwoke-silverblue-nvidia-open-browserless
+          - unwoke-kinoite-browserless
+          - unwoke-kinoite-nvidia-open-browserless
 permissions: {}
 jobs:
   iso:

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Overlay toggles. Stock secureblue ujust commands still apply; this only
-# covers Brave Origin extras we added.
+# covers extras we added (flavor, Brave Origin policies).
 set -euo pipefail
 
 HARDEN_SRC="/usr/share/unwoke/brave-hardening.json"
@@ -9,6 +9,10 @@ POLICY_DIR="/etc/brave-origin/policies/managed"
 HARDEN_DST="${POLICY_DIR}/10-unwoke-hardening.json"
 JITLESS_DST="${POLICY_DIR}/20-unwoke-jitless.json"
 OPT_OUT="/etc/unwoke/brave-hardening.off"
+FLAVOR="brave-origin"
+if [[ -f /usr/share/unwoke/flavor ]]; then
+  FLAVOR="$(tr -d '[:space:]' < /usr/share/unwoke/flavor)"
+fi
 
 as_root() {
   if [[ "$(id -u)" -eq 0 ]]; then
@@ -23,8 +27,10 @@ ok() { printf '  [ok]  %s\n' "$*"; }
 bad() { printf '  [NO]  %s\n' "$*"; }
 info() { printf '  [--]  %s\n' "$*"; }
 
+is_browserless() { [[ "${FLAVOR}" == "browserless" ]]; }
+
 cmd_status() {
-  echo "unwoke-secureblue"
+  echo "unwoke-secureblue (${FLAVOR})"
   if [[ -f /usr/share/ublue-os/image-info.json ]]; then
     info "image-info: $(tr -d '\n' < /usr/share/ublue-os/image-info.json | head -c 200)"
   fi
@@ -38,33 +44,55 @@ for d in j.get("deployments") or []:
   fi
 
   if command -v semodule >/dev/null && semodule -l 2>/dev/null | grep -qx harden_userns; then
-    ok "harden_userns enabled (other apps cannot create userns)"
+    ok "harden_userns enabled (unconfined apps cannot create userns)"
   else
     bad "harden_userns missing or disabled — run: ujust set-unconfined-userns off"
   fi
-  if command -v semodule >/dev/null && semodule -l 2>/dev/null | grep -qx unwoke_brave; then
-    ok "unwoke_brave SELinux module loaded (Brave userns via brave_t)"
+
+  if is_browserless; then
+    ok "flavor: browserless (no image browser)"
+    if command -v semodule >/dev/null && semodule -l 2>/dev/null | grep -qx unwoke_brave; then
+      bad "unwoke_brave loaded — browserless must not add brave_t"
+    else
+      ok "no brave_t userns exception"
+    fi
+    if [[ -e /opt/brave.com/brave-origin/brave ]]; then
+      bad "Brave Origin ELF present on a browserless image"
+    else
+      ok "no Brave Origin"
+    fi
+    if [[ -e /opt/brave.com/brave/brave ]]; then
+      bad "full brave-browser is installed"
+    else
+      ok "no full brave-browser"
+    fi
+    info "Brave Origin policies: n/a"
   else
-    bad "unwoke_brave module not listed"
+    if command -v semodule >/dev/null && semodule -l 2>/dev/null | grep -qx unwoke_brave; then
+      ok "unwoke_brave SELinux module loaded (Brave userns via brave_t)"
+    else
+      bad "unwoke_brave module not listed"
+    fi
+    if [[ -e /opt/brave.com/brave-origin/brave ]]; then
+      ok "Brave Origin binary present (/opt/brave.com/brave-origin/brave)"
+    else
+      bad "Brave Origin ELF missing"
+    fi
+    if [[ -e /opt/brave.com/brave/brave ]]; then
+      bad "full brave-browser is also installed; this overlay wants brave-origin only"
+    fi
+    if [[ -f "${HARDEN_DST}" ]] || [[ -f /usr/etc/brave-origin/policies/managed/10-unwoke-hardening.json && ! -f "${OPT_OUT}" ]]; then
+      ok "Brave Origin managed hardening policy on (restart the browser after changes)"
+    else
+      info "Brave managed hardening policy off"
+    fi
+    if [[ -f "${JITLESS_DST}" ]]; then
+      info "Brave JIT disabled (breaks some sites)"
+    else
+      info "Brave JIT allowed (default)"
+    fi
   fi
-  if [[ -e /opt/brave.com/brave-origin/brave ]]; then
-    ok "Brave Origin binary present (/opt/brave.com/brave-origin/brave)"
-  else
-    bad "Brave Origin ELF missing"
-  fi
-  if [[ -e /opt/brave.com/brave/brave ]]; then
-    bad "full brave-browser is also installed; this overlay wants brave-origin only"
-  fi
-  if [[ -f "${HARDEN_DST}" ]] || [[ -f /usr/etc/brave-origin/policies/managed/10-unwoke-hardening.json && ! -f "${OPT_OUT}" ]]; then
-    ok "Brave Origin managed hardening policy on (restart the browser after changes)"
-  else
-    info "Brave managed hardening policy off"
-  fi
-  if [[ -f "${JITLESS_DST}" ]]; then
-    info "Brave JIT disabled (breaks some sites)"
-  else
-    info "Brave JIT allowed (default)"
-  fi
+
   if command -v rpm >/dev/null && rpm -q gnome-software >/dev/null 2>&1; then
     bad "gnome-software is installed"
   else
@@ -90,13 +118,28 @@ cmd_audit() {
   cmd_status
   fail=0
   command -v semodule >/dev/null && semodule -l 2>/dev/null | grep -qx harden_userns || fail=1
-  command -v semodule >/dev/null && semodule -l 2>/dev/null | grep -qx unwoke_brave || fail=1
-  [[ -e /opt/brave.com/brave-origin/brave ]] || fail=1
-  [[ ! -e /opt/brave.com/brave/brave ]] || fail=1
+  if is_browserless; then
+    [[ ! -e /opt/brave.com/brave-origin/brave ]] || fail=1
+    [[ ! -e /opt/brave.com/brave/brave ]] || fail=1
+    if command -v semodule >/dev/null && semodule -l 2>/dev/null | grep -qx unwoke_brave; then
+      fail=1
+    fi
+  else
+    command -v semodule >/dev/null && semodule -l 2>/dev/null | grep -qx unwoke_brave || fail=1
+    [[ -e /opt/brave.com/brave-origin/brave ]] || fail=1
+    [[ ! -e /opt/brave.com/brave/brave ]] || fail=1
+  fi
   if [[ -e /opt/brave.com ]] && find /opt/brave.com -xdev -perm -4000 -type f 2>/dev/null | grep -q .; then
     fail=1
   fi
   exit "${fail}"
+}
+
+need_origin() {
+  if is_browserless; then
+    echo "This image is browserless. Rebase to unwoke-*-silverblue / kinoite (no -browserless) for Brave Origin policies." >&2
+    exit 1
+  fi
 }
 
 policy_on() {
@@ -111,6 +154,7 @@ policy_off() {
 }
 
 cmd_hardening() {
+  need_origin
   local action="${1:-status}"
   case "${action}" in
     on|enable)
@@ -140,6 +184,7 @@ cmd_hardening() {
 }
 
 cmd_jitless() {
+  need_origin
   local action="${1:-status}"
   case "${action}" in
     on|enable)

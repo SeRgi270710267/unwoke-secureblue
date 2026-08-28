@@ -36,6 +36,10 @@ jobs:
           - unwoke-silverblue-nvidia-open.yml
           - unwoke-kinoite.yml
           - unwoke-kinoite-nvidia-open.yml
+          - unwoke-silverblue-browserless.yml
+          - unwoke-silverblue-nvidia-open-browserless.yml
+          - unwoke-kinoite-browserless.yml
+          - unwoke-kinoite-nvidia-open-browserless.yml
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0

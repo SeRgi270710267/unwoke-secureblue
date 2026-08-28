@@ -45,23 +45,26 @@
     <div class="table-container">
       <table>
         <thead>
-          <tr><th></th><th>Stock secureblue</th><th>This overlay</th></tr>
+          <tr><th></th><th>Stock secureblue</th><th>Origin images</th><th>Browserless</th></tr>
         </thead>
         <tbody>
           <tr>
             <td>Browser</td>
-            <td><a href="https://github.com/secureblue/Trivalent">Trivalent</a> — their Chromium, default, SELinux-confined</td>
-            <td><a href="https://brave.com/origin/linux/">Brave Origin</a> standalone RPM (<code>brave-origin</code>). Default browser. Runs in <code>brave_t</code>.</td>
+            <td><a href="https://github.com/secureblue/Trivalent">Trivalent</a> — confined Chromium</td>
+            <td><a href="https://brave.com/origin/linux/">Brave Origin</a> RPM. Runs in fat <code>brave_t</code>.</td>
+            <td>None. No Trivalent, no Origin.</td>
           </tr>
           <tr>
             <td>App store</td>
-            <td>Bazaar — curated catalog, most Flathub browsers blocklisted</td>
-            <td>None. Flathub remote for <code>flatpak</code> CLI. No GNOME Software, no Plasma Discover.</td>
+            <td>Bazaar — curated catalog</td>
+            <td>None. Full Flathub CLI remote.</td>
+            <td>None. Flathub is not added.</td>
           </tr>
           <tr>
             <td>User namespaces</td>
             <td>Off for unconfined; on for Flatpak and Trivalent</td>
-            <td>Same, plus <code>brave_t</code> on their userns allow-list so Brave Origin’s sandbox can start. Other unconfined apps stay blocked.</td>
+            <td>Same, plus <code>brave_t</code> on the allow-list</td>
+            <td>Stock with Trivalent gone: unconfined blocked, Flatpak only</td>
           </tr>
         </tbody>
       </table>

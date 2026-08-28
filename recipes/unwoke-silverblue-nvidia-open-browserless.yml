@@ -1,11 +1,11 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-name: unwoke-silverblue-nvidia-open
-description: "secureblue Silverblue nvidia-open overlay — Brave Origin, no Bazaar, no Trivalent"
+name: unwoke-silverblue-nvidia-open-browserless
+description: "secureblue Silverblue nvidia-open overlay — no browser, no Bazaar, no Trivalent"
 
 base-image: ghcr.io/secureblue/silverblue-nvidia-open-hardened
 image-version: latest
 
 modules:
   - from-file: common.yml
-  - from-file: brave.yml
+  - from-file: browserless.yml
