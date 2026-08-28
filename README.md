@@ -2,7 +2,7 @@
 
 **secureblue’s hardening. Brave Origin *or* no browser. Terminal, no curator store.**
 
-The product name is **Unwoke SecureBlue**. Git and GHCR stay lowercase (`unwoke-secureblue`, `unwoke-silverblue`) because registries and rebase commands are slugs, not titles.
+The product name is **Unwoke SecureBlue**. *Unwoke* is the modifier (adjective/verb). *SecureBlue* is one word, S and B capped — not “Secure Blue”, not `unwoke-secureblue` in titles. Git and GHCR stay lowercase (`unwoke-secureblue`, `unwoke-silverblue`) because registries and rebase commands are slugs.
 
 This is a daily overlay on official [secureblue](https://secureblue.dev) images. It is **not** a fork and **not** affiliated with them. Their kernel hardening, `hardened_malloc`, SELinux, no Xwayland by default, and automatic updates stay. We only strip the two product decisions that lock the desktop: **Trivalent** and **Bazaar**. No GUI software store is added back. Two flavors: **Brave Origin**, or **browserless** (no Trivalent, no Origin, no `brave_t`).
 

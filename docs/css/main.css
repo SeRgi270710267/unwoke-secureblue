@@ -70,9 +70,20 @@ footer .brand .accent {
   color: #c4e07a;
 }
 
+h1 a .sb,
+h1 a:visited .sb,
+footer .brand .sb {
+  color: inherit;
+  white-space: nowrap;
+}
+
 .wordmark {
   font-weight: 700;
   letter-spacing: -0.03em;
+}
+
+.sb {
+  white-space: nowrap;
 }
 
 code, pre {
