@@ -30,6 +30,7 @@ def rewrite(html: str, depth: int) -> str:
         "post-install",
         "features",
         "compared",
+        "ahead",
         "faq",
         "images",
         "brand",

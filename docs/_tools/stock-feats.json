@@ -1,0 +1,78 @@
+{
+  "comment": "Official secureblue GitHub requests we monitor and have shipped as reversible Unwoke defaults. Live open/closed is refreshed at Pages deploy. Do not add a FEAT we did not actually ship. Do not claim kernel/UKI/ARM work.",
+  "repo": "secureblue/secureblue",
+  "items": [
+    {
+      "issue": 1885,
+      "title": "[FEAT] Add more filesystem permissions to Harden Flatpak command",
+      "created": "2026-01-30",
+      "url": "https://github.com/secureblue/secureblue/issues/1885",
+      "shipped": "2026-08-29",
+      "commit": "2e4bf8f",
+      "tag": "Apps",
+      "we": "Extra xdg folders plus host-root cut by default. Not host-os (hardened_malloc needs host-os:ro).",
+      "revert": "ujust set-flatpak-lockdown off",
+      "where": "features/#toggles"
+    },
+    {
+      "issue": 2156,
+      "title": "[FEAT] Allow blocking flatpaks from creating record streams",
+      "created": "2026-04-23",
+      "url": "https://github.com/secureblue/secureblue/issues/2156",
+      "shipped": "2026-08-29",
+      "commit": "2e4bf8f",
+      "tag": "Apps",
+      "we": "Pulse and PipeWire capture blocked for Flatpaks, independent of folder lockdown. Native speakers stay.",
+      "revert": "ujust set-flatpak-record off",
+      "where": "tutorials/camera-mic/"
+    },
+    {
+      "issue": 2354,
+      "title": "[FEAT] add network fs toggle",
+      "created": "2026-06-15",
+      "url": "https://github.com/secureblue/secureblue/issues/2354",
+      "shipped": "2026-08-29",
+      "commit": "2e4bf8f",
+      "tag": "Network",
+      "we": "NFS and CIFS client modules blacklisted. Stock already masks the NFS server; we never unmask the server.",
+      "revert": "ujust set-network-fs on",
+      "where": "tutorials/network-fs/"
+    },
+    {
+      "issue": 2432,
+      "title": "[FEAT] Make disk encryption opt-out instead of opt-in in anaconda",
+      "created": "2026-07-14",
+      "url": "https://github.com/secureblue/secureblue/issues/2432",
+      "shipped": "2026-08-29",
+      "commit": "2e4bf8f",
+      "tag": "USB install",
+      "we": "Empty-disk Anaconda starts with LUKS on. You can still untick Encrypt.",
+      "revert": "Untick Encrypt in Anaconda",
+      "where": "install/"
+    },
+    {
+      "issue": 2508,
+      "title": "[FEAT] Report installed Flatpak browsers in `ujust audit-secureblue`",
+      "created": "2026-08-13",
+      "url": "https://github.com/secureblue/secureblue/issues/2508",
+      "shipped": "2026-08-29",
+      "commit": "2e4bf8f",
+      "tag": "Trust",
+      "we": "ujust audit-unwoke warns if a Flatpak web browser is installed, and fails on browserless.",
+      "revert": "Hygiene, not a lock. Uninstall the Flatpak if it should not be there.",
+      "where": "tutorials/check-health/"
+    },
+    {
+      "issue": 2526,
+      "title": "Set higher default memory parameter for LUKS in ISOs",
+      "created": "2026-08-21",
+      "url": "https://github.com/secureblue/secureblue/issues/2526",
+      "shipped": "2026-08-29",
+      "commit": "2e4bf8f",
+      "tag": "USB install",
+      "we": "Argon2id memory cost 2 GiB (RFC 9106) on the live ISO and /usr/etc/cryptsetup.conf.",
+      "revert": "Weaker if you format LUKS yourself without that conf",
+      "where": "install/"
+    }
+  ]
+}

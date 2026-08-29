@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>Shipped first | Unwoke SecureBlue</title>
+  <meta name="description" content="Official secureblue GitHub feature requests we monitor and already ship as reversible defaults, while they are still open on their tracker.">
+  <base href="/unwoke-secureblue/">
+  <link rel="icon" href="assets/logo.svg?v=5" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css?v=19">
+</head>
+<body class="page-ahead">
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="./"><img src="assets/logo.svg?v=5" alt="">Unwoke SecureBlue</a></li>
+        <li><a href="features/">Features</a></li>
+        <li><a href="compared/">Compared</a></li>
+        <li aria-current="page"><a href="ahead/">Shipped first</a></li>
+        <li><a href="privacy/">Privacy</a></li>
+        <li><a href="factory/">Factory</a></li>
+        <li><a href="brand/">Brand</a></li>
+        <li><a href="changelog/">Changelog</a></li>
+        <li><a href="images/">Images</a></li>
+        <li><a href="install/">Install</a></li>
+        <li><a href="start/">After login</a></li>
+        <li><a href="post-install/">Post-install</a></li>
+        <li><a href="tutorials/">Tutorials</a></li>
+        <li><a href="faq/">FAQ</a></li>
+        <li><a href="stock-issues/">Workarounds</a></li>
+        <li><a href="contributing/">Contributing</a></li>
+        <li><a href="conduct/">Conduct</a></li>
+        <li><a href="donate/">Donate</a></li>
+        <li><a href="secureblue/">Their docs</a></li>
+        <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="content">
+    <p class="eyebrow">Their GitHub</p>
+    <h1>Shipped first</h1>
+    <p class="lead">We watch official <a href="https://github.com/secureblue/secureblue/issues">secureblue issues</a>. These requests are still open on their tracker. They are <strong>defaults here</strong>, each with a revert. Same signed kernel. No fork. No weaker SELinux.</p>
+    <p class="notice"><strong>Not affiliated.</strong> Their tickets, our overlay. Open/closed status is refreshed when this site deploys. If they ship one, this page will say so.</p>
+    <div class="factory-stamp" data-factory-stamp>Checking last green…</div>
+
+    <div class="score-row">
+      <div><strong>6</strong><span>still open on stock</span></div>
+      <div><strong>6</strong><span>shipped here as defaults</span></div>
+      <div><strong>7 months</strong><span>longest wait on their tracker</span></div>
+    </div>
+
+<!-- feats-generated:start -->
+    <div class="feat-grid">
+      <article class="feat-card feat-open">
+        <p class="feat-status">Still open on stock</p>
+        <p class="tag">Apps</p>
+        <h3>[FEAT] Add more filesystem permissions to Harden Flatpak command</h3>
+        <p class="feat-race">Opened 2026-01-30. We shipped 2026-08-29. They had been asking for 7 months.</p>
+        <p>Extra xdg folders plus host-root cut by default. Not host-os (hardened_malloc needs host-os:ro).</p>
+        <p class="feat-revert"><span>Revert</span> <code>ujust set-flatpak-lockdown off</code></p>
+        <p class="feat-links"><a href="https://github.com/secureblue/secureblue/issues/1885">Stock #1885</a> · <a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/2e4bf8f"><code>2e4bf8f</code></a> · <a href="features/#toggles">On Unwoke</a></p>
+      </article>
+
+      <article class="feat-card feat-open">
+        <p class="feat-status">Still open on stock</p>
+        <p class="tag">Apps</p>
+        <h3>[FEAT] Allow blocking flatpaks from creating record streams</h3>
+        <p class="feat-race">Opened 2026-04-23. We shipped 2026-08-29. They had been asking for 4 months.</p>
+        <p>Pulse and PipeWire capture blocked for Flatpaks, independent of folder lockdown. Native speakers stay.</p>
+        <p class="feat-revert"><span>Revert</span> <code>ujust set-flatpak-record off</code></p>
+        <p class="feat-links"><a href="https://github.com/secureblue/secureblue/issues/2156">Stock #2156</a> · <a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/2e4bf8f"><code>2e4bf8f</code></a> · <a href="tutorials/camera-mic/">On Unwoke</a></p>
+      </article>
+
+      <article class="feat-card feat-open">
+        <p class="feat-status">Still open on stock</p>
+        <p class="tag">Network</p>
+        <h3>[FEAT] add network fs toggle</h3>
+        <p class="feat-race">Opened 2026-06-15. We shipped 2026-08-29. They had been asking for 2 months.</p>
+        <p>NFS and CIFS client modules blacklisted. Stock already masks the NFS server; we never unmask the server.</p>
+        <p class="feat-revert"><span>Revert</span> <code>ujust set-network-fs on</code></p>
+        <p class="feat-links"><a href="https://github.com/secureblue/secureblue/issues/2354">Stock #2354</a> · <a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/2e4bf8f"><code>2e4bf8f</code></a> · <a href="tutorials/network-fs/">On Unwoke</a></p>
+      </article>
+
+      <article class="feat-card feat-open">
+        <p class="feat-status">Still open on stock</p>
+        <p class="tag">USB install</p>
+        <h3>[FEAT] Make disk encryption opt-out instead of opt-in in anaconda</h3>
+        <p class="feat-race">Opened 2026-07-14. We shipped 2026-08-29. They had been asking for 2 months.</p>
+        <p>Empty-disk Anaconda starts with LUKS on. You can still untick Encrypt.</p>
+        <p class="feat-revert"><span>Revert</span> <code>Untick Encrypt in Anaconda</code></p>
+        <p class="feat-links"><a href="https://github.com/secureblue/secureblue/issues/2432">Stock #2432</a> · <a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/2e4bf8f"><code>2e4bf8f</code></a> · <a href="install/">On Unwoke</a></p>
+      </article>
+
+      <article class="feat-card feat-open">
+        <p class="feat-status">Still open on stock</p>
+        <p class="tag">Trust</p>
+        <h3>[FEAT] Report installed Flatpak browsers in `ujust audit-secureblue`</h3>
+        <p class="feat-race">Opened 2026-08-13. We shipped 2026-08-29. They had been asking for 16 days.</p>
+        <p>ujust audit-unwoke warns if a Flatpak web browser is installed, and fails on browserless.</p>
+        <p class="feat-revert"><span>Revert</span> Hygiene, not a lock. Uninstall the Flatpak if it should not be there.</p>
+        <p class="feat-links"><a href="https://github.com/secureblue/secureblue/issues/2508">Stock #2508</a> · <a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/2e4bf8f"><code>2e4bf8f</code></a> · <a href="tutorials/check-health/">On Unwoke</a></p>
+      </article>
+
+      <article class="feat-card feat-open">
+        <p class="feat-status">Still open on stock</p>
+        <p class="tag">USB install</p>
+        <h3>Set higher default memory parameter for LUKS in ISOs</h3>
+        <p class="feat-race">Opened 2026-08-21. We shipped 2026-08-29. They had been asking for 8 days.</p>
+        <p>Argon2id memory cost 2 GiB (RFC 9106) on the live ISO and /usr/etc/cryptsetup.conf.</p>
+        <p class="feat-revert"><span>Revert</span> Weaker if you format LUKS yourself without that conf</p>
+        <p class="feat-links"><a href="https://github.com/secureblue/secureblue/issues/2526">Stock #2526</a> · <a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/2e4bf8f"><code>2e4bf8f</code></a> · <a href="install/">On Unwoke</a></p>
+      </article>
+
+    </div>
+<!-- feats-generated:end -->
+
+    <h2 id="rules"><a href="#rules">What this list is not</a></h2>
+    <p>We do not ship every request on their tracker. UKI, ARM, server images, kernel modules, TPM, and SELinux policy need their signed base — an overlay cannot honestly claim those. We also skip FEATs that would weaken the box (Safe Browsing off, unloading all audio, default system Flatpaks). Bugs that hit this overlay belong on <a href="stock-issues/">Workarounds</a>, not here.</p>
+    <div class="start-cta">
+      <a class="button" href="compared/">Compared to stock</a>
+      <a class="button ghost" href="https://github.com/secureblue/secureblue/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement">Their open enhancements</a>
+    </div>
+  </main>
+
+  <footer>
+    <a class="brand" href="./"><img src="assets/logo.svg?v=5" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="compared/">Compared</a></li>
+      <li><a href="stock-issues/">Workarounds</a></li>
+      <li><a href="https://github.com/secureblue/secureblue/issues">Their issues</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+  <script src="js/factory-status.js?v=3" defer></script>
+</body>
+</html>
