@@ -119,6 +119,14 @@ if [[ ! -f "${work}/usr/share/applications/unwoke-setup.desktop" ]]; then
   echo "FAIL: missing Unwoke setup launcher" >&2
   fail=1
 fi
+if [[ ! -f "${work}/usr/share/applications/unwoke-lock-bluetooth.desktop" ]]; then
+  echo "FAIL: missing Bluetooth lock launcher" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/share/unwoke/help/index.html" ]]; then
+  echo "FAIL: missing offline help" >&2
+  fail=1
+fi
 if [[ ! -f "${work}/usr/lib/systemd/user/unwoke-signed-nag.timer" ]]; then
   echo "FAIL: missing signed-nag timer" >&2
   fail=1

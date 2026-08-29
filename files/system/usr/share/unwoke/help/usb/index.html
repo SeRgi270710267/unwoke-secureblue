@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>USB sticks and gadgets | Tutorials | Unwoke SecureBlue</title>
+  <meta name="description" content="USBGuard from currently attached devices. Stock helper, still the right standard.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+        <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="../index.html">Unwoke help (offline)</a></li>
+        <li><a href="https://sergi270710267.github.io/unwoke-secureblue/tutorials/">Online tutorials</a></li>
+      </ul>
+    </nav>
+
+  </header>
+  <main id="content">
+
+    <p class="eyebrow">Peripherals</p>
+    <h1>USB sticks and gadgets</h1>
+    <p><span class="chip">Keep locked</span> A stick that enumerates as a keyboard is a real attack. The standard is USBGuard: generate a policy from what is plugged in <em>now</em>, block new IDs until you allow them.</p>
+    <ol class="steps">
+      <li>
+        <h3>Plug in what you actually use</h3>
+        <p>Keyboard, mouse, YubiKey, the disk you trust. Unplug novelty gadgets and random charging dongles.</p>
+      </li>
+      <li>
+        <h3>Write the policy</h3>
+        <pre><code>ujust setup-usbguard</code></pre>
+        <p>Stock recipe (also setup option 4). It allows currently attached devices and enables the daemon. After that, a new stick may do nothing until you allow it — that is success.</p>
+      </li>
+      <li>
+        <h3>New device later</h3>
+        <p>Follow their USBGuard notes (mirrored under <a href="secureblue/post-install/">their post-install</a>). Do not disable USBGuard to “make USB work.” Do not use Ventoy on install media either — <a href="https://sergi270710267.github.io/unwoke-secureblue/install/">Install</a>.</p>
+      </li>
+    </ol>
+    <nav class="tutorial-nav" aria-label="Adjacent tutorials">
+      <a href="../install-apps/index.html">Previous: Install an app</a>
+      <a href="../index.html">All tutorials</a>
+      <a href="../bluetooth/index.html">Next: Bluetooth headphones</a>
+    </nav>
+  </main>
+  <footer>
+    <a class="brand" href="https://sergi270710267.github.io/unwoke-secureblue/"><img src="../assets/logo.svg" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="../index.html">Tutorials</a></li>
+      <li><a href="https://sergi270710267.github.io/unwoke-secureblue/post-install/">Post-install</a></li>
+      <li><a href="https://sergi270710267.github.io/unwoke-secureblue/faq/">FAQ</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

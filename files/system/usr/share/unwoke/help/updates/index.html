@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>Updates and rollback | Tutorials | Unwoke SecureBlue</title>
+  <meta name="description" content="Automatic signed updates, how to see a staged deployment, how to roll back.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+        <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="../index.html">Unwoke help (offline)</a></li>
+        <li><a href="https://sergi270710267.github.io/unwoke-secureblue/tutorials/">Online tutorials</a></li>
+      </ul>
+    </nav>
+
+  </header>
+  <main id="content">
+
+    <p class="eyebrow">Stay current</p>
+    <h1>Updates and rollback</h1>
+    <p><span class="chip">Keep locked</span> After the signed reboot, the PC follows <code>ghcr.io/sergi270710267/…</code> and checks our <code>cosign.pub</code>. Do not switch back to an unverified origin to “fix” an update.</p>
+    <ol class="steps">
+      <li>
+        <h3>Let it update</h3>
+        <p>Stock automatic updates stay. We rebuild overlay images twice a day. You do not click a store. A staged deployment needs a reboot to become the booted one.</p>
+      </li>
+      <li>
+        <h3>See what is coming</h3>
+        <pre><code>rpm-ostree status</code></pre>
+        <p>Look for a staged deployment and whether the origin is <code>ostree-image-signed</code>. If the first boot never staged signed (no network), use the command on <a href="https://sergi270710267.github.io/unwoke-secureblue/install/#signed">Install</a>.</p>
+      </li>
+      <li>
+        <h3>Reboot when it is staged</h3>
+        <p>Same as the first hour. Setup → <code>r</code>, or:</p>
+        <pre><code>systemctl reboot</code></pre>
+      </li>
+      <li>
+        <h3>Roll back a bad bake</h3>
+        <p>Atomic desktops keep the previous deployment. This is the standard recovery, not a reinstall.</p>
+        <pre><code>rpm-ostree rollback
+systemctl reboot</code></pre>
+        <p>Pin a known-good deployment if you need it to survive the next update (stock <code>ostree admin pin</code> / their docs). Do not <code>rpm-ostree rebase</code> onto random unsigned tags.</p>
+      </li>
+    </ol>
+    <div class="alert tip">
+      <p>Factory canary + inspect run on GitHub, not on your laptop. If you care that <em>this</em> disk matches what we published: <a href="../check-health/index.html">check health</a>.</p>
+    </div>
+    <nav class="tutorial-nav" aria-label="Adjacent tutorials">
+      <a href="../first-hour/index.html">Previous: The first hour</a>
+      <a href="../index.html">All tutorials</a>
+      <a href="../check-health/index.html">Next: Check the box is what we shipped</a>
+    </nav>
+  </main>
+  <footer>
+    <a class="brand" href="https://sergi270710267.github.io/unwoke-secureblue/"><img src="../assets/logo.svg" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="../index.html">Tutorials</a></li>
+      <li><a href="https://sergi270710267.github.io/unwoke-secureblue/post-install/">Post-install</a></li>
+      <li><a href="https://sergi270710267.github.io/unwoke-secureblue/faq/">FAQ</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

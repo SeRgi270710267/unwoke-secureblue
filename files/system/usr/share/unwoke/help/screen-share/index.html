@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>Screen share | Tutorials | Unwoke SecureBlue</title>
+  <meta name="description" content="Sandbox pack blocks capture. Loosen that, not JIT, hardening, or Xwayland.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+        <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="../index.html">Unwoke help (offline)</a></li>
+        <li><a href="https://sergi270710267.github.io/unwoke-secureblue/tutorials/">Online tutorials</a></li>
+      </ul>
+    </nav>
+
+  </header>
+  <main id="content">
+
+    <p class="eyebrow">Meetings</p>
+    <h1>Screen share</h1>
+    <p><span class="chip">Keep locked</span> Extra sandbox pack: audio sandbox on, screen capture off, JS optimizer off. Xwayland is still off (stock). Wayland portals are the path, not “enable X11 for Zoom.”</p>
+    <ol class="steps">
+      <li>
+        <h3>Try the portal first</h3>
+        <p>GNOME/KDE picker for a window or display. If the site or Flatpak never prompts, it is often policy, not a missing pipewire package.</p>
+      </li>
+      <li>
+        <h3>Loosen only the sandbox pack</h3>
+        <pre><code>ujust set-brave-sandbox off</code></pre>
+        <p>Restart the house browser. Do not turn isolation off (WebGL/WebGPU) or JIT on for a meeting. Do not turn Xwayland on unless their FAQ says that exact app is X-only — and treat that app as untrusted.</p>
+      </li>
+    </ol>
+    <p>Related: <a href="../camera-mic/index.html">camera and mic</a>. Bubblejail on Origin can also break PipeWire/portals — <code>ujust why</code> option for GPU/audio, or <code>ujust set-brave-bubblejail off</code>.</p>
+    <nav class="tutorial-nav" aria-label="Adjacent tutorials">
+      <a href="../camera-mic/index.html">Previous: Webcam and microphone</a>
+      <a href="../index.html">All tutorials</a>
+      <a href="../sites-broken/index.html">Next: A site looks broken</a>
+    </nav>
+  </main>
+  <footer>
+    <a class="brand" href="https://sergi270710267.github.io/unwoke-secureblue/"><img src="../assets/logo.svg" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="../index.html">Tutorials</a></li>
+      <li><a href="https://sergi270710267.github.io/unwoke-secureblue/post-install/">Post-install</a></li>
+      <li><a href="https://sergi270710267.github.io/unwoke-secureblue/faq/">FAQ</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

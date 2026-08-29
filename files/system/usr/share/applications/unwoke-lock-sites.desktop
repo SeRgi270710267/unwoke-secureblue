@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Websites broken (Unwoke lock)
+GenericName=JavaScript JIT
+Comment=Usually JIT-less or WebGL. Opens Unwoke setup — Looks broken. Does not auto-unlock.
+Exec=/usr/libexec/unwoke/first-session.sh --force --broken
+Icon=/usr/share/pixmaps/unwoke-logo.svg
+Terminal=false
+Categories=Settings;Network;
+Keywords=javascript;jit;webgl;webgpu;extensions;chrome;brave;trivalent;site;broken;
+StartupNotify=true

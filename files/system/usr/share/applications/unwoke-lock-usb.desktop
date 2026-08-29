@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=USB stick (Unwoke / USBGuard)
+GenericName=USB
+Comment=USBGuard: allow what is plugged in. Opens Unwoke setup — leftover stock steps.
+Exec=/usr/libexec/unwoke/first-session.sh --force --stock
+Icon=/usr/share/pixmaps/unwoke-logo.svg
+Terminal=false
+Categories=Settings;HardwareSettings;
+Keywords=usb;stick;flash;thumb drive;usbguard;gadget;
+StartupNotify=true

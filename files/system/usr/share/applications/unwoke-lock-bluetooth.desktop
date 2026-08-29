@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Bluetooth (Unwoke lock)
+GenericName=Headphones
+Comment=Off on purpose. Opens Unwoke setup to turn Bluetooth on. Wi-Fi is already on.
+Exec=/usr/libexec/unwoke/first-session.sh --force --hardware
+Icon=/usr/share/pixmaps/unwoke-logo.svg
+Terminal=false
+Categories=Settings;HardwareSettings;
+Keywords=bluetooth;headphones;earbuds;airpods;speaker;headset;bt;wireless;
+StartupNotify=true

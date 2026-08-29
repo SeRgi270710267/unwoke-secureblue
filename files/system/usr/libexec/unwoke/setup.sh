@@ -15,9 +15,10 @@ case "${1:-}" in
   --broken|broken|why) jump="broken" ;;
   --stock|stock) jump="stock" ;;
   --hardware|hardware) jump="hardware" ;;
+  --loosened|loosened) jump="loosened" ;;
   "" ) ;;
   *)
-    echo "usage: setup.sh [--broken|--stock|--hardware]" >&2
+    echo "usage: setup.sh [--broken|--stock|--hardware|--loosened]" >&2
     exit 2
     ;;
 esac
@@ -88,6 +89,7 @@ menu() {
   3) Something seems broken (lock, not a bug)
   4) Leftover stock steps (Secure Boot, kargs, USBGuard)
   5) Create a daily (non-wheel) user
+  6) You turned something off (put it back)
   s) Show status
   r) Reboot now
   n) Do not show this on login again
@@ -292,6 +294,60 @@ stock_loop() {
   done
 }
 
+loosened_loop() {
+  echo
+  echo "Defaults are locked. Only what you turned off is listed."
+  local n=0
+  declare -a keys=()
+  declare -a restores=()
+  declare -a slugs=()
+  add_item() {
+    local title="$1" restore="$2" slug="$3"
+    n=$((n + 1))
+    keys+=("${title}")
+    restores+=("${restore}")
+    slugs+=("${slug}")
+    echo "  ${n}) ${title}  — put it back"
+  }
+  [[ -f /etc/unwoke/allow-bluetooth ]] && add_item "Bluetooth" "bluetooth off" "bluetooth"
+  if [[ -f /etc/unwoke/flathub ]]; then
+    local st
+    st="$(tr -d '[:space:]' < /etc/unwoke/flathub)"
+    [[ "${st}" != "off" && -n "${st}" ]] && add_item "Flathub" "flathub off" "install-apps"
+  fi
+  [[ -f /etc/unwoke/allow-brew ]] && add_item "Homebrew" "brew off" "install-apps"
+  [[ -f /etc/unwoke/allow-toolbox ]] && add_item "Toolbox" "toolbox off" "toolbox"
+  [[ -f /etc/unwoke/allow-camera-mic ]] && add_item "Camera / mic" "camera-mic off" "camera-mic"
+  [[ -f /etc/unwoke/allow-extra-daemons ]] && add_item "Avahi / ModemManager" "extra-daemons off" "first-hour"
+  [[ -f /etc/unwoke/flatpak-lockdown.off ]] && add_item "Flatpak lockdown off" "lockdown on" "install-apps"
+  [[ -f /etc/unwoke/brave-jitless.off ]] && add_item "JavaScript JIT allowed" "jitless on" "sites-broken"
+  [[ -f /etc/unwoke/brave-devices.off ]] && add_item "Browser devices allowed" "devices on" "camera-mic"
+  [[ -f /etc/unwoke/brave-hardening.off ]] && add_item "Hardening pack off" "hardening on" "sites-broken"
+  [[ -f /etc/unwoke/brave-extensions.off ]] && add_item "Extensions allowed" "extensions block" "sites-broken"
+  [[ -f /etc/unwoke/brave-isolation.off ]] && add_item "WebGL allowed" "isolation on" "sites-broken"
+  [[ -f /etc/unwoke/brave-sandbox.off ]] && add_item "Screen capture pack off" "sandbox on" "screen-share"
+  [[ -f /etc/unwoke/brave-bubblejail.off ]] && add_item "Origin Bubblejail off" "bubblejail on" "sites-broken"
+  [[ -f /etc/unwoke/trivalent-network-sandbox.off ]] && add_item "Trivalent network sandbox off" "network-sandbox on" "sites-broken"
+  [[ -f /etc/unwoke/admin-split.off ]] && add_item "Admin split off" "admin-split on" "daily-user"
+  [[ -f /etc/unwoke/allow-browsers ]] && add_item "Host browsers allowed" "allow-browsers off" "install-apps"
+  if [[ "${n}" -eq 0 ]]; then
+    echo "Nothing loosened. Defaults are on."
+    return 0
+  fi
+  echo "  b) Back"
+  echo
+  read -r -p "Choice: " ans || return 0
+  case "${ans}" in
+    b|B|q|Q|"") return 0 ;;
+  esac
+  [[ "${ans}" =~ ^[0-9]+$ ]] || { echo "Unknown choice."; return 0; }
+  local i=$((ans - 1))
+  [[ "${i}" -ge 0 && "${i}" -lt "${n}" ]] || { echo "Unknown choice."; return 0; }
+  # shellcheck disable=SC2086
+  run_toggle ${restores[$i]}
+  open_tutorial "${slugs[$i]}"
+}
+
 create_daily() {
   echo
   echo "Creates a non-wheel daily user. Wheel stays for TTY/run0."
@@ -307,6 +363,7 @@ loop() {
     broken) broken_loop ;;
     stock) stock_loop ;;
     hardware) hardware_loop ;;
+    loosened) loosened_loop ;;
   esac
   while true; do
     menu
@@ -322,6 +379,7 @@ loop() {
       3) broken_loop ;;
       4) stock_loop ;;
       5) create_daily ;;
+      6) loosened_loop ;;
       s|S) run_toggle status ;;
       r|R)
         echo "Rebooting."

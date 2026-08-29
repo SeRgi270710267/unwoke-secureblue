@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>The first hour | Tutorials | Unwoke SecureBlue</title>
+  <meta name="description" content="After rebase or USB install: setup window, signed reboot, keep the locks.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+        <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="../index.html">Unwoke help (offline)</a></li>
+        <li><a href="https://sergi270710267.github.io/unwoke-secureblue/tutorials/">Online tutorials</a></li>
+      </ul>
+    </nav>
+
+  </header>
+  <main id="content">
+
+    <p class="eyebrow">Start</p>
+    <h1>The first hour</h1>
+    <p><span class="chip">Keep locked</span> The overlay is strict on purpose. A quiet desktop with no store, no Bluetooth, and no Flathub is the healthy state — not a failed install.</p>
+    <div class="alert tip">
+      <p><strong>Secure default.</strong> Option 1 in setup: keep all defaults. Do the leftover stock steps (their key, kargs, USBGuard) without turning overlay locks off.</p>
+    </div>
+    <ol class="steps">
+      <li>
+        <h3>Finish the signed reboot</h3>
+        <p>The first rebase cannot check our stamp yet. After that boot, a service stages <code>ostree-image-signed</code>. A notification and the MOTD say so. Reboot once more. Until then, updates are not locked to <code>cosign.pub</code>.</p>
+        <pre><code>rpm-ostree status
+ujust setup</code></pre>
+        <p>In Unwoke setup (app grid, or <code>ujust setup</code>): Reboot now. The nag repeats every login and every 15 minutes until you reboot. If nothing staged, wait on the network or run the signed rebase from <a href="https://sergi270710267.github.io/unwoke-secureblue/install/#signed">Install</a>.</p>
+      </li>
+      <li>
+        <h3>Use the setup window — do not hunt a wiki</h3>
+        <p>First graphical login opens <strong>Unwoke setup</strong> (also in the app grid). Same stamps as <code>ujust setup</code>. Later, <code>ujust why</code> if something looks broken. Tutorial buttons open these pages. Nothing turns off until you pick it.</p>
+      </li>
+      <li>
+        <h3>Keep defaults unless you have a named need</h3>
+        <p>Flathub, brew, Bluetooth, toolbox, camera, JIT, WebGL, Bubblejail, extra daemons: all intentional. If a site or headset is the actual task, open that tutorial — do not flip everything “to make it normal.”</p>
+      </li>
+      <li>
+        <h3>Do their leftover steps</h3>
+        <p>Setup option 4, or their page: enroll the <strong>secureblue</strong> Secure Boot key (prompt password <code>secureblue</code>), <code>ujust set-kargs-hardening</code> if you rebased instead of using their ISO, then USBGuard. Full text: <a href="secureblue/post-install/">their post-install</a>.</p>
+      </li>
+      <li>
+        <h3>Confirm the overlay</h3>
+        <pre><code>ujust unwoke-status
+ujust audit-unwoke
+ujust audit-secureblue</code></pre>
+      </li>
+    </ol>
+    <div class="alert">
+      <p>Before the greeter, an installer-style screen asks for a daily (non-wheel) username. That is <a href="../daily-user/index.html">admin-split</a>, not a hung install. The greeter does not start until you finish or skip. Empty name, Cancel, or a 5-minute skip leaves the lock pending — then Unwoke setup → Daily user is the graphical path. We do not let wheel onto the greeter first; that would be a weaker split.</p>
+    </div>
+    <nav class="tutorial-nav" aria-label="Adjacent tutorials">
+      <span></span>
+      <a href="../index.html">All tutorials</a>
+      <a href="../updates/index.html">Next: Updates and rollback</a>
+    </nav>
+  </main>
+  <footer>
+    <a class="brand" href="https://sergi270710267.github.io/unwoke-secureblue/"><img src="../assets/logo.svg" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="../index.html">Tutorials</a></li>
+      <li><a href="https://sergi270710267.github.io/unwoke-secureblue/post-install/">Post-install</a></li>
+      <li><a href="https://sergi270710267.github.io/unwoke-secureblue/faq/">FAQ</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Camera and microphone (Unwoke lock)
+GenericName=Webcam
+Comment=Capture is locked on purpose. Opens Unwoke setup. Speakers stay.
+Exec=/usr/libexec/unwoke/first-session.sh --force --hardware
+Icon=/usr/share/pixmaps/unwoke-logo.svg
+Terminal=false
+Categories=Settings;HardwareSettings;
+Keywords=camera;webcam;microphone;mic;video call;zoom;meet;teams;
+StartupNotify=true

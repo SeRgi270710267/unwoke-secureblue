@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
-# Open a Tutorials page. Overlay locks are unchanged.
+# Open a tutorial: local copy first (offline), then the site.
 set -euo pipefail
 slug="${1:-}"
+help_root="/usr/share/unwoke/help"
 base="https://sergi270710267.github.io/unwoke-secureblue/tutorials"
-if [[ -n "${slug}" ]]; then
+if [[ -n "${slug}" && -f "${help_root}/${slug}/index.html" ]]; then
+  url="file://${help_root}/${slug}/index.html"
+elif [[ -z "${slug}" && -f "${help_root}/index.html" ]]; then
+  url="file://${help_root}/index.html"
+elif [[ -n "${slug}" ]]; then
   url="${base}/${slug}/"
 else
   url="${base}/"

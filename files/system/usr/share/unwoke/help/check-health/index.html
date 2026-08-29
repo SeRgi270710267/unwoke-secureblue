@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>Check the box is what we shipped | Tutorials | Unwoke SecureBlue</title>
+  <meta name="description" content="ujust status and audits, plus cosign verify of the GHCR image.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+        <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="../index.html">Unwoke help (offline)</a></li>
+        <li><a href="https://sergi270710267.github.io/unwoke-secureblue/tutorials/">Online tutorials</a></li>
+      </ul>
+    </nav>
+
+  </header>
+  <main id="content">
+
+    <p class="eyebrow">Trust</p>
+    <h1>Check the box is what we shipped</h1>
+    <p><span class="chip">Keep locked</span> Five minutes, terminal only. No extra scanner app, no store, no new key.</p>
+    <ol class="steps">
+      <li>
+        <h3>Overlay dashboard</h3>
+        <pre><code>ujust unwoke-status
+ujust audit-unwoke</code></pre>
+        <p>Status is flavor, remotes, policies, store absence. Audit is invariants: <code>harden_userns</code>, house browser for that flavor, no leftover Trivalent on Origin/browserless, no SUID under Origin.</p>
+      </li>
+      <li>
+        <h3>Stock audit</h3>
+        <pre><code>ujust audit-secureblue</code></pre>
+        <p>Theirs. Kernel args, USBGuard, malloc, and the rest of the inherited story. Overlay audit does not replace it.</p>
+      </li>
+      <li>
+        <h3>Signature on the image you pull</h3>
+        <p>On another machine (or this one if <code>cosign</code> is available), with our repo’s <code>cosign.pub</code>:</p>
+        <pre><code>cosign verify --key cosign.pub ghcr.io/sergi270710267/unwoke-silverblue-trivalent</code></pre>
+        <p>Use the image name you actually rebased to (recommended default is <code>*-trivalent</code>). First rebase is unverified by design; after the signed reboot, the origin must stay signed.</p>
+      </li>
+    </ol>
+    <div class="alert">
+      <p>A new <code>keys/secureblue.pub</code> or a canary hit is not auto-merged. That is our problem on GitHub, not something you “fix” by pulling <code>:latest</code> harder.</p>
+    </div>
+    <nav class="tutorial-nav" aria-label="Adjacent tutorials">
+      <a href="../updates/index.html">Previous: Updates and rollback</a>
+      <a href="../index.html">All tutorials</a>
+      <a href="../daily-user/index.html">Next: Daily user vs wheel</a>
+    </nav>
+  </main>
+  <footer>
+    <a class="brand" href="https://sergi270710267.github.io/unwoke-secureblue/"><img src="../assets/logo.svg" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="../index.html">Tutorials</a></li>
+      <li><a href="https://sergi270710267.github.io/unwoke-secureblue/post-install/">Post-install</a></li>
+      <li><a href="https://sergi270710267.github.io/unwoke-secureblue/faq/">FAQ</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

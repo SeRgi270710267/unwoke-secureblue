@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>VPN without DNS leaks | Tutorials | Unwoke SecureBlue</title>
+  <meta name="description" content="Use the VPN’s resolver. Skip Trivalent DoH and custom Unbound when tunneling.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+        <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="../index.html">Unwoke help (offline)</a></li>
+        <li><a href="https://sergi270710267.github.io/unwoke-secureblue/tutorials/">Online tutorials</a></li>
+      </ul>
+    </nav>
+
+  </header>
+  <main id="content">
+
+    <p class="eyebrow">Network</p>
+    <h1>VPN without DNS leaks</h1>
+    <p><span class="chip">Keep locked</span> Firewall stays closed. The leak people hit is DNS: the tunnel is up, queries still go to a global resolver or browser DoH. Stock’s rule is the standard — follow it.</p>
+    <ol class="steps">
+      <li>
+        <h3>Install the VPN as a Flatpak if it exists</h3>
+        <p><a href="../install-apps/index.html">Verified Flathub</a> first. Grant only the network/device it needs in Flatseal. WireGuard in NetworkManager is fine. Random Electron VPN + brew is not the standard.</p>
+      </li>
+      <li>
+        <h3>Keep system DNS on the VPN</h3>
+        <p>Their selector:</p>
+        <pre><code>ujust dns-selector</code></pre>
+        <p>If you use a VPN: choose the <strong>system default</strong> resolver, not a custom Unbound/DoT path that bypasses the tunnel. They also document <code>ujust dns-selector resolver resolved</code> so systemd-resolved can take the VPN’s DNS. Especially skip setting Trivalent DNS-over-HTTPS in that case.</p>
+      </li>
+      <li>
+        <h3>Do not open the firewall “for the VPN”</h3>
+        <p>A well-packaged VPN uses the existing stack. If a vendor asks you to disable firewalld or SELinux, use another vendor.</p>
+      </li>
+    </ol>
+    <p>Canonical write-up: <a href="secureblue/post-install/">their post-install</a> (DNS + VPN warning). Overlay does not replace that.</p>
+    <nav class="tutorial-nav" aria-label="Adjacent tutorials">
+      <a href="../sites-broken/index.html">Previous: A site looks broken</a>
+      <a href="../index.html">All tutorials</a>
+      <a href="../toolbox/index.html">Next: toolbox / distrobox</a>
+    </nav>
+  </main>
+  <footer>
+    <a class="brand" href="https://sergi270710267.github.io/unwoke-secureblue/"><img src="../assets/logo.svg" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="../index.html">Tutorials</a></li>
+      <li><a href="https://sergi270710267.github.io/unwoke-secureblue/post-install/">Post-install</a></li>
+      <li><a href="https://sergi270710267.github.io/unwoke-secureblue/faq/">FAQ</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

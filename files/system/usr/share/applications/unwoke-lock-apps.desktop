@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Install apps (Unwoke)
+GenericName=Flathub
+Comment=No GUI store. Opens Unwoke setup to turn on verified Flathub.
+Exec=/usr/libexec/unwoke/first-session.sh --force --hardware
+Icon=/usr/share/pixmaps/unwoke-logo.svg
+Terminal=false
+Categories=Settings;PackageManager;
+Keywords=flathub;flatpak;store;software;bazaar;discover;gnome software;app;install;
+StartupNotify=true

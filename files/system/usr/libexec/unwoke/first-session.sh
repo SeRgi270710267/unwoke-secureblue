@@ -17,6 +17,7 @@ for arg in "$@"; do
     --stock) jump+=(--stock) ;;
     --hardware) jump+=(--hardware) ;;
     --daily) jump+=(--daily) ;;
+    --loosened) jump+=(--loosened) ;;
   esac
 done
 

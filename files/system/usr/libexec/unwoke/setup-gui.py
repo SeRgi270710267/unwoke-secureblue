@@ -18,7 +18,6 @@ except (ImportError, ValueError):
 
 TOGGLES = "/usr/libexec/unwoke/toggles.sh"
 ADMIN = "/usr/libexec/unwoke/admin-split.sh"
-SITE = "https://sergi270710267.github.io/unwoke-secureblue/tutorials"
 STAGED = Path("/etc/unwoke/signed-staged")
 FLAVOR_FILE = Path("/usr/share/unwoke/flavor")
 OFF = Path("/etc/unwoke/admin-split.off")
@@ -50,8 +49,44 @@ def run_toggle(*args: str) -> str:
 
 
 def open_tutorial(slug: str) -> None:
-    url = f"{SITE}/{slug}/" if slug else f"{SITE}/"
-    subprocess.Popen(["xdg-open", url], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.Popen(
+        ["/usr/libexec/unwoke/open-tutorial.sh", slug or ""],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+
+
+def _exists(path: str) -> bool:
+    return Path(path).exists()
+
+
+def _flathub_on() -> bool:
+    p = Path("/etc/unwoke/flathub")
+    if not p.exists():
+        return False
+    return p.read_text(encoding="utf-8").strip() not in ("", "off")
+
+
+# Default is locked. These stamps mean the user loosened something.
+LOOSENED = (
+    ("Bluetooth", lambda: _exists("/etc/unwoke/allow-bluetooth"), ("bluetooth", "off"), "bluetooth"),
+    ("Flathub", _flathub_on, ("flathub", "off"), "install-apps"),
+    ("Homebrew", lambda: _exists("/etc/unwoke/allow-brew"), ("brew", "off"), "install-apps"),
+    ("Toolbox / distrobox", lambda: _exists("/etc/unwoke/allow-toolbox"), ("toolbox", "off"), "toolbox"),
+    ("Camera / microphone", lambda: _exists("/etc/unwoke/allow-camera-mic"), ("camera-mic", "off"), "camera-mic"),
+    ("Avahi / ModemManager", lambda: _exists("/etc/unwoke/allow-extra-daemons"), ("extra-daemons", "off"), "first-hour"),
+    ("Flatpak lockdown off", lambda: _exists("/etc/unwoke/flatpak-lockdown.off"), ("lockdown", "on"), "install-apps"),
+    ("JavaScript JIT allowed", lambda: _exists("/etc/unwoke/brave-jitless.off"), ("jitless", "on"), "sites-broken"),
+    ("Browser devices allowed", lambda: _exists("/etc/unwoke/brave-devices.off"), ("devices", "on"), "camera-mic"),
+    ("Password / autofill pack off", lambda: _exists("/etc/unwoke/brave-hardening.off"), ("hardening", "on"), "sites-broken"),
+    ("Extensions allowed", lambda: _exists("/etc/unwoke/brave-extensions.off"), ("extensions", "block"), "sites-broken"),
+    ("WebGL / WebGPU allowed", lambda: _exists("/etc/unwoke/brave-isolation.off"), ("isolation", "on"), "sites-broken"),
+    ("Screen capture pack off", lambda: _exists("/etc/unwoke/brave-sandbox.off"), ("sandbox", "on"), "screen-share"),
+    ("Origin Bubblejail off", lambda: _exists("/etc/unwoke/brave-bubblejail.off"), ("bubblejail", "on"), "sites-broken"),
+    ("Trivalent network sandbox off", lambda: _exists("/etc/unwoke/trivalent-network-sandbox.off"), ("network-sandbox", "on"), "sites-broken"),
+    ("Admin split off (wheel on greeter)", lambda: _exists("/etc/unwoke/admin-split.off"), ("admin-split", "on"), "daily-user"),
+    ("Host browsers allowed", lambda: _exists("/etc/unwoke/allow-browsers"), ("allow-browsers", "off"), "install-apps"),
+)
 
 
 def pending_daily() -> bool:
@@ -90,7 +125,7 @@ def confirm(parent: Gtk.Window, title: str, body: str) -> bool:
     return resp == Gtk.ResponseType.OK
 
 
-def row(title: str, blurb: str, on_do, tutorial: str | None) -> Gtk.Box:
+def row(title: str, blurb: str, on_do, tutorial: str | None, button: str = "Do this") -> Gtk.Box:
     box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
     box.set_margin_top(8)
     box.set_margin_bottom(8)
@@ -99,7 +134,7 @@ def row(title: str, blurb: str, on_do, tutorial: str | None) -> Gtk.Box:
     sub = Gtk.Label(label=blurb, xalign=0, wrap=True)
     sub.set_max_width_chars(56)
     btns = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
-    do = Gtk.Button(label="Do this")
+    do = Gtk.Button(label=button)
     do.connect("clicked", lambda *_: on_do())
     btns.pack_start(do, False, False, 0)
     if tutorial:
@@ -163,8 +198,11 @@ class SetupWindow(Gtk.Window):
         nb.append_page(self._scroll(self._page_broken()), Gtk.Label(label="Looks broken"))
         nb.append_page(self._scroll(self._page_stock()), Gtk.Label(label="Stock leftover"))
         nb.append_page(self._scroll(self._page_daily()), Gtk.Label(label="Daily user"))
+        self.loosened_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        self._fill_loosened()
+        nb.append_page(self._scroll(self.loosened_box), Gtk.Label(label="You loosened"))
 
-        jump_map = {"broken": 2, "stock": 3, "hardware": 1, "daily": 4}
+        jump_map = {"broken": 2, "stock": 3, "hardware": 1, "daily": 4, "loosened": 5}
         if jump in jump_map:
             nb.set_current_page(jump_map[jump])
 
@@ -205,7 +243,67 @@ class SetupWindow(Gtk.Window):
         tut = Gtk.Button(label="Open first-hour tutorial")
         tut.connect("clicked", lambda *_: open_tutorial("first-hour"))
         box.pack_start(tut, False, False, 0)
+        loose = Gtk.Button(label="You turned something off")
+        loose.connect("clicked", lambda *_: self.nb.set_current_page(5))
+        box.pack_start(loose, False, False, 0)
         return box
+
+    def _fill_loosened(self) -> None:
+        for child in list(self.loosened_box.get_children()):
+            self.loosened_box.remove(child)
+        self.loosened_box.set_margin_start(16)
+        self.loosened_box.set_margin_end(16)
+        self.loosened_box.set_margin_top(12)
+        self.loosened_box.pack_start(
+            Gtk.Label(
+                label="Defaults are locked. This list is only what you turned off. Put it back does not auto-unlock anything else.",
+                xalign=0,
+                wrap=True,
+            ),
+            False,
+            False,
+            8,
+        )
+        found = 0
+        for title, detect, restore, slug in LOOSENED:
+            try:
+                on = bool(detect())
+            except OSError:
+                on = False
+            if not on:
+                continue
+            found += 1
+            self.loosened_box.pack_start(
+                row(
+                    title,
+                    "This lock is off. Put it back to the secure default.",
+                    lambda a=restore: self.do_restore(*a),
+                    slug,
+                    "Put it back",
+                ),
+                False,
+                False,
+                0,
+            )
+        if found == 0:
+            self.loosened_box.pack_start(
+                Gtk.Label(
+                    label="Nothing loosened. Defaults are on. That is the healthy state.",
+                    xalign=0,
+                    wrap=True,
+                ),
+                False,
+                False,
+                8,
+            )
+        self.loosened_box.show_all()
+
+    def do_restore(self, *args: str) -> None:
+        if not confirm(self, "Put this lock back?", " ".join(args) + "\nThis restores the secure default."):
+            return
+        body = run_toggle(*args)
+        info(self, "Restored", body)
+        self._fill_loosened()
 
     def _page_on(self) -> Gtk.Box:
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
@@ -374,6 +472,7 @@ class SetupWindow(Gtk.Window):
         else:
             body = run_toggle(*args)
         info(self, "Toggle", body)
+        self._fill_loosened()
 
     def _allow_browsers(self) -> bool:
         dlg = Gtk.Dialog(title="Type ALLOW", transient_for=self, flags=0)
@@ -471,6 +570,7 @@ def main() -> int:
     p.add_argument("--stock", action="store_true")
     p.add_argument("--hardware", action="store_true")
     p.add_argument("--daily", action="store_true")
+    p.add_argument("--loosened", action="store_true")
     args = p.parse_args()
     jump = ""
     if args.broken:
@@ -481,6 +581,8 @@ def main() -> int:
         jump = "hardware"
     elif args.daily:
         jump = "daily"
+    elif args.loosened:
+        jump = "loosened"
     if not os.environ.get("DISPLAY") and not os.environ.get("WAYLAND_DISPLAY"):
         return 2
     win = SetupWindow(jump)

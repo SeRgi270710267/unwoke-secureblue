@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>Daily user vs wheel | Tutorials | Unwoke SecureBlue</title>
+  <meta name="description" content="Graphical session as non-admin; run0 for privilege. The usual secure split.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+        <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="../index.html">Unwoke help (offline)</a></li>
+        <li><a href="https://sergi270710267.github.io/unwoke-secureblue/tutorials/">Online tutorials</a></li>
+      </ul>
+    </nav>
+
+  </header>
+  <main id="content">
+
+    <p class="eyebrow">Accounts</p>
+    <h1>Daily user vs wheel</h1>
+    <p><span class="chip">Keep locked</span> Wheel on the greeter is a larger target (password sniffing, prompt spoofing). The standard is a daily non-wheel user on GNOME/KDE, and wheel only for TTY / <code>run0</code>.</p>
+    <ol class="steps">
+      <li>
+        <h3>Prefer the first-boot screen</h3>
+        <p>Before GDM/SDDM, an installer-style dialog asks for a daily username and password. The greeter does not start until you finish or skip. That is the same split as before — we did not let wheel onto the GUI first. Empty name, Cancel, or a 5-minute timeout skips; the lock stays pending. Then: Unwoke setup → Daily user.</p>
+      </li>
+      <li>
+        <h3>Or add one later</h3>
+        <pre><code>ujust set-admin-split add NAME</code></pre>
+        <p>Same outcome: a non-wheel account, greeter locked for wheel. Stock also has <code>ujust create-admin</code> (their helper). Do not create a second wheel user and call it “daily.”</p>
+      </li>
+      <li>
+        <h3>Day to day</h3>
+        <p>Log into the daily user. When a unit file or <code>ujust</code> needs root, authenticate as wheel via <code>run0</code> (stock replaced sudo/su/pkexec). That prompt is the feature.</p>
+      </li>
+    </ol>
+    <div class="alert">
+      <p><strong>If you must:</strong> greeter refuses wheel and you have no daily user — <code>ujust set-admin-split off</code>. You accepted a weaker split. TTY always worked.</p>
+    </div>
+    <nav class="tutorial-nav" aria-label="Adjacent tutorials">
+      <a href="../check-health/index.html">Previous: Check the box is what we shipped</a>
+      <a href="../index.html">All tutorials</a>
+      <a href="../install-apps/index.html">Next: Install an app</a>
+    </nav>
+  </main>
+  <footer>
+    <a class="brand" href="https://sergi270710267.github.io/unwoke-secureblue/"><img src="../assets/logo.svg" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="../index.html">Tutorials</a></li>
+      <li><a href="https://sergi270710267.github.io/unwoke-secureblue/post-install/">Post-install</a></li>
+      <li><a href="https://sergi270710267.github.io/unwoke-secureblue/faq/">FAQ</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

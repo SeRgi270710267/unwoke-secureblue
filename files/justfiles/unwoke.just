@@ -16,6 +16,11 @@ why:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/first-session.sh --force --broken
 
+# Locks you turned off, with put-back. Does not auto-unlock.
+loosened:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/first-session.sh --force --loosened
+
 # Show this overlay's flavor / remotes / policy / store status
 unwoke-status:
     #!/usr/bin/bash
