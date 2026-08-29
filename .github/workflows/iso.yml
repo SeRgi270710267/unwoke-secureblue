@@ -165,11 +165,30 @@ jobs:
             HOOK_pre_initramfs="${HOOK_PRE}" \
             TITANOBOA_BUILDER_DISTRO=fedora \
             script -q -e -c "just build '${IMAGE_REF}' 1 none squashfs NONE '${IMAGE_REF}' 1" /dev/null
-          sudo chown "$(id -u):$(id -g)" output.iso
+          echo "ISO files after just build:"
+          sudo find "${GITHUB_WORKSPACE}" -name '*.iso' -printf '%s %p\n' | sort -n || true
+          SRC=""
+          if [[ -f output.iso ]]; then
+            SRC="output.iso"
+          elif [[ -f "${GITHUB_WORKSPACE}/titanoboa/output.iso" ]]; then
+            SRC="${GITHUB_WORKSPACE}/titanoboa/output.iso"
+          else
+            SRC="$(sudo find "${GITHUB_WORKSPACE}" -name '*.iso' -size +100M -printf '%p\n' | tail -n 1 || true)"
+          fi
+          [[ -n "${SRC}" && -f "${SRC}" ]] || {
+            echo "FAIL: no ISO after titanoboa" >&2
+            exit 1
+          }
+          sudo chown "$(id -u):$(id -g)" "${SRC}"
           mkdir -p "$(dirname "${DEST}")"
-          mv -f output.iso "${DEST}"
+          mv -f "${SRC}" "${DEST}"
           ls -lh "${DEST}"
-          echo "ISO_PATH=${DEST}" >> "${GITHUB_ENV}"
+          bytes="$(stat -c '%s' "${DEST}")"
+          echo "ISO bytes=${bytes}"
+          [[ "${bytes}" -gt 104857600 ]] || {
+            echo "FAIL: ISO too small (${bytes} bytes)" >&2
+            exit 1
+          }
 
       - name: Checksum and sign sums
         env:
@@ -178,10 +197,12 @@ jobs:
           IMAGE_NAME: ${{ matrix.image }}
         run: |
           set -euo pipefail
-          ISO_SRC="${ISO_PATH:-${GITHUB_WORKSPACE}/${IMAGE_NAME}.iso}"
-          [[ -s "${ISO_SRC}" ]] || {
-            echo "ISO missing or empty: ${ISO_SRC}" >&2
-            ls -lh "${GITHUB_WORKSPACE}"/*.iso titanoboa/*.iso 2>/dev/null || true
+          ISO_SRC="${GITHUB_WORKSPACE}/${IMAGE_NAME}.iso"
+          echo "Looking for ${ISO_SRC}"
+          ls -lh "${ISO_SRC}" || true
+          find "${GITHUB_WORKSPACE}" -name '*.iso' -printf '%s %p\n' | sort -n || true
+          [[ -f "${ISO_SRC}" ]] || {
+            echo "FAIL: ISO not at ${ISO_SRC}" >&2
             exit 1
           }
           DATE_SUFFIX="$(date -u +%Y%m%d)"
@@ -189,8 +210,16 @@ jobs:
           ISO="output/${IMAGE_NAME}-${DATE_SUFFIX}.iso"
           mv -f "${ISO_SRC}" "${ISO}"
           (cd output && sha256sum "$(basename "${ISO}")" | tee SHA256SUMS)
-          COSIGN_OCI_EXPERIMENTAL=0 cosign sign-blob --yes --key env://COSIGN_PRIVATE_KEY \
+          KEY="${RUNNER_TEMP}/unwoke-cosign.key"
+          umask 077
+          printf '%s\n' "${COSIGN_PRIVATE_KEY}" > "${KEY}"
+          [[ -s "${KEY}" ]] || {
+            echo "FAIL: SIGNING_SECRET empty" >&2
+            exit 1
+          }
+          COSIGN_OCI_EXPERIMENTAL=0 cosign sign-blob --yes --key "${KEY}" \
             output/SHA256SUMS --output-signature output/SHA256SUMS.sig
+          shred -u "${KEY}" || rm -f "${KEY}"
           echo "ISO_FILE=${ISO}" >> "${GITHUB_ENV}"
 
       - name: Install oras
@@ -214,8 +243,12 @@ jobs:
           if cosign verify --help 2>&1 | grep -q -- '--new-bundle-format'; then
             extra+=(--new-bundle-format=false)
           fi
-          COSIGN_OCI_EXPERIMENTAL=0 cosign sign --yes --key env://COSIGN_PRIVATE_KEY \
+          KEY="${RUNNER_TEMP}/unwoke-cosign.key"
+          umask 077
+          printf '%s\n' "${COSIGN_PRIVATE_KEY}" > "${KEY}"
+          COSIGN_OCI_EXPERIMENTAL=0 cosign sign --yes --key "${KEY}" \
             "${ISO_PKG}:latest"
+          shred -u "${KEY}" || rm -f "${KEY}"
 
       - name: Upload ISO artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
