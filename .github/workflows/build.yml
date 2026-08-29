@@ -57,7 +57,7 @@ jobs:
     if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
@@ -67,14 +67,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
-          persist-credentials: false
+          persist-credentials: true
 
-      - name: Compare stock scripts to snapshots
-        id: watch
+      - name: Auto-refresh snapshots on main
+        if: github.event_name != 'pull_request'
+        run: bash .github/scripts/auto-refresh-snapshots.sh
+
+      - name: Compare stock scripts (pull request)
+        if: github.event_name == 'pull_request'
         run: bash .github/scripts/check-upstream-watch.sh
 
       - name: Upload drifted stock files
-        if: failure() && steps.watch.outcome == 'failure'
+        if: failure()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: stock-script-drift
