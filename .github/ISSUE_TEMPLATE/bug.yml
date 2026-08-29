@@ -1,0 +1,44 @@
+name: Overlay bug
+description: Something Unwoke added or changed is wrong. Not a stock kernel bug.
+labels: ["overlay"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Stock kernel / Trivalent-the-browser / USBGuard-in-stock → [secureblue/secureblue](https://github.com/secureblue/secureblue/issues).
+        This form is the overlay only. Maintainer decides if it is in scope.
+  - type: input
+    id: image
+    attributes:
+      label: Image
+      placeholder: ghcr.io/sergi270710267/unwoke-silverblue-trivalent:latest
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What should happen
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Repro
+      placeholder: ujust unwoke-status / ujust audit-unwoke …
+    validations:
+      required: true
+  - type: checkboxes
+    id: not-stock
+    attributes:
+      label: This is the overlay
+      options:
+        - label: I am not reporting a stock-only bug here.
+          required: true
+        - label: I did not paste secrets or private keys.
+          required: true

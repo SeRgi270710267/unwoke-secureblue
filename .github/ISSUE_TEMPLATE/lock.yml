@@ -1,0 +1,22 @@
+name: Overlay lock / privacy idea
+description: A default or ujust you want. Not a vote. Not a demand to weaken Safe Browsing.
+labels: ["lock"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Security-first. If it weakens a lock, it must be **opt-in and warned**. Maintainer has the last word.
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      placeholder: What default, what revert ujust, why this is not a security cut.
+    validations:
+      required: true
+  - type: checkboxes
+    id: cost
+    attributes:
+      label: Cost
+      options:
+        - label: This does not require setenforce 0, gpgcheck=0, unsigned rebase, firewall off, Safe Browsing off, or killing fwupd.
+          required: true

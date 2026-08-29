@@ -24,6 +24,9 @@ on:
       - ".github/scripts/write-factory-status.py"
       - ".github/scripts/mirror-secureblue-docs.py"
       - ".github/scripts/mirror-template.html"
+      - ".github/workflows/pr-gate.yml"
+      - ".github/CODEOWNERS"
+      - ".github/ISSUE_TEMPLATE/**"
   pull_request:
   workflow_dispatch:
 permissions: {}

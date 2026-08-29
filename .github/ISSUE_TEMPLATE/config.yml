@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Stock secureblue bugs
+    url: https://github.com/secureblue/secureblue/issues
+    about: Kernel, Trivalent-the-browser, USBGuard in stock — not this overlay.
+  - name: Overlay contributing rules
+    url: https://sergi270710267.github.io/unwoke-secureblue/contributing/
+    about: How PRs are accepted. Maintainer has the last word.
