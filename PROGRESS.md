@@ -1,15 +1,16 @@
 # Unwoke SecureBlue — development handoff
 
-**Read this first** if continuing in a new chat. Working tree was clean and pushed.
+**Read this first** if continuing in a new chat (including another computer). Working tree was clean and pushed when this file was last committed.
 
-- Branch: `main`, synced to `origin/main` when this file was last committed.
-- Local clone: `C:\Users\UsEr1002\.grok\bin\unwoke-secureblue`
+- Branch: `main`, synced to `origin/main`.
 - GitHub: `SeRgi270710267/unwoke-secureblue`
+- Clone anywhere: `git clone https://github.com/SeRgi270710267/unwoke-secureblue.git`
 - Site: https://sergi270710267.github.io/unwoke-secureblue/
 - Brand: https://sergi270710267.github.io/unwoke-secureblue/brand/
 - Changelog: https://sergi270710267.github.io/unwoke-secureblue/changelog/ (generated at Pages deploy; gitignored)
+- Last overlay images that passed canary + inspect: commit `505a88b` / Actions [33244950389](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33244950389) (all 12 green). Later `af7de25` is ISO workflow + docs only (`build.yml` paths-ignore `iso.yml` and `docs/**`).
 
-**How to resume:** open the clone, say you are continuing Unwoke SecureBlue from `PROGRESS.md`, and do not rebuild images for docs-only work.
+**How to resume:** clone the repo (or open it), say you are continuing Unwoke SecureBlue from `PROGRESS.md`. Do not rebuild images for docs-only work. Do not docker-pull Atomic images (layer depth). Do not auto-accept a new `cosign.pub` or auto-exec live `/usr/libexec/secureblue/*.py`.
 
 **Not affiliated with secureblue.** Overlay on their signed Fedora Atomic images. Not a fork.
 
@@ -27,8 +28,10 @@ Display: **Unwoke SecureBlue** (`Unwoke` = modifier; `SecureBlue` = one word, S+
 - Base canary: `.github/scripts/scan-base-canary.sh` runs on the four official bases *before* the 12-image matrix. `cosign verify` + `crane export` (never docker/podman pull — Atomic images exceed Docker layer depth; never run the image) for needles in `.github/scripts/base-canary-needles.txt`. Hit = no overlay. Does not catch a generic backdoor or obfuscation. Stock still cannot push to this GitHub/GHCR; user machines follow Unwoke GHCR after signed rebase. Canary matrix `fail-fast: false` so all four bases still report if one is red.
 - Automatic snapshot refresh: `.github/scripts/auto-refresh-snapshots.sh` on main. If stock `harden_flatpak.py` / `flatpak.just` change and pass a targeting scan, CI commits snapshots and regenerates `flatpak-lockdown-lists.sh`. Overlay is not blocked. Runtime still uses Unwoke scripts. Poison (file names Unwoke) is not auto-copied.
 - Stock `ujust harden-flatpak` hits `/usr/libexec/secureblue/harden_flatpak.py`, which is an Unwoke trampoline (`os.execv` to `/usr/libexec/unwoke/harden-flatpak.sh`). Compose fails if that trampoline is missing. Inspect also checks it.
-- Post-publish inspect: after each non-PR BlueBuild, `.github/scripts/inspect-flavor.sh` crane-exports the GHCR `:latest` (cosign + flavor + trampoline + no store). Twice-daily `verify.yml` does the same even with no push. Does not auto-accept a new `cosign.pub`.
-- Factory alarm: one GitHub issue, label `factory-alarm`, reused. Opened/commented when canary/watch/build/inspect fails (not on PRs). Closed only when canary + watch + bluebuild are all green. A canary hit or key rotation is not auto-merged.
+- Post-publish inspect: after each non-PR BlueBuild, **before** `attest-build-provenance`. `.github/scripts/inspect-flavor.sh` crane-exports GHCR `:latest`. Cosign must use classic `.sig` tags (`COSIGN_OCI_EXPERIMENTAL=0`, `--new-bundle-format=false` if the flag exists) — GitHub certificate attestations otherwise fail with `expected key signature, not certificate`. Flavor ELF checks use tar member types (file/symlink/hardlink), not leftover empty dirs. Origin ELF is often a hardlink. Twice-daily `verify.yml` is schedule + dispatch only. GitHub may show a 0-second red `verify.yml` run on **push** (workflow-file quirk, no jobs). That is not a failed inspect. Does not auto-accept a new `cosign.pub`.
+- Extract helper: `.github/scripts/extract-prefixes.py` (stream tar; `extractfile()` only on regular files; copy hardlinks if the target is already extracted). Crane for canary/inspect is checksum-pinned `v0.20.3` in `install-crane.sh`.
+- Factory alarm: one GitHub issue, label `factory-alarm`, reused. Opened/commented when canary/watch/build/inspect fails (not on PRs). Closed only when canary + watch + bluebuild are all green. Issue #4 was closed on the green run above. A canary hit or key rotation is not auto-merged.
+- `remove-trivalent.sh` (Origin + browserless): `dnf remove` then `rm` leftover `/usr/bin/trivalent` and `/usr/lib64/trivalent`. Inspect fails if those remain.
 - Stock MOTD replaced (`usr/libexec/secureblue-motd`). User nags masked by default: deprecation notice, update-verification, flatpak-setup (`ujust set-stock-nags on` to restore). Key-enrollment check stays. Docs mirror sanitizes script-like HTML.
 - Daily image rebuilds 08:00 and 20:00 UTC. Docs mirror of secureblue.dev at 09:30 UTC into generated `docs/secureblue/` (gitignored).
 - Empty-disk ISO: `.github/workflows/iso.yml` wraps a published Unwoke GHCR image (Titanoboa). Dispatch any of the twelve. Weekly (Sunday 10:00 UTC) the four default desktops (Silverblue/Kinoite × Origin/Trivalent) go to `ghcr.io/…/<name>-iso:latest` plus a 14-day artifact. Checksums are cosign-signed. Does not block the overlay factory. GitHub will not host a 3 GB release asset.
@@ -141,17 +144,24 @@ Stock `ujust` still works.
 6. Default wallpaper / lock / accent
 7. Site updated to document all of the above + Brand tab
 8. Auto changelog tab: Pages job runs `docs/_tools/generate-changelog.py` from public git subjects (no bodies/diffs). Output gitignored `docs/changelog/`. Pages runs on every `main` push so overlay commits show up without waiting for the daily mirror cron.
-9. **Trivalent flavor** (`*-trivalent`): keep stock Trivalent + SELinux; extra reversible Chromium policies + conf.d flags (JIT-less, isolation, sandbox, Network Service Sandbox, punycode/referrers). Origin and browserless still strip Trivalent. 12 GHCR images.
+9. **Trivalent flavor** (`*-trivalent`): keep stock Trivalent + SELinux; extra reversible Chromium policies + conf.d flags. Origin and browserless still strip Trivalent. 12 GHCR images.
+10. Hostile-upstream canary (crane, not docker) + snapshot auto-refresh + harden-flatpak trampoline + MOTD/nags mask.
+11. Factory autos that do not drop security: post-publish inspect, twice-daily verify.yml, one `factory-alarm` issue. Key rotation / canary hits stay manual.
+12. **Direct USB ISO** (`iso.yml`): Titanoboa wrap of published Unwoke image. Dispatch any of 12. Weekly Sunday 10:00 UTC the four default desktops → `ghcr.io/sergi270710267/<name>-iso:latest` (oras + cosign). Artifacts 14 days. Does not block overlay. First ISO has **not** been built yet — run the `iso` workflow (or wait for Sunday). First GHCR `*-iso` package may be created private; make it public like the OS images.
 
-Image-side theme and toggles land on the **next image rebuild**, not Pages. Docs-only pushes should not rebuild images (`build.yml` paths-ignore).
+Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only / `iso.yml` pushes should not rebuild images (`build.yml` paths-ignore).
 
 ## Tomorrow / next chat
 
-- Confirm the next `bluebuild` run is green (canary uses crane, not docker pull). Last red runs (45–49) failed with Docker `max depth exceeded` on kinoite-main-hardened; that was the inspector, not targeting.
-- Confirm GHCR images after CI actually contain wallpaper + policy packs (`ujust unwoke-status` on a rebase). Theme and toggles are in the overlay; they are not live on an old local image until rebuild + rebase.
-- Hard-refresh Pages if Brand / Changelog look cached.
-- Changelog: `docs/_tools/generate-changelog.py`; output `docs/changelog/` is gitignored. Pages workflow now runs on every `main` push (`fetch-depth: 0`).
+- Pickup phrase: continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.
+- Overlay factory is green as of `505a88b` / run 33244950389. Rebase onto `ghcr.io/sergi270710267/<name>:latest` from that run (or later scheduled rebuilds).
+- USB ISO: trigger Actions → **iso** if the owner wants a USB now (recommend `unwoke-silverblue-trivalent` or `unwoke-kinoite-trivalent`). After first GHCR push, set the `*-iso` package visibility to public if GitHub created it private.
+- `verify.yml` 0-second red on **push** is a GitHub dispatch-workflow quirk. Do not “fix” it by adding `on: push` (that would inspect on every docs commit). Optional: `required: false` on the dispatch input if the noise bothers them.
+- Confirm on a real rebase: `ujust unwoke-status` / `ujust audit-unwoke` (wallpaper, policies, trampoline, leftover Trivalent gone on Origin/browserless).
+- Hard-refresh Pages if Install / Changelog look cached.
 - Do not start a tight `brave_t` jail unless the owner asks again and accepts breakage.
 - Origin/browserless still strip Trivalent. The dedicated `*-trivalent` flavor keeps it. Do not add a GUI store. Do not add xscreensaver. Do not Bubblejail Trivalent.
 - Overlay-on-signed-stock is still the architecture. Do not fork.
 - Trivalent policy dir is `/etc/trivalent/policies/managed/` (RPM `%{_sysconfdir}/trivalent/policies`). Extra flags via `/etc/trivalent/trivalent.conf.d/` (`CHROMIUM_FLAGS` / `FEATURES+=`, never `CHROMIUM_SYSTEM_FLAGS` or `--enable-features`).
+- Canary/inspect: never `docker pull` Atomic images. Use crane + `extract-prefixes.py`. Podman is OK for BlueBuild and the ISO pull.
+- Do not auto-merge canary hits or a new `keys/secureblue.pub`.
