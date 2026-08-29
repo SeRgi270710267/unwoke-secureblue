@@ -93,6 +93,8 @@ def skip(issue: dict, cfg: dict) -> bool:
     ):
         return True
     text = hay(issue)
+    if re.search(r"\b(arm64|aarch64|arm images)\b", text):
+        return True
     only = [s.lower() for s in cfg.get("skip_if_only") or []]
     if only and any(s in text for s in only) and not re.search(
         r"silverblue|kinoite|gnome|plasma|trivalent", text

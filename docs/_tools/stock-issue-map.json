@@ -2,7 +2,7 @@
   "comment": "Map stock secureblue issues to Unwoke-only, revertable ujust. Never applied to a bake. Skip if it cannot hit Silverblue/Kinoite overlay or we have no allowlisted revert.",
   "skip_users": ["dependabot[bot]"],
   "skip_labels": ["cicd", "dependencies", "github_actions"],
-  "skip_title": ["dependabot", "codeql", "bump github/", "chore(deps)"],
+  "skip_title": ["dependabot", "codeql", "bump github/", "chore(deps)", "[feat]"],
   "skip_if_only": ["sericea", "cosmic", "securecore", "iot-main", "iot-nvidia"],
   "fixes": {
     "bluetooth": {
@@ -97,15 +97,15 @@
     {"id": "xwayland", "any": ["xwayland", "x11 app", "x11 backend"]},
     {"id": "flathub", "any": ["flathub", "flatpak install", "no software store"]},
     {"id": "brew", "any": ["homebrew", "brew install", "linuxbrew"]},
-    {"id": "toolbox", "any": ["toolbox", "distrobox"]},
+    {"id": "toolbox", "any": ["toolbox", "distrobox"], "title_only": true, "need_bug": true},
     {"id": "userns", "any": ["oci permission denied", "container-userns", "podman.*permission"]},
     {"id": "unconfined-userns", "any": ["unconfined-userns", "electron", "bwrap: creating new namespace"]},
     {"id": "jit", "any": ["javascript", "jit-less", "jitless", "v8"]},
     {"id": "webgl", "any": ["webgl", "webgpu", "three.js"]},
     {"id": "devices", "any": ["getusermedia", "site camera", "site mic"]},
     {"id": "vpn", "any": ["wireguard", "protonvpn", "mullvad", "install-vpn", "dns leak"]},
-    {"id": "usb", "any": ["usbguard", "mtp"]},
-    {"id": "vm", "any": ["spice", "libvirt", "virt-manager", "vsock", "kvm"]},
+    {"id": "usb", "any": ["usbguard"]},
+    {"id": "vm", "any": ["spice clipboard", "virt-manager clipboard"]},
     {"id": "nvidia", "any": ["nvidia", "nvenc", "cuda"], "title_only": true, "need_bug": true},
     {"id": "nags", "any": ["notification every", "too many notification", "update notification"], "title_only": true},
     {"id": "trivalent", "any": ["trivalent"], "title_only": true}
