@@ -1,14 +1,83 @@
-# Unwoke SecureBlue
+<p align="center">
+  <img src="docs/assets/hero.jpg" alt="Unwoke SecureBlue — navy hexagonal shield" width="920">
+</p>
 
-**secureblue’s hardening. Recommended: stock Trivalent plus extra locks. Or Brave Origin, or no browser. Terminal, no curator store.**
+<p align="center">
+  <img src="docs/assets/logo.svg" width="72" alt="">
+</p>
 
-The product name is **Unwoke SecureBlue**. *Unwoke* is the modifier (adjective/verb). *SecureBlue* is one word, S and B capped — not “Secure Blue”, not `unwoke-secureblue` in titles. Git and GHCR stay lowercase (`unwoke-secureblue`, `unwoke-silverblue`) because registries and rebase commands are slugs.
+<p align="center">
+  <img src="docs/assets/wordmark.svg" alt="Unwoke SecureBlue" width="420">
+</p>
 
-This is a daily overlay on official [secureblue](https://secureblue.dev) images. It is **not** a fork and **not** affiliated with them. Their kernel hardening, `hardened_malloc`, SELinux, no Xwayland by default, and automatic updates stay. We strip **Bazaar** and GUI stores on every image. **Recommended default:** `*-trivalent` (stock Trivalent jail plus extra reversible Chromium policies). Unsuffixed names are **Brave Origin** (looser SELinux). `*-browserless` ships no house browser.
+<p align="center">
+  <strong>secureblue’s hardening. Recommended: stock Trivalent plus extra locks.<br>Or Brave Origin, or no browser. Terminal, no curator store.</strong>
+</p>
 
-Site: [sergi270710267.github.io/unwoke-secureblue](https://sergi270710267.github.io/unwoke-secureblue/). Overlay delta and toggles: [Features](https://sergi270710267.github.io/unwoke-secureblue/features/). Wallpaper/lock/accent: [Brand](https://sergi270710267.github.io/unwoke-secureblue/brand/). What changed: [Changelog](https://sergi270710267.github.io/unwoke-secureblue/changelog/) (rebuilt with the site from public git subjects). Stock secureblue FAQ/features/install are mirrored daily under `/secureblue/` (Apache-2.0, not affiliated); our pages are never overwritten.
+<p align="center">
+  <a href="https://sergi270710267.github.io/unwoke-secureblue/"><img src="https://img.shields.io/badge/site-open-3b6cff?style=for-the-badge&amp;labelColor=050a16" alt="Site"></a>
+  <a href="https://github.com/SeRgi270710267/unwoke-secureblue/actions/workflows/build.yml"><img src="https://img.shields.io/github/actions/workflow/status/SeRgi270710267/unwoke-secureblue/build.yml?style=for-the-badge&amp;label=images&amp;labelColor=050a16&amp;color=3b6cff" alt="Images"></a>
+  <a href="https://github.com/SeRgi270710267/unwoke-secureblue/pkgs/container/unwoke-silverblue-trivalent"><img src="https://img.shields.io/badge/GHCR-public-3b6cff?style=for-the-badge&amp;labelColor=050a16" alt="GHCR public"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-3b6cff?style=for-the-badge&amp;labelColor=050a16" alt="MIT"></a>
+</p>
 
-Images: `ghcr.io/sergi270710267/unwoke-silverblue` · `unwoke-kinoite` · `*-nvidia-open` · `*-trivalent` · `*-browserless`
+<p align="center">
+  <a href="https://sergi270710267.github.io/unwoke-secureblue/install/">Install</a>
+  · <a href="https://sergi270710267.github.io/unwoke-secureblue/features/">Features</a>
+  · <a href="https://sergi270710267.github.io/unwoke-secureblue/privacy/">Privacy</a>
+  · <a href="https://sergi270710267.github.io/unwoke-secureblue/compared/">Compared</a>
+  · <a href="https://sergi270710267.github.io/unwoke-secureblue/brand/">Brand</a>
+  · <a href="https://sergi270710267.github.io/unwoke-secureblue/changelog/">Changelog</a>
+</p>
+
+<p align="center">
+  <img src="docs/assets/divider.svg" width="420" alt="">
+</p>
+
+> **Not affiliated with secureblue.** Overlay on their signed Fedora Atomic images. **Not a fork.** Their kernel hardening, `hardened_malloc`, SELinux, no Xwayland by default, and automatic updates stay.
+
+The product name is **Unwoke SecureBlue**. *Unwoke* is the modifier. *SecureBlue* is one word (S and B capped) — not “Secure Blue”, not `unwoke-secureblue` in titles. Git and GHCR stay lowercase (`unwoke-secureblue`, `unwoke-silverblue`) because registries and rebase commands are slugs.
+
+We strip **Bazaar** and GUI stores on every image.
+
+| | **Trivalent** `*-trivalent` | **Origin** (unsuffixed) | **Browserless** `*-browserless` |
+| --- | --- | --- | --- |
+| | **Recommended default** | Named choice | Named choice |
+| Browser | Stock [Trivalent](https://github.com/secureblue/Trivalent) jail + extra reversible Chromium policies | [Brave Origin](https://brave.com/origin/linux/) RPM in `brave_t` (looser SELinux) | None. Seatbelt until `ujust set-allow-browsers on ALLOW` |
+| Store | None | None | None |
+| Userns | Stock (Flatpak + Trivalent) | Stock + `brave_t` allow-list | Stock with Trivalent gone |
+
+`*-trivalent` equals stock on the house browser and is stricter on extra Chromium policies + house locks. Extra JSON is not a new compiler patch. `brave_t` is **not** Trivalent’s tight confinement.
+
+---
+
+## Install
+
+Already on secureblue (or any Fedora Atomic). First switch cannot check our stamp yet. After reboot, first-boot queues the **signed** image — reboot once more when `rpm-ostree status` shows it staged.
+
+```bash
+rpm-ostree rebase ostree-unverified-registry:ghcr.io/sergi270710267/unwoke-silverblue-trivalent:latest
+systemctl reboot
+```
+
+If it did not auto-stage (no network on first boot):
+
+```bash
+rpm-ostree rebase ostree-image-signed:docker://ghcr.io/sergi270710267/unwoke-silverblue-trivalent:latest
+systemctl reboot
+```
+
+```bash
+cosign verify --key cosign.pub ghcr.io/sergi270710267/unwoke-silverblue-trivalent
+```
+
+KDE → `unwoke-kinoite-trivalent`. NVIDIA → add `-nvidia-open` before `-trivalent`. Brave Origin → drop `-trivalent`. No browser → `-browserless`.
+
+Empty disk: flash a USB from [Actions](https://github.com/SeRgi270710267/unwoke-secureblue/actions/workflows/iso.yml) (artifact, GitHub login) or a [secureblue ISO](https://secureblue.dev/install) then rebase. Encrypt, wheel, enroll **their** Secure Boot key. Not Ventoy.
+
+After first graphical login: **Unwoke setup** (`ujust setup`). `ujust why` if something looks broken. Nothing unlocks unless you pick it. Everyday tasks: [Tutorials](https://sergi270710267.github.io/unwoke-secureblue/tutorials/). Proton.me: `ujust install-proton`. IVPN: `ujust install-ivpn`. Mullvad: `ujust install-mullvad`.
+
+Published as `ghcr.io/sergi270710267/<name>:latest`. OS images are **public**. No GitHub login to pull.
 
 ---
 
@@ -16,26 +85,26 @@ Images: `ghcr.io/sergi270710267/unwoke-silverblue` · `unwoke-kinoite` · `*-nvi
 
 Stock secureblue is a serious hardened Fedora Atomic. It also ships a house browser and a house app store that decide what you may install.
 
-| | Stock [secureblue](https://secureblue.dev) | Origin images | Trivalent images (`*-trivalent`) | Browserless images (`*-browserless`) |
+| | Stock [secureblue](https://secureblue.dev) | Origin | Trivalent | Browserless |
 | --- | --- | --- | --- | --- |
-| Browser | [Trivalent](https://github.com/secureblue/Trivalent) — their Chromium, default, SELinux-confined | **[Brave Origin](https://brave.com/origin/linux/)** standalone RPM (`brave-origin`). Unsuffixed images. Runs in `brave_t`. | **Stock Trivalent** (same patches + SELinux) plus extra reversible policies. **Recommended default.** | **None.** No Trivalent, no Origin. `harden_userns` is stock (Flatpak only). |
-| App store | [Bazaar](https://github.com/secureblue/bazaar-rpm) — curated catalog | **None.** No Flathub until `ujust set-flathub verified`. | **None.** Same. | **None.** Same. |
-| User namespaces | Off for unconfined; on for Flatpak and Trivalent | Same, plus `brave_t` on their userns allow-list so Origin’s sandbox can start | Same as stock. No `brave_t`. | Same as stock with Trivalent gone: unconfined blocked, Flatpak allowed, no extra domain |
+| Browser | Trivalent — their Chromium, SELinux-confined | Brave Origin standalone RPM. Runs in `brave_t` | Stock Trivalent + extra reversible policies | None |
+| App store | [Bazaar](https://github.com/secureblue/bazaar-rpm) | **None.** Flathub off until `ujust set-flathub verified` | **None.** Same | **None.** Same |
+| User namespaces | Off for unconfined; on for Flatpak and Trivalent | Same, plus `brave_t` on their userns allow-list | Same as stock. No `brave_t` | Unconfined blocked, Flatpak allowed, no extra domain |
 
-`brave_t` (Origin images only) is an unconfined-like domain so Brave Origin can run. It is **not** Trivalent’s tight confinement. Trivalent and browserless do not load it.
+Browserless is safer than Origin **until you install a browser**. Easy host installs are blocked until `ujust set-allow-browsers on ALLOW` (Flatpak mask + rpm-ostree exclude). Seatbelt only: toolbox, brew, AppImage, and `rpm-ostree --disableexcludes` still work.
 
-`*-trivalent` equals stock on the house browser and is stricter on extra Chromium policies + house locks. Extra JSON is not a new compiler patch.
+Stock `ujust` still works (`ujust set-unconfined-userns`, `ujust set-kargs-hardening`, `ujust audit-secureblue`, …). We did **not** gut SELinux, kernel args, `hardened_malloc`, disk encryption, or Secure Boot enrollment.
 
-Browserless is safer than Origin **until you install a browser**. Easy host installs are blocked until `ujust set-allow-browsers on ALLOW` (Flatpak mask + rpm-ostree exclude). That is a seatbelt: toolbox, brew, AppImage, and `rpm-ostree --disableexcludes` still work. It is not a Trivalent replacement.
-
-What we *can* do on Origin and Trivalent is force Chromium enterprise policies and keep their `ujust` surface. Stock commands still work (`ujust set-unconfined-userns`, `ujust set-kargs-hardening`, `ujust audit-secureblue`, …). Overlay extras:
+<details>
+<summary><strong>Overlay ujust extras</strong></summary>
 
 ```bash
 ujust unwoke-status
 ujust audit-unwoke
+ujust setup
+ujust why
 
-# Origin and Trivalent (each has on/off; restart the browser after policy changes)
-# set-trivalent-* is the same pack under a clearer name on -trivalent images
+# Origin and Trivalent (restart the browser after policy changes)
 ujust set-brave-hardening on|off     # HTTPS, no metrics, no autofill/passwords (default on)
 ujust set-brave-devices on|off       # camera/mic/geo/USB/BT/serial blocked (default on)
 ujust set-brave-jitless on|off       # no JS JIT; breaks some sites (default on)
@@ -48,36 +117,33 @@ ujust set-trivalent-network-sandbox on|off  # Trivalent only; may clear cookies
 ujust set-trivalent-referrers on|off        # Trivalent only; punycode + strip referrers
 
 # All flavors
-ujust set-flathub verified|full|off  # default off both flavors; verified = stock
+ujust set-flathub verified|full|off  # default off; verified = stock
 ujust set-bluetooth on|off           # default off; Wi-Fi stays
 ujust set-toolbox on|off             # default off; /usr/bin/toolbox is a wrapper
 ujust set-extra-daemons on|off       # default off (Avahi + ModemManager)
-ujust set-stock-nags on|off          # default off (their deprecation/update-verify/flatpak-setup)
-ujust set-flatpak-lockdown on|off    # default on; apps need Flatseal
-ujust set-brew on|off                # default off (stock ships Homebrew)
-ujust set-camera-mic on|off          # default locked (uvcvideo + capture nodes)
-ujust set-admin-split on|off|add NAME  # wheel GUI lock once a daily user exists
+ujust set-stock-nags on|off          # default off
+ujust set-flatpak-lockdown on|off    # default on
+ujust set-brew on|off                # default off
+ujust set-camera-mic on|off          # default locked
+ujust set-admin-split on|off|add NAME
+ujust set-unwoke-theme apply
 
 # Browserless only
 ujust set-allow-browsers on ALLOW
 ujust set-allow-browsers off
-
-# Theme
-ujust set-unwoke-theme apply     # wallpaper + accent again
 ```
 
-We did **not** gut SELinux, kernel args, `hardened_malloc`, disk encryption, or Secure Boot enrollment. Calling this “insecure Fedora” is false. Calling it “identical to secureblue” is also false.
+</details>
 
----
-
-## Images (rebuilt every day, 08:00 UTC)
+<details>
+<summary><strong>Twelve images</strong> (rebuilt 08:00 and 20:00 UTC)</summary>
 
 | Image | Desktop | GPU | Browser |
 | --- | --- | --- | --- |
 | `unwoke-silverblue` | GNOME | Nouveau | Brave Origin |
 | `unwoke-silverblue-nvidia-open` | GNOME | NVIDIA open (GTX 16xx / RTX+) | Brave Origin |
 | `unwoke-kinoite` | KDE Plasma | Nouveau | Brave Origin |
-| `unwoke-kinoite-nvidia-open` | KDE Plasma | NVIDIA open (GTX 16xx / RTX+) | Brave Origin |
+| `unwoke-kinoite-nvidia-open` | KDE Plasma | NVIDIA open | Brave Origin |
 | `unwoke-silverblue-trivalent` | GNOME | Nouveau | Trivalent |
 | `unwoke-silverblue-nvidia-open-trivalent` | GNOME | NVIDIA open | Trivalent |
 | `unwoke-kinoite-trivalent` | KDE Plasma | Nouveau | Trivalent |
@@ -87,51 +153,23 @@ We did **not** gut SELinux, kernel args, `hardened_malloc`, disk encryption, or 
 | `unwoke-kinoite-browserless` | KDE Plasma | Nouveau | none |
 | `unwoke-kinoite-nvidia-open-browserless` | KDE Plasma | NVIDIA open | none |
 
-Published as `ghcr.io/sergi270710267/<name>:latest`. All are **public**. No GitHub login to pull.
-
----
-
-## Install (one command)
-
-Already on secureblue (or any Fedora Atomic):
-
-```bash
-rpm-ostree rebase ostree-unverified-registry:ghcr.io/sergi270710267/unwoke-silverblue-trivalent:latest
-systemctl reboot
-```
-
-That first switch **cannot** check our stamp yet (your PC does not have our key). After that reboot, a first-boot service **queues the signed image**. Reboot **one more time** when `rpm-ostree status` shows a staged signed deployment (or after a few minutes on the network). From then on, updates must match our `cosign.pub`. After the first graphical login, **Unwoke setup** (app grid + autostart; also `ujust setup`) explains the locks; `ujust why` if something looks broken. Nothing unlocks unless you pick it. Everyday tasks: [Tutorials](https://sergi270710267.github.io/unwoke-secureblue/tutorials/). Proton.me without a store: `ujust install-proton`. IVPN: `ujust install-ivpn` (WireGuard first). Vs stock: [Compared](https://sergi270710267.github.io/unwoke-secureblue/compared/).
-
-If it did not auto-stage (no network on first boot), do it yourself:
-
-```bash
-rpm-ostree rebase ostree-image-signed:docker://ghcr.io/sergi270710267/unwoke-silverblue-trivalent:latest
-systemctl reboot
-```
-
-Empty disk: flash a [secureblue ISO](https://secureblue.dev/install) first (encrypt, wheel, enroll their Secure Boot key), then the commands above.
-
-KDE → `unwoke-kinoite-trivalent`. NVIDIA → add `-nvidia-open` before `-trivalent`. Brave Origin → drop `-trivalent` (unsuffixed name). No browser → `-browserless`.
-
-```bash
-cosign verify --key cosign.pub ghcr.io/sergi270710267/unwoke-silverblue-trivalent
-```
+</details>
 
 ---
 
 ## USB ISO (empty disk, no stock first)
 
-The OS **is** the GHCR image. A flashable ISO wraps that image so you do not install stock secureblue first.
+The OS **is** the GHCR image. A flashable ISO wraps that image.
 
-- On demand: Actions → **iso** → Run workflow → pick the image → artifact (14 days).
-- Weekly (Sunday 10:00 UTC): four Trivalent desktops (Silverblue/Kinoite × NVIDIA/not) pushed to `ghcr.io/sergi270710267/<name>-iso:latest`. Origin/browserless: Run workflow. Pull with `oras`, verify with `cosign.pub`.
-- GitHub will not host a 3 GB ISO as a normal release. Not Ventoy. Enroll the **secureblue** Secure Boot key (kernel is theirs).
+- On demand: Actions → **iso** → pick the image → artifact (14 days, GitHub login).
+- Weekly (Sunday 10:00 UTC): four Trivalent desktops to `ghcr.io/sergi270710267/<name>-iso:latest` once oras publish succeeds. Origin/browserless: Run workflow.
+- GitHub will not host a 3 GB ISO as a normal release. Not Ventoy. Enroll the **secureblue** Secure Boot key.
 
 Stock-ISO-then-rebase still works.
 
 ---
 
-## How it stays current (and how the signatures work)
+## How it stays current
 
 Not a git fork of `secureblue/secureblue`. Forks rot. We pull their **already-built, already-signed** images.
 
@@ -140,39 +178,31 @@ base-image: ghcr.io/secureblue/silverblue-main-hardened
 image-version: latest
 ```
 
-**Trust chain**
+<details>
+<summary><strong>Trust chain and factory</strong></summary>
 
 1. secureblue builds and **cosign-signs** `ghcr.io/secureblue/…-hardened`.
-2. Our CI downloads [their public key](https://github.com/secureblue/secureblue/blob/live/cosign.pub), checks it still matches `keys/secureblue.pub` in this repo, **`cosign verify`s the base**, then **pins that digest** so `:latest` cannot swap mid-build. A canary job inspects that signed base with **crane export** (does not run it, does not docker-pull it) and **fails the overlay** if the stock image names this repo, our GHCR, or `/usr/share/unwoke`. Cosign does not protect against a hostile signer; the canary only catches an in-the-clear targeted payload. After rebase, your PC follows **our** GHCR, not theirs.
-3. We drop Bazaar+GUI stores+full `brave-browser`. Origin images also drop Trivalent, then layer **Brave Origin** (`brave-origin`) and a `brave_t` SELinux domain. `-trivalent` images keep stock Trivalent and add extra policies. Browserless images drop Trivalent and skip Origin. Then we **cosign-sign our image** with `cosign.pub` in this repo.
+2. Our CI checks [their public key](https://github.com/secureblue/secureblue/blob/live/cosign.pub) still matches `keys/secureblue.pub`, **`cosign verify`s the base**, then **pins that digest**. A canary inspects that signed base with **crane export** (does not run it, does not docker-pull it) and **fails the overlay** if the stock image names this repo, our GHCR, or `/usr/share/unwoke`. After rebase, your PC follows **our** GHCR, not theirs.
+3. We drop Bazaar + GUI stores. Origin also drops Trivalent and layers Brave Origin + `brave_t`. `-trivalent` keeps stock Trivalent and adds extra policies. Browserless drops Trivalent and skips Origin. Then we **cosign-sign our image** with `cosign.pub` in this repo.
 4. Your PC pulls `ghcr.io/sergi270710267/unwoke-…` and, after the signed rebase, verifies **our** signature.
 
-That is as close as an overlay gets to “updating from their source” without merging their git. We do **not** rebuild their kernel or re-run their SLSA pipeline; we inherit whatever they already shipped, after checking their signature.
+We do **not** rebuild their kernel or re-run their SLSA pipeline.
 
-Rebuilds: **08:00 and 20:00 UTC**, plus every recipe push.
+Factory extras (this repo, not the desktop): Harden-Runner; Actions pinned to SHAs; SLSA-style provenance; checksum-pinned crane `v0.20.3`; inspect after each bake and twice daily; one reused `factory-alarm` issue; stock `ujust harden-flatpak` is a trampoline to Unwoke’s script.
 
-Factory extras (this repo, not the desktop):
-
-- **Harden-Runner** on CI (audit outbound traffic)
-- GitHub Actions **pinned to commit SHAs**
-- **SLSA-style provenance** attached to each published image (`attest-build-provenance`)
-- BlueBuild CLI install is **signature-checked**
-- **crane** for canary/inspect is checksum-pinned (`v0.20.3`); Atomic images are not docker-pulled
-- Published images are **inspected after each build** and twice daily (`verify.yml`)
-- One reused GitHub issue (`factory-alarm`) when the overlay factory is red; closed when it is green
-- Stock `ujust harden-flatpak` is a trampoline to `/usr/libexec/unwoke/harden-flatpak.sh` (their Python is not executed)
-
-We do **not** use a hardware signing key. `cosign.key` lives only as the GitHub secret `SIGNING_SECRET`. A YubiKey would be stricter; it is not wired up.
-
-Your machine then follows this repo with normal `rpm-ostree` updates.
+We do **not** use a hardware signing key. `cosign.key` lives only as the GitHub secret `SIGNING_SECRET`.
 
 | Change | File |
 | --- | --- |
-| Packages | `recipes/common.yml` (stores); `remove-trivalent.sh` on Origin/browserless |
+| Packages | `recipes/common.yml`; `remove-trivalent.sh` on Origin/browserless |
 | Browser / first-boot | `files/scripts/apply-{unwoke,brave,trivalent,browserless}.sh` |
-| Brave SELinux / userns | `files/scripts/install-brave-selinux.sh`, `files/system/usr/share/unwoke/selinux/` (Origin only) |
+| Brave SELinux / userns | `files/scripts/install-brave-selinux.sh` (Origin only) |
 | ujust extras | `files/justfiles/unwoke.just`, `files/system/usr/libexec/unwoke/toggles.sh` |
 | GNOME favorites | `files/gschema-overrides/zz2-unwoke*.gschema.override` |
+
+</details>
+
+Stock FAQ/features/install are mirrored daily under the site `/secureblue/` (Apache-2.0, not affiliated). Pickup file for this repo: [`PROGRESS.md`](PROGRESS.md).
 
 ---
 
