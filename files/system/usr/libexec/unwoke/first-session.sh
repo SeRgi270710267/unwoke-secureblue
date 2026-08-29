@@ -21,6 +21,7 @@ for arg in "$@"; do
     --proton) jump+=(--proton) ;;
     --ivpn) jump+=(--ivpn) ;;
     --vendors) jump+=(--vendors) ;;
+    --mullvad) jump+=(--mullvad) ;;
   esac
 done
 

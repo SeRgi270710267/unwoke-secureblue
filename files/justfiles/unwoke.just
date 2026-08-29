@@ -31,6 +31,11 @@ install-ivpn:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/install-ivpn.sh
 
+# Mullvad VPN. WireGuard first. Official repo only after you accept an extra RPM origin.
+install-mullvad:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/install-mullvad.sh
+
 # Probe Proton/IVPN URLs and version.json (does not install, does not unlock).
 check-vendor-installers:
     #!/usr/bin/bash

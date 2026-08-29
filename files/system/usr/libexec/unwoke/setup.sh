@@ -19,9 +19,10 @@ case "${1:-}" in
   --proton|proton) jump="proton" ;;
   --ivpn|ivpn) jump="ivpn" ;;
   --vendors|vendors) jump="vendors" ;;
+  --mullvad|mullvad) jump="mullvad" ;;
   "" ) ;;
   *)
-    echo "usage: setup.sh [--broken|--stock|--hardware|--loosened|--proton|--ivpn]" >&2
+    echo "usage: setup.sh [--broken|--stock|--hardware|--loosened|--proton|--ivpn|--mullvad|--vendors]" >&2
     exit 2
     ;;
 esac
@@ -96,6 +97,7 @@ menu() {
   7) Proton.me apps (web first; hashed RPM only if you insist)
   8) IVPN (WireGuard first; official repo only if you insist)
   9) All strict apps (every vendor in the watched list)
+  0) Mullvad VPN (WireGuard first)
   s) Show status
   r) Reboot now
   n) Do not show this on login again
@@ -373,6 +375,7 @@ loop() {
     proton) bash /usr/libexec/unwoke/install-proton.sh ;;
     ivpn) bash /usr/libexec/unwoke/install-ivpn.sh ;;
     vendors) bash /usr/libexec/unwoke/install-vendor.sh ;;
+    mullvad) bash /usr/libexec/unwoke/install-mullvad.sh ;;
   esac
   while true; do
     menu
@@ -392,6 +395,7 @@ loop() {
       7) bash /usr/libexec/unwoke/install-proton.sh ;;
       8) bash /usr/libexec/unwoke/install-ivpn.sh ;;
       9) bash /usr/libexec/unwoke/install-vendor.sh ;;
+      0) bash /usr/libexec/unwoke/install-mullvad.sh ;;
       s|S) run_toggle status ;;
       r|R)
         echo "Rebooting."

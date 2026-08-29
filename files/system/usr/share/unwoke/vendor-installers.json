@@ -64,6 +64,27 @@
       "url": "https://www.ivpn.net/account/",
       "strictest": true
     },
+    "mullvad_account": {
+      "kind": "wireguard-import",
+      "title": "Mullvad WireGuard",
+      "group": "mullvad",
+      "tutorial": "mullvad",
+      "keywords": "mullvad;vpn;wireguard",
+      "url": "https://mullvad.net/en/account/wireguard-config",
+      "strictest": true
+    },
+    "mullvad_repo": {
+      "kind": "yum-repo",
+      "title": "Mullvad VPN official app repo",
+      "group": "mullvad",
+      "tutorial": "mullvad",
+      "keywords": "mullvad;vpn;rpm",
+      "url": "https://repository.mullvad.net/rpm/stable/mullvad.repo",
+      "require_gpgcheck": true,
+      "packages": ["mullvad-vpn"],
+      "docs": "https://mullvad.net/en/download/vpn/linux",
+      "strictest": false
+    },
     "ivpn_repo": {
       "kind": "yum-repo",
       "title": "IVPN official CLI/UI repo",

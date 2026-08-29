@@ -155,6 +155,10 @@ if [[ ! -f "${work}/usr/libexec/unwoke/install-vendor.sh" ]]; then
   echo "FAIL: missing install-vendor.sh" >&2
   fail=1
 fi
+if [[ ! -f "${work}/usr/libexec/unwoke/install-mullvad.sh" ]]; then
+  echo "FAIL: missing install-mullvad.sh" >&2
+  fail=1
+fi
 if ! python3 - "${work}/usr/share/unwoke/vendor-installers.json" <<'PY'
 import json, sys
 from pathlib import Path

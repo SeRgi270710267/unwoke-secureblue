@@ -61,6 +61,7 @@ chmod a+x /usr/libexec/unwoke/setup.sh /usr/libexec/unwoke/first-session.sh \
   /usr/libexec/unwoke/setup-gui.py /usr/libexec/unwoke/signed-nag.sh \
   /usr/libexec/unwoke/notify-reboot.sh /usr/libexec/unwoke/open-tutorial.sh \
   /usr/libexec/unwoke/install-proton.sh /usr/libexec/unwoke/install-ivpn.sh \
+  /usr/libexec/unwoke/install-mullvad.sh \
   /usr/libexec/unwoke/install-vendor.sh /usr/libexec/unwoke/vendor.py \
   /usr/libexec/unwoke/toggles.sh /usr/libexec/unwoke/first-boot.sh 2>/dev/null || true
 

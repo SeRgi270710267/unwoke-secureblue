@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>Mullvad VPN | Tutorials | Unwoke SecureBlue</title>
+  <meta name="description" content="Install Mullvad VPN the strict way: WireGuard import first, official Fedora repo only after you accept an extra RPM origin.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+        <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="../index.html">Unwoke help (offline)</a></li>
+        <li><a href="https://sergi270710267.github.io/unwoke-secureblue/tutorials/">Online tutorials</a></li>
+      </ul>
+    </nav>
+
+  </header>
+  <main id="content">
+    <p class="eyebrow">Network</p>
+    <h1>Mullvad VPN without a store</h1>
+    <p><span class="chip">Keep locked</span> Mullvad VPN only — not Mullvad Browser (that is a different, looser house browser). Same wizard as <a href="../ivpn/index.html">IVPN</a> / <a href="../proton/index.html">Proton</a>. Watched and healed with every other <code>vendors{}</code> key.</p>
+    <div class="alert tip">
+      <p><strong>Secure default.</strong> <code>ujust install-mullvad</code> option 1: import their WireGuard file. No extra daemon, no extra repo. Flathub stays off. Firewalld stays on.</p>
+    </div>
+    <ol class="steps">
+      <li>
+        <h3>WireGuard import (recommended)</h3>
+        <pre><code>ujust install-mullvad</code></pre>
+        <p>Account number (no email) → WireGuard config generator → download <code>.conf</code>. GNOME: keep the filename ≤ 15 characters. Then Settings → Network → VPN → Import, or <code>nmcli connection import type wireguard file …</code>. Keep Mullvad DNS. No Trivalent DoH. <a href="../vpn-dns/index.html">VPN without DNS leaks</a>.</p>
+      </li>
+      <li>
+        <h3>Official app only if you need their GUI</h3>
+        <p>Option 3 adds <a href="https://repository.mullvad.net/rpm/stable/mullvad.repo">their Fedora repo</a> (<code>gpgcheck=1</code>) and layers <code>mullvad-vpn</code>. Extra RPM origin. After reboot, enable <code>mullvad-daemon</code> if it is not already running.</p>
+      </li>
+      <li>
+        <h3>What we will not automate</h3>
+        <p>Snap, Flathub wrappers, Mullvad Browser (use <code>*-trivalent</code>), COPR repacks. Search GNOME for “Mullvad” after the next overlay bake (generated launcher + this wizard).</p>
+      </li>
+    </ol>
+    <nav class="tutorial-nav" aria-label="Adjacent tutorials">
+      <a href="../ivpn/index.html">Previous: IVPN</a>
+      <a href="../index.html">All tutorials</a>
+      <a href="../vpn-dns/index.html">Next: VPN without DNS leaks</a>
+    </nav>
+  </main>
+  <footer>
+    <a class="brand" href="https://sergi270710267.github.io/unwoke-secureblue/"><img src="../assets/logo.svg" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="../index.html">Tutorials</a></li>
+      <li><a href="https://sergi270710267.github.io/unwoke-secureblue/compared/">Compared</a></li>
+      <li><a href="https://sergi270710267.github.io/unwoke-secureblue/faq/">FAQ</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

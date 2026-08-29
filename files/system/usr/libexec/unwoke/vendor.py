@@ -23,6 +23,9 @@ HOSTS = frozenset(
         "repo.ivpn.net",
         "ivpn.net",
         "www.ivpn.net",
+        "mullvad.net",
+        "www.mullvad.net",
+        "repository.mullvad.net",
     }
 )
 TRANSIENT_HTTP = frozenset({429, 500, 502, 503, 504})

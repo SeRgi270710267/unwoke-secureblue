@@ -96,6 +96,11 @@ ujust set-allow-browsers on ALLOW</code></pre>
     <h2 id="vendor-watch"><a href="#vendor-watch">Will Proton/IVPN installers break when they change their site?</a></h2>
     <p>Usual vendor-side breakage is handled without you: new version/SHA, redirects, www vs bare host, renamed JSON fields, checksum in a sidecar file, repo path change, short outages (retried). CI heals the list when the new location is still HTTPS on their host with SHA512/SHA256 or <code>gpgcheck=1</code>. 5xx/timeouts are retried, not rewritten. Flathub, HTTP, or no checksum still opens an issue. On the image: <code>ujust check-vendor-installers</code>.</p>
 
+    <h2 id="mullvad"><a href="#mullvad">How do I install Mullvad VPN?</a></h2>
+    <p>VPN only, not Mullvad Browser. Same list as Proton/IVPN (watched + healed):</p>
+<pre><code>ujust install-mullvad</code></pre>
+    <p>Default: WireGuard import from their account (filename ≤ 15 characters on GNOME). Official <code>mullvad-vpn</code> repo only if you accept an extra RPM origin. <a href="tutorials/mullvad/">Tutorial</a>.</p>
+
     <h2 id="ivpn"><a href="#ivpn">How do I install IVPN?</a></h2>
     <p>IVPN is a VPN (AntiTracker is inside their official app — not a Mail/Pass suite). No store:</p>
 <pre><code>ujust install-ivpn</code></pre>

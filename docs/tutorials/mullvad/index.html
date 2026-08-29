@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#050a16">
   <meta name="color-scheme" content="dark">
-  <title>IVPN | Tutorials | Unwoke SecureBlue</title>
-  <meta name="description" content="Install IVPN the strict way: WireGuard import first, official Fedora repo only after you accept an extra RPM origin. No Snap, no store.">
+  <title>Mullvad VPN | Tutorials | Unwoke SecureBlue</title>
+  <meta name="description" content="Install Mullvad VPN the strict way: WireGuard import first, official Fedora repo only after you accept an extra RPM origin.">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css?v=9">
@@ -36,32 +36,30 @@
   </header>
   <main id="content">
     <p class="eyebrow">Network</p>
-    <h1>IVPN without a store</h1>
-    <p><span class="chip">Keep locked</span> IVPN (ivpn.net) is a <strong>VPN</strong>. AntiTracker and multi-hop live in their official app — they do not ship Mail/Pass/Drive. Same wizard pattern as <a href="tutorials/proton/">Proton</a> and stock <code>ujust install-steam</code>.</p>
+    <h1>Mullvad VPN without a store</h1>
+    <p><span class="chip">Keep locked</span> Mullvad VPN only — not Mullvad Browser (that is a different, looser house browser). Same wizard as <a href="tutorials/ivpn/">IVPN</a> / <a href="tutorials/proton/">Proton</a>. Watched and healed with every other <code>vendors{}</code> key.</p>
     <div class="alert tip">
-      <p><strong>Secure default.</strong> <code>ujust install-ivpn</code> option 1: import their WireGuard file in Network Settings. No extra daemon, no extra repo, no Snap. Flathub stays off. Firewalld stays on.</p>
+      <p><strong>Secure default.</strong> <code>ujust install-mullvad</code> option 1: import their WireGuard file. No extra daemon, no extra repo. Flathub stays off. Firewalld stays on.</p>
     </div>
     <ol class="steps">
       <li>
         <h3>WireGuard import (recommended)</h3>
-        <pre><code>ujust install-ivpn</code></pre>
-        <p>Sign in at ivpn.net → VPN Accounts → WireGuard → download a <code>.conf</code>. GNOME rejects filenames longer than 15 characters (“Cannot Import VPN”). Then Settings → Network → VPN → Import, or:</p>
-        <pre><code>nmcli connection import type wireguard file /path/to/short.conf</code></pre>
-        <p>Keep the VPN’s DNS. Do not enable Trivalent DoH. If you customized Unbound: <code>ujust dns-selector</code> → system default. See also <a href="tutorials/vpn-dns/">VPN without DNS leaks</a>.</p>
+        <pre><code>ujust install-mullvad</code></pre>
+        <p>Account number (no email) → WireGuard config generator → download <code>.conf</code>. GNOME: keep the filename ≤ 15 characters. Then Settings → Network → VPN → Import, or <code>nmcli connection import type wireguard file …</code>. Keep Mullvad DNS. No Trivalent DoH. <a href="tutorials/vpn-dns/">VPN without DNS leaks</a>.</p>
       </li>
       <li>
-        <h3>Official CLI / UI only if you need in-app AntiTracker</h3>
-        <p>Option 3 follows <a href="https://www.ivpn.net/knowledgebase/linux/fedora-silverblue/">their Silverblue doc</a>: HTTPS Fedora repo (<code>gpgcheck</code> checked), then <code>rpm-ostree install ivpn</code>, optional <code>ivpn-ui</code>, reboot, then <code>run0 systemctl enable --now ivpn-service</code>. That is an extra RPM origin. Weaker than WireGuard; stronger than Snap.</p>
+        <h3>Official app only if you need their GUI</h3>
+        <p>Option 3 adds <a href="https://repository.mullvad.net/rpm/stable/mullvad.repo">their Fedora repo</a> (<code>gpgcheck=1</code>) and layers <code>mullvad-vpn</code>. Extra RPM origin. After reboot, enable <code>mullvad-daemon</code> if it is not already running.</p>
       </li>
       <li>
         <h3>What we will not automate</h3>
-        <p>Snap (<code>snap install ivpn</code>), a GUI store, turning off firewalld for their UFW kill-switch notes, unfiltered Flathub. Search GNOME/KDE for “IVPN” to open this wizard.</p>
+        <p>Snap, Flathub wrappers, Mullvad Browser (use <code>*-trivalent</code>), COPR repacks. Search GNOME for “Mullvad” after the next overlay bake (generated launcher + this wizard).</p>
       </li>
     </ol>
     <nav class="tutorial-nav" aria-label="Adjacent tutorials">
-      <a href="tutorials/proton/">Previous: Proton.me</a>
+      <a href="tutorials/ivpn/">Previous: IVPN</a>
       <a href="tutorials/">All tutorials</a>
-      <a href="tutorials/mullvad/">Next: Mullvad VPN</a>
+      <a href="tutorials/vpn-dns/">Next: VPN without DNS leaks</a>
     </nav>
   </main>
   <footer>
