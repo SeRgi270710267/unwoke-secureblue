@@ -88,6 +88,21 @@
             <td colspan="2">Lockdown <strong>on</strong> by default; <code>ujust set-flatpak-lockdown off</code></td>
           </tr>
           <tr>
+            <td>Homebrew</td>
+            <td>Shipped</td>
+            <td colspan="2">Off until <code>ujust set-brew on</code></td>
+          </tr>
+          <tr>
+            <td>Camera / mic</td>
+            <td>Available</td>
+            <td colspan="2">Kernel + udev locked until <code>ujust set-camera-mic on</code> (speakers stay)</td>
+          </tr>
+          <tr>
+            <td>Wheel on the greeter</td>
+            <td>Typical daily user is wheel</td>
+            <td colspan="2">GUI lock for wheel once a non-wheel user exists. <code>ujust set-admin-split off</code> or <code>add NAME</code></td>
+          </tr>
+          <tr>
             <td>Look</td>
             <td>Their defaults</td>
             <td colspan="2">Unwoke wallpaper, lock screen, dark, blue accent. <a href="brand/">Brand</a></td>
@@ -105,7 +120,9 @@
       <li><strong>Chromium managed policies</strong> in <code>/etc/brave-origin/policies/managed/</code>, split into reversible packs (hardening, devices, JIT-less, extensions).</li>
       <li>Flathub <code>verified</code> / <code>full</code> / <code>off</code>. Origin default verified (stock). Browserless default off.</li>
       <li>Flatpak permission lockdown (same cuts as their <code>ujust flatpak-permissions-lockdown</code>) default <strong>on</strong>.</li>
-      <li>Optional Bubblejail wrapper on the Origin desktop launcher (default off).</li>
+      <li>Bubblejail wrapper on the Origin desktop launcher (default on; <code>ujust set-brave-bubblejail off</code>).</li>
+      <li>Homebrew off (stock ships it). Camera/mic locked at module+udev. Wheel GUI lock after a daily user exists.</li>
+      <li>Origin isolation pack: no WebGL/WebGPU, SitePerProcess, origin-keyed processes.</li>
       <li>First-boot: re-enable <code>harden_userns</code>, apply defaults unless you stamped them off, promote <code>ostree-unverified-registry</code> → <code>ostree-image-signed</code>.</li>
       <li>Unwoke wallpaper, lock image, GTK <code>#3b6cff</code>, GNOME named <code>blue</code>, KDE accent, GDM wallpaper. See <a href="brand/">Brand</a>.</li>
       <li>This site. Daily mirror of <em>their</em> markdown under <code>/secureblue/</code> (Apache-2.0). Our FAQ/Features/Install/Brand are never overwritten.</li>
@@ -173,10 +190,34 @@
             <td><code>allow</code></td>
           </tr>
           <tr>
+            <td><code>ujust set-brave-isolation</code></td>
+            <td><code>on</code> (Origin)</td>
+            <td>Disable3DAPIs (WebGL), WebGPU flag, SitePerProcess, origin-keyed processes.</td>
+            <td><code>off</code></td>
+          </tr>
+          <tr>
             <td><code>ujust set-brave-bubblejail</code></td>
+            <td><code>on</code> (Origin)</td>
+            <td>Wrap Origin’s desktop launcher in Bubblejail. GPU/audio may break.</td>
             <td><code>off</code></td>
-            <td>Wrap Origin’s desktop launcher in Bubblejail. Experimental. GPU/audio may break.</td>
+          </tr>
+          <tr>
+            <td><code>ujust set-brew</code></td>
             <td><code>off</code></td>
+            <td>Homebrew not on PATH; brew-setup/update masked. Stock ships brew.</td>
+            <td><code>on</code></td>
+          </tr>
+          <tr>
+            <td><code>ujust set-camera-mic</code></td>
+            <td>locked</td>
+            <td>uvcvideo blacklisted; V4L and ALSA capture nodes mode 000. Speakers stay.</td>
+            <td><code>on</code></td>
+          </tr>
+          <tr>
+            <td><code>ujust set-admin-split</code></td>
+            <td>wanted</td>
+            <td>Wheel cannot use GDM/SDDM once a non-wheel user exists. Does not brick a single wheel ISO.</td>
+            <td><code>off</code> / <code>add NAME</code></td>
           </tr>
           <tr>
             <td><code>ujust set-allow-browsers</code></td>
@@ -201,7 +242,11 @@ ujust set-brave-hardening on|off
 ujust set-brave-devices on|off
 ujust set-brave-jitless on|off
 ujust set-brave-extensions block|allow
+ujust set-brave-isolation on|off
 ujust set-brave-bubblejail on|off
+ujust set-brew on|off
+ujust set-camera-mic on|off
+ujust set-admin-split on|off|add NAME
 ujust set-unwoke-theme apply
 ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
 

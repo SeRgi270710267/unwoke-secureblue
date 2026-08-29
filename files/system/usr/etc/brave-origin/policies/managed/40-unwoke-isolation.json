@@ -1,0 +1,6 @@
+{
+  "Disable3DAPIs": true,
+  "SitePerProcess": true,
+  "OriginKeyedProcessesEnabled": true,
+  "DefaultInsecureContentSetting": 2
+}

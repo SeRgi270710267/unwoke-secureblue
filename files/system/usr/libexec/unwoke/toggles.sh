@@ -6,16 +6,19 @@ HARDEN_SRC="/usr/share/unwoke/brave-hardening.json"
 DEVICES_SRC="/usr/share/unwoke/brave-devices.json"
 JITLESS_SRC="/usr/share/unwoke/brave-jitless.json"
 EXT_SRC="/usr/share/unwoke/brave-extensions.json"
+ISO_SRC="/usr/share/unwoke/brave-isolation.json"
 POLICY_DIR="/etc/brave-origin/policies/managed"
 HARDEN_DST="${POLICY_DIR}/10-unwoke-hardening.json"
 DEVICES_DST="${POLICY_DIR}/15-unwoke-devices.json"
 JITLESS_DST="${POLICY_DIR}/20-unwoke-jitless.json"
 EXT_DST="${POLICY_DIR}/30-unwoke-extensions.json"
+ISO_DST="${POLICY_DIR}/40-unwoke-isolation.json"
 HARDEN_OFF="/etc/unwoke/brave-hardening.off"
 DEVICES_OFF="/etc/unwoke/brave-devices.off"
 JITLESS_OFF="/etc/unwoke/brave-jitless.off"
 EXT_OFF="/etc/unwoke/brave-extensions.off"
-BUBBLE_STAMP="/etc/unwoke/brave-bubblejail"
+ISO_OFF="/etc/unwoke/brave-isolation.off"
+BUBBLE_OFF="/etc/unwoke/brave-bubblejail.off"
 
 FLAVOR="brave-origin"
 if [[ -f /usr/share/unwoke/flavor ]]; then
@@ -103,6 +106,15 @@ for d in j.get("deployments") or []:
   if [[ -x /usr/libexec/unwoke/flatpak-lockdown.sh ]]; then
     info "flatpak-lockdown: $(/usr/libexec/unwoke/flatpak-lockdown.sh status)"
   fi
+  if [[ -x /usr/libexec/unwoke/brew.sh ]]; then
+    info "homebrew: $(/usr/libexec/unwoke/brew.sh status)"
+  fi
+  if [[ -x /usr/libexec/unwoke/camera-mic.sh ]]; then
+    info "camera-mic: $(/usr/libexec/unwoke/camera-mic.sh status)"
+  fi
+  if [[ -x /usr/libexec/unwoke/admin-split.sh ]]; then
+    info "admin-split: $(/usr/libexec/unwoke/admin-split.sh status)"
+  fi
 
   if is_browserless; then
     ok "flavor: browserless (no image browser)"
@@ -162,10 +174,15 @@ for d in j.get("deployments") or []:
     else
       info "Brave extension installs allowed — ujust set-brave-extensions block"
     fi
-    if [[ -f "${BUBBLE_STAMP}" ]]; then
-      info "Brave Bubblejail wanted (${BUBBLE_STAMP}) — desktop launcher jails if the instance exists"
+    if [[ -f "${ISO_DST}" ]] || [[ -f /usr/etc/brave-origin/policies/managed/40-unwoke-isolation.json && ! -f "${ISO_OFF}" ]]; then
+      ok "Brave isolation pack on (no WebGL/WebGPU, SitePerProcess) — ujust set-brave-isolation off"
     else
-      info "Brave Bubblejail off (default) — ujust set-brave-bubblejail on"
+      info "Brave isolation pack off — ujust set-brave-isolation on"
+    fi
+    if [[ -f "${BUBBLE_OFF}" ]]; then
+      info "Brave Bubblejail off — ujust set-brave-bubblejail on"
+    else
+      ok "Brave Bubblejail on (default). GPU may break — ujust set-brave-bubblejail off"
     fi
   fi
 
@@ -188,6 +205,9 @@ for d in j.get("deployments") or []:
   echo "Toggles (all reversible):"
   echo "  ujust set-flathub verified|full|off"
   echo "  ujust set-flatpak-lockdown on|off"
+  echo "  ujust set-brew on|off"
+  echo "  ujust set-camera-mic on|off"
+  echo "  ujust set-admin-split on|off|add NAME"
   if is_browserless; then
     echo "  ujust set-allow-browsers on ALLOW|off"
   else
@@ -195,6 +215,7 @@ for d in j.get("deployments") or []:
     echo "  ujust set-brave-devices on|off"
     echo "  ujust set-brave-jitless on|off"
     echo "  ujust set-brave-extensions block|allow"
+    echo "  ujust set-brave-isolation on|off"
     echo "  ujust set-brave-bubblejail on|off"
   fi
   echo "Stock: ujust set-unconfined-userns  ujust set-kargs-hardening  ujust audit-secureblue"
@@ -292,6 +313,15 @@ cmd_allow_browsers() {
   esac
 }
 
+ensure_bubble_instance() {
+  command -v bubblejail >/dev/null || return 0
+  bubblejail list 2>/dev/null | grep -qx brave-origin && return 0
+  bubblejail create --profile chromium brave-origin \
+    || bubblejail create --desktop-entry /usr/share/applications/brave-origin.desktop brave-origin \
+    || bubblejail create brave-origin \
+    || true
+}
+
 cmd_bubblejail() {
   need_origin
   local action="${1:-status}"
@@ -301,28 +331,22 @@ cmd_bubblejail() {
         echo "bubblejail is not on this image (stock secureblue desktop images ship it)." >&2
         exit 1
       }
-      if ! bubblejail list 2>/dev/null | grep -qx brave-origin; then
-        bubblejail create --profile chromium brave-origin \
-          || bubblejail create --desktop-entry /usr/share/applications/brave-origin.desktop brave-origin \
-          || bubblejail create brave-origin \
-          || { echo "bubblejail create failed. Leave it off." >&2; exit 1; }
-      fi
       as_root mkdir -p /etc/unwoke
-      as_root touch "${BUBBLE_STAMP}"
-      echo "Bubblejail ON for the Brave Origin desktop launcher (this user needs the instance; it was created)."
-      echo "GPU/PipeWire/portals may break. Revert: ujust set-brave-bubblejail off"
-      echo "Restart Brave Origin."
+      as_root rm -f "${BUBBLE_OFF}"
+      ensure_bubble_instance
+      echo "Bubblejail ON (default). GPU/PipeWire/portals may break."
+      echo "Revert: ujust set-brave-bubblejail off. Restart Brave Origin."
       ;;
     off|disable)
-      as_root rm -f "${BUBBLE_STAMP}"
+      as_root mkdir -p /etc/unwoke
+      as_root touch "${BUBBLE_OFF}"
       echo "Bubblejail OFF. Launcher runs /opt/brave.com/brave-origin/brave directly."
-      echo "The bubblejail instance was left in place; delete it yourself if you want."
       ;;
     status)
-      if [[ -f "${BUBBLE_STAMP}" ]]; then
-        echo "on (${BUBBLE_STAMP})"
+      if [[ -f "${BUBBLE_OFF}" ]]; then
+        echo "off (${BUBBLE_OFF})"
       else
-        echo "off (default)"
+        echo "on (default)"
       fi
       ;;
     *)
@@ -349,6 +373,7 @@ cmd_apply_boot() {
     [[ -f "${DEVICES_OFF}" ]] || cp -a "${DEVICES_SRC}" "${DEVICES_DST}" || true
     [[ -f "${JITLESS_OFF}" ]] || cp -a "${JITLESS_SRC}" "${JITLESS_DST}" || true
     [[ -f "${EXT_OFF}" ]] || cp -a "${EXT_SRC}" "${EXT_DST}" || true
+    [[ -f "${ISO_OFF}" ]] || cp -a "${ISO_SRC}" "${ISO_DST}" || true
     if [[ ! -f /etc/unwoke/flathub ]]; then
       printf 'verified\n' > /etc/unwoke/flathub
     fi
@@ -359,6 +384,15 @@ cmd_apply_boot() {
   if [[ -x /usr/libexec/unwoke/flatpak-lockdown.sh ]]; then
     /usr/libexec/unwoke/flatpak-lockdown.sh apply-boot || true
   fi
+  if [[ -x /usr/libexec/unwoke/brew.sh ]]; then
+    /usr/libexec/unwoke/brew.sh apply-boot || true
+  fi
+  if [[ -x /usr/libexec/unwoke/camera-mic.sh ]]; then
+    /usr/libexec/unwoke/camera-mic.sh apply-boot || true
+  fi
+  if [[ -x /usr/libexec/unwoke/admin-split.sh ]]; then
+    /usr/libexec/unwoke/admin-split.sh apply-boot || true
+  fi
 }
 
 cmd_apply_user() {
@@ -368,10 +402,13 @@ cmd_apply_user() {
   if [[ -x /usr/libexec/unwoke/theme.sh ]]; then
     /usr/libexec/unwoke/theme.sh apply-user-once || true
   fi
+  if ! is_browserless && [[ ! -f "${BUBBLE_OFF}" ]]; then
+    ensure_bubble_instance || true
+  fi
 }
 
 usage() {
-  echo "usage: toggles.sh status|audit|hardening|devices|jitless|extensions|allow-browsers|flathub|lockdown|bubblejail|apply-boot|apply-user" >&2
+  echo "usage: toggles.sh status|audit|hardening|devices|jitless|extensions|isolation|allow-browsers|flathub|lockdown|bubblejail|brew|camera-mic|admin-split|apply-boot|apply-user" >&2
   exit 2
 }
 
@@ -391,10 +428,14 @@ case "${main}" in
       *) echo "usage: ujust set-brave-extensions block|allow|status" >&2; exit 2 ;;
     esac
     ;;
+  isolation) cmd_pack "Brave isolation pack" "${ISO_SRC}" "${ISO_DST}" "${ISO_OFF}" "${1:-status}" ;;
   allow-browsers) cmd_allow_browsers "${1:-status}" "${2:-}" ;;
   flathub) exec /usr/libexec/unwoke/flathub.sh "${1:-status}" ;;
   lockdown) exec /usr/libexec/unwoke/flatpak-lockdown.sh "${1:-status}" ;;
   bubblejail) cmd_bubblejail "${1:-status}" ;;
+  brew) exec /usr/libexec/unwoke/brew.sh "${1:-status}" ;;
+  camera-mic) exec /usr/libexec/unwoke/camera-mic.sh "${1:-status}" ;;
+  admin-split) exec /usr/libexec/unwoke/admin-split.sh "${1:-status}" "${2:-}" ;;
   apply-boot) cmd_apply_boot ;;
   apply-user) cmd_apply_user ;;
   *) usage ;;

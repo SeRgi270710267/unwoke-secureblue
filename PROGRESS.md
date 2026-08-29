@@ -45,7 +45,15 @@ Display: **Unwoke SecureBlue** (`Unwoke` = modifier; `SecureBlue` = one word, S+
 
 **Flatpak lockdown:** default on (stock’s cuts, system + user). `ujust set-flatpak-lockdown off`.
 
-**Bubblejail:** Origin launcher wrapper, default off.
+**Bubblejail:** Origin launcher wrapper, default **on**. `ujust set-brave-bubblejail off`.
+
+**Homebrew:** off by default (stock ships it). `ujust set-brew on`.
+
+**Camera/mic:** uvcvideo + V4L/ALSA capture locked. Speakers stay. `ujust set-camera-mic on`.
+
+**Admin split:** wheel blocked from GDM/SDDM once a non-wheel user exists (will not brick a single-wheel ISO). `ujust set-admin-split off` or `add NAME`.
+
+**Origin isolation pack:** Disable3DAPIs (WebGL), WebGPU CLI flag, SitePerProcess, OriginKeyedProcessesEnabled. `ujust set-brave-isolation off`.
 
 **Theme:** wallpaper + lock JPG, GNOME `accent-color=blue` + GTK `#3b6cff`, KDE `59,108,255`, GDM wallpaper. `ujust set-unwoke-theme apply`. No classic screensaver (GNOME does not have one). No tight `brave_t` jail (intentionally not shipped).
 
@@ -62,7 +70,11 @@ ujust set-brave-hardening on|off
 ujust set-brave-devices on|off
 ujust set-brave-jitless on|off
 ujust set-brave-extensions block|allow
+ujust set-brave-isolation on|off
 ujust set-brave-bubblejail on|off
+ujust set-brew on|off
+ujust set-camera-mic on|off
+ujust set-admin-split on|off|add NAME
 ujust set-unwoke-theme apply
 ujust set-allow-browsers on ALLOW   # browserless
 ```

@@ -37,11 +37,15 @@ ujust set-brave-hardening on|off     # HTTPS, no metrics, no autofill/passwords 
 ujust set-brave-devices on|off       # camera/mic/geo/USB/BT/serial blocked (default on)
 ujust set-brave-jitless on|off       # no JS JIT; breaks some sites (default on)
 ujust set-brave-extensions block|allow
-ujust set-brave-bubblejail on|off    # experimental; default off
+ujust set-brave-isolation on|off     # no WebGL/WebGPU; SitePerProcess (default on)
+ujust set-brave-bubblejail on|off    # default on; GPU may break
 
 # Both flavors
 ujust set-flathub verified|full|off  # Origin default verified; browserless default off
 ujust set-flatpak-lockdown on|off    # default on; apps need Flatseal
+ujust set-brew on|off                # default off (stock ships Homebrew)
+ujust set-camera-mic on|off          # default locked (uvcvideo + capture nodes)
+ujust set-admin-split on|off|add NAME  # wheel GUI lock once a daily user exists
 
 # Browserless only
 ujust set-allow-browsers on ALLOW

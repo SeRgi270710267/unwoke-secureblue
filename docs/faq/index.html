@@ -65,24 +65,37 @@ ujust set-brave-hardening on|off
 ujust set-brave-devices on|off
 ujust set-brave-jitless on|off
 ujust set-brave-extensions block|allow
+ujust set-brave-isolation on|off
 ujust set-brave-bubblejail on|off
+ujust set-brew on|off
+ujust set-camera-mic on|off
+ujust set-admin-split on|off|add NAME
 ujust set-unwoke-theme apply
 ujust set-allow-browsers on ALLOW</code></pre>
 
     <h2 id="jitless"><a href="#jitless">A site broke after install</a></h2>
     <p>JIT-less is <strong>on</strong> by default on Origin. Turn it off and restart Brave Origin:</p>
 <pre><code>ujust set-brave-jitless off</code></pre>
-    <p>Camera/mic/USB in the browser: <code>ujust set-brave-devices off</code>. Passwords/autofill: <code>ujust set-brave-hardening off</code>. Extensions: <code>ujust set-brave-extensions allow</code>.</p>
+    <p>Camera/mic/USB in the browser: <code>ujust set-brave-devices off</code> and if the kernel lock is on, <code>ujust set-camera-mic on</code>. WebGL/WebGPU: <code>ujust set-brave-isolation off</code>. Passwords/autofill: <code>ujust set-brave-hardening off</code>. Extensions: <code>ujust set-brave-extensions allow</code>.</p>
 
     <h2 id="lockdown"><a href="#lockdown">Flatpaks do nothing / need a million permissions</a></h2>
     <p>Permission lockdown is <strong>on</strong> by default (stock ships it as opt-in). Grant per-app in Flatseal, or:</p>
 <pre><code>ujust set-flatpak-lockdown off</code></pre>
 
+    <h2 id="brew"><a href="#brew">Where is brew?</a></h2>
+    <p>Off by default — stock secureblue ships Homebrew. Enable: <code>ujust set-brew on</code> then a new shell.</p>
+
+    <h2 id="camera"><a href="#camera">Webcam and microphone are dead</a></h2>
+    <p>Default lock: <code>uvcvideo</code> (and a few Intel IPU modules) blacklisted, V4L nodes and ALSA <em>capture</em> devices mode 000. Speakers and USB headsets (playback) stay. <code>ujust set-camera-mic on</code> then replug or <code>run0 modprobe uvcvideo</code>.</p>
+
+    <h2 id="admin"><a href="#admin">Can wheel log into GNOME/KDE?</a></h2>
+    <p>Once you have a non-wheel daily user, wheel is blocked from GDM/SDDM. TTY and <code>run0</code> still work. A single-user ISO is <em>not</em> locked out (that would brick the greeter). Create the daily user with <code>ujust set-admin-split add NAME</code>, or keep wheel on the greeter: <code>ujust set-admin-split off</code>.</p>
+
     <h2 id="theme"><a href="#theme">Wallpaper, lock screen, accent</a></h2>
     <p>Default Unwoke navy wallpaper, a darker lock image, dark style, GNOME named accent <code>blue</code>, GTK/KDE <code>#3b6cff</code>. Gallery: <a href="brand/">Brand</a>. GNOME has no classic screensaver; the lock screen is that image. Re-apply: <code>ujust set-unwoke-theme apply</code>.</p>
 
     <h2 id="bubblejail"><a href="#bubblejail">What is set-brave-bubblejail?</a></h2>
-    <p>Optional extra sandbox around Origin’s desktop launcher. Default <strong>off</strong>. GPU, PipeWire, and portals may break. Turn it off if the window will not start.</p>
+    <p>Extra sandbox around Origin’s desktop launcher. Default <strong>on</strong>. GPU, PipeWire, and portals may break. <code>ujust set-brave-bubblejail off</code> if the window will not start.</p>
 
     <h2 id="userns"><a href="#userns">Did you turn user namespaces back on?</a></h2>
     <p>Not globally. <code>harden_userns</code> stays on. On Origin images, Brave Origin is labeled <code>brave_t</code> and that domain is on secureblue’s userns allow-list. Browserless images do not add that exception — same as stock with Trivalent removed. Unconfined apps still cannot create user namespaces.</p>

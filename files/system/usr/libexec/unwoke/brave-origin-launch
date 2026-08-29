@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
-# Desktop launcher for Brave Origin. Jails only if the bubblejail stamp is on.
+# Desktop launcher for Brave Origin.
+# Bubblejail default on unless /etc/unwoke/brave-bubblejail.off
+# Isolation pack adds --disable-features=WebGPU (policy covers WebGL).
 set -euo pipefail
 
 REAL="/opt/brave.com/brave-origin/brave"
-STAMP="/etc/unwoke/brave-bubblejail"
+BUBBLE_OFF="/etc/unwoke/brave-bubblejail.off"
+ISO_OFF="/etc/unwoke/brave-isolation.off"
+ISO_DST="/etc/brave-origin/policies/managed/40-unwoke-isolation.json"
 INSTANCE="brave-origin"
 
 if [[ ! -x "${REAL}" ]]; then
@@ -11,10 +15,15 @@ if [[ ! -x "${REAL}" ]]; then
   exit 127
 fi
 
-if [[ -f "${STAMP}" ]] && command -v bubblejail >/dev/null; then
+EXTRA=()
+if [[ ! -f "${ISO_OFF}" ]] && [[ -f "${ISO_DST}" || -f /usr/etc/brave-origin/policies/managed/40-unwoke-isolation.json ]]; then
+  EXTRA+=(--disable-features=WebGPU,WebGPUService)
+fi
+
+if [[ ! -f "${BUBBLE_OFF}" ]] && command -v bubblejail >/dev/null; then
   if bubblejail list 2>/dev/null | grep -qx "${INSTANCE}"; then
-    exec bubblejail run "${INSTANCE}" "$@"
+    exec bubblejail run "${INSTANCE}" "${EXTRA[@]}" "$@"
   fi
 fi
 
-exec "${REAL}" "$@"
+exec "${REAL}" "${EXTRA[@]}" "$@"

@@ -48,11 +48,35 @@ set-brave-extensions *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh extensions "$@"
 
-# Brave Origin: wrap the desktop launcher in Bubblejail. Default off. Experimental.
+# Brave Origin: wrap the desktop launcher in Bubblejail. Default on. GPU may break.
 [positional-arguments]
 set-brave-bubblejail *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh bubblejail "$@"
+
+# Brave Origin: no WebGL/WebGPU, force site/origin isolation. Restart after.
+[positional-arguments]
+set-brave-isolation *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh isolation "$@"
+
+# Homebrew. Default off (stock ships it). New shell after change.
+[positional-arguments]
+set-brew *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh brew "$@"
+
+# Webcam + ALSA capture lock. Speakers stay. Default locked.
+[positional-arguments]
+set-camera-mic *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh camera-mic "$@"
+
+# Wheel GUI lock once a non-wheel user exists. TTY/run0 stay. add NAME creates that user.
+[positional-arguments]
+set-admin-split *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh admin-split "$@"
 
 # Re-apply Unwoke wallpaper + accent (GNOME schema / KDE wallpaper). Settings still override.
 [positional-arguments]
