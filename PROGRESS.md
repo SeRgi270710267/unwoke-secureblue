@@ -164,7 +164,7 @@ Stock `ujust` still works.
 21. **Last-green stamp + Reboot on the nag:** Pages writes `status.json` (bake + inspect + ISO if green). Home/Install/Images/Compared show it. `notify-reboot.sh` adds a Reboot button when libnotify supports `--action`; timer waits up to 180s. Overlay bake for the button. No lock loosened.
 22. **Proton.me wizard (no store):** `ujust install-proton` / Setup → Proton.me. Trivalent first; VPN WireGuard; official Mail/Pass RPM only after SHA512 + asked `set-unconfined-userns`. No unverified Flathub. Tutorial + Compared. Overlay bake required.
 23. **IVPN wizard (no store):** `ujust install-ivpn`. WireGuard import first. Official Fedora repo + `ivpn`/`ivpn-ui` only after you accept an extra RPM origin. No Snap. Tutorial + Compared. Overlay bake required.
-24. **Vendor installer watch:** `vendor-installers.json` + `vendor.py`. Version/SHA512 fetched live. Twice-daily `vendor-watch` probes; if a URL moved on an allowlisted HTTPS host and still has SHA512/`gpgcheck=1`, **heal commits the JSON** (triggers overlay bake). Flathub / gpgcheck=0 / new schema still open `vendor-installers` — not auto-weakened.
+24. **Vendor installer watch:** live SHA512; heal also covers redirects, field renames, sidecar checksums, www, repo path, retries on 429/5xx (no rewrite). Allowlisted HTTPS + checksum/gpg only. Flathub/HTTP still a human issue.
 
 Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only / `iso.yml` pushes should not rebuild images (`build.yml` paths-ignore).
 
