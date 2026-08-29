@@ -366,6 +366,33 @@ main img {
   color: var(--text-muted);
 }
 
+.table-container.compare {
+  font-size: 0.88rem;
+}
+
+.table-container.compare table {
+  min-width: 52rem;
+}
+
+.table-container.compare th:first-child,
+.table-container.compare td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--bg-table);
+  font-weight: 600;
+  min-width: 9.5rem;
+}
+
+.table-container.compare th:first-child {
+  background: var(--bg-card);
+}
+
+.table-container.compare th:nth-child(4),
+.table-container.compare td:nth-child(4) {
+  box-shadow: inset 0 0 0 1px rgba(59, 108, 255, 0.35);
+}
+
 .select-group {
   display: flex;
   flex-wrap: wrap;

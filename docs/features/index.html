@@ -8,15 +8,15 @@
   <title>Features | Unwoke SecureBlue</title>
   <meta name="description" content="Overlay delta: Brave Origin, stock Trivalent, or browserless; no store; extra reversible Chromium policies; Unwoke theme.">
   <base href="/unwoke-secureblue/">
-  <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
-  <link rel="stylesheet" href="css/main.css?v=4">
+  <link rel="icon" href="assets/logo.svg?v=5" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css?v=5">
 </head>
 <body>
   <a class="skip" href="#content">Skip to content</a>
   <header>
     <nav id="site-menu" aria-label="Primary">
       <ul>
-        <li><a href="./"><img src="assets/logo.svg?v=4" alt="">Unwoke SecureBlue</a></li>
+        <li><a href="./"><img src="assets/logo.svg?v=5" alt="">Unwoke SecureBlue</a></li>
         <li aria-current="page"><a href="features/">Features</a></li>
         <li><a href="brand/">Brand</a></li>
         <li><a href="changelog/">Changelog</a></li>
@@ -52,29 +52,122 @@
     <p>Read their list if you want the complete inventory. We did not gut SELinux, kernel args, disk encryption, or Secure Boot enrollment.</p>
 
     <h2 id="changed"><a href="#changed">What this overlay changes</a></h2>
-    <div class="table-container">
+    <p>Four columns, left to right: stock secureblue, Unwoke Origin, Unwoke Trivalent (<code>*-trivalent</code>), Unwoke browserless. The Trivalent column is the new flavor: same house browser as stock, then extra reversible policies stock does not force. Scroll sideways on a phone. Reverts: <a href="#toggles">toggles</a>.</p>
+    <div class="table-container compare">
       <table>
         <thead>
-          <tr><th></th><th>Stock secureblue</th><th>Origin</th><th>Trivalent (<code>*-trivalent</code>)</th><th>Browserless</th></tr>
+          <tr>
+            <th></th>
+            <th>Stock secureblue</th>
+            <th>Origin</th>
+            <th>Trivalent (<code>*-trivalent</code>)</th>
+            <th>Browserless</th>
+          </tr>
         </thead>
         <tbody>
           <tr>
             <td>Browser</td>
             <td><a href="https://github.com/secureblue/Trivalent">Trivalent</a> — confined Chromium</td>
-            <td><a href="https://brave.com/origin/linux/">Brave Origin</a> RPM. Fat <code>brave_t</code>. Policy packs on.</td>
-            <td>Stock Trivalent (patches + SELinux) plus extra reversible policies stock does not force.</td>
-            <td>None. No Trivalent, no Origin, no <code>brave_t</code>.</td>
+            <td><a href="https://brave.com/origin/linux/">Brave Origin</a> RPM. Fat <code>brave_t</code>.</td>
+            <td>Stock Trivalent (same binary, patches, SELinux) plus extra reversible policies</td>
+            <td>None. No Trivalent, no Origin, no <code>brave_t</code></td>
+          </tr>
+          <tr>
+            <td>Vanadium / compiler patches</td>
+            <td>Yes (Trivalent)</td>
+            <td>No. Policies are not a substitute</td>
+            <td>Yes — inherited, not rebuilt</td>
+            <td>n/a (no browser)</td>
+          </tr>
+          <tr>
+            <td>Browser SELinux</td>
+            <td>Tight <code>trivalent_t</code></td>
+            <td>Fat <code>brave_t</code> (unconfined-like)</td>
+            <td>Same tight <code>trivalent_t</code> as stock. No <code>brave_t</code></td>
+            <td>No extra domain</td>
+          </tr>
+          <tr>
+            <td>JavaScript JIT</td>
+            <td>Allowed</td>
+            <td>Blocked by default. <code>ujust set-brave-jitless off</code></td>
+            <td>Blocked by default. Same toggle (stock does not force this)</td>
+            <td>n/a</td>
+          </tr>
+          <tr>
+            <td>WebGL / WebGPU</td>
+            <td>Allowed</td>
+            <td>Off by default. <code>ujust set-brave-isolation off</code></td>
+            <td>Off by default. Same toggle (stock does not force this)</td>
+            <td>n/a</td>
+          </tr>
+          <tr>
+            <td>Extensions</td>
+            <td>Allowed</td>
+            <td>Installs blocked. <code>ujust set-brave-extensions allow</code></td>
+            <td>Installs blocked. Same toggle (stock does not force this)</td>
+            <td>n/a</td>
+          </tr>
+          <tr>
+            <td>Browser camera / mic / USB / BT / geo</td>
+            <td>Site permission prompts</td>
+            <td>Blocked by policy. <code>ujust set-brave-devices off</code></td>
+            <td>Blocked by policy. Same toggle (stock does not force this)</td>
+            <td>n/a</td>
+          </tr>
+          <tr>
+            <td>HTTPS-only / no passwords / no metrics</td>
+            <td>Compile-time defaults; not our JSON pack</td>
+            <td>Managed pack on. <code>ujust set-brave-hardening off</code></td>
+            <td>Same managed pack on (additive if Trivalent already compiled some of this in)</td>
+            <td>n/a</td>
+          </tr>
+          <tr>
+            <td>Extra sandbox pack</td>
+            <td>No</td>
+            <td>On: audio sandbox, no screen capture, JS optimizer off. <code>ujust set-brave-sandbox off</code></td>
+            <td>On. Same pack (stock does not force this)</td>
+            <td>n/a</td>
+          </tr>
+          <tr>
+            <td>Network Service Sandbox</td>
+            <td>Off in <code>chrome://settings/security</code> (can clear cookies)</td>
+            <td>n/a (Origin launcher, not Trivalent conf.d)</td>
+            <td>Forced on. <code>ujust set-trivalent-network-sandbox off</code></td>
+            <td>n/a</td>
+          </tr>
+          <tr>
+            <td>Punycode / strip referrers</td>
+            <td>Optional chrome://flags</td>
+            <td>n/a</td>
+            <td>On via conf.d. <code>ujust set-trivalent-referrers off</code></td>
+            <td>n/a</td>
+          </tr>
+          <tr>
+            <td>Bubblejail on the house browser</td>
+            <td>Do not wrap Trivalent (their FAQ)</td>
+            <td>On. <code>ujust set-brave-bubblejail off</code></td>
+            <td>Refused. Stock already jails Trivalent</td>
+            <td>n/a</td>
+          </tr>
+          <tr>
+            <td>DevTools lock</td>
+            <td>Unlocked</td>
+            <td>Unlocked until <code>ujust set-brave-devtools lock</code></td>
+            <td>Unlocked until the same lock toggle</td>
+            <td>n/a</td>
           </tr>
           <tr>
             <td>App store</td>
             <td>Bazaar — curated catalog</td>
-            <td colspan="3">None. No Flathub until <code>ujust set-flathub verified</code>.</td>
+            <td>None. Flathub off until <code>ujust set-flathub verified</code></td>
+            <td>None. Same</td>
+            <td>None. Same</td>
           </tr>
           <tr>
             <td>User namespaces</td>
             <td>Off for unconfined; on for Flatpak and Trivalent</td>
             <td>Same, plus <code>brave_t</code> on the allow-list</td>
-            <td>Same as stock (Trivalent stays on the allow-list). No <code>brave_t</code>.</td>
+            <td>Same as stock. No <code>brave_t</code></td>
             <td>Stock with Trivalent gone: unconfined blocked, Flatpak only</td>
           </tr>
           <tr>
@@ -87,42 +180,58 @@
           <tr>
             <td>Flatpak permissions</td>
             <td>Opt-in lockdown</td>
-            <td colspan="3">Lockdown <strong>on</strong> by default; <code>ujust set-flatpak-lockdown off</code></td>
+            <td>Lockdown <strong>on</strong>. <code>ujust set-flatpak-lockdown off</code></td>
+            <td>Lockdown <strong>on</strong>. Same</td>
+            <td>Lockdown <strong>on</strong>. Same</td>
           </tr>
           <tr>
             <td>Homebrew</td>
             <td>Shipped</td>
-            <td colspan="3">Off until <code>ujust set-brew on</code></td>
+            <td>Off until <code>ujust set-brew on</code></td>
+            <td>Off. Same</td>
+            <td>Off. Same</td>
           </tr>
           <tr>
-            <td>Camera / mic</td>
+            <td>Camera / mic (kernel)</td>
             <td>Available</td>
-            <td colspan="3">Kernel + udev locked until <code>ujust set-camera-mic on</code> (speakers stay)</td>
+            <td>Locked until <code>ujust set-camera-mic on</code> (speakers stay)</td>
+            <td>Locked. Same</td>
+            <td>Locked. Same</td>
           </tr>
           <tr>
             <td>Wheel on the greeter</td>
             <td>Typical daily user is wheel</td>
-            <td colspan="3">tty1 prompt before greeter to create a daily user, then wheel is blocked from GDM/SDDM. <code>ujust set-admin-split off</code></td>
+            <td>tty1 prompt, then wheel blocked from GDM/SDDM. <code>ujust set-admin-split off</code></td>
+            <td>Same prompt / lock</td>
+            <td>Same prompt / lock</td>
           </tr>
           <tr>
             <td>Bluetooth</td>
             <td>Available</td>
-            <td colspan="3">Off until <code>ujust set-bluetooth on</code>. Wi-Fi stays.</td>
+            <td>Off until <code>ujust set-bluetooth on</code>. Wi-Fi stays</td>
+            <td>Off. Same</td>
+            <td>Off. Same</td>
           </tr>
           <tr>
             <td>toolbox / distrobox</td>
             <td>Available</td>
-            <td colspan="3">Off. <code>/usr/bin/toolbox</code> is a wrapper. <code>ujust set-toolbox on</code>. podman stays.</td>
+            <td>Off. <code>/usr/bin/toolbox</code> is a wrapper. <code>ujust set-toolbox on</code></td>
+            <td>Off. Same</td>
+            <td>Off. Same</td>
           </tr>
           <tr>
             <td>Avahi / ModemManager</td>
             <td>Typically on</td>
-            <td colspan="3">Masked until <code>ujust set-extra-daemons on</code>. cups/geoclue already stock-masked.</td>
+            <td>Masked until <code>ujust set-extra-daemons on</code></td>
+            <td>Masked. Same</td>
+            <td>Masked. Same</td>
           </tr>
           <tr>
             <td>Look</td>
             <td>Their defaults</td>
-            <td colspan="3">Unwoke wallpaper, lock screen, dark, blue accent. <a href="brand/">Brand</a></td>
+            <td>Unwoke wallpaper, lock, blue accent. <a href="brand/">Brand</a></td>
+            <td>Same Unwoke look</td>
+            <td>Same Unwoke look</td>
           </tr>
         </tbody>
       </table>
@@ -178,7 +287,7 @@
           </tr>
           <tr>
             <td><code>ujust set-flathub</code></td>
-            <td><code>off</code> both flavors</td>
+            <td><code>off</code> all flavors</td>
             <td>System Flathub remote. Stock uses verified.</td>
             <td><code>verified</code> / <code>full</code> / <code>off</code></td>
           </tr>
@@ -338,7 +447,7 @@ ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
   </main>
 
   <footer>
-    <a class="brand" href="./"><img src="assets/logo.svg?v=4" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <a class="brand" href="./"><img src="assets/logo.svg?v=5" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
     <ul id="social">
       <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
       <li><a href="https://secureblue.dev/features">secureblue features</a></li>
