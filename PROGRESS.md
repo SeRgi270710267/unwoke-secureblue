@@ -12,7 +12,7 @@
 - Workarounds: https://sergi270710267.github.io/unwoke-secureblue/stock-issues/
 - Fingerprint tutorial: https://sergi270710267.github.io/unwoke-secureblue/tutorials/fingerprint/
 - Changelog: https://sergi270710267.github.io/unwoke-secureblue/changelog/ (generated; gitignored)
-- **Handoff commit:** whatever `git log -1 --oneline` is after this file is pushed (this write is the close-chat save). Previous session HEAD before this file: `041d514` (contributor path).
+- **Handoff commit:** whatever `git log -1 --oneline` is after this file is pushed (this write is the close-chat save). Previous session HEAD before this file: `9ae34a4` (auto-apply public mark; live browser policies scrubbed).
 - **GitHub ruleset:** only **`main-strict`**, Active, target `refs/heads/main`. Requires PR + 1 approval + Code Owners + status **`Strict PR gate`** (GitHub Actions). Block force-push + deletion. **Repository admin bypass** so the owner (and this agent) can still `git push` to `main`. No `protect-main`. No auto-merge. Grok cannot merge.
 
 **How to resume:** clone the repo (or open it), say you are continuing Unwoke SecureBlue from `PROGRESS.md`. Do not rebuild images for docs-only work. Do not docker-pull Atomic images (layer depth). Do not auto-accept a new `cosign.pub` or auto-exec live `/usr/libexec/secureblue/*.py`.
@@ -214,17 +214,30 @@ Image-side theme, privacy.sh, and Setup fingerprint button land on the **image r
 
 ## Tomorrow / next chat
 
-- Pickup: *continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.* Other PC: `git clone` or `git pull`.
-- Overlay bake **queues** if another is running (`cancel-in-progress: false`). Do not force-cancel a green bake to “go faster.” Item 51 (auto-stamp + scrub live browser policies) **does** bake. Item 46 (After login page) is Pages + a setup-gui label; the window still opens first-hour help.
-- Privacy locks (`privacy.sh apply-boot`, countme/connectivity/DHCP/thumbnails, hardening Privacy Sandbox) need a **green overlay bake** then a real rebase to confirm.
-- USB ISO wrap **green:** [run 20](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33254135512) (~4 GB **Actions artifact**). GHCR `-iso` was **not** created: oras 1.2 rejected the absolute ISO path. Download the artifact (GitHub login). Do not send people to `/users/.../packages/container/.../settings` (404/500). After the relative-path oras fix, re-dispatch `iso`. Weekly four Trivalent. Not Ventoy. Their Secure Boot key.
-- **#5** was a false alarm (pin still `840217d` / tag v0.2). Do not bump. Next `verify` should close it.
+- Pickup: *continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.* Other PC: `git clone https://github.com/SeRgi270710267/unwoke-secureblue.git` then `git pull`. Phrase: continuing Unwoke SecureBlue from `PROGRESS.md`.
+- Last product HEAD: `9ae34a4` (mark auto-apply + live browser policies scrubbed). Git is clean on `main`.
+- Overlay: [run 84](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33270781562) (`edff869`) was **in progress** at close-chat. [run 86](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33271511130) (`9ae34a4`) is **queued**. Do **not** cancel either. `cancel-in-progress: false`. Item 51 lands when 86 is green.
+- USB ISOs: only `unwoke-silverblue-trivalent` existed before close-chat ([run 21](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33265732467), GHCR publish also green). All **12** flavors were dispatched at close-chat (one `iso.yml` each; concurrency per image, do not cancel). Wrap uses GHCR `:latest` at pull time — if overlay 84/86 is still publishing, a wrap may get the previous `:latest`. Download the **Actions artifact** (GitHub login, ~4 GB, 14 days). Not Ventoy. Enroll **their** Secure Boot key. Weekly still four Trivalent.
+  - [silverblue-trivalent](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33271596640)
+  - [kinoite-trivalent](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33271598181)
+  - [silverblue-nvidia-open-trivalent](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33271599868)
+  - [kinoite-nvidia-open-trivalent](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33271601020)
+  - [silverblue](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33271602415)
+  - [silverblue-nvidia-open](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33271603810)
+  - [kinoite](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33271605294)
+  - [kinoite-nvidia-open](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33271606614)
+  - [silverblue-browserless](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33271607795)
+  - [silverblue-nvidia-open-browserless](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33271608871)
+  - [kinoite-browserless](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33271610062)
+  - [kinoite-nvidia-open-browserless](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33271611064)
+  - Lane: [iso.yml runs](https://github.com/SeRgi270710267/unwoke-secureblue/actions/workflows/iso.yml)
+- Public mark is automatic (`mark-check.py --apply` at compose). Do not put `UNWOKE-SHIPPED-FIRST` into live Chromium/Brave/Trivalent `policies/managed`. Do not wait to be asked to re-stamp. Do not weaken privacy/security for credit.
+- Confirm on a real USB/rebase after overlay 86: `ujust setup` / `ujust audit-unwoke` / `ujust set-countme` status off / `ujust why`. Shipped first: https://sergi270710267.github.io/unwoke-secureblue/ahead/
+- **#5** was a false alarm (pin still `840217d` / tag v0.2). Do not bump.
 - First stranger PR: confirm **Strict PR gate** runs; if the merge box cannot find the check, edit `main-strict` and pick it from search after that run.
-- Confirm on a real rebase: `ujust setup` / fingerprint button / `ujust set-countme` status off / `ujust why`.
-- Workarounds: do not loosen keyword map to “help” with the wrong `ujust`. Groq/xAI secret optional for AI notes; Pollinations is best-effort.
 - Do not add `on: push` to `iso.yml` or `verify.yml`.
 - Do not start a tight `brave_t` jail unless the owner asks again and accepts breakage.
 - Do not add a GUI store. Do not Bubblejail Trivalent. Do not fork. Do not default-off Safe Browsing or fwupd.
-- Overlay-on-signed-stock. Trivalent policy dir `/etc/trivalent/policies/managed/`. Flags via `trivalent.conf.d` (`CHROMIUM_FLAGS` / `FEATURES+=`).
+- Overlay-on-signed-stock. Trivalent policy dir `/etc/trivalent/policies/managed/`. Flags via `trivalent.conf.d`.
 - Canary/inspect: never `docker pull` Atomic images. Crane + `extract-prefixes.py`.
 - Do not auto-merge canary hits, a new `keys/secureblue.pub`, a new vendor hostname, Flathub, `gpgcheck=0`, or a titanoboa pin bump.
