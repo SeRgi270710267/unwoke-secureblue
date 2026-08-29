@@ -336,6 +336,10 @@ main.mirror pre {
   overflow-x: auto;
 }
 
+.unwoke-cmd pre {
+  margin: 0.75rem 0 0.35rem;
+}
+
 ul.whats-new {
   list-style: none;
   padding: 0;

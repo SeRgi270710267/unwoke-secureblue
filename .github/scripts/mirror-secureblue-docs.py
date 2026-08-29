@@ -156,6 +156,184 @@ def wrap_tables(fragment: str) -> str:
     return fragment
 
 
+# Stock snippets that do the wrong thing (or not enough) on Unwoke.
+# Inserted under the matching stock <pre> or paragraph at mirror time.
+UNWOKE_CMDS: tuple[dict[str, object], ...] = (
+    {
+        "id": "flathub",
+        "needles": ("ujust set-flathub-unfiltered", "Software store"),
+        "code": "ujust set-flathub verified\n# or: ujust set-flathub full",
+        "note": "Flathub is <strong>off</strong> here. There is no Bazaar/GNOME Software/Discover. "
+        "<code>verified</code> matches stock’s default remote. <code>full</code> is their unfiltered.",
+        "more": ("tutorials/install-apps/", "Install an app"),
+    },
+    {
+        "id": "vpn",
+        "needles": ("ujust install-vpn",),
+        "code": "ujust install-proton\nujust install-ivpn\nujust install-mullvad\nujust install-vendor NAME",
+        "note": "WireGuard import first (no extra daemon). Official RPM/repo only after live SHA512 "
+        "or <code>gpgcheck=1</code>, and only if you accept the extra origin. No Snap, no unverified Flathub.",
+        "more": ("tutorials/", "Tutorials"),
+    },
+    {
+        "id": "rebase-stock",
+        "needles": ("ujust rebase-secureblue", "bootc switch ghcr.io/secureblue"),
+        "code": "rpm-ostree rebase ostree-image-signed:docker://ghcr.io/sergi270710267/unwoke-silverblue-trivalent:latest",
+        "note": "That stock command rebases you <strong>off Unwoke</strong> onto their GHCR. Stay on "
+        "<code>ghcr.io/sergi270710267/…</code> after the signed reboot. Pick the flavor on "
+        '<a href="install/">Install</a>.',
+        "more": ("images/", "Our images"),
+    },
+    {
+        "id": "bluetooth",
+        "needles": ("ujust set-bluetooth-modules",),
+        "code": "ujust set-bluetooth on",
+        "note": "Stock only loads BT kernel modules. We also mask <code>bluetooth.service</code> and "
+        "<code>rfkill</code>. The stock command alone is not enough here. Wi-Fi is not touched.",
+        "more": ("tutorials/bluetooth/", "Bluetooth tutorial"),
+    },
+    {
+        "id": "webcam",
+        "needles": ("ujust set-webcam-modules",),
+        "code": "ujust set-camera-mic on",
+        "note": "Webcam/mic capture is <strong>already locked</strong> (speakers stay). Stock’s command "
+        "turns modules off; you want the opposite to use a camera. Then grant the browser: "
+        "<code>ujust set-brave-devices off</code> if policy is blocking it.",
+        "more": ("tutorials/camera-mic/", "Camera / mic"),
+    },
+    {
+        "id": "avahi",
+        "needles": ("unmask avahi-daemon", "systemctl unmask avahi"),
+        "code": "ujust set-extra-daemons on",
+        "note": "Avahi and ModemManager are masked on Unwoke. That one toggle is the overlay path. "
+        "cups/geoclue stay stock’s masks. Then still open firewall mDNS as they describe.",
+        "more": ("faq/#daemons", "Our FAQ"),
+    },
+    {
+        "id": "brew",
+        "needles": ("brew install", "Why does secureblue include Homebrew"),
+        "code": "ujust set-brew on\n# new shell, then brew works like stock",
+        "note": "Homebrew is off until you toggle it. Stock ships it on PATH.",
+        "more": ("faq/#brew", "Our FAQ"),
+    },
+    {
+        "id": "toolbox",
+        "needles": ("ujust distrobox-assemble", "distrobox-assemble"),
+        "code": "ujust set-toolbox on",
+        "note": "<code>toolbox</code> / <code>distrobox</code> are wrappers until you opt in. "
+        "<code>podman</code> stays. Then their Distrobox command works.",
+        "more": ("tutorials/toolbox/", "toolbox tutorial"),
+    },
+    {
+        "id": "audit",
+        "needles": ("ujust audit-secureblue",),
+        "code": "ujust audit-unwoke\nujust unwoke-status",
+        "note": "Stock audit still applies (their kernel, USBGuard, kargs). Also run the overlay check "
+        "so trampoline / flavor / no leftover store are covered.",
+        "more": ("tutorials/check-health/", "Check health"),
+    },
+    {
+        "id": "admin",
+        "needles": ("ujust create-admin",),
+        "code": "ujust set-admin-split add NAME\n# or skip the first-boot prompt: ujust set-admin-split off",
+        "note": "Unwoke already asks for a daily (non-wheel) user before GDM/SDDM. Stock "
+        "<code>create-admin</code> still exists if you skipped that. Wheel is blocked from the greeter.",
+        "more": ("tutorials/daily-user/", "Daily user"),
+    },
+    {
+        "id": "trivalent-flags",
+        "needles": ("chrome://flags", "Trivalent post-install"),
+        "code": "ujust set-trivalent-network-sandbox on   # default on *-trivalent\nujust set-trivalent-referrers on",
+        "note": "On <code>*-trivalent</code>, JIT-less / no WebGL / extension block / NSS may already be "
+        "forced by overlay policy. Origin uses <code>ujust set-brave-*</code>. Do not Bubblejail Trivalent.",
+        "more": ("features/#trivalent", "Trivalent flavor"),
+    },
+)
+
+PRE_BLOCK = re.compile(r"<pre\b[^>]*>.*?</pre>", re.I | re.S)
+P_BLOCK = re.compile(r"<p\b[^>]*>.*?</p>", re.I | re.S)
+
+
+def _unwoke_box(spec: dict[str, object]) -> str:
+    sid = html.escape(str(spec["id"]), quote=True)
+    code = html.escape(str(spec["code"]))
+    note = str(spec["note"])
+    more = spec.get("more")
+    extra = ""
+    if isinstance(more, tuple) and len(more) == 2:
+        extra = (
+            f' <a href="{html.escape(more[0], quote=True)}">{html.escape(more[1])}</a>.'
+        )
+    return (
+        f'<div class="alert note unwoke-cmd" data-unwoke-cmd="{sid}">'
+        "<p><strong>On Unwoke SecureBlue</strong> — the stock snippet above is theirs. "
+        f"Use this as well or instead:</p>"
+        f"<pre><code>{code}</code></pre>"
+        f"<p>{note}{extra}</p></div>"
+    )
+
+
+def _contains(hay: str, needles: tuple[str, ...]) -> bool:
+    low = hay.lower()
+    return any(n.lower() in low for n in needles)
+
+
+def annotate_unwoke_commands(fragment: str) -> str:
+    """Under stock commands that differ here, add the Unwoke ujust. Idempotent."""
+    for spec in UNWOKE_CMDS:
+        sid = str(spec["id"])
+        if f'data-unwoke-cmd="{sid}"' in fragment:
+            continue
+        needles = spec["needles"]
+        if not isinstance(needles, tuple):
+            continue
+        box = _unwoke_box(spec)
+        inserted = False
+
+        def put_pre(m: re.Match[str], box: str = box, needles: tuple[str, ...] = needles) -> str:
+            nonlocal inserted
+            block = m.group(0)
+            if inserted or not _contains(block, needles):
+                return block
+            inserted = True
+            return block + box
+
+        fragment = PRE_BLOCK.sub(put_pre, fragment)
+        if inserted:
+            continue
+
+        def put_p(m: re.Match[str], box: str = box, needles: tuple[str, ...] = needles) -> str:
+            nonlocal inserted
+            block = m.group(0)
+            if inserted or not _contains(block, needles):
+                return block
+            inserted = True
+            return block + box
+
+        fragment = P_BLOCK.sub(put_p, fragment)
+        if inserted:
+            continue
+        low = fragment.lower()
+        pos = -1
+        for n in needles:
+            i = low.find(n.lower())
+            if i != -1 and (pos == -1 or i < pos):
+                pos = i
+        if pos < 0:
+            continue
+        rest = fragment[pos:]
+        cut = -1
+        for tag in ("</pre>", "</li>", "</p>", "</h4>", "</h3>", "</h2>"):
+            j = rest.lower().find(tag)
+            if j != -1 and (cut == -1 or j < cut):
+                cut = j + len(tag)
+        if cut == -1:
+            continue
+        at = pos + cut
+        fragment = fragment[:at] + box + fragment[at:]
+    return fragment
+
+
 def keep_heading_ids(text: str) -> str:
     """Keep {: #id} / {: .class} for Python-Markdown attr_list. Drop other kramdown."""
 
@@ -316,6 +494,7 @@ def main() -> int:
         body_html = replace_stock_forms(body_html)
         body_html = wrap_tables(body_html)
         body_html = sanitize_html(body_html)
+        body_html = annotate_unwoke_commands(body_html)
         extra = PAGE_NOTICES.get(permalink.rstrip("/"), "")
         if extra:
             body_html = extra + body_html
