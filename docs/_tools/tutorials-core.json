@@ -3,7 +3,7 @@
     {
       "label": "First days",
       "cards": [
-        {"href": "tutorials/first-hour/", "eyebrow": "Start", "h3": "The first hour", "p": "Login window, signed reboot, keep defaults. The machine is supposed to feel strict."},
+        {"href": "start/", "eyebrow": "Start", "h3": "After you log in", "p": "Unwoke setup, not GNOME Settings. Daily user, signed reboot, leftover stock. Keep the locks."},
         {"href": "tutorials/updates/", "eyebrow": "Stay current", "h3": "Updates and rollback", "p": "Updates are automatic and signed. Check status, reboot, roll back if a bake is bad."},
         {"href": "tutorials/check-health/", "eyebrow": "Trust", "h3": "Check the box is what we shipped", "p": "Status, overlay audit, stock audit, cosign. Five minutes, no extra software."},
         {"href": "tutorials/daily-user/", "eyebrow": "Accounts", "h3": "Daily user vs wheel", "p": "Graphical session as a non-admin. run0 when you need privilege. That is the standard."}

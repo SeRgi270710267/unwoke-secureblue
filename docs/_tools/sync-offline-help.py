@@ -26,6 +26,7 @@ def rewrite(html: str, depth: int) -> str:
     html = html.replace('href="tutorials/"', f'href="{prefix}index.html"')
     for page in (
         "install",
+        "start",
         "post-install",
         "features",
         "compared",

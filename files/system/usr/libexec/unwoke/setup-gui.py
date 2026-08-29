@@ -257,7 +257,7 @@ class SetupWindow(Gtk.Window):
         rb = Gtk.Button(label="Reboot now")
         rb.connect("clicked", self.on_reboot)
         box.pack_start(rb, False, False, 0)
-        tut = Gtk.Button(label="Open first-hour tutorial")
+        tut = Gtk.Button(label="After you log in (first hour)")
         tut.connect("clicked", lambda *_: open_tutorial("first-hour"))
         box.pack_start(tut, False, False, 0)
         fp = Gtk.Button(label="Fingerprinting vs locks (read only)")

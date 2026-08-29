@@ -25,6 +25,7 @@
         <li><a href="changelog/">Changelog</a></li>
         <li><a href="images/">Images</a></li>
         <li aria-current="page"><a href="install/">Install</a></li>
+        <li><a href="start/">After login</a></li>
         <li><a href="post-install/">Post-install</a></li>
         <li><a href="tutorials/">Tutorials</a></li>
         <li><a href="faq/">FAQ</a></li>
@@ -143,8 +144,9 @@ systemctl reboot</code></pre>
     <p>Still valid: flash a <a href="https://secureblue.dev/install">secureblue ISO</a>, encrypt, enroll their key, then rebase. Use this if you want their installer and do not want to wait for an Unwoke ISO build.</p>
 
     <h2 id="after"><a href="#after">After install</a></h2>
-    <p>Stock secureblue post-install still applies. Full overlay + their steps: <a href="post-install/">Post-install</a>. Their page only (mirrored daily): <a href="secureblue/post-install/">secureblue/post-install</a>.</p>
-    <p>After the first graphical login, a setup window explains the locks (nothing turns off unless you pick it). Same later: app grid → <strong>Unwoke setup</strong>, or <code>ujust setup</code>. If Bluetooth, Flathub, brew, webcam, WebGL, or the greeter is “broken,” it is a default lock — <code>ujust why</code>. Step-by-step: <a href="tutorials/">Tutorials</a>. Full table: <a href="post-install/">Post-install</a>.</p>
+    <p>You logged in. Do not open GNOME Settings looking for a store. Walk <a href="start/">After you log in</a> once — Unwoke setup, signed reboot, daily user, leftover stock. Command dump: <a href="post-install/">Post-install</a>. Their page only (mirrored daily): <a href="secureblue/post-install/">secureblue/post-install</a>.</p>
+    <p><a class="button" href="start/">After you log in</a></p>
+    <p>Same later: app grid → <strong>Unwoke setup</strong>, or <code>ujust setup</code>. If Bluetooth, Flathub, brew, webcam, WebGL, or the greeter is “broken,” it is a default lock — <code>ujust why</code>.</p>
 <pre><code>ujust setup
 ujust why
 ujust unwoke-status

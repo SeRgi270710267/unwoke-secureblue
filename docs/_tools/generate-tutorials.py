@@ -32,6 +32,7 @@ NAV = """        <li><a href="./"><img src="assets/logo.svg?v=4" alt="">Unwoke S
         <li><a href="changelog/">Changelog</a></li>
         <li><a href="images/">Images</a></li>
         <li><a href="install/">Install</a></li>
+        <li><a href="start/">After login</a></li>
         <li><a href="post-install/">Post-install</a></li>
         <li aria-current="page"><a href="tutorials/">Tutorials</a></li>
         <li><a href="faq/">FAQ</a></li>
@@ -200,7 +201,7 @@ def write_hub(core: dict, grouped: OrderedDict) -> None:
         "      <p><strong>How to use these.</strong> The recommended step keeps the lock.",
         "      Nothing auto-unlocks Flathub, Bluetooth, the webcam, JIT, or a store (there is no store).</p>",
         "    </div>",
-        '    <p>Install: <a href="install/">Install</a>. Checklist: <a href="post-install/">Post-install</a>.',
+        '    <p>Install: <a href="install/">Install</a>. First session: <a href="start/">After you log in</a>. Checklist: <a href="post-install/">Post-install</a>.',
         '    Vs stock: <a href="compared/">Compared</a>.</p>',
         "",
     ]
@@ -234,6 +235,7 @@ def write_hub(core: dict, grouped: OrderedDict) -> None:
         '    <a class="brand" href="./"><img src="assets/logo.svg?v=4" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>',
         '    <ul id="social">',
         '      <li><a href="install/">Install</a></li>',
+        '      <li><a href="start/">After login</a></li>',
         '      <li><a href="post-install/">Post-install</a></li>',
         '      <li><a href="faq/">FAQ</a></li>',
         "    </ul>",

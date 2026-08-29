@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>After you log in | Unwoke SecureBlue</title>
+  <meta name="description" content="First login, in order: daily user, Unwoke setup, signed reboot, leftover stock steps. GNOME Settings is not the setup.">
+  <base href="/unwoke-secureblue/">
+  <link rel="icon" href="assets/logo.svg?v=5" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css?v=18">
+</head>
+<body class="page-start">
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="./"><img src="assets/logo.svg?v=5" alt="">Unwoke SecureBlue</a></li>
+        <li><a href="features/">Features</a></li>
+        <li><a href="compared/">Compared</a></li>
+        <li><a href="privacy/">Privacy</a></li>
+        <li><a href="factory/">Factory</a></li>
+        <li><a href="brand/">Brand</a></li>
+        <li><a href="changelog/">Changelog</a></li>
+        <li><a href="images/">Images</a></li>
+        <li><a href="install/">Install</a></li>
+        <li aria-current="page"><a href="start/">After login</a></li>
+        <li><a href="post-install/">Post-install</a></li>
+        <li><a href="tutorials/">Tutorials</a></li>
+        <li><a href="faq/">FAQ</a></li>
+        <li><a href="stock-issues/">Workarounds</a></li>
+        <li><a href="contributing/">Contributing</a></li>
+        <li><a href="conduct/">Conduct</a></li>
+        <li><a href="donate/">Donate</a></li>
+        <li><a href="secureblue/">Their docs</a></li>
+        <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="content">
+    <p class="eyebrow">First session</p>
+    <h1>After you log in</h1>
+    <p class="lead">The desktop will feel quiet. No store. No Bluetooth. Sites may look “broken.” That is the healthy state, not a failed install. Walk this list once, in order. Then live with the defaults.</p>
+    <div class="start-kicker">
+      <span>About 20 minutes</span>
+      <span>Keep the locks</span>
+      <span>Settings is not setup</span>
+    </div>
+    <p class="notice"><strong>The one sentence.</strong> Do not open GNOME Software, Discover, or Settings → Apps. Open <strong>Unwoke setup</strong> in the app grid (also <code>ujust setup</code>). Nothing turns off until you pick it.</p>
+
+    <h2 id="where"><a href="#where">Where to click</a></h2>
+    <p>Three places. Most first-day mistakes are using the wrong one.</p>
+    <div class="where-grid trio">
+      <article class="where-card where-use">
+        <p class="tag">Use this</p>
+        <h3>Unwoke setup</h3>
+        <p>App grid, first login, or <code>ujust setup</code>. Locks, leftover stock steps, daily user, “this looks broken.” This is first-time setup.</p>
+      </article>
+      <article class="where-card">
+        <p class="tag">Later, maybe</p>
+        <h3>GNOME / KDE Settings</h3>
+        <p>Wi-Fi network name, display scale, keyboard, night light. Not software. Not Bluetooth. Not “privacy” checkboxes. We already set those.</p>
+      </article>
+      <article class="where-card where-skip">
+        <p class="tag">There isn’t one</p>
+        <h3>A software store</h3>
+        <p>Bazaar, GNOME Software, and Discover are gone on purpose. Searching Settings for “Software” is a dead end. Apps: <a href="tutorials/install-apps/">Install an app</a>.</p>
+      </article>
+    </div>
+
+    <h2 id="do"><a href="#do">Do this / not that</a></h2>
+    <div class="do-grid">
+      <article class="do-card do-yes">
+        <p class="tag">Do</p>
+        <h3>Keep defaults for a day</h3>
+        <p>Create the daily user if asked. Reboot if a signed update is staged. Enroll their Secure Boot key. USBGuard with the devices you actually use. Then stop.</p>
+      </article>
+      <article class="do-card do-no">
+        <p class="tag">Do not</p>
+        <h3>Make it “feel like Fedora”</h3>
+        <p>Do not enable Bluetooth, Flathub, brew, toolbox, and every browser pack in the first hour “to test.” Each one is a named need, later. <code>ujust why</code> if something looks broken.</p>
+      </article>
+    </div>
+
+    <h2 id="before"><a href="#before">Before the login window</a></h2>
+    <p>On a USB install (and on first boot of a new image) you may see an installer-style screen on tty1 <em>before</em> GNOME or KDE starts. It asks for a daily username. The greeter waits. That is not a hung install.</p>
+    <ol class="steps">
+      <li>
+        <p class="when">If the screen appears</p>
+        <h3>Create a daily (non-wheel) user</h3>
+        <p>Pick a normal name and password. That account is for the graphical session. Wheel stays for TTY and <code>run0</code>. Empty name, Cancel, or a 5-minute skip leaves this pending — then Unwoke setup → Daily user. Do not log into GNOME/KDE as wheel if you can avoid it.</p>
+      </li>
+    </ol>
+
+    <h2 id="steps"><a href="#steps">First graphical login, in order</a></h2>
+    <ol class="steps">
+      <li>
+        <p class="when">Login</p>
+        <h3>Sign in as the daily user</h3>
+        <p>The navy wallpaper and blue accent are the theme, not a second setup wizard. If the greeter refuses wheel, that is <a href="tutorials/daily-user/">admin-split</a> working. Use the daily account. Need privilege later: <code>run0</code>, not sudo.</p>
+      </li>
+      <li>
+        <p class="when">If you see a reboot nag</p>
+        <h3>Reboot onto the signed image first</h3>
+        <p>The first rebase cannot check our stamp yet. After that boot, a service stages <code>ostree-image-signed</code>. A notification (and MOTD) repeats every login and every 15 minutes until you reboot, with a Reboot button. In Unwoke setup → Start → <strong>Reboot now</strong>.</p>
+        <pre><code>rpm-ostree status</code></pre>
+        <p>You want a staged signed deployment, then one reboot. Until then, updates are not locked to our <code>cosign.pub</code>. No staged row? Network, or the command on <a href="install/#signed">Install</a>.</p>
+      </li>
+      <li>
+        <p class="when">The window that opens</p>
+        <h3>Stay in Unwoke setup</h3>
+        <p>It autostarts on first login. App grid → <strong>Unwoke setup</strong> if you closed it. Same stamps as <code>ujust setup</code>. On Start: <strong>Keep all defaults (recommended)</strong>. You can hide it on login after this session. Open it again any time. Tutorial buttons in the window open these pages offline if the image has help files.</p>
+      </li>
+      <li>
+        <p class="when">Stock leftover tab</p>
+        <h3>Their steps, not ours</h3>
+        <p>Overlay locks stay on. Do these on confirm:</p>
+        <ul>
+          <li>Enroll the <strong>secureblue</strong> Secure Boot key if the installer prompt did not run. BIOS password is <code>secureblue</code>. The kernel is still theirs.</li>
+          <li><code>ujust set-kargs-hardening</code> if you <em>rebased</em> instead of installing from a secureblue/Unwoke ISO.</li>
+          <li>USBGuard: plug in the keyboard, mouse, and keys you trust, unplug novelty dongles, then run their helper (setup option, or <code>ujust setup-usbguard</code>). New sticks doing nothing after that is success. Detail: <a href="tutorials/usb/">USB</a>.</li>
+        </ul>
+        <p>Full stock text: <a href="secureblue/post-install/">their post-install</a>.</p>
+      </li>
+      <li>
+        <p class="when">Daily user tab</p>
+        <h3>Only if you skipped tty1</h3>
+        <p>Create the non-wheel account here. Then log out and into that user. Do not make a second wheel account and call it daily.</p>
+      </li>
+      <li>
+        <p class="when">Stop</p>
+        <h3>Do not “turn everything on”</h3>
+        <p>Flathub, Bluetooth, brew, toolbox, camera, JIT, WebGL: all intentional defaults. Live a day. When a headset or a site is a real task, open that tutorial — one lock. Extra browser packs make you rarer than stock Trivalent; that is the security default. Read <a href="tutorials/fingerprint/">Fingerprinting vs locks</a> before loosening JIT or WebGL “to look normal.”</p>
+      </li>
+      <li>
+        <p class="when">Trust</p>
+        <h3>Confirm the box is what we shipped</h3>
+        <p>In Unwoke setup → Start → Show status, or:</p>
+        <pre><code>ujust unwoke-status
+ujust audit-unwoke
+ujust audit-secureblue</code></pre>
+        <p>Five minutes. No extra scanner. Longer version: <a href="tutorials/check-health/">Check health</a>.</p>
+      </li>
+      <li>
+        <p class="when">Now Settings is fine</p>
+        <h3>Wi-Fi, display, keyboard — not apps</h3>
+        <p>GNOME Settings or KDE System Settings: join a Wi-Fi network, set scale, night light, input. Do not look there for a store, Bluetooth enable (the service is masked until Unwoke setup → Turn on), or Users as a way around admin-split. Wallpaper is already Unwoke; change it in Settings if you want, or <code>ujust set-unwoke-theme apply</code> to put it back.</p>
+      </li>
+    </ol>
+
+    <h2 id="setup"><a href="#setup">How to read Unwoke setup</a></h2>
+    <p>Tabs. Nothing auto-unlocks. The TUI (<code>ujust setup</code>) is the same list if GTK is missing.</p>
+    <div class="tab-map">
+      <article class="tab-card">
+        <p class="tag">Start</p>
+        <h3>Keep defaults, reboot, hide</h3>
+        <p>Recommended button. Status. Reboot now if a signed image is staged. “Don’t show on login” after you have done this once.</p>
+      </article>
+      <article class="tab-card">
+        <p class="tag">Turn on</p>
+        <h3>Named needs only</h3>
+        <p>Flathub verified, Bluetooth, camera, NFS/CIFS, toolbox, brew. Each line is optional. Wi-Fi is already on.</p>
+      </article>
+      <article class="tab-card">
+        <p class="tag">Looks broken</p>
+        <h3>It is probably a lock</h3>
+        <p>JIT, WebGL, browser camera, Flatpaks, no store, Flatpak mic, NAS. Maps the symptom. Still your click. Same as <code>ujust why</code>.</p>
+      </article>
+      <article class="tab-card">
+        <p class="tag">Stock leftover</p>
+        <h3>Their post-install</h3>
+        <p>Secure Boot key, hardening kargs, USBGuard, stock audit. Overlay locks unchanged.</p>
+      </article>
+      <article class="tab-card">
+        <p class="tag">Daily user</p>
+        <h3>Non-wheel on the greeter</h3>
+        <p>If tty1 was skipped. Graphical session as a normal account. <code>run0</code> when you need wheel.</p>
+      </article>
+      <article class="tab-card">
+        <p class="tag">You loosened</p>
+        <h3>Put a lock back</h3>
+        <p>Only what you turned off. Restoring one does not unlock the rest.</p>
+      </article>
+      <article class="tab-card">
+        <p class="tag">Strict apps</p>
+        <h3>No store. Wizards later.</h3>
+        <p>Proton.me, IVPN, Mullvad: web or WireGuard first. Official RPM only after a checksum and an asked extra origin. Not day-one work unless that is why you installed.</p>
+      </article>
+    </div>
+
+    <h2 id="settings"><a href="#settings">GNOME / KDE Settings vs Unwoke</a></h2>
+    <p>Settings is a settings app. It is not the security control panel.</p>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr><th>You want</th><th>Go here</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Join Wi-Fi, pick a display, keyboard layout</td>
+            <td>GNOME Settings / KDE System Settings</td>
+          </tr>
+          <tr>
+            <td>Bluetooth headphones</td>
+            <td>Unwoke setup → Turn on, then Settings. Service is masked until then. <a href="tutorials/bluetooth/">Bluetooth</a></td>
+          </tr>
+          <tr>
+            <td>Install an app</td>
+            <td>Not Settings. Verified Flathub then Flatpak, or a vendor wizard. <a href="tutorials/install-apps/">Install an app</a></td>
+          </tr>
+          <tr>
+            <td>Webcam / mic for a call</td>
+            <td>Kernel lock and browser policy are two doors. <a href="tutorials/camera-mic/">Camera and mic</a></td>
+          </tr>
+          <tr>
+            <td>A site looks broken</td>
+            <td>Unwoke setup → Looks broken (usually JIT or WebGL). <a href="tutorials/sites-broken/">Sites</a></td>
+          </tr>
+          <tr>
+            <td>Users / “admin on the login screen”</td>
+            <td>Unwoke Daily user. Not Settings → Users as wheel</td>
+          </tr>
+          <tr>
+            <td>Privacy checkboxes, telemetry, connectivity</td>
+            <td>Already off. Do not turn Fedora countme or connectivity-check on to “fix” hotel Wi-Fi until you need that one lock. <a href="privacy/">Privacy</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="later"><a href="#later">After this session</a></h2>
+    <p>You are done with first-time setup when: daily user exists, signed reboot happened, their key/USBGuard are done, and you have not loosened a pile of locks. Command dump for later: <a href="post-install/">Post-install</a>. Everyday tasks: <a href="tutorials/">Tutorials</a>.</p>
+    <div class="start-cta">
+      <a class="button" href="tutorials/">Tutorials</a>
+      <a class="button ghost" href="post-install/">Post-install table</a>
+      <a class="button ghost" href="tutorials/check-health/">Health check</a>
+    </div>
+    <div class="alert">
+      <p><strong>If it still feels broken.</strong> App grid → Unwoke setup → Looks broken, or <code>ujust why</code>. That menu names the lock. It does not auto-unlock. Workarounds for stock bugs that hit this overlay: <a href="stock-issues/">Workarounds</a>.</p>
+    </div>
+  </main>
+
+  <footer>
+    <a class="brand" href="./"><img src="assets/logo.svg?v=5" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="install/">Install</a></li>
+      <li><a href="tutorials/">Tutorials</a></li>
+      <li><a href="post-install/">Post-install</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>
