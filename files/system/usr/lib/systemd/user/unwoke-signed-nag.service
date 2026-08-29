@@ -4,4 +4,5 @@ ConditionPathExists=/etc/unwoke/signed-staged
 
 [Service]
 Type=oneshot
+TimeoutStartSec=180
 ExecStart=/usr/bin/bash /usr/libexec/unwoke/signed-nag.sh

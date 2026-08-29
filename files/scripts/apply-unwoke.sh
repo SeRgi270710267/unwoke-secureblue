@@ -59,7 +59,7 @@ fi
 
 chmod a+x /usr/libexec/unwoke/setup.sh /usr/libexec/unwoke/first-session.sh \
   /usr/libexec/unwoke/setup-gui.py /usr/libexec/unwoke/signed-nag.sh \
-  /usr/libexec/unwoke/open-tutorial.sh \
+  /usr/libexec/unwoke/notify-reboot.sh /usr/libexec/unwoke/open-tutorial.sh \
   /usr/libexec/unwoke/toggles.sh /usr/libexec/unwoke/first-boot.sh 2>/dev/null || true
 
 if command -v glib-compile-schemas >/dev/null && [[ -d /usr/share/glib-2.0/schemas ]]; then

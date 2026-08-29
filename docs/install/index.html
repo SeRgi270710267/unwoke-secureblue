@@ -9,7 +9,7 @@
   <meta name="description" content="Install Unwoke SecureBlue from a USB ISO (no stock first) or rebase from Fedora Atomic, then reboot into the signed deployment.">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
-  <link rel="stylesheet" href="css/main.css?v=8">
+  <link rel="stylesheet" href="css/main.css?v=9">
 </head>
 <body>
   <a class="skip" href="#content">Skip to content</a>
@@ -38,6 +38,7 @@
   <main id="content">
     <h1>Install</h1>
     <p>Two ways in: a <strong>USB ISO of Unwoke</strong> (empty disk, no stock secureblue first), or a <strong>rebase</strong> if you already run Fedora Atomic / secureblue. After either path, their <a href="secureblue/post-install/">post-install</a> still applies.</p>
+    <p class="factory-stamp" data-factory-stamp>Checking last green bake…</p>
 
     <h2 id="pick"><a href="#pick">Pick an image</a></h2>
     <p>Three questions. Same twelve images as before — you do not have to name them.</p>
@@ -344,5 +345,6 @@ ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
     enhanceCopy();
     render(fromRadios());
   </script>
+  <script src="js/factory-status.js?v=1" defer></script>
 </body>
 </html>

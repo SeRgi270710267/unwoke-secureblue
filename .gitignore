@@ -9,6 +9,7 @@ cosign2.exe
 Thumbs.db
 docs/secureblue/
 docs/changelog/
+docs/status.json
 .github/workflows/isos/prep_rootfs.generated.sh
 upstream-drift/
 __pycache__/

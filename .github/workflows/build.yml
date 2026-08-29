@@ -16,6 +16,7 @@ on:
       - ".github/scripts/install-just.sh"
       - ".github/scripts/install-oras.sh"
       - ".github/scripts/public-packages.sh"
+      - ".github/scripts/write-factory-status.py"
       - ".github/scripts/mirror-secureblue-docs.py"
       - ".github/scripts/mirror-template.html"
   pull_request:

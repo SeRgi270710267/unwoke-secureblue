@@ -27,8 +27,10 @@ notify() {
 }
 
 if [[ -f "${STAGED}" ]]; then
-  notify "Reboot to lock updates" \
-    "A signed Unwoke image is staged. Reboot once. Until then updates are not stamp-checked. This nag repeats until you reboot."
+  # Background: Reboot button must not block the setup window.
+  bash /usr/libexec/unwoke/notify-reboot.sh --background || \
+    notify "Reboot to lock updates" \
+      "A signed Unwoke image is staged. Reboot once. Until then updates are not stamp-checked."
 fi
 
 [[ -x "${SETUP}" || -x "${GUI}" ]] || exit 0

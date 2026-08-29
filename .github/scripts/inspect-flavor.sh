@@ -131,6 +131,10 @@ if [[ ! -f "${work}/usr/lib/systemd/user/unwoke-signed-nag.timer" ]]; then
   echo "FAIL: missing signed-nag timer" >&2
   fail=1
 fi
+if [[ ! -f "${work}/usr/libexec/unwoke/notify-reboot.sh" ]]; then
+  echo "FAIL: missing notify-reboot.sh" >&2
+  fail=1
+fi
 
 selinux_mentions_origin() {
   grep -R -q '/opt/brave.com/brave-origin' \

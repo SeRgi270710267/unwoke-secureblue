@@ -161,6 +161,7 @@ Stock `ujust` still works.
 18. **Compared tab (Pages):** living list vs stock — easy words, stricter table, easier table, factory, where stock still wins, dated ledger. Update this page when we ship a lock or a UX win. Does not auto-unlock. Docs-only.
 19. **Recommended default is Trivalent:** install picker, README, weekly ISO four `*-trivalent` desktops. Unsuffixed GHCR names stay Origin. Origin radio shows a warning. No lock loosened.
 20. **Search + undo + offline help:** `.desktop` launchers so GNOME/KDE search hits Bluetooth/camera/Flathub/sites/USB. Setup **You loosened** / `ujust loosened` puts locks back. Tutorials copied to `/usr/share/unwoke/help/` (`open-tutorial.sh` prefers local). Overlay bake required. No auto-unlock.
+21. **Last-green stamp + Reboot on the nag:** Pages writes `status.json` (bake + inspect + ISO if green). Home/Install/Images/Compared show it. `notify-reboot.sh` adds a Reboot button when libnotify supports `--action`; timer waits up to 180s. Overlay bake for the button. No lock loosened.
 
 Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only / `iso.yml` pushes should not rebuild images (`build.yml` paths-ignore).
 

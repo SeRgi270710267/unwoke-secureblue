@@ -9,7 +9,7 @@
   <meta name="description" content="Unwoke SecureBlue: a personal overlay on official secureblue images. Brave Origin, stock Trivalent, or browserless. No GUI software store. Not affiliated with secureblue.">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
-  <link rel="stylesheet" href="css/main.css?v=8">
+  <link rel="stylesheet" href="css/main.css?v=9">
   <meta property="og:title" content="Unwoke SecureBlue">
   <meta property="og:description" content="secureblue’s hardening. Brave Origin, Trivalent, or no browser. No curator store.">
   <meta property="og:type" content="website">
@@ -52,6 +52,7 @@
 
   <main id="content">
     <p class="notice"><strong>Not affiliated with secureblue.</strong> This is a personal overlay on their signed images. Stock secureblue is at <a href="https://secureblue.dev">secureblue.dev</a>.</p>
+    <p class="factory-stamp" data-factory-stamp>Checking last green bake…</p>
 
     <h2 id="about"><a href="#about">About</a></h2>
     <p><strong>Unwoke SecureBlue</strong> is a daily <a href="https://blue-build.org/">BlueBuild</a> overlay on official <a href="https://secureblue.dev">secureblue</a> Fedora Atomic images. Kernel hardening, SELinux, <code>hardened_malloc</code>, closed firewall, and their <code>ujust</code> commands stay. We only change two product decisions: the house browser and the house app store.</p>
@@ -110,5 +111,6 @@
     </ul>
     <p>Overlay files MIT. Fedora, secureblue, BlueBuild, Brave Origin: their licenses. Not affiliated with secureblue.</p>
   </footer>
+  <script src="js/factory-status.js?v=1" defer></script>
 </body>
 </html>

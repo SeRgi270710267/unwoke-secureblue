@@ -9,7 +9,7 @@
   <meta name="description" content="Easy words, then a detailed ledger: how Unwoke SecureBlue is stricter or easier than stock secureblue, and where stock still wins.">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
-  <link rel="stylesheet" href="css/main.css?v=8">
+  <link rel="stylesheet" href="css/main.css?v=9">
 </head>
 <body>
   <a class="skip" href="#content">Skip to content</a>
@@ -39,6 +39,7 @@
     <h1>Compared to stock</h1>
     <p>This page is the living list of how Unwoke is <strong>stricter</strong>, <strong>easier</strong>, or <strong>not better</strong> than official <a href="https://secureblue.dev">secureblue</a>. The four-column table stays on <a href="features/">Features</a>. When we ship something, it gets a line here.</p>
     <p class="notice"><strong>Not affiliated.</strong> We overlay their already-signed images. Kernel, SELinux, <code>hardened_malloc</code>, firewall, USBGuard, <code>run0</code> — that is still them. We did not rewrite the OS.</p>
+    <p class="factory-stamp" data-factory-stamp>Checking last green bake…</p>
 
     <h2 id="easy"><a href="#easy">Easy words</a></h2>
     <p>Stock is a locked-down Fedora Atomic desktop with Trivalent and a curated store (Bazaar). Unwoke is that same OS with different house rules and a first-day conversation.</p>
@@ -279,6 +280,12 @@
         <tbody>
           <tr>
             <td>2026-08-29</td>
+            <td>Last-green bake/inspect stamp on the site. Signed-reboot nag has a <strong>Reboot</strong> button (libnotify --action).</td>
+            <td>Trust without opening GitHub. Second reboot is one click. Stock has neither.</td>
+            <td>Pages now; Reboot button on next overlay bake</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
             <td>GNOME/KDE search finds Bluetooth, camera, Flathub, broken sites, USB. Setup tab <strong>You loosened</strong> with put-back. Tutorials also live under <code>/usr/share/unwoke/help/</code> for offline first hour.</td>
             <td>Beats stock Settings hunt. Same locks. Undo is obvious. Help works with no network.</td>
             <td>Next overlay bake</td>
@@ -346,5 +353,6 @@
     </ul>
     <p>Not affiliated with secureblue.</p>
   </footer>
+  <script src="js/factory-status.js?v=1" defer></script>
 </body>
 </html>
