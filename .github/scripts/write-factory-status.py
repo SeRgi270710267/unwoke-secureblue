@@ -30,7 +30,7 @@ def api(url: str) -> dict:
 def last_success(owner: str, repo: str, workflow: str) -> dict | None:
     url = (
         f"https://api.github.com/repos/{owner}/{repo}/actions/workflows/"
-        f"{workflow}/runs?status=success&per_page=5"
+        f"{workflow}/runs?status=completed&per_page=15"
     )
     try:
         data = api(url)

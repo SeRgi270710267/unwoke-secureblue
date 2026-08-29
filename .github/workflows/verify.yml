@@ -6,11 +6,12 @@ on:
   workflow_dispatch:
     inputs:
       image:
-        description: Image to inspect (schedule inspects all twelve)
-        required: true
+        description: Image to inspect. "all" (and the schedule) inspects every flavor.
+        required: false
         type: choice
-        default: unwoke-silverblue
+        default: all
         options:
+          - all
           - unwoke-silverblue
           - unwoke-silverblue-nvidia-open
           - unwoke-kinoite
@@ -50,7 +51,7 @@ jobs:
           DISPATCH_IMAGE: ${{ github.event.inputs.image }}
         run: |
           set -euo pipefail
-          if [[ "${EVENT_NAME}" == "workflow_dispatch" ]]; then
+          if [[ "${EVENT_NAME}" == "workflow_dispatch" && -n "${DISPATCH_IMAGE}" && "${DISPATCH_IMAGE}" != "all" ]]; then
             python3 -c 'import json,os; print("images="+json.dumps([os.environ["DISPATCH_IMAGE"]]))' >> "${GITHUB_OUTPUT}"
           else
             python3 -c 'import json; print("images="+json.dumps(["unwoke-silverblue","unwoke-silverblue-nvidia-open","unwoke-kinoite","unwoke-kinoite-nvidia-open","unwoke-silverblue-browserless","unwoke-silverblue-nvidia-open-browserless","unwoke-kinoite-browserless","unwoke-kinoite-nvidia-open-browserless","unwoke-silverblue-trivalent","unwoke-silverblue-nvidia-open-trivalent","unwoke-kinoite-trivalent","unwoke-kinoite-nvidia-open-trivalent"]))' >> "${GITHUB_OUTPUT}"

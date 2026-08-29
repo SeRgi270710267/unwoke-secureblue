@@ -336,7 +336,7 @@ def annotate_unwoke_commands(fragment: str, specs: list[dict[str, object]]) -> s
 def keep_heading_ids(text: str) -> str:
     """Put kramdown {: #id} on the heading line so attr_list consumes it; drop leftovers."""
     text = re.sub(
-        r"^(#{1,6}[^\n]+)\n\{:\s*#([A-Za-z0-9_-]+)\s*\}[ \t]*$",
+        r"^(#{1,6}[^\n]+)\n(?:[ \t]*\n)*\{:\s*#([A-Za-z0-9_-]+)\s*\}[ \t]*$",
         r"\1 {: #\2}",
         text,
         flags=re.M,
@@ -417,8 +417,8 @@ def rebuild_toc(fragment: str, here: str) -> str:
 
 
 def polish_mirror_html(fragment: str, here: str) -> str:
-    fragment = re.sub(r"<p>\s*\{:[^}]*\}\s*</p>", "", fragment, flags=re.I)
-    fragment = re.sub(r"^\s*\{:[^}]*\}\s*$", "", fragment, flags=re.M)
+    fragment = re.sub(r"<p>\s*\{:[^}]*\}\s*</p>", "", fragment, flags=re.I | re.S)
+    fragment = re.sub(r"\{:\s*#[A-Za-z0-9_-]+\s*\}", "", fragment)
     fragment = rebuild_toc(fragment, here)
     return fragment
 
