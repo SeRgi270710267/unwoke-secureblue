@@ -51,7 +51,7 @@
       <div class="card">
         <p class="eyebrow">Overlay</p>
         <h3>Images</h3>
-        <p>Twice-daily bake of twelve GHCR images on signed stock. Canary → pin digest → BlueBuild → inspect → try Public. One <code>factory-alarm</code> issue if this lane is red.</p>
+        <p>Twice-daily bake of twelve GHCR images on signed stock. Canary → pin digest → BlueBuild → inspect → try Public → rewrite <code>receipt</code>. A later overlay push <strong>queues</strong>; it does not cancel a bake that is already running. One <code>factory-alarm</code> issue if this lane is red.</p>
       </div>
       <div class="card">
         <p class="eyebrow">USB</p>
@@ -149,7 +149,7 @@
           </tr>
           <tr>
             <td>GitHub Release <code>receipt</code> missing or stale</td>
-            <td>Twice-daily full verify rewrites one moving tag: <code>cosign.pub</code> + verified GHCR digests. Opens <code>receipt-alarm</code> if that fails. Next green run overwrites and closes. Never attaches the ISO</td>
+            <td>Full verify and a finished overlay bake both rewrite one moving tag: <code>cosign.pub</code> + verified GHCR digests. After a USB wrap, tiny <code>SHA256SUMS</code> files are attached (never the ISO). Opens <code>receipt-alarm</code> if that fails. Next green run overwrites and closes</td>
             <td>Host a 4 GB USB. A new tag every bake. Auto-accept a new signing key</td>
           </tr>
           <tr>
