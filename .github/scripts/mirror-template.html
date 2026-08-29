@@ -10,9 +10,9 @@
   <base href="/unwoke-secureblue/">
   <link rel="canonical" href="__CANONICAL__">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
-  <link rel="stylesheet" href="css/main.css?v=10">
+  <link rel="stylesheet" href="css/main.css?v=11">
 </head>
-<body>
+<body class="mirror-page">
   <a class="skip" href="__HERE__#content">Skip to content</a>
   <header>
     <nav id="site-menu" aria-label="Primary">
@@ -37,9 +37,10 @@
     </nav>
   </header>
   <main id="content" class="mirror">
-    <p class="notice mirror-banner"><strong>Mirrored from <a href="__CANONICAL__">secureblue.dev</a>.</strong> This is stock secureblue documentation (Apache-2.0), not Unwoke SecureBlue’s overlay notes. Our FAQ / Features / Install stay on the main nav and are never overwritten. Canonical: <a href="__CANONICAL__">__CANONICAL__</a></p>
+    __SUBNAV__
+    <p class="notice mirror-banner"><strong>Stock secureblue</strong> (mirrored). Not our overlay. <a href="__CANONICAL__">Canonical on secureblue.dev</a>. Unwoke: <a href="faq/">FAQ</a> · <a href="install/">Install</a> · <a href="compared/">Compared</a>.</p>
     __BODY__
-    <p class="mirror-meta">Source: <a href="https://github.com/secureblue/secureblue.dev">secureblue/secureblue.dev</a> <code>__SHA__</code>. Fetched __FETCHED__. Redistributed under Apache License 2.0. Unwoke SecureBlue is not affiliated with secureblue.</p>
+    <p class="mirror-meta">Source: <a href="https://github.com/secureblue/secureblue.dev">secureblue/secureblue.dev</a> <code>__SHA__</code>. Fetched __FETCHED__. Apache-2.0. Not affiliated with secureblue.</p>
   </main>
   <footer>
     <a class="brand" href="./"><img src="assets/logo.svg?v=4" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
@@ -48,5 +49,29 @@
       <li><a href="https://github.com/secureblue/secureblue.dev">Their site source</a></li>
     </ul>
   </footer>
+  <script>
+    document.querySelectorAll("main.mirror pre").forEach((pre) => {
+      if (pre.parentElement && pre.parentElement.classList.contains("copy-wrap")) return;
+      const wrap = document.createElement("div");
+      wrap.className = "copy-wrap";
+      pre.parentNode.insertBefore(wrap, pre);
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "copy-btn";
+      btn.textContent = "Copy";
+      btn.addEventListener("click", async () => {
+        const t = (pre.querySelector("code") || pre).textContent;
+        try {
+          await navigator.clipboard.writeText(t);
+          btn.textContent = "Copied";
+          setTimeout(() => { btn.textContent = "Copy"; }, 1500);
+        } catch (e) {
+          btn.textContent = "Select and copy";
+        }
+      });
+      wrap.appendChild(btn);
+      wrap.appendChild(pre);
+    });
+  </script>
 </body>
 </html>

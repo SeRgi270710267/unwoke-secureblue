@@ -334,15 +334,124 @@ def annotate_unwoke_commands(fragment: str, specs: list[dict[str, object]]) -> s
 
 
 def keep_heading_ids(text: str) -> str:
-    """Keep {: #id} / {: .class} for Python-Markdown attr_list. Drop other kramdown."""
+    """Put kramdown {: #id} on the heading line so attr_list consumes it; drop leftovers."""
+    text = re.sub(
+        r"^(#{1,6}[^\n]+)\n\{:\s*#([A-Za-z0-9_-]+)\s*\}[ \t]*$",
+        r"\1 {: #\2}",
+        text,
+        flags=re.M,
+    )
+    text = re.sub(r"\n\{:\s*[^}\n]+\}[ \t]*", "\n", text)
+    return text
 
-    def repl(m: re.Match[str]) -> str:
-        inner = m.group(1).strip()
-        if re.fullmatch(r"[#.][\w-]+(?:\s+[#.][\w-]+)*", inner):
-            return m.group(0)
-        return ""
 
-    return KRAMDOWN_ATTR.sub(repl, text)
+HEADING_RE = re.compile(r"<h([23])\b([^>]*)>(.*?)</h\1>", re.I | re.S)
+
+
+def _plain(inner: str) -> str:
+    t = re.sub(r"<[^>]+>", "", inner)
+    t = html.unescape(t)
+    return re.sub(r"\s+", " ", t).strip()
+
+
+def _hid(attrs: str, inner: str) -> str:
+    m = re.search(r'\bid="([^"]+)"', attrs)
+    if m:
+        return m.group(1)
+    m = re.search(r'href="[^"]*#([^"]+)"', inner)
+    if m:
+        return m.group(1)
+    return ""
+
+
+def rebuild_toc(fragment: str, here: str) -> str:
+    """Replace stock's messy markdown TOC with grouped cards from real h2/h3."""
+    matches = list(HEADING_RE.finditer(fragment))
+    toc_at: int | None = None
+    content_at: int | None = None
+    groups: list[dict[str, object]] = []
+    current: dict[str, object] | None = None
+    for m in matches:
+        level = int(m.group(1))
+        title = _plain(m.group(3))
+        hid = _hid(m.group(2), m.group(3))
+        if level == 2 and re.search(r"table of contents", title, re.I):
+            toc_at = m.start()
+            continue
+        if toc_at is None:
+            continue
+        if not hid:
+            continue
+        if level == 2:
+            if content_at is None:
+                content_at = m.start()
+            current = {"id": hid, "title": title, "items": []}
+            groups.append(current)
+        elif level == 3 and current is not None:
+            items = current["items"]
+            if isinstance(items, list):
+                items.append((hid, title))
+    if toc_at is None or content_at is None or not groups:
+        return fragment
+    cols: list[str] = []
+    for g in groups:
+        gid = html.escape(str(g["id"]), quote=True)
+        gtitle = html.escape(str(g["title"]))
+        lis = []
+        for hid, title in g["items"] if isinstance(g["items"], list) else []:
+            lis.append(
+                f'<li><a href="{html.escape(here, quote=True)}#{html.escape(hid, quote=True)}">'
+                f"{html.escape(str(title))}</a></li>"
+            )
+        inner = f"<ul>{''.join(lis)}</ul>" if lis else ""
+        cols.append(
+            f'<div class="toc-group"><h3><a href="{html.escape(here, quote=True)}#{gid}">'
+            f"{gtitle}</a></h3>{inner}</div>"
+        )
+    nav = (
+        '<nav class="mirror-toc" aria-label="On this page">'
+        "<p class=\"eyebrow\">On this page</p>"
+        f'<div class="toc-grid">{"".join(cols)}</div></nav>\n'
+    )
+    return fragment[:toc_at] + nav + fragment[content_at:]
+
+
+def polish_mirror_html(fragment: str, here: str) -> str:
+    fragment = re.sub(r"<p>\s*\{:[^}]*\}\s*</p>", "", fragment, flags=re.I)
+    fragment = re.sub(r"^\s*\{:[^}]*\}\s*$", "", fragment, flags=re.M)
+    fragment = rebuild_toc(fragment, here)
+    return fragment
+
+
+def pretty_title(title: str) -> str:
+    t = re.sub(r"\s*\|\s*secureblue\s*$", "", title, flags=re.I).strip()
+    return t or title
+
+
+SUBNAV = (
+    ("secureblue/", "Index"),
+    ("secureblue/install/", "Install"),
+    ("secureblue/post-install/", "Post-install"),
+    ("secureblue/faq/", "FAQ"),
+    ("secureblue/features/", "Features"),
+    ("secureblue/images/", "Images"),
+    ("secureblue/articles/", "Articles"),
+)
+
+
+def subnav_html(here: str) -> str:
+    bits = []
+    for href, label in SUBNAV:
+        current = False
+        if href == "secureblue/":
+            current = here.rstrip("/") == "secureblue"
+        elif here.startswith(href.rstrip("/")):
+            current = True
+        cur = ' aria-current="page"' if current else ""
+        bits.append(
+            f'<a href="{html.escape(href, quote=True)}"{cur}>{html.escape(label)}</a>'
+        )
+    return '<nav class="mirror-subnav" aria-label="Stock docs">' + "".join(bits) + "</nav>"
 
 
 _UNSAFE_HTML = re.compile(
@@ -436,6 +545,7 @@ def render_page(
 ) -> str:
     html = TEMPLATE
     html = html.replace("__HERE__", here)
+    html = html.replace("__SUBNAV__", subnav_html(here))
     html = html.replace("__TITLE__", title)
     html = html.replace("__DESCRIPTION__", description)
     html = html.replace("__CANONICAL__", canonical)
@@ -506,13 +616,14 @@ def main() -> int:
             body_md, book, same, recipes, unmatched, auto_ids
         )
         body_html = annotate_unwoke_commands(body_html, specs)
+        body_html = polish_mirror_html(body_html, here)
         extra = PAGE_NOTICES.get(permalink.rstrip("/"), "")
         if extra:
             body_html = extra + body_html
         canonical = "https://secureblue.dev" + permalink
         dest = out_dir_for(permalink)
         dest.mkdir(parents=True, exist_ok=True)
-        page_title = f"{title} (mirrored)"
+        page_title = f"{pretty_title(title)} (mirrored)"
         (dest / "index.html").write_text(
             render_page(page_title, description, canonical, body_html, sha, fetched, here),
             encoding="utf-8",
@@ -530,18 +641,21 @@ def main() -> int:
         for key in keys:
             href = "secureblue" + key + "/"
             if href in by_path:
-                lis.append(f'<li><a href="{href}">{html.escape(by_path[href])}</a></li>')
+                lis.append(
+                    f'<li><a href="{href}">{html.escape(pretty_title(by_path[href]))}</a></li>'
+                )
                 used.add(href)
         if lis:
             sections.append(
-                f'<div class="card"><p class="eyebrow">{html.escape(label)}</p><ul>{"".join(lis)}</ul></div>'
+                f'<div class="card"><p class="eyebrow">{html.escape(label)}</p>'
+            f"<ul>{''.join(lis)}</ul></div>"
             )
     articles = []
     leftover = []
     for href, title in sorted(index_links, key=lambda x: x[1].lower()):
         if href in used:
             continue
-        item = f'<li><a href="{href}">{html.escape(title)}</a></li>'
+        item = f'<li><a href="{href}">{html.escape(pretty_title(title))}</a></li>'
         if "/articles/" in href:
             articles.append(item)
         else:
@@ -558,7 +672,7 @@ def main() -> int:
     <h1>Stock secureblue docs</h1>
     <p>Pulled daily from <a href="https://secureblue.dev">secureblue.dev</a> and wrapped in our chrome. Unwoke FAQ, Features, Images, and Install stay on the main nav — this tree cannot overwrite them.</p>
     <div class="alert note"><p><strong>These pages describe stock.</strong> They still mention Bazaar, verified Flathub, Homebrew, and their ISO picker. Overlay rules: <a href="compared/">Compared</a>. How to install Unwoke: <a href="install/">Install</a>.</p></div>
-    <div class="docs-index">{"".join(sections)}</div>
+    <div class="cards docs-index">{"".join(sections)}</div>
     <p>Not mirrored on purpose: their homepage and Contributor Covenant. Canonical for everything here is still <a href="https://secureblue.dev">secureblue.dev</a>.</p>
     """
     (OUT / "index.html").write_text(
