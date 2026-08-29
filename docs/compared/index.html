@@ -9,9 +9,9 @@
   <meta name="description" content="Easy words, then a detailed ledger: how Unwoke SecureBlue is stricter or easier than stock secureblue, and where stock still wins.">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
-  <link rel="stylesheet" href="css/main.css?v=15">
+  <link rel="stylesheet" href="css/main.css?v=17">
 </head>
-<body>
+<body class="page-compared">
   <a class="skip" href="#content">Skip to content</a>
   <header>
     <nav id="site-menu" aria-label="Primary">
@@ -39,10 +39,79 @@
   </header>
 
   <main id="content">
+    <p class="eyebrow">Living ledger</p>
     <h1>Compared to stock</h1>
+    <p class="lead">Same signed foundation. Stricter house rules. A first day that talks. That is how we win without forking.</p>
     <p>This page is the living list of how Unwoke is <strong>stricter</strong>, <strong>easier</strong>, or <strong>not better</strong> than official <a href="https://secureblue.dev">secureblue</a>. The four-column table stays on <a href="features/">Features</a>. When we ship something, it gets a line here.</p>
     <p class="notice"><strong>Not affiliated.</strong> We overlay their already-signed images. Kernel, SELinux, <code>hardened_malloc</code>, firewall, USBGuard, <code>run0</code> — that is still them. We did not rewrite the OS.</p>
     <div class="factory-stamp" data-factory-stamp>Checking last green…</div>
+
+    <div class="vs-duel" role="group" aria-label="Stock versus Unwoke">
+      <article class="vs-col vs-stock">
+        <p class="tag">Stock secureblue</p>
+        <h3>Signed Fedora Atomic</h3>
+        <ul>
+          <li>Encrypt checkbox starts <em>off</em></li>
+          <li>Flatpaks can record Pulse/PipeWire</li>
+          <li>NFS <em>server</em> masked; clients still load</li>
+          <li>Lockdown is opt-in, fewer folder cuts</li>
+          <li>Wiki, then you are on your own</li>
+        </ul>
+      </article>
+      <p class="vs-mark" aria-hidden="true">vs</p>
+      <article class="vs-col vs-us">
+        <p class="tag">Unwoke</p>
+        <h3>Same kernel. Stricter house.</h3>
+        <ul>
+          <li>LUKS on, Argon2id 2&nbsp;GiB</li>
+          <li>Flatpak record blocked (revert one command)</li>
+          <li>NFS/CIFS <em>clients</em> blacklisted too</li>
+          <li>Lockdown on, extra xdg/host-root</li>
+          <li>Setup window talks on day one</li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="score-row">
+      <div><strong>6</strong><span>stock FEATs shipped here</span></div>
+      <div><strong>0</strong><span>security cuts to ship them</span></div>
+      <div><strong>12</strong><span>signed desktop images</span></div>
+    </div>
+
+    <h2 id="win"><a href="#win">Where we beat stock today</a></h2>
+    <p>Stock asked for these. They are still open on their tracker. We shipped them as <strong>defaults</strong>, each with a revert. No Flathub, no Safe Browsing off, no weaker SELinux.</p>
+    <div class="win-grid">
+      <article class="win-card">
+        <p class="tag">USB install</p>
+        <h3>Disk encryption on</h3>
+        <p>Stock Anaconda leaves Encrypt unchecked. Our stick starts with LUKS <strong>on</strong>. Untick if you must.</p>
+      </article>
+      <article class="win-card">
+        <p class="tag">USB install</p>
+        <h3>Harder-to-crack LUKS</h3>
+        <p>Argon2id memory cost 2&nbsp;GiB (RFC 9106). Stock’s installer uses a weaker compiled-in default.</p>
+      </article>
+      <article class="win-card">
+        <p class="tag">Apps</p>
+        <h3>Flatpak cannot record</h3>
+        <p>Pulse + PipeWire capture blocked for Flatpaks. Native speakers stay. <code>ujust set-flatpak-record off</code></p>
+      </article>
+      <article class="win-card">
+        <p class="tag">Apps</p>
+        <h3>Tighter Flatpak folders</h3>
+        <p>xdg documents/download/home extras stock’s lockdown command does not force. <code>ujust set-flatpak-lockdown off</code></p>
+      </article>
+      <article class="win-card">
+        <p class="tag">Network</p>
+        <h3>NFS/CIFS clients off</h3>
+        <p>Stock only masks the NFS <em>server</em>. We also blacklist client modules. <code>ujust set-network-fs on</code></p>
+      </article>
+      <article class="win-card">
+        <p class="tag">Trust</p>
+        <h3>Audit names Flatpak browsers</h3>
+        <p><code>ujust audit-unwoke</code> warns (fails on browserless). Stock’s audit does not list them yet.</p>
+      </article>
+    </div>
 
     <h2 id="easy"><a href="#easy">Easy words</a></h2>
     <p>Stock is a locked-down Fedora Atomic desktop with Trivalent and a curated store (Bazaar). Unwoke is that same OS with different house rules and a first-day conversation.</p>
@@ -136,6 +205,30 @@
             <td>Available</td>
             <td>Kernel modules + udev locked. Speakers stay</td>
             <td><code>ujust set-camera-mic on</code></td>
+          </tr>
+          <tr>
+            <td>Flatpak Pulse/PipeWire record</td>
+            <td>Open request; not default</td>
+            <td>Blocked (independent of lockdown)</td>
+            <td><code>ujust set-flatpak-record off</code></td>
+          </tr>
+          <tr>
+            <td>Flatpak extra folders</td>
+            <td>Lockdown opt-in, fewer xdg cuts</td>
+            <td>xdg documents/download/… + host-root cut by default</td>
+            <td><code>ujust set-flatpak-lockdown off</code></td>
+          </tr>
+          <tr>
+            <td>NFS/CIFS</td>
+            <td>nfs-server masked; clients still load</td>
+            <td>Server masked + client modules blacklisted</td>
+            <td><code>ujust set-network-fs on</code></td>
+          </tr>
+          <tr>
+            <td>Empty-disk encryption</td>
+            <td>Encrypt checkbox off</td>
+            <td>LUKS on unless you untick; 2&nbsp;GiB Argon2id</td>
+            <td>Untick Encrypt in Anaconda (weaker)</td>
           </tr>
           <tr>
             <td>Avahi / ModemManager</td>

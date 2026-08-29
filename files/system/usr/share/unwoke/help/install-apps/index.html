@@ -25,7 +25,7 @@
 
     <p class="eyebrow">Software</p>
     <h1>Install an app</h1>
-    <p><span class="chip">Keep locked</span> There is no Bazaar, GNOME Software, or Discover. That is the product. The secure app path is <strong>verified Flathub</strong> → <code>flatpak install</code> → leave permission lockdown on → grant in Flatseal.</p>
+    <p><span class="chip">Keep locked</span> There is no Bazaar, GNOME Software, or Discover. That is the product. For Proton/IVPN/Mullvad, use the wizards (<code>ujust install-proton</code> and friends) — not Flathub. For other GUI apps the secure path is <strong>verified Flathub</strong> → <code>flatpak install</code> → leave permission lockdown on → grant in Flatseal.</p>
     <div class="alert tip">
       <p><strong>Secure default.</strong> Flathub is off. Homebrew is off. Do not turn on unfiltered Flathub (<code>full</code>) or brew to install a calculator. Browserless still blocks host browsers until <code>ujust set-allow-browsers on ALLOW</code>.</p>
     </div>
@@ -43,7 +43,7 @@ flatpak install flathub org.example.App</code></pre>
       </li>
       <li>
         <h3>Leave lockdown on; grant per app</h3>
-        <p>Overlay lockdown is <strong>on</strong> (stock ships it as opt-in). Broken portals or missing folders are usually missing grants, not a reason to disable the whole cut.</p>
+        <p>Overlay lockdown is <strong>on</strong> (stock ships it as opt-in) and cuts extra xdg folders + host-root that stock’s command does not. Pulse/PipeWire <em>record</em> is a separate lock. Broken portals or missing folders are usually missing grants, not a reason to disable the whole cut.</p>
         <pre><code>flatpak install flathub com.github.tchx84.Flatseal</code></pre>
         <p>In Flatseal, give that one app the filesystem, device, or socket it needs. Speakers often work without touching camera lockdown.</p>
       </li>

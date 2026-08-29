@@ -113,6 +113,7 @@ hardware_menu() {
   1) Flathub: verified apps
   2) Bluetooth on (Wi-Fi is already on)
   3) Camera / microphone on
+  n) NFS/CIFS clients on (NAS)
   4) Toolbox / distrobox on
   5) Homebrew on
   6) Avahi (.local) / ModemManager on
@@ -152,6 +153,8 @@ EOF
       ;;
   esac
   echo "  0) No software store (by design; Flathub is off)"
+  echo "  m) Flatpak cannot record / use a microphone"
+  echo "  f) Cannot mount a NAS (NFS/CIFS)"
   echo "  c) Hotel Wi-Fi login page never appears (connectivity check)"
   echo "  t) Files has no previews (thumbnails)"
   echo "  b) Back"
@@ -180,6 +183,7 @@ hardware_loop() {
       1) run_toggle flathub verified; open_tutorial install-apps ;;
       2) run_toggle bluetooth on; open_tutorial bluetooth ;;
       3) run_toggle camera-mic on; open_tutorial camera-mic ;;
+      n|N) run_toggle network-fs on; open_tutorial network-fs ;;
       4) run_toggle toolbox on; open_tutorial toolbox ;;
       5) run_toggle brew on; open_tutorial install-apps ;;
       6) run_toggle extra-daemons on ;;
@@ -280,6 +284,15 @@ broken_loop() {
         run_toggle thumbnails on
         echo "GNOME Files / Dolphin previews are on."
         ;;
+      m|M)
+        run_toggle flatpak-record off
+        echo "Flatpak Pulse/PipeWire record is allowed. Kernel camera-mic is a different door."
+        open_tutorial camera-mic
+        ;;
+      f|F)
+        run_toggle network-fs on
+        open_tutorial network-fs
+        ;;
       b|B|q|Q|"") return 0 ;;
       *) echo "Unknown choice." ;;
     esac
@@ -351,6 +364,8 @@ loosened_loop() {
   [[ -f /etc/unwoke/allow-dhcp-hostname ]] && add_item "DHCP hostname" "dhcp-hostname off" "first-hour"
   [[ -f /etc/unwoke/allow-thumbnails ]] && add_item "Thumbnails" "thumbnails off" "first-hour"
   [[ -f /etc/unwoke/flatpak-lockdown.off ]] && add_item "Flatpak lockdown off" "lockdown on" "install-apps"
+  [[ -f /etc/unwoke/flatpak-record.off ]] && add_item "Flatpak record allowed" "flatpak-record on" "camera-mic"
+  [[ -f /etc/unwoke/allow-network-fs ]] && add_item "NFS/CIFS clients allowed" "network-fs off" "network-fs"
   [[ -f /etc/unwoke/brave-jitless.off ]] && add_item "JavaScript JIT allowed" "jitless on" "sites-broken"
   [[ -f /etc/unwoke/brave-devices.off ]] && add_item "Browser devices allowed" "devices on" "camera-mic"
   [[ -f /etc/unwoke/brave-hardening.off ]] && add_item "Hardening pack off" "hardening on" "sites-broken"

@@ -3,25 +3,72 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Fingerprinting vs locks | Unwoke help</title>
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>Fingerprinting vs locks | Tutorials | Unwoke SecureBlue</title>
+  <meta name="description" content="We ship maximum security first. Extra browser packs make you rarer than stock Trivalent. Phone-home off does not. How to blend if you choose.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../css/main.css">
 </head>
 <body>
-  <nav id="site-menu" aria-label="Primary">
-    <ul>
-      <li><a href="../index.html">Unwoke help (offline)</a></li>
-    </ul>
-  </nav>
-  <main>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+        <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="../index.html">Unwoke help (offline)</a></li>
+        <li><a href="https://sergi270710267.github.io/unwoke-secureblue/tutorials/">Online tutorials</a></li>
+      </ul>
+    </nav>
+
+  </header>
+  <main id="content">
+    <p class="eyebrow">Web</p>
     <h1>Fingerprinting vs locks</h1>
-    <p>We ship maximum security first. Extra browser packs make you rarer than stock Trivalent. Phone-home off (countme, connectivity, DHCP hostname, thumbnails) does <strong>not</strong> fingerprint websites — leave those off.</p>
-    <p>Best crowd on Unwoke: <code>*-trivalent</code>. Origin is a smaller crowd.</p>
-    <p>If you choose to look closer to stock Trivalent (one pack, then restart the browser):</p>
-<pre><code>ujust set-brave-jitless off
+    <p><span class="chip">Keep locked</span> We ship the <strong>most security first</strong>. Extra browser packs make this desktop <em>rarer</em> than stock Trivalent. That is a real trade, not a bug. Nothing below auto-unlocks.</p>
+    <div class="alert tip">
+      <p><strong>Best crowd on Unwoke:</strong> rebase <code>*-trivalent</code> (same browser and <code>trivalent_t</code> as stock). Origin is a smaller crowd and a fatter SELinux domain. There is no overlay that is both “stricter than stock Trivalent” and “as anonymous as Chrome.”</p>
+    </div>
+    <ol class="steps">
+      <li>
+        <h3>Phone-home off does not fingerprint websites</h3>
+        <p>Fedora countme, connectivity-check, DHCP hostname, LLMNR/mDNS registration, thumbnails, Privacy Sandbox, Cast, and Chrome-to-Google time queries are not a website fingerprint. <strong>Leave those off.</strong> They are how we beat stock without looking weirder on the web. Safe Browsing stays on (turning it off is a security cut — we will not default that).</p>
+      </li>
+      <li>
+        <h3>These packs make a site able to tell you from stock Trivalent</h3>
+        <p>JIT-less, WebGL/WebGPU off, extension installs blocked, site camera/mic/USB blocked by policy. Cover-Your-Tracks style tests will score that as more unique. They are also the attack-surface cuts. Default: keep them.</p>
+      </li>
+      <li>
+        <h3>If you choose to look closer to stock Trivalent</h3>
+        <p>One pack at a time, then restart the house browser. Do not flatten everything for one site.</p>
+<pre><code># closer to stock Trivalent (security down for that pack):
+ujust set-brave-jitless off
 ujust set-brave-isolation off
-ujust set-brave-devices off</code></pre>
-    <p>Do not flatten every pack. Do not install an “anti-detect” browser. Do not Bubblejail Trivalent.</p>
-    <p>Online: tutorials/fingerprint/</p>
+ujust set-brave-devices off
+# put one back:
+ujust set-brave-jitless on</code></pre>
+        <p>Leave HTTPS-only / no metrics / no <code>ping</code> (hardening pack) if you can — those leak less and are a smaller uniqueness hit than JIT+WebGL. Leave extensions blocked.</p>
+      </li>
+      <li>
+        <h3>Do not</h3>
+        <p>Do not install a random “anti-detect” browser. Do not turn off Safe Browsing to hide from Google (phishing lists go with it). Do not add extra Cloudflare DoH on top of <code>ujust dns-selector</code>. Do not Bubblejail Trivalent.</p>
+      </li>
+    </ol>
+    <div class="alert">
+      <p>Site broken, not anonymity: <a href="../sites-broken/index.html">A site looks broken</a>. Fast path on the box: <code>ujust why</code> then this page (Setup also has a Fingerprinting button).</p>
+    </div>
+    <nav class="tutorial-nav" aria-label="Adjacent tutorials">
+      <a href="../sites-broken/index.html">Previous: A site looks broken</a>
+      <a href="../index.html">All tutorials</a>
+      <a href="../vpn-dns/index.html">Next: VPN without DNS leaks</a>
+    </nav>
   </main>
+  <footer>
+    <a class="brand" href="https://sergi270710267.github.io/unwoke-secureblue/"><img src="../assets/logo.svg" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="../index.html">Tutorials</a></li>
+      <li><a href="https://sergi270710267.github.io/unwoke-secureblue/faq/#fingerprint">FAQ</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
 </body>
 </html>

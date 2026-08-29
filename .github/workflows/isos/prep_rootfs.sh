@@ -134,6 +134,7 @@ menu_auto_hide = True
 [Storage]
 default_scheme = BTRFS
 btrfs_compression = zstd:1
+luks_version = luks2
 default_partitioning =
     /     (min 1 GiB, max 70 GiB)
     /home (min 500 MiB, free 50 GiB)
@@ -184,10 +185,28 @@ echo -e "$ENROLLMENT_PASSWORD\n$ENROLLMENT_PASSWORD" | mokutil --import "$SECURE
 %end
 EOF
 
+# Encrypt by default (stock Anaconda is opt-in). User can still uncheck.
+if grep -qE '^[[:space:]]*autopart' /usr/share/anaconda/interactive-defaults.ks 2>/dev/null; then
+  sed -i -E 's/^[[:space:]]*autopart.*/autopart --encrypted --type=btrfs --luks-version=luks2/' \
+    /usr/share/anaconda/interactive-defaults.ks
+fi
 tee -a /usr/share/anaconda/interactive-defaults.ks <<EOF
 ostreecontainer --url=${IMAGE_REF}:${IMAGE_TAG} --transport=containers-storage
 %include /usr/share/anaconda/post-scripts/install-configure-upgrade.ks
 %include /usr/share/anaconda/post-scripts/secureboot-enroll-key.ks
+EOF
+if ! grep -qE '^[[:space:]]*autopart --encrypted' /usr/share/anaconda/interactive-defaults.ks; then
+  tmp="$(mktemp)"
+  { echo 'autopart --encrypted --type=btrfs --luks-version=luks2'; \
+    cat /usr/share/anaconda/interactive-defaults.ks; } > "${tmp}"
+  mv "${tmp}" /usr/share/anaconda/interactive-defaults.ks
+fi
+
+# libcryptsetup default when Anaconda/blivet format LUKS (memory is KiB).
+cat > /etc/cryptsetup.conf <<'EOF'
+# Unwoke live ISO: Argon2id 2 GiB. Stock Anaconda uses a weaker compiled-in default.
+pbkdf = argon2id
+pbkdf-memory = 2097152
 EOF
 
 tee /usr/share/anaconda/post-scripts/install-configure-upgrade.ks <<EOF

@@ -239,6 +239,12 @@ for d in j.get("deployments") or []:
   if [[ -x /usr/libexec/unwoke/flatpak-lockdown.sh ]]; then
     info "flatpak-lockdown: $(/usr/libexec/unwoke/flatpak-lockdown.sh status)"
   fi
+  if [[ -x /usr/libexec/unwoke/flatpak-record.sh ]]; then
+    info "flatpak-record: $(/usr/libexec/unwoke/flatpak-record.sh status)"
+  fi
+  if [[ -x /usr/libexec/unwoke/network-fs.sh ]]; then
+    info "network-fs: $(/usr/libexec/unwoke/network-fs.sh status)"
+  fi
   if [[ -x /usr/libexec/unwoke/brew.sh ]]; then
     info "homebrew: $(/usr/libexec/unwoke/brew.sh status)"
   fi
@@ -373,6 +379,8 @@ for d in j.get("deployments") or []:
   echo "Toggles (all reversible):"
   echo "  ujust set-flathub verified|full|off"
   echo "  ujust set-flatpak-lockdown on|off"
+  echo "  ujust set-flatpak-record on|off"
+  echo "  ujust set-network-fs on|off"
   echo "  ujust set-brew on|off"
   echo "  ujust set-camera-mic on|off"
   echo "  ujust set-admin-split on|off|add NAME"
@@ -470,6 +478,25 @@ cmd_audit() {
   fi
   if [[ -e /opt/brave.com ]] && find /opt/brave.com -xdev -perm -4000 -type f 2>/dev/null | grep -q .; then
     fail=1
+  fi
+  # Stock #2508: warn (or fail on browserless) if a Flatpak web browser is installed.
+  if command -v flatpak >/dev/null; then
+    local apps br
+    apps="$(flatpak list --app --columns=application 2>/dev/null || true)"
+    if [[ -n "${apps}" ]]; then
+      while IFS= read -r br; do
+        [[ -n "${br}" ]] || continue
+        case "${br}" in
+          org.mozilla.firefox*|com.google.Chrome*|com.brave.Browser*|com.microsoft.Edge*|org.chromium.Chromium*|io.github.ungoogled*|net.mullvad.MullvadBrowser*|org.torproject.*|io.gitlab.librewolf*|app.zen_browser.*|org.gnome.Epiphany*|com.vivaldi.*|com.opera.Opera*)
+            info "Flatpak web browser installed: ${br} (stock audit does not warn yet)"
+            if is_browserless; then
+              bad "browserless image with a Flatpak browser"
+              fail=1
+            fi
+            ;;
+        esac
+      done <<<"${apps}"
+    fi
   fi
   exit "${fail}"
 }
@@ -690,6 +717,12 @@ cmd_apply_boot() {
   if [[ -x /usr/libexec/unwoke/flatpak-lockdown.sh ]]; then
     /usr/libexec/unwoke/flatpak-lockdown.sh apply-boot || true
   fi
+  if [[ -x /usr/libexec/unwoke/flatpak-record.sh ]]; then
+    /usr/libexec/unwoke/flatpak-record.sh apply-boot || true
+  fi
+  if [[ -x /usr/libexec/unwoke/network-fs.sh ]]; then
+    /usr/libexec/unwoke/network-fs.sh apply-boot || true
+  fi
   if [[ -x /usr/libexec/unwoke/brew.sh ]]; then
     /usr/libexec/unwoke/brew.sh apply-boot || true
   fi
@@ -716,6 +749,9 @@ cmd_apply_boot() {
 cmd_apply_user() {
   if [[ -x /usr/libexec/unwoke/flatpak-lockdown.sh ]]; then
     /usr/libexec/unwoke/flatpak-lockdown.sh apply-user || true
+  fi
+  if [[ -x /usr/libexec/unwoke/flatpak-record.sh ]]; then
+    /usr/libexec/unwoke/flatpak-record.sh apply-user || true
   fi
   if [[ -x /usr/libexec/unwoke/theme.sh ]]; then
     /usr/libexec/unwoke/theme.sh apply-user-once || true
@@ -766,6 +802,8 @@ case "${main}" in
   allow-browsers) cmd_allow_browsers "${1:-status}" "${2:-}" ;;
   flathub) exec /usr/libexec/unwoke/flathub.sh "${1:-status}" ;;
   lockdown) exec /usr/libexec/unwoke/flatpak-lockdown.sh "${1:-status}" ;;
+  flatpak-record) exec /usr/libexec/unwoke/flatpak-record.sh "${1:-status}" ;;
+  network-fs) exec /usr/libexec/unwoke/network-fs.sh "${1:-status}" ;;
   bubblejail) cmd_bubblejail "${1:-status}" ;;
   brew) exec /usr/libexec/unwoke/brew.sh "${1:-status}" ;;
   camera-mic) exec /usr/libexec/unwoke/camera-mic.sh "${1:-status}" ;;

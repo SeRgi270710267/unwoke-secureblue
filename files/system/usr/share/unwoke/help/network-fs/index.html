@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>Network shares (NFS/CIFS) | Tutorials | Unwoke SecureBlue</title>
+  <meta name="description" content="NFS and CIFS clients are locked. Stock only masks the NFS server. Turn on only to mount a NAS.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+        <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="../index.html">Unwoke help (offline)</a></li>
+        <li><a href="https://sergi270710267.github.io/unwoke-secureblue/tutorials/">Online tutorials</a></li>
+      </ul>
+    </nav>
+
+  </header>
+  <main id="content">
+    <p class="eyebrow">NAS</p>
+    <h1>Network shares (NFS/CIFS)</h1>
+    <p><span class="chip">Keep locked</span> Stock already masks the NFS <em>server</em>. Unwoke also blacklists NFS and CIFS <em>client</em> modules so a random share does not mount. That is stricter than stock.</p>
+    <ol class="steps">
+      <li>
+        <h3>Need a NAS?</h3>
+        <pre><code>ujust set-network-fs on</code></pre>
+        <p>Then you may need <code>run0 modprobe cifs</code> or <code>nfs</code>. This is a security loosen. Put it back when you are done.</p>
+      </li>
+      <li>
+        <h3>Done with the share</h3>
+        <pre><code>ujust set-network-fs off</code></pre>
+        <p>Unmount first. Already-mounted shares stay until you unmount them.</p>
+      </li>
+    </ol>
+    <nav class="tutorial-nav" aria-label="Adjacent tutorials">
+      <a href="../camera-mic/index.html">Previous: Webcam</a>
+      <a href="../index.html">All tutorials</a>
+      <a href="../screen-share/index.html">Next: Screen share</a>
+    </nav>
+  </main>
+  <footer>
+    <a class="brand" href="https://sergi270710267.github.io/unwoke-secureblue/"><img src="../assets/logo.svg" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

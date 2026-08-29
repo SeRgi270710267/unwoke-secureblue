@@ -42,6 +42,11 @@ apply_one() {
   for i in "${feature[@]}"; do ${cmd} --disallow="${i}"; done
   for i in "${filesystem[@]}"; do ${cmd} --nofilesystem="${i}"; done
   for i in "${dangerous[@]}"; do ${cmd} --nofilesystem="${i}"; done
+  # Extra xdg/host-root cuts stock's lockdown just does not default. Not host-os
+  # (harden-flatpak.sh needs host-os:ro for malloc). Revert with lockdown off.
+  local extra_fs
+  extra_fs=(host-root xdg-desktop xdg-documents xdg-download xdg-music xdg-pictures xdg-videos xdg-public-share xdg-templates xdg-cache xdg-config xdg-data)
+  for i in "${extra_fs[@]}"; do ${cmd} --nofilesystem="${i}"; done
   for i in "${session[@]}"; do ${cmd} --no-talk-name="${i}"; done
   for i in "${system[@]}"; do ${cmd} --system-no-talk-name="${i}"; done
   ${cmd} --persist=.
@@ -110,8 +115,13 @@ case "${1:-status}" in
     as_root touch "${STAMP_OFF}"
     as_root /usr/bin/bash /usr/libexec/unwoke/flatpak-lockdown.sh reset-system-root
     cmd_reset_user
+    if [[ -x /usr/libexec/unwoke/flatpak-record.sh ]]; then
+      as_root /usr/libexec/unwoke/flatpak-record.sh apply-system
+      /usr/libexec/unwoke/flatpak-record.sh apply-user || true
+    fi
     echo "Flatpak permission lockdown OFF. Global user overrides saved as global.save if present."
-    echo "Unwoke harden-flatpak.sh re-applied malloc preload. Re-enable: ujust set-flatpak-lockdown on"
+    echo "Unwoke harden-flatpak.sh re-applied malloc preload. Record-block stays unless you also: ujust set-flatpak-record off"
+    echo "Re-enable lockdown: ujust set-flatpak-lockdown on"
     ;;
   reset-system-root)
     cmd_reset_system

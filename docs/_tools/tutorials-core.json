@@ -21,6 +21,7 @@
       "cards": [
         {"href": "tutorials/bluetooth/", "eyebrow": "Radio", "h3": "Bluetooth headphones", "p": "Off on purpose. Wi-Fi is already on. Turn BT on only if you need it."},
         {"href": "tutorials/camera-mic/", "eyebrow": "Calls", "h3": "Webcam and microphone", "p": "Kernel lock and browser policy are two different doors. Open the smallest one."},
+        {"href": "tutorials/network-fs/", "eyebrow": "NAS", "h3": "Network shares (NFS/CIFS)", "p": "Clients are locked. Stock only masks the NFS server. Turn on only if you mount a NAS."},
         {"href": "tutorials/screen-share/", "eyebrow": "Meetings", "h3": "Screen share", "p": "Extra sandbox blocks capture. Loosen that pack, not the whole browser."}
       ]
     },

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Network shares (Unwoke lock)
+GenericName=NFS CIFS
+Comment=NFS/CIFS clients are locked on purpose. Opens Unwoke setup.
+Exec=/usr/libexec/unwoke/first-session.sh --force --hardware
+Icon=/usr/share/pixmaps/unwoke-logo.svg
+Terminal=false
+Categories=Settings;HardwareSettings;
+Keywords=nfs;cifs;smb;samba;network share;nas;
+StartupNotify=true

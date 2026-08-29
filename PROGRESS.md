@@ -79,7 +79,13 @@ Display: **Unwoke SecureBlue** (`Unwoke` = modifier; `SecureBlue` = one word, S+
 
 **toolbox/distrobox:** default off (PATH stub). podman stays. `ujust set-toolbox on`. Full `/usr/bin/toolbox` is a bypass.
 
-**Flatpak lockdown:** default on (stock’s cuts, system + user). `ujust set-flatpak-lockdown off`.
+**Flatpak lockdown:** default on (stock’s cuts plus extra xdg/host-root, not host-os). `ujust set-flatpak-lockdown off`.
+
+**Flatpak record:** Pulse + PipeWire capture blocked for Flatpaks, independent of lockdown. `ujust set-flatpak-record off`.
+
+**NFS/CIFS clients:** modules blacklisted. Stock only masks nfs-server; we never unmask the server. `ujust set-network-fs on`.
+
+**USB encrypt-on:** Anaconda `autopart --encrypted` + Argon2id 2 GiB (`/etc/cryptsetup.conf` on the live ISO and `/usr/etc/cryptsetup.conf` on the OS). Untick Encrypt if you must.
 
 **Bubblejail:** Origin launcher wrapper, default **on**. `ujust set-brave-bubblejail off`. Refused on Trivalent (stock FAQ: pairing is broken).
 
@@ -125,6 +131,8 @@ ujust set-admin-split on|off|add NAME
 ujust set-bluetooth on|off
 ujust set-toolbox on|off
 ujust set-extra-daemons on|off
+ujust set-flatpak-record on|off
+ujust set-network-fs on|off
 ujust set-unwoke-theme apply
 ujust set-allow-browsers on ALLOW   # browserless
 ```
@@ -193,13 +201,14 @@ Stock `ujust` still works.
 42. **#6 settings URL 404:** `unwoke-silverblue-trivalent-iso` was never on GHCR. Run 20 `oras push` died: absolute file path. USB is the Actions artifact. Do not invent `/users/.../packages/container/NAME/settings` (500 even for public OS). oras now pushes from the ISO dir with a relative name. Do not auto-bump titanoboa.
 43. **Receipt release:** one moving GitHub tag `receipt` (pubkey + verified digests). Hands-off rewrite on full verify **and** after overlay bake. Tiny USB checksums after wrap. `receipt-alarm` if it cannot write; last good files stay. Not the OS, not the USB.
 44. **Babysit less:** overlay `cancel-in-progress: false`. ISO oras one retry, same pin. No extra secrets. No auto-trust.
+45. **Stock FEAT we shipped, stock did not:** USB encrypt-on + Argon2 2 GiB (ISO kickstart + `/usr/etc/cryptsetup.conf`); Flatpak record-block (independent of lockdown, actually re-allows on off); extra xdg/host-root lockdown (never host-os); NFS/CIFS *clients* blacklisted while nfs-server stays masked; `audit-unwoke` warns on Flatpak browsers. All reversible except LUKS after you chose it at install. Compared page is the public scoreboard.
 
 Image-side theme, privacy.sh, and Setup fingerprint button land on the **image rebuild**, not Pages. Docs-only / `iso.yml` / `pr-gate.yml` / CODEOWNERS are in `build.yml` paths-ignore (this commit is docs-only). Overlay scripts (`privacy.sh`, `apply-unwoke.sh`, `vendor.py`, `inspect-flavor.sh`) **do** bake.
 
 ## Tomorrow / next chat
 
 - Pickup: *continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.* Other PC: `git clone` or `git pull`.
-- Overlay bake **queues** if another is running (`cancel-in-progress: false`). Do not force-cancel a green bake to “go faster.”
+- Overlay bake **queues** if another is running (`cancel-in-progress: false`). Do not force-cancel a green bake to “go faster.” Item 45 (encrypt-on, Flatpak record, extra FS, NFS/CIFS clients, audit browsers) **does** bake.
 - Privacy locks (`privacy.sh apply-boot`, countme/connectivity/DHCP/thumbnails, hardening Privacy Sandbox) need a **green overlay bake** then a real rebase to confirm.
 - USB ISO wrap **green:** [run 20](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33254135512) (~4 GB **Actions artifact**). GHCR `-iso` was **not** created: oras 1.2 rejected the absolute ISO path. Download the artifact (GitHub login). Do not send people to `/users/.../packages/container/.../settings` (404/500). After the relative-path oras fix, re-dispatch `iso`. Weekly four Trivalent. Not Ventoy. Their Secure Boot key.
 - **#5** was a false alarm (pin still `840217d` / tag v0.2). Do not bump. Next `verify` should close it.

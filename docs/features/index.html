@@ -185,9 +185,30 @@
           <tr>
             <td>Flatpak permissions</td>
             <td>Opt-in lockdown</td>
-            <td>Lockdown <strong>on</strong>. <code>ujust set-flatpak-lockdown off</code></td>
-            <td>Lockdown <strong>on</strong>. Same</td>
-            <td>Lockdown <strong>on</strong>. Same</td>
+            <td>Lockdown <strong>on</strong> plus extra xdg/host-root cuts. <code>ujust set-flatpak-lockdown off</code></td>
+            <td>Same extra cuts</td>
+            <td>Same extra cuts</td>
+          </tr>
+          <tr>
+            <td>Flatpak Pulse/PipeWire record</td>
+            <td>Open request; not default</td>
+            <td>Blocked. Independent of lockdown. <code>ujust set-flatpak-record off</code></td>
+            <td>Blocked. Same</td>
+            <td>Blocked. Same</td>
+          </tr>
+          <tr>
+            <td>NFS / CIFS</td>
+            <td>nfs-server masked; clients still load</td>
+            <td>Server stays masked. Client modules blacklisted until <code>ujust set-network-fs on</code></td>
+            <td>Same</td>
+            <td>Same</td>
+          </tr>
+          <tr>
+            <td>Empty-disk USB encryption</td>
+            <td>Encrypt checkbox off; weaker LUKS memory</td>
+            <td>LUKS on unless you untick. Argon2id 2&nbsp;GiB</td>
+            <td>Same ISO hook</td>
+            <td>Same ISO hook</td>
           </tr>
           <tr>
             <td>Homebrew</td>
@@ -315,7 +336,7 @@
           <tr>
             <td><code>ujust audit-unwoke</code></td>
             <td>—</td>
-            <td>Fail if <code>harden_userns</code> / flavor browser / <code>brave_t</code> (Origin) / SUID invariants break.</td>
+            <td>Fail if <code>harden_userns</code> / flavor browser / <code>brave_t</code> (Origin) / SUID invariants break. Warns (fails on browserless) if a Flatpak web browser is installed.</td>
             <td>—</td>
           </tr>
           <tr>
@@ -327,8 +348,20 @@
           <tr>
             <td><code>ujust set-flatpak-lockdown</code></td>
             <td><code>on</code></td>
-            <td>Reject most Flatpak permissions (Wayland+DRI kept). Apps need Flatseal.</td>
+            <td>Reject most Flatpak permissions plus extra xdg/host-root (not host-os). Apps need Flatseal.</td>
             <td><code>off</code></td>
+          </tr>
+          <tr>
+            <td><code>ujust set-flatpak-record</code></td>
+            <td><code>on</code> (blocked)</td>
+            <td>Pulse + PipeWire capture blocked for Flatpaks. Independent of lockdown. Speakers in native apps stay.</td>
+            <td><code>off</code></td>
+          </tr>
+          <tr>
+            <td><code>ujust set-network-fs</code></td>
+            <td><code>off</code> (locked)</td>
+            <td>Blacklist NFS/CIFS <em>client</em> modules. nfs-server stays masked even if you turn clients on.</td>
+            <td><code>on</code></td>
           </tr>
           <tr>
             <td><code>ujust set-brave-hardening</code> / <code>set-trivalent-hardening</code></td>
@@ -475,6 +508,8 @@
 ujust audit-unwoke
 ujust set-flathub verified|full|off
 ujust set-flatpak-lockdown on|off
+ujust set-flatpak-record on|off
+ujust set-network-fs on|off
 ujust set-brave-hardening on|off
 ujust set-brave-devices on|off
 ujust set-brave-jitless on|off

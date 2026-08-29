@@ -119,6 +119,46 @@ if [[ ! -f "${work}/usr/libexec/unwoke/privacy.sh" ]]; then
   echo "FAIL: missing /usr/libexec/unwoke/privacy.sh" >&2
   fail=1
 fi
+if [[ ! -f "${work}/usr/libexec/unwoke/network-fs.sh" ]]; then
+  echo "FAIL: missing /usr/libexec/unwoke/network-fs.sh" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/share/unwoke/modprobe-network-fs.conf" ]]; then
+  echo "FAIL: missing modprobe-network-fs.conf" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/libexec/unwoke/flatpak-record.sh" ]]; then
+  echo "FAIL: missing /usr/libexec/unwoke/flatpak-record.sh" >&2
+  fail=1
+fi
+if ! grep -q 'xdg-documents' "${work}/usr/libexec/unwoke/flatpak-lockdown.sh" 2>/dev/null; then
+  echo "FAIL: lockdown missing extra xdg filesystem cuts" >&2
+  fail=1
+fi
+if ! grep -q 'host-root' "${work}/usr/libexec/unwoke/flatpak-lockdown.sh" 2>/dev/null; then
+  echo "FAIL: lockdown missing host-root cut" >&2
+  fail=1
+fi
+if grep -vE '^[[:space:]]*#' "${work}/usr/libexec/unwoke/flatpak-lockdown.sh" 2>/dev/null | grep -qE -- '--nofilesystem=host-os([[:space:]]|$)'; then
+  echo "FAIL: lockdown must not cut host-os (harden-flatpak malloc needs host-os:ro)" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/share/applications/unwoke-lock-network-fs.desktop" ]]; then
+  echo "FAIL: missing Network shares lock launcher" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/share/applications/unwoke-lock-flatpak-record.desktop" ]]; then
+  echo "FAIL: missing Flatpak record lock launcher" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/share/unwoke/help/network-fs/index.html" ]]; then
+  echo "FAIL: missing offline help for network-fs" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/etc/cryptsetup.conf" ]] || ! grep -q 'pbkdf-memory = 2097152' "${work}/usr/etc/cryptsetup.conf"; then
+  echo "FAIL: missing /usr/etc/cryptsetup.conf Argon2 2 GiB default" >&2
+  fail=1
+fi
 for f in usr/share/unwoke/nm-privacy-connectivity.conf \
          usr/share/unwoke/nm-privacy-dhcp.conf \
          usr/share/unwoke/dconf-thumbnails-off \

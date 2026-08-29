@@ -59,7 +59,7 @@ flatpak install flathub org.example.App</code></pre>
       </li>
       <li>
         <h3>Leave lockdown on; grant per app</h3>
-        <p>Overlay lockdown is <strong>on</strong> (stock ships it as opt-in). Broken portals or missing folders are usually missing grants, not a reason to disable the whole cut.</p>
+        <p>Overlay lockdown is <strong>on</strong> (stock ships it as opt-in) and cuts extra xdg folders + host-root that stock’s command does not. Pulse/PipeWire <em>record</em> is a separate lock. Broken portals or missing folders are usually missing grants, not a reason to disable the whole cut.</p>
         <pre><code>flatpak install flathub com.github.tchx84.Flatseal</code></pre>
         <p>In Flatseal, give that one app the filesystem, device, or socket it needs. Speakers often work without touching camera lockdown.</p>
       </li>

@@ -63,11 +63,23 @@ set-flathub *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh flathub "$@"
 
-# Flatpak permission lockdown (stock cuts, default on). Breaks apps until Flatseal.
+# Flatpak permission lockdown (stock cuts plus extra xdg/host-root). Breaks apps until Flatseal.
 [positional-arguments]
 set-flatpak-lockdown *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh lockdown "$@"
+
+# Flatpak Pulse/PipeWire record (mic + other apps' audio). Default on. Independent of lockdown.
+[positional-arguments]
+set-flatpak-record *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh flatpak-record "$@"
+
+# NFS/CIFS client modules. Default off (stock only masks the NFS *server*).
+[positional-arguments]
+set-network-fs *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh network-fs "$@"
 
 # Origin or Trivalent: HTTPS / metrics / autofill / passwords / translate. Restart the browser after.
 [positional-arguments]

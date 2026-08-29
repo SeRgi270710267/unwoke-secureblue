@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Flatpak microphone (Unwoke lock)
+GenericName=Flatpak record
+Comment=Flatpak apps cannot record Pulse/PipeWire. Opens Unwoke setup. Speakers in native apps stay.
+Exec=/usr/libexec/unwoke/first-session.sh --force --hardware
+Icon=/usr/share/pixmaps/unwoke-logo.svg
+Terminal=false
+Categories=Settings;HardwareSettings;
+Keywords=microphone;mic;pulse;pipewire;flatpak;record;privacy;
+StartupNotify=true
