@@ -69,13 +69,22 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Fail if stock script changed
+      - name: Compare stock scripts to snapshots
+        id: watch
         run: bash .github/scripts/check-upstream-watch.sh
+
+      - name: Upload drifted stock files
+        if: failure() && steps.watch.outcome == 'failure'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: stock-script-drift
+          path: upstream-drift/
+          if-no-files-found: ignore
 
   bluebuild:
     name: Build ${{ matrix.recipe }}
     if: github.actor != 'dependabot[bot]'
-    needs: [canary, upstream-watch]
+    needs: canary
     runs-on: ubuntu-latest
     permissions:
       contents: read
