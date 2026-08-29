@@ -109,9 +109,10 @@ Do **not** auto-bump to \`@main\`. Read the new commit, pin a hash, re-dispatch 
 - SHA: \`${GITHUB_SHA}\`
 - Run: ${RUN_URL}
 
-The twelve OS images are often already Public. The leftover is usually a first \`unwoke-*-iso\` USB wrap.
+The twelve OS images are often already Public. A USB \`-iso\` GHCR package only exists after oras push succeeds. If the package page 404s, there is nothing to make Public — download the Actions ISO artifact instead.
 
-Open GitHub → Packages → that package → Package settings → Change visibility → Public. One click. After that this job is a no-op and this issue closes.
+Working pages are \`https://github.com/OWNER/REPO/pkgs/container/NAME\` (linked) or the repo Packages sidebar. \`/users/.../packages/container/NAME/settings\` 404s/500s.
+
 Do not make the bake fail over this. Do not switch the registry."
     CLOSE="GHCR Unwoke packages are Public: ${RUN_URL}"
     ;;

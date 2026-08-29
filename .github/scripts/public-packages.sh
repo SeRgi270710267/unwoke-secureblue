@@ -31,19 +31,16 @@ NAMES=(
   unwoke-kinoite-nvidia-open-trivalent
 )
 
-# Also cover USB ISO wraps if they exist.
-iso_names=()
-for n in "${NAMES[@]}"; do
-  iso_names+=("${n}-iso")
-done
-
+# Do not invent *-iso names. oras may never have created them; GET then
+# 404s and some gh --jq prints "null", which used to look "private" and
+# linked to a Packages settings URL that 404s in the browser.
 listed=""
 listed="$(gh api --paginate "users/${OWNER}/packages?package_type=container&per_page=100" \
   --jq '.[].name' 2>/dev/null || true)"
 
 declare -A seen=()
 queue=()
-for n in "${NAMES[@]}" "${iso_names[@]}"; do
+for n in "${NAMES[@]}"; do
   seen["${n}"]=1
   queue+=("${n}")
 done
@@ -81,17 +78,37 @@ anon_pull_ok() {
   [[ "${code}" == "200" ]]
 }
 
+package_page() {
+  local name="$1"
+  local html
+  html="$(gh api "users/${OWNER}/packages/container/${name}" --jq .html_url 2>/dev/null || true)"
+  if [[ "${html}" == https://* ]]; then
+    printf '%s\n' "${html}"
+    return 0
+  fi
+  # Linked packages (OS images): repo pkgs page. /users/.../packages/container/NAME 500s.
+  if [[ -n "${GITHUB_REPOSITORY:-}" ]]; then
+    printf 'https://github.com/%s/pkgs/container/%s\n' "${GITHUB_REPOSITORY}" "${name}"
+    return 0
+  fi
+  printf 'https://github.com/%s?tab=packages\n' "${GITHUB_REPOSITORY_OWNER:-${OWNER}}"
+}
+
 set_public() {
   local name="$1"
   local vis settings
-  vis="$(gh api "users/${OWNER}/packages/container/${name}" --jq .visibility 2>/dev/null || echo missing)"
-  settings="https://github.com/users/${OWNER}/packages/container/${name}/settings"
+  # --jq .visibility on a 404 body is "null" on some gh versions (exit 0).
+  # Only private/internal are leftovers. Empty/null/missing = no package.
+  vis="$(gh api "users/${OWNER}/packages/container/${name}" --jq '.visibility // empty' 2>/dev/null || true)"
+  settings="$(package_page "${name}")"
   case "${vis}" in
     public)
       echo "public  ${name}"
       return 0
       ;;
-    missing)
+    private|internal)
+      ;;
+    *)
       echo "absent  ${name}"
       return 0
       ;;
@@ -140,11 +157,11 @@ if [[ "${ALARM:-}" == "1" && -f "${ROOT}/.github/scripts/issue-alarm.sh" ]]; the
     extra="Still private after the factory tried Public:"
     for n in "${private_names[@]}"; do
       extra="${extra}
-- \`${n}\` → https://github.com/users/${OWNER}/packages/container/${n}/settings"
+- \`${n}\` → $(package_page "${n}")"
     done
     extra="${extra}
 
-Anonymous rebase of the twelve OS images can already work. The usual leftover is a first \`*-iso\` USB wrap. One Public click on each URL. Do not bump titanoboa or switch registry."
+Anonymous rebase of the twelve OS images can already work. If a USB \`-iso\` name 404s, that GHCR package was never created (oras path check); download the Actions artifact instead. Do not bump titanoboa or switch registry."
     ALARM_EXTRA="${extra}" bash "${ROOT}/.github/scripts/issue-alarm.sh" packages open || true
   else
     bash "${ROOT}/.github/scripts/issue-alarm.sh" packages close || true

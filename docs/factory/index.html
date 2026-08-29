@@ -99,7 +99,7 @@
           </tr>
           <tr>
             <td>First GHCR push is private</td>
-            <td>Tries Public after overlay, ISO, and twice-daily trust-watch. Anonymous OCI pull is the truth (OS images can already be Public while a first <code>*-iso</code> wrap is not). Opens <code>ghcr-private</code> with each leftover settings URL. Closes after the click</td>
+            <td>Tries Public after overlay, ISO, and twice-daily trust-watch. Anonymous OCI pull is the truth. Does not invent ISO names or <code>/users/.../settings</code> URLs (those 404 if oras never pushed). Opens <code>ghcr-private</code> only for packages that exist. Closes after a real Public click</td>
             <td>Fail the bake. Auto-guess a different registry</td>
           </tr>
           <tr>

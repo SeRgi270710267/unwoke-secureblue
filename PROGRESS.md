@@ -187,7 +187,8 @@ Stock `ujust` still works.
 38. **Privacy sell page** (`docs/privacy/`): four stories + full table vs stock. Nav **Privacy**. Home + Compared link here.
 39. **Workarounds page:** keyword map to allowlisted `ujust` only (tightened: skip `[FEAT]`, ARM, MTP≠USBGuard, vsock≠Xwayland). Optional Pollinations batch for an “AI note”; often 402 — then dashed **Keyword only** panel. Cards: blue AI strip vs Type this box. Never baked.
 40. **Contributor door:** `CODEOWNERS` = `@SeRgi270710267`. `pr-gate.yml` job name **`Strict PR gate`**. PR/issue templates, `CONTRIBUTING.md`, `SECURITY.md`. GitHub ruleset **`main-strict`** only (no `protect-main`). Maintainer merge only. No auto-merge. `pull_request_target` forbidden. Owner bypass so agent can still push `main`.
-41. **False titanoboa-pin + named GHCR leftover:** #5 was `git ls-remote` missing tag v0.2 (`840217d` still there). Checker now asks GitHub for the commit. All twelve OS GHCR images already pull anonymously. #6 is the first USB wrap `unwoke-silverblue-trivalent-iso` still Private — `GITHUB_TOKEN` cannot flip visibility. Do not auto-bump the pin.
+41. **False titanoboa-pin + named GHCR leftover:** #5 was `git ls-remote` missing tag v0.2 (`840217d` still there). Checker now asks GitHub for the commit. All twelve OS GHCR images already pull anonymously.
+42. **#6 settings URL 404:** `unwoke-silverblue-trivalent-iso` was never on GHCR. Run 20 `oras push` died: absolute file path. USB is the Actions artifact. Do not invent `/users/.../packages/container/NAME/settings` (500 even for public OS). oras now pushes from the ISO dir with a relative name. Do not auto-bump titanoboa.
 
 Image-side theme, privacy.sh, and Setup fingerprint button land on the **image rebuild**, not Pages. Docs-only / `iso.yml` / `pr-gate.yml` / CODEOWNERS are in `build.yml` paths-ignore (this commit is docs-only). Overlay scripts (`privacy.sh`, `apply-unwoke.sh`, `vendor.py`, `inspect-flavor.sh`) **do** bake.
 
@@ -196,7 +197,7 @@ Image-side theme, privacy.sh, and Setup fingerprint button land on the **image r
 - Pickup: *continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.* Other PC: `git clone` or `git pull`.
 - **Do not cancel** an overlay bake that is already running (`cancel-in-progress: true` would kill it).
 - Privacy locks (`privacy.sh apply-boot`, countme/connectivity/DHCP/thumbnails, hardening Privacy Sandbox) need a **green overlay bake** then a real rebase to confirm.
-- USB ISO **green:** [run 20](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33254135512) (~4 GB). **#6 leftover:** [unwoke-silverblue-trivalent-iso settings](https://github.com/users/sergi270710267/packages/container/unwoke-silverblue-trivalent-iso/settings) → Change visibility → Public (token cannot). Weekly four Trivalent. Not Ventoy. Their Secure Boot key.
+- USB ISO wrap **green:** [run 20](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33254135512) (~4 GB **Actions artifact**). GHCR `-iso` was **not** created: oras 1.2 rejected the absolute ISO path. Download the artifact (GitHub login). Do not send people to `/users/.../packages/container/.../settings` (404/500). After the relative-path oras fix, re-dispatch `iso`. Weekly four Trivalent. Not Ventoy. Their Secure Boot key.
 - **#5** was a false alarm (pin still `840217d` / tag v0.2). Do not bump. Next `verify` should close it.
 - First stranger PR: confirm **Strict PR gate** runs; if the merge box cannot find the check, edit `main-strict` and pick it from search after that run.
 - Confirm on a real rebase: `ujust setup` / fingerprint button / `ujust set-countme` status off / `ujust why`.

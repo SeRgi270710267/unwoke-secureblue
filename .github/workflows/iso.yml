@@ -258,12 +258,20 @@ jobs:
             exit 1
           }
           echo "${GITHUB_TOKEN}" | oras login ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
-          files=("${ISO_FILE}:application/vnd.unwoke.iso")
-          [[ -s output/SHA256SUMS ]] && files+=("output/SHA256SUMS:text/plain")
-          [[ -s output/SHA256SUMS.sig ]] && files+=("output/SHA256SUMS.sig:application/octet-stream")
-          oras push "${ISO_PKG}:latest" \
-            --artifact-type application/vnd.unwoke.iso.v1 \
-            "${files[@]}"
+          # oras 1.2 rejects absolute paths unless --disable-path-validation.
+          # Run 20 died here, so ghcr.io/...-iso was never created and the
+          # Packages settings URL 404'd. Push from the ISO directory instead.
+          iso_dir="$(dirname "${ISO_FILE}")"
+          iso_base="$(basename "${ISO_FILE}")"
+          files=("${iso_base}:application/vnd.unwoke.iso")
+          [[ -s "${iso_dir}/SHA256SUMS" ]] && files+=("SHA256SUMS:text/plain")
+          [[ -s "${iso_dir}/SHA256SUMS.sig" ]] && files+=("SHA256SUMS.sig:application/octet-stream")
+          (
+            cd "${iso_dir}"
+            oras push "${ISO_PKG}:latest" \
+              --artifact-type application/vnd.unwoke.iso.v1 \
+              "${files[@]}"
+          )
           export KEY="${RUNNER_TEMP}/unwoke-cosign.key"
           umask 077
           python3 -c 'import os, pathlib; pathlib.Path(os.environ["KEY"]).write_text(os.environ["COSIGN_PRIVATE_KEY"], encoding="utf-8")'
