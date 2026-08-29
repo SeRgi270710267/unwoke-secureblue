@@ -30,7 +30,26 @@ done
 [[ "${ok}" -eq 1 ]] || { echo "FAIL: cannot see ${IMG}" >&2; exit 1; }
 
 echo "inspect: cosign verify ${IMG}"
-cosign verify --key "${PUB}" "${IMG}" >/dev/null
+# GitHub attest-build-provenance attaches certificate attestations as OCI
+# referrers. Newer cosign verify --key can pick those and fail with
+# "expected key signature, not certificate". Prefer classic .sig tags.
+extra=()
+if cosign verify --help 2>&1 | grep -q -- '--new-bundle-format'; then
+  extra+=(--new-bundle-format=false)
+fi
+payload="$(COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key "${PUB}" "${extra[@]}" "${IMG}" 2>/dev/null || true)"
+if [[ -z "${payload}" ]]; then
+  echo "FAIL: no Unwoke key signature on ${IMG}" >&2
+  COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key "${PUB}" "${extra[@]}" "${IMG}" >/dev/null
+  exit 1
+fi
+got="$(python3 -c 'import json,sys; print(json.load(sys.stdin)[0]["critical"]["image"]["docker-manifest-digest"])' <<<"${payload}")"
+want="$(crane digest "${IMG}")"
+if [[ "${got}" != "${want}" ]]; then
+  echo "FAIL: signed digest ${got} != ${want}" >&2
+  exit 1
+fi
+echo "inspect: signed digest ${got}"
 
 work="$(mktemp -d)"
 trap 'rm -rf "${work}"' EXIT

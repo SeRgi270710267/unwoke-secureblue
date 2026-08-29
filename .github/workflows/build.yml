@@ -156,14 +156,6 @@ jobs:
           echo "digest=${DIGEST}" >> "${GITHUB_OUTPUT}"
           echo "Signed digest ${SUBJECT}@${DIGEST}"
 
-      - name: Attest build provenance
-        if: github.event_name != 'pull_request'
-        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2
-        with:
-          subject-name: ${{ steps.digest.outputs.image }}
-          subject-digest: ${{ steps.digest.outputs.digest }}
-          push-to-registry: true
-
       - name: Inspect published flavor
         if: github.event_name != 'pull_request'
         env:
@@ -173,6 +165,14 @@ jobs:
           NAME="${{ matrix.recipe }}"
           NAME="${NAME%.yml}"
           bash .github/scripts/inspect-flavor.sh "${NAME}"
+
+      - name: Attest build provenance
+        if: github.event_name != 'pull_request'
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2
+        with:
+          subject-name: ${{ steps.digest.outputs.image }}
+          subject-digest: ${{ steps.digest.outputs.digest }}
+          push-to-registry: true
 
   factory-alarm:
     name: Factory alarm
