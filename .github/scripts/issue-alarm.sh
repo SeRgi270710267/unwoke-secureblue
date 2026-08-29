@@ -3,7 +3,7 @@
 # Usage: issue-alarm.sh <iso|pages|factory|vendor> open|close
 set -euo pipefail
 
-preset="${1:?usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds open|close}"
+preset="${1:?usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds|receipt open|close}"
 cmd="${2:-open}"
 RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
@@ -130,8 +130,22 @@ Do not make the bake fail over this. Do not switch the registry."
 The mirror still injected a \`ujust why\` / \`ujust setup\` box so people are not left with only their snippet. Add a real stanza (needles, Unwoke code, note). Do **not** auto-unlock Flathub/Bluetooth to make their command work. Do not treat this as a canary hit."
     CLOSE="Stock ujust footnotes mapped again: ${RUN_URL}"
     ;;
+  receipt)
+    TITLE="Receipt release failed (do not upload the ISO)"
+    LABEL="receipt-alarm"
+    COLOR="1D76DB"
+    DESC="The moving GitHub Release tag receipt could not be rewritten"
+    BODY="The factory could not rewrite the \`receipt\` GitHub Release (pubkey + verified GHCR digests). Overlay images are independent. This is not a USB host.
+
+- Workflow: \`${GITHUB_WORKFLOW}\`
+- SHA: \`${GITHUB_SHA}\`
+- Run: ${RUN_URL}
+
+Do **not** attach the ISO (over 2 GiB). Do not auto-accept a new signing key. Next green full verify rewrites the release and closes this."
+    CLOSE="Receipt release rewritten: ${RUN_URL}"
+    ;;
   *)
-    echo "usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds open|close" >&2
+    echo "usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds|receipt open|close" >&2
     exit 1
     ;;
 esac

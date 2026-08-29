@@ -79,6 +79,8 @@ After first graphical login: **Unwoke setup** (`ujust setup`). `ujust why` if so
 
 Published as `ghcr.io/sergi270710267/<name>:latest`. OS images are **public**. No GitHub login to pull.
 
+Current bake **receipt** (pubkey + verified digests, not the OS, not a USB): [Releases / receipt](https://github.com/SeRgi270710267/unwoke-secureblue/releases/tag/receipt). Ignore the source zip GitHub adds. The factory rewrites that tag; it does not attach the ISO.
+
 ---
 
 ## Why this exists (receipts, not vibes)

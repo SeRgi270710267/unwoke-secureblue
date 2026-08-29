@@ -148,6 +148,11 @@
             <td>Auto-bump titanoboa. Auto-weaken the site</td>
           </tr>
           <tr>
+            <td>GitHub Release <code>receipt</code> missing or stale</td>
+            <td>Twice-daily full verify rewrites one moving tag: <code>cosign.pub</code> + verified GHCR digests. Opens <code>receipt-alarm</code> if that fails. Next green run overwrites and closes. Never attaches the ISO</td>
+            <td>Host a 4 GB USB. A new tag every bake. Auto-accept a new signing key</td>
+          </tr>
+          <tr>
             <td>Last-green stamp stale on the site</td>
             <td>Pages writes <code>status.json</code> from successful overlay / inspect / ISO / vendor-watch runs</td>
             <td>Invent a green bake that did not happen</td>
