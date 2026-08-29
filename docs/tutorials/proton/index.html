@@ -65,6 +65,21 @@
         <p>Unverified Flathub <code>me.proton.*</code>, Snap, unofficial Drive AppImage, <code>curl | sh</code> CLIs, Distrobox. Search GNOME for “Proton” to open this wizard.</p>
       </li>
     </ol>
+<!-- vendor-generated:start -->
+<div class="alert tip">
+<p><strong>From the vendor list</strong> (watched and healed twice a day).
+<code>ujust install-vendor NAME</code> or Setup → Strict apps. Group: <code>proton</code>.</p>
+<ul>
+<li><strong>Proton Mail (Trivalent)</strong> (<code>proton_mail_web</code>, recommended) — Open in Trivalent. No extra package. <code>ujust install-vendor proton_mail_web</code></li>
+<li><strong>Proton Pass (Trivalent)</strong> (<code>proton_pass_web</code>, recommended) — Open in Trivalent. No extra package. <code>ujust install-vendor proton_pass_web</code></li>
+<li><strong>Proton VPN WireGuard</strong> (<code>proton_vpn_downloads</code>, recommended) — WireGuard import. No extra daemon. <code>ujust install-vendor proton_vpn_downloads</code></li>
+<li><strong>Proton Mail desktop RPM</strong> (<code>proton_mail</code>, asked) — Official RPM after live SHA512. Asked userns. <code>ujust install-vendor proton_mail</code></li>
+<li><strong>Proton Pass desktop RPM</strong> (<code>proton_pass</code>, asked) — Official RPM after live SHA512. Asked userns. <code>ujust install-vendor proton_pass</code></li>
+</ul>
+<p>Probe: <code>ujust check-vendor-installers</code>. New app = stanza in <code>vendor-installers.json</code>, not a one-off tutorial fork.</p>
+</div>
+<!-- vendor-generated:end -->
+
     <nav class="tutorial-nav" aria-label="Adjacent tutorials">
       <a href="tutorials/install-apps/">Previous: Install an app</a>
       <a href="tutorials/">All tutorials</a>

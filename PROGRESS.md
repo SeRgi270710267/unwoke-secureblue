@@ -167,6 +167,7 @@ Stock `ujust` still works.
 24. **Vendor installer watch:** live SHA512; heal also covers redirects, field renames, sidecar checksums, www, repo path, retries on 429/5xx (no rewrite). Allowlisted HTTPS + checksum/gpg only. Flathub/HTTP still a human issue.
 25. **Every vendors{} key is first-class:** `install-vendor.sh`, Setup tab Strict apps, generated `.desktop` files, inspect JSON, CI check/heal. New app = JSON stanza, not a Proton/IVPN-only fork of the watch.
 26. **Mullvad VPN** on that list: WireGuard first; official `mullvad.repo` + `mullvad-vpn` asked. Hosts allowlisted for heal. Not Mullvad Browser. Tutorial + `ujust install-mullvad`.
+27. **Tutorials hub generated at Pages deploy** from `tutorials-core.json` + every `vendors{}` `tutorial` slug. Vendor command lists injected. Missing slugs get a stub page. Does not auto-unlock.
 
 Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only / `iso.yml` pushes should not rebuild images (`build.yml` paths-ignore).
 

@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#050a16">
   <meta name="color-scheme" content="dark">
   <title>Tutorials | Unwoke SecureBlue</title>
-  <meta name="description" content="Everyday Unwoke SecureBlue tasks the secure way: first hour, apps without a store, Bluetooth, camera, USBGuard, updates, rollback.">
+  <meta name="description" content="Everyday Unwoke tasks the secure way. Vendor apps are generated from vendor-installers.json.">
   <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css">
 </head>
@@ -21,14 +21,16 @@
     </nav>
 
   </header>
-
   <main id="content">
     <h1>Tutorials</h1>
-    <p>Common things people actually do on this desktop, written as the <strong>secure path first</strong>. Locks stay on unless you turn one off. Same commands as <code>ujust setup</code> / <code>ujust why</code> — this is the long form, with why.</p>
+    <p>Common things on this desktop, <strong>secure path first</strong>.
+    Vendor apps below are generated from <code>vendor-installers.json</code> at Pages deploy so the hub cannot drift.</p>
     <div class="alert tip">
-      <p><strong>How to use these.</strong> The recommended step is the one that keeps the lock. “If you must” is optional and named as a security trade. Nothing here auto-unlocks Flathub, Bluetooth, the webcam, JIT, or the store (there is no store).</p>
+      <p><strong>How to use these.</strong> The recommended step keeps the lock.
+      Nothing auto-unlocks Flathub, Bluetooth, the webcam, JIT, or a store (there is no store).</p>
     </div>
-    <p>Install and first rebase: <a href="https://sergi270710267.github.io/unwoke-secureblue/install/">Install</a>. Overlay + leftover stock checklist: <a href="https://sergi270710267.github.io/unwoke-secureblue/post-install/">Post-install</a>. Stock-only topics (Xwayland, malloc, AppImage): <a href="secureblue/faq/">their FAQ</a>.</p>
+    <p>Install: <a href="https://sergi270710267.github.io/unwoke-secureblue/install/">Install</a>. Checklist: <a href="https://sergi270710267.github.io/unwoke-secureblue/post-install/">Post-install</a>.
+    Vs stock: <a href="https://sergi270710267.github.io/unwoke-secureblue/compared/">Compared</a>.</p>
 
     <p class="section-label">First days</p>
     <div class="cards">
@@ -50,7 +52,7 @@
       <a class="card" href="daily-user/index.html">
         <p class="eyebrow">Accounts</p>
         <h3>Daily user vs wheel</h3>
-        <p>Graphical session as a non-admin. <code>run0</code> when you need privilege. That is the standard.</p>
+        <p>Graphical session as a non-admin. run0 when you need privilege. That is the standard.</p>
       </a>
     </div>
 
@@ -60,21 +62,6 @@
         <p class="eyebrow">Software</p>
         <h3>Install an app</h3>
         <p>No GUI store. Verified Flathub, then Flatpak. Lockdown stays; grant in Flatseal.</p>
-      </a>
-      <a class="card" href="proton/index.html">
-        <p class="eyebrow">Proton.me</p>
-        <h3>Mail, Pass, VPN, Drive</h3>
-        <p>Like stock install-steam: wizard, not a store. Trivalent first. SHA512 on official RPMs.</p>
-      </a>
-      <a class="card" href="ivpn/index.html">
-        <p class="eyebrow">IVPN</p>
-        <h3>WireGuard, then official app</h3>
-        <p>VPN + AntiTracker in their client. Import WireGuard first. No Snap.</p>
-      </a>
-      <a class="card" href="mullvad/index.html">
-        <p class="eyebrow">Mullvad</p>
-        <h3>VPN, WireGuard first</h3>
-        <p>Same vendor list as Proton/IVPN. Official app only if you accept their repo.</p>
       </a>
       <a class="card" href="usb/index.html">
         <p class="eyebrow">Peripherals</p>
@@ -124,8 +111,26 @@
         <p>Off. Prefer Flatpak. Turn the wrappers back into real bins only when you need a pet container.</p>
       </a>
     </div>
-  </main>
 
+    <p class="section-label">Strict apps (from the vendor list)</p>
+    <div class="cards">
+      <a class="card" href="proton/index.html">
+        <p class="eyebrow">Proton.me</p>
+        <h3>Mail, Pass, VPN</h3>
+        <p>Wizard, not a store. Trivalent/WireGuard first. SHA512 on official RPMs.</p>
+      </a>
+      <a class="card" href="ivpn/index.html">
+        <p class="eyebrow">IVPN</p>
+        <h3>WireGuard, then official app</h3>
+        <p>VPN + AntiTracker in their client. Import first. No Snap.</p>
+      </a>
+      <a class="card" href="mullvad/index.html">
+        <p class="eyebrow">Mullvad</p>
+        <h3>VPN, WireGuard first</h3>
+        <p>Same vendor list. Official app only if you accept their repo.</p>
+      </a>
+    </div>
+  </main>
   <footer>
     <a class="brand" href="https://sergi270710267.github.io/unwoke-secureblue/"><img src="assets/logo.svg" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
     <ul id="social">
