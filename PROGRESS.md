@@ -4,11 +4,16 @@
 
 - Branch: `main`, synced to `origin/main`.
 - GitHub: `SeRgi270710267/unwoke-secureblue`
-- Clone anywhere: `git clone https://github.com/SeRgi270710267/unwoke-secureblue.git`
+- Clone anywhere: `git clone https://github.com/SeRgi270710267/unwoke-secureblue.git` then `git pull`.
+- **Pickup phrase:** continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.
 - Site: https://sergi270710267.github.io/unwoke-secureblue/
-- Brand: https://sergi270710267.github.io/unwoke-secureblue/brand/
-- Changelog: https://sergi270710267.github.io/unwoke-secureblue/changelog/ (generated at Pages deploy; gitignored)
-- Last overlay images that passed canary + inspect: commit `505a88b` / Actions [33244950389](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33244950389) (all 12 green). `af7de25` added ISO + `install-oras.sh`; that script was **not** in `build.yml` paths-ignore, so it started overlay bake [33246110776](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33246110776) (let it finish; do not cancel). `29be70c` is the previous-PC handoff.
+- Privacy sell page: https://sergi270710267.github.io/unwoke-secureblue/privacy/
+- Factory: https://sergi270710267.github.io/unwoke-secureblue/factory/
+- Workarounds: https://sergi270710267.github.io/unwoke-secureblue/stock-issues/
+- Fingerprint tutorial: https://sergi270710267.github.io/unwoke-secureblue/tutorials/fingerprint/
+- Changelog: https://sergi270710267.github.io/unwoke-secureblue/changelog/ (generated; gitignored)
+- **Handoff commit:** whatever `git log -1 --oneline` is after this file is pushed (this write is the close-chat save). Previous session HEAD before this file: `041d514` (contributor path).
+- **GitHub ruleset:** only **`main-strict`**, Active, target `refs/heads/main`. Requires PR + 1 approval + Code Owners + status **`Strict PR gate`** (GitHub Actions). Block force-push + deletion. **Repository admin bypass** so the owner (and this agent) can still `git push` to `main`. No `protect-main`. No auto-merge. Grok cannot merge.
 
 **How to resume:** clone the repo (or open it), say you are continuing Unwoke SecureBlue from `PROGRESS.md`. Do not rebuild images for docs-only work. Do not docker-pull Atomic images (layer depth). Do not auto-accept a new `cosign.pub` or auto-exec live `/usr/libexec/secureblue/*.py`.
 
@@ -178,21 +183,25 @@ Stock `ujust` still works.
 34. **Privacy vs stock (no security cut):** default-off Fedora countme, NM connectivity-check, DHCP hostname/DUID (RFC 7844-ish + IPv6 stable-privacy), GNOME/Dolphin thumbnails. Hyperlink ping off in hardening pack (prefetch already off). Boot `privacy.sh apply-boot` remasks. Inspect checks files. Revert: `ujust set-countme|set-connectivity-check|set-dhcp-hostname|set-thumbnails on`. Not fwupd, not Safe Browsing.
 35. **Fingerprinting vs locks:** security-first defaults stay. Tutorial + FAQ + Setup (`i` / GUI button) explain which packs make you rarer than stock Trivalent vs phone-home that sites never see. Blend is opt-in, one pack, not a silent default.
 36. **More privacy defaults that are still locks:** Privacy Sandbox / Cast / Chrome time-query off (Safe Browsing stays), LLMNR+mDNS registration off, systemd-resolved LLMNR=no (mDNS back if Avahi allowed), GNOME remember-app-usage off, IPv6 ip6-privacy=2. Hardening-off and JIT/WebGL/devices-off print a WARN. Not Safe Browsing off, not fwupd off.
+37. **Fingerprinting honesty:** we ship security-first extra browser packs (rarer than stock Trivalent). Phone-home off does **not** fingerprint websites. Blend is opt-in, one pack, warned. Tutorial + Setup `i` / GUI button. Do not drop JIT/WebGL by default to “look like Chrome.”
+38. **Privacy sell page** (`docs/privacy/`): four stories + full table vs stock. Nav **Privacy**. Home + Compared link here.
+39. **Workarounds page:** keyword map to allowlisted `ujust` only (tightened: skip `[FEAT]`, ARM, MTP≠USBGuard, vsock≠Xwayland). Optional Pollinations batch for an “AI note”; often 402 — then dashed **Keyword only** panel. Cards: blue AI strip vs Type this box. Never baked.
+40. **Contributor door:** `CODEOWNERS` = `@SeRgi270710267`. `pr-gate.yml` job name **`Strict PR gate`**. PR/issue templates, `CONTRIBUTING.md`, `SECURITY.md`. GitHub ruleset **`main-strict`** only (no `protect-main`). Maintainer merge only. No auto-merge. `pull_request_target` forbidden. Owner bypass so agent can still push `main`.
 
-Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only / `iso.yml` pushes should not rebuild images (`build.yml` paths-ignore). `issue-alarm.sh` is paths-ignored. Overlay scripts (`apply-unwoke.sh`, `vendor.py`, `inspect-flavor.sh`) **do** bake.
+Image-side theme, privacy.sh, and Setup fingerprint button land on the **image rebuild**, not Pages. Docs-only / `iso.yml` / `pr-gate.yml` / CODEOWNERS are in `build.yml` paths-ignore (this commit is docs-only). Overlay scripts (`privacy.sh`, `apply-unwoke.sh`, `vendor.py`, `inspect-flavor.sh`) **do** bake.
 
 ## Tomorrow / next chat
 
-- Pickup phrase: continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.
-- `install-oras.sh` and `.github/workflows/isos/**` are in `build.yml` paths-ignore. Do not cancel a bake that is already running.
-- USB ISO **green:** [run 20](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33254135512) wrap + GHCR publish + artifact `unwoke-silverblue-trivalent-iso` (~4 GB, 14 days). Make the GHCR `-iso` package Public if the factory job still cannot. Weekly four Trivalent desktops. Not Ventoy. Their Secure Boot key.
-- Factory page: https://sergi270710267.github.io/unwoke-secureblue/factory/ after Pages. Overlay bake from this commit is required for inspect/help stubs/chmod-all.
+- Pickup: *continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.* Other PC: `git clone` or `git pull`.
+- **Do not cancel** an overlay bake that is already running (`cancel-in-progress: true` would kill it).
+- Privacy locks (`privacy.sh apply-boot`, countme/connectivity/DHCP/thumbnails, hardening Privacy Sandbox) need a **green overlay bake** then a real rebase to confirm.
+- USB ISO **green:** [run 20](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33254135512) (~4 GB). GHCR `-iso` Public if still private. Weekly four Trivalent. Not Ventoy. Their Secure Boot key.
+- First stranger PR: confirm **Strict PR gate** runs; if the merge box cannot find the check, edit `main-strict` and pick it from search after that run.
+- Confirm on a real rebase: `ujust setup` / fingerprint button / `ujust set-countme` status off / `ujust why`.
+- Workarounds: do not loosen keyword map to “help” with the wrong `ujust`. Groq/xAI secret optional for AI notes; Pollinations is best-effort.
 - Do not add `on: push` to `iso.yml` or `verify.yml`.
-- Confirm on a real rebase: app grid **Unwoke setup** / `ujust setup` / `ujust install-proton` / `ujust why` / `ujust unwoke-status`. Setup window + Proton wizard + signed nag ship on the **next overlay bake**. Pages has Tutorials/Compared/Install/Factory immediately.
-- Hard-refresh Pages if Install / Changelog look cached.
 - Do not start a tight `brave_t` jail unless the owner asks again and accepts breakage.
-- Origin/browserless still strip Trivalent. The dedicated `*-trivalent` flavor keeps it. Do not add a GUI store. Do not add xscreensaver. Do not Bubblejail Trivalent.
-- Overlay-on-signed-stock is still the architecture. Do not fork.
-- Trivalent policy dir is `/etc/trivalent/policies/managed/` (RPM `%{_sysconfdir}/trivalent/policies`). Extra flags via `/etc/trivalent/trivalent.conf.d/` (`CHROMIUM_FLAGS` / `FEATURES+=`, never `CHROMIUM_SYSTEM_FLAGS` or `--enable-features`).
-- Canary/inspect: never `docker pull` Atomic images. Use crane + `extract-prefixes.py`. Podman is OK for BlueBuild and the ISO pull.
+- Do not add a GUI store. Do not Bubblejail Trivalent. Do not fork. Do not default-off Safe Browsing or fwupd.
+- Overlay-on-signed-stock. Trivalent policy dir `/etc/trivalent/policies/managed/`. Flags via `trivalent.conf.d` (`CHROMIUM_FLAGS` / `FEATURES+=`).
+- Canary/inspect: never `docker pull` Atomic images. Crane + `extract-prefixes.py`.
 - Do not auto-merge canary hits, a new `keys/secureblue.pub`, a new vendor hostname, Flathub, `gpgcheck=0`, or a titanoboa pin bump.
