@@ -34,7 +34,7 @@ Display: **Unwoke SecureBlue** (`Unwoke` = modifier; `SecureBlue` = one word, S+
 - `remove-trivalent.sh` (Origin + browserless): `dnf remove` then `rm` leftover `/usr/bin/trivalent` and `/usr/lib64/trivalent`. Inspect fails if those remain.
 - Stock MOTD replaced (`usr/libexec/secureblue-motd`). User nags masked by default: deprecation notice, update-verification, flatpak-setup (`ujust set-stock-nags on` to restore). Key-enrollment check stays. Docs mirror sanitizes script-like HTML.
 - Daily image rebuilds 08:00 and 20:00 UTC. Docs mirror of secureblue.dev at 09:30 UTC into generated `docs/secureblue/` (gitignored).
-- Empty-disk ISO: `.github/workflows/iso.yml` wraps a published Unwoke GHCR image (Titanoboa). A `pick` job builds the matrix (dispatch = one image; weekly = four defaults). **Do not put `matrix` in a job-level `if`** — GitHub’s workflow_dispatch parser rejects it (`Unrecognized named-value: 'matrix'`), which blocked Run workflow. Weekly (Sunday 10:00 UTC) the four default desktops (Silverblue/Kinoite × Origin/Trivalent) go to `ghcr.io/…/<name>-iso:latest` plus a 14-day artifact. Checksums are cosign-signed. Does not block the overlay factory. GitHub will not host a 3 GB release asset.
+- Empty-disk ISO: `.github/workflows/iso.yml` wraps a published Unwoke GHCR image. **Do not use `ublue-os/titanoboa@main`** — that old LiveCD requires `/usr/lib/bootc-image-builder/iso.yaml` in the OS image; neither stock nor Unwoke ship it (first wrap failed after squashfs, run 33246595295). Use `RoyalOughtness/titanoboa@3d19fdfa` (same pin as secureblue) plus `.github/workflows/isos/prep_{rootfs,initramfs}.sh`. Live USB is Anaconda; installed OS is the GHCR image. Enroll **their** Secure Boot key (kernel is still theirs). A `pick` job builds the matrix (dispatch = one image; weekly = four defaults). **Do not put `matrix` in a job-level `if`**. Weekly (Sunday 10:00 UTC) the four default desktops go to `ghcr.io/…/<name>-iso:latest` plus a 14-day artifact. Checksums are cosign-signed. Does not block the overlay factory. GitHub will not host a 3 GB release asset.
 
 ## What the overlay does
 
@@ -148,15 +148,15 @@ Stock `ujust` still works.
 10. Hostile-upstream canary (crane, not docker) + snapshot auto-refresh + harden-flatpak trampoline + MOTD/nags mask.
 11. Factory autos that do not drop security: post-publish inspect, twice-daily verify.yml, one `factory-alarm` issue. Key rotation / canary hits stay manual.
 12. **Direct USB ISO** (`iso.yml`): Titanoboa wrap of published Unwoke image. Dispatch any of 12. Weekly Sunday 10:00 UTC the four default desktops → `ghcr.io/sergi270710267/<name>-iso:latest` (oras + cosign). Artifacts 14 days. Does not block overlay.
-13. **This PC pickup (2026-08-29):** cloned/pulled `29be70c`. Dispatch of `iso` failed on `matrix` in job `if`. Fixed `iso.yml` + `verify.yml` with a `pick` job. First ISO (`unwoke-silverblue-trivalent`) is triggered after that push. After the GHCR `*-iso` package exists, set it **Public** if GitHub created it private.
+13. **This PC pickup (2026-08-29):** cloned/pulled `29be70c`. Dispatch of `iso` failed on `matrix` in job `if`, then the wrap failed because old titanoboa wanted `iso.yaml`. Switched to RoyalOughtness/titanoboa + Anaconda live hooks.
 
 Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only / `iso.yml` pushes should not rebuild images (`build.yml` paths-ignore).
 
 ## Tomorrow / next chat
 
 - Pickup phrase: continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.
-- Overlay bake [33246110776](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33246110776) was accidental (`install-oras.sh` not ignored). Let it finish. Then add `.github/scripts/install-oras.sh` to `build.yml` paths-ignore **after** that run is green (touching `build.yml` cancels in-progress bakes).
-- USB ISO: first wrap is `unwoke-silverblue-trivalent` (~20–40 min). If green, download the artifact (14 days) and/or `oras pull ghcr.io/sergi270710267/unwoke-silverblue-trivalent-iso:latest`. Make the GHCR `*-iso` package Public. Kinoite / NVIDIA / Origin / browserless ISOs stay on-demand.
+- `install-oras.sh` and `.github/workflows/isos/**` are in `build.yml` paths-ignore. Do not cancel a bake that is already running.
+- USB ISO: first wrap of `unwoke-silverblue-trivalent` with old titanoboa **failed** ([33246595295](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33246595295)) — missing `iso.yaml`. Retry after the RoyalOughtness/titanoboa switch. If green, download the artifact (14 days). Make the GHCR `*-iso` package Public.
 - Do not add `on: push` to `iso.yml` or `verify.yml`.
 - Confirm on a real rebase: `ujust unwoke-status` / `ujust audit-unwoke` (wallpaper, policies, trampoline, leftover Trivalent gone on Origin/browserless).
 - Hard-refresh Pages if Install / Changelog look cached.

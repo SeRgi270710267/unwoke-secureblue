@@ -108,11 +108,42 @@ jobs:
       - name: Pull image (root, podman)
         run: sudo podman pull "${{ env.IMAGE_REF }}"
 
+      # ublue-os/titanoboa@main is the old LiveCD that requires
+      # /usr/lib/bootc-image-builder/iso.yaml in the OS image. Stock and
+      # Unwoke do not ship that file, so the wrap died after squashfs.
+      # RoyalOughtness/titanoboa is the Anaconda installer builder secureblue
+      # uses on the same bases.
+      - name: Materialize ISO hooks
+        env:
+          IMAGE_REF: ${{ env.IMAGE_REF }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os, pathlib
+          src = pathlib.Path(".github/workflows/isos/prep_rootfs.sh")
+          text = src.read_text(encoding="utf-8")
+          ref = os.environ["IMAGE_REF"]
+          if "@IMAGE_REF@" not in text:
+              raise SystemExit("prep_rootfs.sh missing @IMAGE_REF@")
+          out = pathlib.Path(".github/workflows/isos/prep_rootfs.generated.sh")
+          out.write_text(text.replace("@IMAGE_REF@", ref), encoding="utf-8")
+          out.chmod(0o755)
+          initramfs = pathlib.Path(".github/workflows/isos/prep_initramfs.sh")
+          initramfs.chmod(0o755)
+          print(f"ISO hook IMAGE_REF={ref}")
+          PY
+
       - name: Build ISO
         id: build
-        uses: ublue-os/titanoboa@5c457c3d0518bd17e754be0fd98a60d29d26abb4 # pin main
+        uses: RoyalOughtness/titanoboa@3d19fdfa8bff13542c0bb92620ed7826f1bbe82c # pin (secureblue ISO builder)
         with:
           image-ref: ${{ env.IMAGE_REF }}
+          container-image: ${{ env.IMAGE_REF }}
+          hook-post-rootfs: ${{ github.workspace }}/.github/workflows/isos/prep_rootfs.generated.sh
+          hook-pre-initramfs: ${{ github.workspace }}/.github/workflows/isos/prep_initramfs.sh
+          livesys: "true"
+          compression: squashfs
+          builder-distro: fedora
           iso-dest: ${{ github.workspace }}/${{ matrix.image }}.iso
 
       - name: Checksum and sign sums
