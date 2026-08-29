@@ -1,0 +1,9 @@
+{
+  "AudioSandboxEnabled": true,
+  "ScreenCaptureAllowed": false,
+  "DefaultJavaScriptOptimizerSetting": 2,
+  "WebRtcEventLogCollectionAllowed": false,
+  "PaymentMethodQueryEnabled": false,
+  "PrivacySandboxPromptEnabled": false,
+  "RelatedWebsiteSetsEnabled": false
+}

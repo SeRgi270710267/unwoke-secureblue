@@ -20,7 +20,7 @@ Display: **Unwoke SecureBlue** (`Unwoke` = modifier; `SecureBlue` = one word, S+
 ## Architecture (do not change without a reason)
 
 - BlueBuild overlay on official signed secureblue images.
-- Eight GHCR images: silverblue / kinoite × nvidia-open × browserless.
+- Twelve GHCR images: silverblue / kinoite × nvidia-open × (Origin | trivalent | browserless).
 - `ghcr.io/sergi270710267/<name>:latest`. Cosign with a GitHub Actions secret (not a hardware key).
 - First rebase is `ostree-unverified-registry`; first-boot promotes `ostree-image-signed`.
 - Image CI: `.github/workflows/build.yml` (paths-ignore docs). Pages: `.github/workflows/pages.yml` from `docs/`.
@@ -28,18 +28,29 @@ Display: **Unwoke SecureBlue** (`Unwoke` = modifier; `SecureBlue` = one word, S+
 
 ## What the overlay does
 
-**Strip:** Trivalent, Bazaar, GNOME Software, Plasma Discover, leftover launchers.
+**Strip (all flavors):** Bazaar, GNOME Software, Plasma Discover, leftover store launchers.
 
-**Origin flavor:** `brave-origin` RPM (`/opt/brave.com/brave-origin/brave`), not `brave-browser`. Fat SELinux `brave_t` (`unconfined_domain`) + CIL userns allow-list. `harden_userns` stays on. SUID stripped on Origin. Default browser.
+**Origin flavor:** also strips Trivalent. `brave-origin` RPM (`/opt/brave.com/brave-origin/brave`), not `brave-browser`. Fat SELinux `brave_t` (`unconfined_domain`) + CIL userns allow-list. `harden_userns` stays on. SUID stripped on Origin. Default browser.
 
-**Browserless:** nothing put back. No `brave_t`. Flatpak mask + rpm exclude until `ujust set-allow-browsers on ALLOW` (seatbelt: toolbox/brew/AppImage/`--disableexcludes` still work).
+**Trivalent flavor (`*-trivalent`):** keep stock Trivalent + `trivalent-selinux`. No `brave_t`. Extra Chromium managed policies in `/etc/trivalent/policies/managed/` plus `trivalent.conf.d` flags. Same house locks as Origin.
 
-**Policies** (Origin, default on, each reversible):
+**Browserless:** strips Trivalent. Nothing put back. No `brave_t`. Flatpak mask + rpm exclude until `ujust set-allow-browsers on ALLOW` (seatbelt: toolbox/brew/AppImage/`--disableexcludes` still work).
+
+**Policies** (Origin + Trivalent, default on, each reversible):
 
 - hardening — HTTPS, no metrics/sync/autofill/passwords/translate/WebRTC IP leak
 - devices — camera/mic/geo/USB/BT/serial/HID/FS API
 - jitless — `DefaultJavaScriptJitSetting: 2`
 - extensions — blocklist `*`
+- isolation — Disable3DAPIs, SitePerProcess, OriginKeyedProcessesEnabled (+ WebGPU flag)
+- sandbox — AudioSandboxEnabled, ScreenCaptureAllowed false, DefaultJavaScriptOptimizerSetting 2
+
+**Trivalent-only extras (default on):**
+
+- network-sandbox — `FEATURES+=,NetworkServiceSandbox` (stock leaves this off; may clear cookies)
+- referrers — ShowPunycodeDomains + ClearCrossOriginReferrers
+
+**Opt-in:** `set-brave-devtools lock` (DeveloperToolsAvailability 2). Default allow.
 
 **Flathub:** default `off` on Origin and browserless (stricter than stock verified). `ujust set-flathub verified|full|off`.
 
@@ -49,7 +60,7 @@ Display: **Unwoke SecureBlue** (`Unwoke` = modifier; `SecureBlue` = one word, S+
 
 **Flatpak lockdown:** default on (stock’s cuts, system + user). `ujust set-flatpak-lockdown off`.
 
-**Bubblejail:** Origin launcher wrapper, default **on**. `ujust set-brave-bubblejail off`.
+**Bubblejail:** Origin launcher wrapper, default **on**. `ujust set-brave-bubblejail off`. Refused on Trivalent (stock FAQ: pairing is broken).
 
 **Homebrew:** off by default (stock ships it). `ujust set-brew on`.
 
@@ -61,7 +72,7 @@ Display: **Unwoke SecureBlue** (`Unwoke` = modifier; `SecureBlue` = one word, S+
 
 **Extra daemons:** Avahi + ModemManager masked. `ujust set-extra-daemons on`. cups/geoclue already stock.
 
-**Origin isolation pack:** Disable3DAPIs (WebGL), WebGPU CLI flag, SitePerProcess, OriginKeyedProcessesEnabled. `ujust set-brave-isolation off`.
+**Isolation pack:** Disable3DAPIs (WebGL), WebGPU CLI/conf.d flag, SitePerProcess, OriginKeyedProcessesEnabled. `ujust set-brave-isolation off`.
 
 **Theme:** wallpaper + lock JPG, GNOME `accent-color=blue` + GTK `#3b6cff`, KDE `59,108,255`, GDM wallpaper. `ujust set-unwoke-theme apply`. No classic screensaver (GNOME does not have one). No tight `brave_t` jail (intentionally not shipped).
 
@@ -79,7 +90,12 @@ ujust set-brave-devices on|off
 ujust set-brave-jitless on|off
 ujust set-brave-extensions block|allow
 ujust set-brave-isolation on|off
-ujust set-brave-bubblejail on|off
+ujust set-brave-sandbox on|off
+ujust set-brave-devtools lock|allow
+ujust set-brave-bubblejail on|off          # Origin
+ujust set-trivalent-hardening on|off       # aliases of set-brave-*
+ujust set-trivalent-network-sandbox on|off # Trivalent
+ujust set-trivalent-referrers on|off       # Trivalent
 ujust set-brew on|off
 ujust set-camera-mic on|off
 ujust set-admin-split on|off|add NAME
@@ -94,14 +110,15 @@ Stock `ujust` still works.
 
 ## Honest leftover gaps (cannot close as an overlay)
 
-- Trivalent/Vanadium Chromium patches
+- Origin still has no Trivalent/Vanadium Chromium patches (use `*-trivalent` for those)
+- Extra Trivalent policies are JSON/flags, not extra compiler patches
 - Tight SELinux for Origin
 - Hardware signing key / their SLSA for the *overlay* key
 - GNOME Shell custom hex accent (named `blue` only)
 
 ## Key paths
 
-- Recipes: `recipes/*.yml` (`common.yml` + `brave.yml` or `browserless.yml`)
+- Recipes: `recipes/*.yml` (`common.yml` + `brave.yml` / `trivalent.yml` / `browserless.yml`)
 - Scripts: `files/scripts/`, `files/system/usr/libexec/unwoke/`
 - Policies: `files/system/usr/share/unwoke/*.json` and `usr/etc/brave-origin/policies/managed/`
 - Theme: `files/system/usr/share/backgrounds/unwoke/`, gschema `zz1-unwoke-theme.gschema.override`
@@ -117,6 +134,7 @@ Stock `ujust` still works.
 6. Default wallpaper / lock / accent
 7. Site updated to document all of the above + Brand tab
 8. Auto changelog tab: Pages job runs `docs/_tools/generate-changelog.py` from public git subjects (no bodies/diffs). Output gitignored `docs/changelog/`. Pages runs on every `main` push so overlay commits show up without waiting for the daily mirror cron.
+9. **Trivalent flavor** (`*-trivalent`): keep stock Trivalent + SELinux; extra reversible Chromium policies + conf.d flags (JIT-less, isolation, sandbox, Network Service Sandbox, punycode/referrers). Origin and browserless still strip Trivalent. 12 GHCR images.
 
 Image-side theme and toggles land on the **next image rebuild**, not Pages. Docs-only pushes should not rebuild images (`build.yml` paths-ignore).
 
@@ -126,5 +144,6 @@ Image-side theme and toggles land on the **next image rebuild**, not Pages. Docs
 - Hard-refresh Pages if Brand / Changelog look cached.
 - Changelog: `docs/_tools/generate-changelog.py`; output `docs/changelog/` is gitignored. Pages workflow now runs on every `main` push (`fetch-depth: 0`).
 - Do not start a tight `brave_t` jail unless the owner asks again and accepts breakage.
-- Do not put Trivalent back. Do not add a GUI store. Do not add xscreensaver.
+- Origin/browserless still strip Trivalent. The dedicated `*-trivalent` flavor keeps it. Do not add a GUI store. Do not add xscreensaver. Do not Bubblejail Trivalent.
 - Overlay-on-signed-stock is still the architecture. Do not fork.
+- Trivalent policy dir is `/etc/trivalent/policies/managed/` (RPM `%{_sysconfdir}/trivalent/policies`). Extra flags via `/etc/trivalent/trivalent.conf.d/` (`CHROMIUM_FLAGS` / `FEATURES+=`, never `CHROMIUM_SYSTEM_FLAGS` or `--enable-features`).

@@ -45,8 +45,8 @@
 <pre><code>ujust unwoke-status
 ujust audit-unwoke
 ujust audit-secureblue</code></pre>
-    <p>Full toggle table: <a href="features/#toggles">Features</a>. Restart Brave Origin after policy changes. If something “broke,” it is usually a default lock — run the matching <code>on</code> (or <code>off</code> for Origin packs).</p>
-    <p><strong>Default off</strong> (stock has these on): Flathub, Homebrew, Bluetooth, toolbox/distrobox, camera/mic hardware. <strong>Default on</strong> (loosen with <code>off</code>): Flatpak lockdown, Origin policy packs, Bubblejail, isolation. <strong>Browserless only:</strong> host browsers stay blocked until <code>ujust set-allow-browsers on ALLOW</code>.</p>
+    <p>Full toggle table: <a href="features/#toggles">Features</a>. Restart the house browser after policy changes. If something “broke,” it is usually a default lock — run the matching <code>on</code> (or <code>off</code> for browser packs).</p>
+    <p><strong>Default off</strong> (stock has these on): Flathub, Homebrew, Bluetooth, toolbox/distrobox, camera/mic hardware. <strong>Default on</strong> (loosen with <code>off</code>): Flatpak lockdown, Origin/Trivalent policy packs, Origin Bubblejail, isolation, extra sandbox, Trivalent Network Service Sandbox + referrer flags. <strong>Browserless only:</strong> host browsers stay blocked until <code>ujust set-allow-browsers on ALLOW</code>.</p>
     <div class="table-container">
       <table>
         <thead>
@@ -54,7 +54,7 @@ ujust audit-secureblue</code></pre>
         </thead>
         <tbody>
           <tr><td>Site needs JIT</td><td><code>ujust set-brave-jitless off</code></td></tr>
-          <tr><td>Need camera / mic / USB in Origin</td><td><code>ujust set-brave-devices off</code></td></tr>
+          <tr><td>Need camera / mic / USB in the browser</td><td><code>ujust set-brave-devices off</code></td></tr>
           <tr><td>Need passwords / autofill</td><td><code>ujust set-brave-hardening off</code></td></tr>
           <tr><td>Need extensions</td><td><code>ujust set-brave-extensions allow</code></td></tr>
           <tr><td>Need Flathub (stock-like)</td><td><code>ujust set-flathub verified</code></td></tr>
@@ -65,7 +65,10 @@ ujust audit-secureblue</code></pre>
           <tr><td>Flatpaks are broken</td><td><code>ujust set-flatpak-lockdown off</code></td></tr>
           <tr><td>Want wallpaper / accent back</td><td><code>ujust set-unwoke-theme apply</code></td></tr>
           <tr><td>WebGL/WebGPU needed</td><td><code>ujust set-brave-isolation off</code></td></tr>
-          <tr><td>Bubblejail breaks GPU/audio</td><td><code>ujust set-brave-bubblejail off</code></td></tr>
+          <tr><td>Bubblejail breaks GPU/audio (Origin)</td><td><code>ujust set-brave-bubblejail off</code></td></tr>
+          <tr><td>Trivalent clears cookies on exit</td><td><code>ujust set-trivalent-network-sandbox off</code></td></tr>
+          <tr><td>Need screen capture / JS optimizer</td><td><code>ujust set-brave-sandbox off</code></td></tr>
+          <tr><td>Need chrome://devtools locked</td><td><code>ujust set-brave-devtools lock</code></td></tr>
           <tr><td>Need Homebrew</td><td><code>ujust set-brew on</code></td></tr>
           <tr><td>Need webcam / mic</td><td><code>ujust set-camera-mic on</code></td></tr>
           <tr><td>Need wheel on the greeter</td><td><code>ujust set-admin-split off</code></td></tr>

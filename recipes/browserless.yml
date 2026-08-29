@@ -9,6 +9,7 @@ modules:
 
   - type: script
     scripts:
+      - remove-trivalent.sh
       - apply-browserless.sh
 
   - type: signing

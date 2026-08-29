@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#050a16">
   <meta name="color-scheme" content="dark">
-  <title>Unwoke SecureBlue — hardening, Brave Origin or no browser</title>
-  <meta name="description" content="Unwoke SecureBlue: a personal overlay on official secureblue images. Brave Origin or browserless. No GUI software store. Not affiliated with secureblue.">
+  <title>Unwoke SecureBlue — hardening, Origin, Trivalent, or no browser</title>
+  <meta name="description" content="Unwoke SecureBlue: a personal overlay on official secureblue images. Brave Origin, stock Trivalent, or browserless. No GUI software store. Not affiliated with secureblue.">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css?v=4">
   <meta property="og:title" content="Unwoke SecureBlue">
-  <meta property="og:description" content="secureblue’s hardening. Brave Origin or no browser. No curator store.">
+  <meta property="og:description" content="secureblue’s hardening. Brave Origin, Trivalent, or no browser. No curator store.">
   <meta property="og:type" content="website">
 </head>
 <body>
@@ -39,7 +39,7 @@
   <div class="hero">
     <div>
       <h1 id="name" class="wordmark"><a href="#name"><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a></h1>
-      <p>A security-focused Fedora Atomic desktop: secureblue’s hardening, Brave Origin or no browser, no curator store. Unwoke look by default.</p>
+      <p>A security-focused Fedora Atomic desktop: secureblue’s hardening, Brave Origin or stock Trivalent or no browser, no curator store. Unwoke look by default.</p>
       <a class="button" href="install/">Get Unwoke SecureBlue</a>
     </div>
     <figure class="device-img">
@@ -53,7 +53,7 @@
 
     <h2 id="about"><a href="#about">About</a></h2>
     <p><strong>Unwoke SecureBlue</strong> is a daily <a href="https://blue-build.org/">BlueBuild</a> overlay on official <a href="https://secureblue.dev">secureblue</a> Fedora Atomic images. Kernel hardening, SELinux, <code>hardened_malloc</code>, closed firewall, and their <code>ujust</code> commands stay. We only change two product decisions: the house browser and the house app store.</p>
-    <p>Default images ship the standalone <strong>Brave Origin</strong> RPM (<code>brave-origin</code>), not full <code>brave-browser</code> and not <a href="https://github.com/secureblue/Trivalent">Trivalent</a>. <strong>Browserless</strong> images (<code>*-browserless</code>) strip Trivalent and install nothing in its place: no Origin, no <code>brave_t</code>, stock <code>harden_userns</code>. There is no GUI software store and no Flathub remote until <code>ujust set-flathub verified</code>. Every extra lock has a <code>ujust</code> to turn it off.</p>
+    <p>Default images ship the standalone <strong>Brave Origin</strong> RPM (<code>brave-origin</code>), not full <code>brave-browser</code>. <strong>Trivalent</strong> images (<code>*-trivalent</code>) keep stock <a href="https://github.com/secureblue/Trivalent">Trivalent</a> — Vanadium patches and their SELinux jail — and add extra reversible Chromium policies stock does not force. <strong>Browserless</strong> images (<code>*-browserless</code>) strip Trivalent and install nothing: no Origin, no <code>brave_t</code>, stock <code>harden_userns</code>. There is no GUI software store and no Flathub remote until <code>ujust set-flathub verified</code>. Every extra lock has a <code>ujust</code> to turn it off.</p>
     <p>It is shipped as OCI bootable container images. Rebase onto one of them from secureblue or any Fedora Atomic desktop. For details, see the <a href="features/">features list</a>.</p>
 
     <div class="cards">
@@ -62,8 +62,8 @@
         <p>Kernel args, SELinux, hardened_malloc, no Xwayland by default, USBGuard, run0. Inherited, not reimplemented. Unwoke navy wallpaper and blue accent on GNOME and KDE.</p>
       </div>
       <div class="card">
-        <h3>Brave Origin</h3>
-        <p>Default flavor. Standalone RPM. Not Trivalent, not full Brave. Optional <code>-browserless</code> images have no browser at all.</p>
+        <h3>Three browser flavors</h3>
+        <p>Default: Brave Origin. <code>-trivalent</code>: stock Trivalent plus extra reversible policies. <code>-browserless</code>: no image browser at all.</p>
       </div>
       <div class="card">
         <h3>No curator store</h3>
@@ -76,13 +76,14 @@
     </div>
 
     <h2 id="who"><a href="#who">Who this is for</a></h2>
-    <p>People who already want Linux, already want secureblue’s hardening, and do not want Trivalent or a curated app catalog deciding which browsers exist.</p>
-    <p>Origin images are <em>not</em> as locked down as stock secureblue + Trivalent. Browserless is tighter than Origin until you install a browser; that install is blocked until <code>ujust set-allow-browsers on ALLOW</code>. It is not a Trivalent replacement. If maximum desktop confinement <em>and</em> a web browser is your first priority, use <a href="https://secureblue.dev">stock secureblue</a>.</p>
+    <p>People who already want Linux, already want secureblue’s hardening, and do not want a curated app catalog. Pick Origin, keep Trivalent, or run with no image browser.</p>
+    <p>Origin images are <em>not</em> as locked down as stock + Trivalent (no Vanadium patches, fat <code>brave_t</code>). <code>-trivalent</code> images <em>are</em> that house browser, plus extra reversible policies stock does not force. Browserless is tighter than Origin until you install a browser; that install is blocked until <code>ujust set-allow-browsers on ALLOW</code>.</p>
 
     <h2 id="honest-limits"><a href="#honest-limits">Honest limits</a></h2>
     <ul>
-      <li>Brave Origin is not Trivalent. No Vanadium-style Chromium patches, no tight Trivalent SELinux jail.</li>
-      <li>On Origin images, <code>brave_t</code> is an unconfined-like domain on the userns allow-list. Browserless does not add that exception.</li>
+      <li>Brave Origin is not Trivalent. No Vanadium-style Chromium patches, no tight Trivalent SELinux jail. Rebase to <code>*-trivalent</code> for that.</li>
+      <li>Extra Trivalent policies (JIT-less, no WebGL, extension block, Network Service Sandbox, …) are enterprise JSON / flags, not new compiler patches. They revert with <code>ujust</code>.</li>
+      <li>On Origin images, <code>brave_t</code> is an unconfined-like domain on the userns allow-list. Trivalent and browserless do not add that exception.</li>
       <li>The signing key is a GitHub secret, not a hardware key.</li>
       <li>We do not rebuild their kernel or re-run their SLSA pipeline. We inherit whatever they already shipped, after checking their signature.</li>
     </ul>

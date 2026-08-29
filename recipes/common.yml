@@ -1,7 +1,8 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
-# Shared overlay: strip Trivalent, Bazaar, GUI stores. No browser here —
-# recipes add either Brave Origin (brave.yml) or nothing (browserless.yml).
+# Shared overlay: strip Bazaar and GUI stores. No browser here —
+# recipes add Brave Origin (brave.yml), keep Trivalent (trivalent.yml),
+# or ship nothing (browserless.yml).
 modules:
   - type: files
     files:
@@ -12,7 +13,7 @@ modules:
     include:
       - zz1-unwoke-theme.gschema.override
 
-  # Drop Trivalent, Bazaar, and any GUI software store.
+  # Drop Bazaar and any GUI software store. Flavor files drop Trivalent if needed.
   - type: script
     scripts:
       - remove-stock.sh

@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
-# Remove Trivalent, Bazaar, and any GUI software store.
+# Strip Bazaar and GUI software stores. Browser packages stay unless a
+# flavor script (remove-trivalent.sh) drops them.
 # skip-unavailable so a future secureblue drop of either does not fail the build.
 set -oue pipefail
 
 if command -v dnf5 >/dev/null; then
   dnf5 -y remove --skip-unavailable \
-    trivalent trivalent-selinux bazaar krunner-bazaar \
+    bazaar krunner-bazaar \
     gnome-software plasma-discover brave-browser || true
 elif command -v dnf >/dev/null; then
   dnf -y remove \
-    trivalent trivalent-selinux bazaar krunner-bazaar \
+    bazaar krunner-bazaar \
     gnome-software plasma-discover brave-browser || true
 fi

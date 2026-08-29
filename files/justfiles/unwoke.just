@@ -1,5 +1,5 @@
 # Overlay extras. All stock secureblue ujust commands still exist.
-# Brave policy commands apply only on Origin images, not -browserless.
+# Browser policy commands apply on Origin and -trivalent, not -browserless.
 # Every overlay hardening switch has on/off/status (or an equivalent revert).
 
 # Show this overlay's flavor / remotes / policy / store status
@@ -7,12 +7,12 @@ unwoke-status:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh status
 
-# Check overlay invariants (harden_userns, brave_t, Brave Origin, no SUID)
+# Check overlay invariants (harden_userns, flavor browser, no SUID)
 audit-unwoke:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh audit
 
-# System Flathub: off (default, both flavors) | verified | full
+# System Flathub: off (default, all flavors) | verified | full
 [positional-arguments]
 set-flathub *args:
     #!/usr/bin/bash
@@ -24,41 +24,101 @@ set-flatpak-lockdown *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh lockdown "$@"
 
-# Brave Origin: HTTPS / metrics / autofill / passwords / translate. Restart the browser after.
+# Origin or Trivalent: HTTPS / metrics / autofill / passwords / translate. Restart the browser after.
 [positional-arguments]
 set-brave-hardening *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh hardening "$@"
 
-# Brave Origin: block camera/mic/geo/USB/Bluetooth/serial/HID/file-system API. Restart after.
+[positional-arguments]
+set-trivalent-hardening *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh hardening "$@"
+
+# Origin or Trivalent: block camera/mic/geo/USB/Bluetooth/serial/HID/file-system API. Restart after.
 [positional-arguments]
 set-brave-devices *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh devices "$@"
 
-# Brave Origin: block JavaScript JIT (default on; breaks some sites). Restart after.
+[positional-arguments]
+set-trivalent-devices *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh devices "$@"
+
+# Origin or Trivalent: block JavaScript JIT (default on; breaks some sites). Restart after.
 [positional-arguments]
 set-brave-jitless *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh jitless "$@"
 
-# Brave Origin: block all extension installs (default) or allow. Restart after.
+[positional-arguments]
+set-trivalent-jitless *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh jitless "$@"
+
+# Origin or Trivalent: block all extension installs (default) or allow. Restart after.
 [positional-arguments]
 set-brave-extensions *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh extensions "$@"
 
-# Brave Origin: wrap the desktop launcher in Bubblejail. Default on. GPU may break.
+[positional-arguments]
+set-trivalent-extensions *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh extensions "$@"
+
+# Origin: wrap the desktop launcher in Bubblejail. Default on. GPU may break.
+# Trivalent: refused (stock already jails it; their FAQ says not to Bubblejail it).
 [positional-arguments]
 set-brave-bubblejail *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh bubblejail "$@"
 
-# Brave Origin: no WebGL/WebGPU, force site/origin isolation. Restart after.
+# Origin or Trivalent: no WebGL/WebGPU, force site/origin isolation. Restart after.
 [positional-arguments]
 set-brave-isolation *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh isolation "$@"
+
+[positional-arguments]
+set-trivalent-isolation *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh isolation "$@"
+
+# Origin or Trivalent: audio sandbox, no screen capture, no JS optimizer. Default on.
+[positional-arguments]
+set-brave-sandbox *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh sandbox "$@"
+
+[positional-arguments]
+set-trivalent-sandbox *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh sandbox "$@"
+
+# Origin or Trivalent: lock chrome://devtools. Default allow (opt-in lock).
+[positional-arguments]
+set-brave-devtools *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh devtools "$@"
+
+[positional-arguments]
+set-trivalent-devtools *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh devtools "$@"
+
+# Trivalent only: force Network Service Sandbox (stock leaves this off; may clear cookies).
+[positional-arguments]
+set-trivalent-network-sandbox *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh network-sandbox "$@"
+
+# Trivalent only: punycode domains + clear-cross-origin-referrers. Some sites may break.
+[positional-arguments]
+set-trivalent-referrers *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh referrers "$@"
 
 # Homebrew. Default off (stock ships it). New shell after change.
 [positional-arguments]

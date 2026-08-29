@@ -16,6 +16,10 @@ on:
           - unwoke-silverblue-nvidia-open-browserless
           - unwoke-kinoite-browserless
           - unwoke-kinoite-nvidia-open-browserless
+          - unwoke-silverblue-trivalent
+          - unwoke-silverblue-nvidia-open-trivalent
+          - unwoke-kinoite-trivalent
+          - unwoke-kinoite-nvidia-open-trivalent
 permissions: {}
 jobs:
   inspect:
@@ -49,10 +53,27 @@ jobs:
               exit 1
             fi
           }
-          for pkg in trivalent bazaar gnome-software plasma-discover brave-browser; do
+          for pkg in bazaar gnome-software plasma-discover brave-browser; do
             gone "$pkg"
           done
-          if [[ "${IMAGE_NAME}" == *browserless* ]]; then
+          if [[ "${IMAGE_NAME}" == *trivalent* ]]; then
+            gone brave-origin
+            podman run --rm --entrypoint /usr/bin/bash "$IMAGE" -lc '
+              set -euo pipefail
+              [[ "$(tr -d "[:space:]" </usr/share/unwoke/flavor)" == trivalent ]]
+              [[ -e /usr/bin/trivalent || -e /usr/lib64/trivalent/trivalent ]]
+              if [[ -e /opt/brave.com/brave-origin/brave ]]; then
+                echo "FAIL: Brave Origin ELF on trivalent image"
+                exit 1
+              fi
+              if grep -q /opt/brave.com/brave-origin /etc/selinux/targeted/contexts/files/file_contexts 2>/dev/null; then
+                echo "FAIL: brave-origin still in file_contexts (brave_t loaded?)"
+                exit 1
+              fi
+              echo "OK: trivalent flavor — Trivalent present, no Origin, no store, no brave_t"
+            '
+          elif [[ "${IMAGE_NAME}" == *browserless* ]]; then
+            gone trivalent
             if podman run --rm --entrypoint /usr/bin/test "$IMAGE" -e /opt/brave.com/brave-origin/brave; then
               echo "FAIL: Brave Origin ELF on browserless image"
               exit 1
@@ -72,6 +93,7 @@ jobs:
               echo "OK: browserless — no Origin, no Trivalent, no store, no brave_t label"
             '
           else
+            gone trivalent
             podman run --rm --entrypoint /usr/bin/test "$IMAGE" -e /opt/brave.com/brave-origin/brave
             if podman run --rm --entrypoint /usr/bin/test "$IMAGE" -e /opt/brave.com/brave/brave; then
               echo "FAIL: full brave-browser ELF still present"

@@ -1,0 +1,14 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+# Trivalent flavor: keep stock Trivalent + trivalent-selinux. No Origin, no brave_t.
+# Extra Chromium managed policies + conf.d flags are applied at first boot / ujust.
+modules:
+  - type: gschema-overrides
+    include:
+      - zz2-unwoke-trivalent.gschema.override
+
+  - type: script
+    scripts:
+      - apply-trivalent.sh
+
+  - type: signing

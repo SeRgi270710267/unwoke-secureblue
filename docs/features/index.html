@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#050a16">
   <meta name="color-scheme" content="dark">
   <title>Features | Unwoke SecureBlue</title>
-  <meta name="description" content="Overlay delta: Brave Origin or browserless, no store, Flathub/brew/Bluetooth/toolbox off until ujust, reversible policy packs, Unwoke theme.">
+  <meta name="description" content="Overlay delta: Brave Origin, stock Trivalent, or browserless; no store; extra reversible Chromium policies; Unwoke theme.">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css?v=4">
@@ -55,72 +55,74 @@
     <div class="table-container">
       <table>
         <thead>
-          <tr><th></th><th>Stock secureblue</th><th>Origin images</th><th>Browserless</th></tr>
+          <tr><th></th><th>Stock secureblue</th><th>Origin</th><th>Trivalent (<code>*-trivalent</code>)</th><th>Browserless</th></tr>
         </thead>
         <tbody>
           <tr>
             <td>Browser</td>
             <td><a href="https://github.com/secureblue/Trivalent">Trivalent</a> — confined Chromium</td>
             <td><a href="https://brave.com/origin/linux/">Brave Origin</a> RPM. Fat <code>brave_t</code>. Policy packs on.</td>
+            <td>Stock Trivalent (patches + SELinux) plus extra reversible policies stock does not force.</td>
             <td>None. No Trivalent, no Origin, no <code>brave_t</code>.</td>
           </tr>
           <tr>
             <td>App store</td>
             <td>Bazaar — curated catalog</td>
-            <td>None. No Flathub until <code>ujust set-flathub verified</code>.</td>
-            <td>None. Same.</td>
+            <td colspan="3">None. No Flathub until <code>ujust set-flathub verified</code>.</td>
           </tr>
           <tr>
             <td>User namespaces</td>
             <td>Off for unconfined; on for Flatpak and Trivalent</td>
             <td>Same, plus <code>brave_t</code> on the allow-list</td>
+            <td>Same as stock (Trivalent stays on the allow-list). No <code>brave_t</code>.</td>
             <td>Stock with Trivalent gone: unconfined blocked, Flatpak only</td>
           </tr>
           <tr>
             <td>Host browser installs</td>
             <td>Trivalent is already there</td>
             <td>Origin is the house browser</td>
+            <td>Trivalent is the house browser</td>
             <td>Blocked until <code>ujust set-allow-browsers on ALLOW</code></td>
           </tr>
           <tr>
             <td>Flatpak permissions</td>
             <td>Opt-in lockdown</td>
-            <td colspan="2">Lockdown <strong>on</strong> by default; <code>ujust set-flatpak-lockdown off</code></td>
+            <td colspan="3">Lockdown <strong>on</strong> by default; <code>ujust set-flatpak-lockdown off</code></td>
           </tr>
           <tr>
             <td>Homebrew</td>
             <td>Shipped</td>
-            <td colspan="2">Off until <code>ujust set-brew on</code></td>
+            <td colspan="3">Off until <code>ujust set-brew on</code></td>
           </tr>
           <tr>
             <td>Camera / mic</td>
             <td>Available</td>
-            <td colspan="2">Kernel + udev locked until <code>ujust set-camera-mic on</code> (speakers stay)</td>
+            <td colspan="3">Kernel + udev locked until <code>ujust set-camera-mic on</code> (speakers stay)</td>
           </tr>
           <tr>
             <td>Wheel on the greeter</td>
             <td>Typical daily user is wheel</td>
-            <td colspan="2">tty1 prompt before greeter to create a daily user, then wheel is blocked from GDM/SDDM. <code>ujust set-admin-split off</code></td>
+            <td colspan="3">tty1 prompt before greeter to create a daily user, then wheel is blocked from GDM/SDDM. <code>ujust set-admin-split off</code></td>
           </tr>
           <tr>
             <td>Bluetooth</td>
             <td>Available</td>
-            <td colspan="2">Off until <code>ujust set-bluetooth on</code>. Wi-Fi stays.</td>
+            <td colspan="3">Off until <code>ujust set-bluetooth on</code>. Wi-Fi stays.</td>
           </tr>
           <tr>
             <td>toolbox / distrobox</td>
             <td>Available</td>
-            <td colspan="2">Off. <code>/usr/bin/toolbox</code> is a wrapper. <code>ujust set-toolbox on</code>. podman stays.</td>
+            <td colspan="3">Off. <code>/usr/bin/toolbox</code> is a wrapper. <code>ujust set-toolbox on</code>. podman stays.</td>
           </tr>
           <tr>
             <td>Avahi / ModemManager</td>
             <td>Typically on</td>
-            <td colspan="2">Masked until <code>ujust set-extra-daemons on</code>. cups/geoclue already stock-masked.</td>
+            <td colspan="3">Masked until <code>ujust set-extra-daemons on</code>. cups/geoclue already stock-masked.</td>
           </tr>
           <tr>
             <td>Look</td>
             <td>Their defaults</td>
-            <td colspan="2">Unwoke wallpaper, lock screen, dark, blue accent. <a href="brand/">Brand</a></td>
+            <td colspan="3">Unwoke wallpaper, lock screen, dark, blue accent. <a href="brand/">Brand</a></td>
           </tr>
         </tbody>
       </table>
@@ -128,16 +130,17 @@
 
     <h2 id="overlay-list"><a href="#overlay-list">Everything we add on top</a></h2>
     <ul>
-      <li>Strip Trivalent, Bazaar, GNOME Software, Plasma Discover. Hide leftover launchers.</li>
+      <li>Strip Bazaar, GNOME Software, Plasma Discover. Hide leftover store launchers. Origin and browserless also strip Trivalent.</li>
       <li><strong>Origin flavor:</strong> standalone <code>brave-origin</code> RPM (not <code>brave-browser</code>). Binary <code>/opt/brave.com/brave-origin/brave</code>. Default browser. Leo/Rewards/Wallet/VPN/Tor compiled out by Brave.</li>
-      <li><strong>SELinux:</strong> fat <code>brave_t</code> (<code>unconfined_domain</code>) plus CIL allow-list so Chromium’s userns sandbox can start while <code>harden_userns</code> stays on. SUID stripped under <code>/opt/brave.com/brave-origin</code>.</li>
+      <li><strong>Trivalent flavor:</strong> keep stock Trivalent + <code>trivalent-selinux</code>. No <code>brave_t</code>. Extra managed policies in <code>/etc/trivalent/policies/managed/</code> plus launcher flags in <code>/etc/trivalent/trivalent.conf.d/</code>.</li>
+      <li><strong>SELinux (Origin only):</strong> fat <code>brave_t</code> (<code>unconfined_domain</code>) plus CIL allow-list so Chromium’s userns sandbox can start while <code>harden_userns</code> stays on. SUID stripped under <code>/opt/brave.com/brave-origin</code>.</li>
       <li><strong>Browserless flavor:</strong> nothing put back. systemd units remask Flatpak browsers and rpm-ostree-exclude them until the allow toggle.</li>
-      <li><strong>Chromium managed policies</strong> in <code>/etc/brave-origin/policies/managed/</code>, split into reversible packs (hardening, devices, JIT-less, extensions).</li>
+      <li><strong>Chromium managed policies</strong> (Origin: <code>/etc/brave-origin/policies/managed/</code>; Trivalent: <code>/etc/trivalent/policies/managed/</code>), split into reversible packs (hardening, devices, JIT-less, extensions, isolation, extra sandbox).</li>
       <li>Flathub <code>off</code> by default (stricter than stock). <code>ujust set-flathub verified</code> to match them.</li>
       <li>Flatpak permission lockdown (same cuts as their <code>ujust flatpak-permissions-lockdown</code>) default <strong>on</strong>.</li>
       <li>Bubblejail wrapper on the Origin desktop launcher (default on; <code>ujust set-brave-bubblejail off</code>).</li>
       <li>Homebrew off (stock ships it). Camera/mic locked at module+udev. Wheel GUI lock after a daily user exists.</li>
-      <li>Origin isolation pack: no WebGL/WebGPU, SitePerProcess, origin-keyed processes.</li>
+      <li>Isolation pack (Origin + Trivalent): no WebGL/WebGPU, SitePerProcess, origin-keyed processes.</li>
       <li>First-boot: re-enable <code>harden_userns</code>, apply defaults unless you stamped them off, promote <code>ostree-unverified-registry</code> → <code>ostree-image-signed</code>.</li>
       <li>Unwoke wallpaper, lock image, GTK <code>#3b6cff</code>, GNOME named <code>blue</code>, KDE accent, GDM wallpaper. See <a href="brand/">Brand</a>.</li>
       <li>This site. Daily mirror of <em>their</em> markdown under <code>/secureblue/</code> (Apache-2.0). Our FAQ/Features/Install/Brand are never overwritten.</li>
@@ -145,8 +148,13 @@
     </ul>
 
     <h2 id="brave-origin"><a href="#brave-origin">Brave Origin</a></h2>
-    <p>Not full <code>brave-browser</code>. Policies live in <code>/etc/brave-origin/policies/managed/</code>. Restart the browser after a toggle. <code>brave_t</code> is unconfined-like on purpose. You do not get Trivalent’s Chromium patches or tight SELinux.</p>
+    <p>Not full <code>brave-browser</code>. Policies live in <code>/etc/brave-origin/policies/managed/</code>. Restart the browser after a toggle. <code>brave_t</code> is unconfined-like on purpose. You do not get Trivalent’s Chromium patches or tight SELinux. For that, rebase to a <code>*-trivalent</code> image.</p>
     <p>Origin compiled out Leo, Rewards, Wallet, VPN, Tor, Talk, News, P3A. What we add on top is enterprise policy, not a new browser.</p>
+
+    <h2 id="trivalent"><a href="#trivalent">Trivalent flavor</a></h2>
+    <p>Same house browser as stock: Vanadium-derived patches, <code>trivalent_t</code> SELinux, their userns allow-list. We do not rebuild Trivalent. We add Chromium enterprise JSON stock does not ship, plus flags their README lists as optional extra hardening. All of it reverts with <code>ujust</code>.</p>
+    <p>Policies: <code>/etc/trivalent/policies/managed/</code> (and a copy under <code>/etc/chromium/policies/managed/</code>). Extra flags: <code>/etc/trivalent/trivalent.conf.d/</code>. <code>set-brave-*</code> and <code>set-trivalent-*</code> are the same packs. We do <em>not</em> wrap Trivalent in Bubblejail — <a href="https://secureblue.dev/faq">their FAQ</a> says that pairing is broken.</p>
+    <p>What this does <em>not</em> add: new compiler/seccomp patches. If a policy already matches something Trivalent compiled in, the JSON is a no-op. The extras that stock does not force are JIT-less, WebGL/WebGPU off, extension blocklist, device/API guards, HTTPS-only, extra sandbox (audio sandbox, no screen capture, JS optimizer off), Network Service Sandbox, and punycode + clear-cross-origin-referrers.</p>
 
     <h2 id="toggles"><a href="#toggles">Overlay ujust extras</a></h2>
     <p>Stock secureblue commands still work. Every overlay switch reverts. Defaults apply on each boot unless you stamped them off.</p>
@@ -165,7 +173,7 @@
           <tr>
             <td><code>ujust audit-unwoke</code></td>
             <td>—</td>
-            <td>Fail if <code>harden_userns</code> / Origin / <code>brave_t</code> / SUID invariants break.</td>
+            <td>Fail if <code>harden_userns</code> / flavor browser / <code>brave_t</code> (Origin) / SUID invariants break.</td>
             <td>—</td>
           </tr>
           <tr>
@@ -181,39 +189,63 @@
             <td><code>off</code></td>
           </tr>
           <tr>
-            <td><code>ujust set-brave-hardening</code></td>
-            <td><code>on</code> (Origin)</td>
+            <td><code>ujust set-brave-hardening</code> / <code>set-trivalent-hardening</code></td>
+            <td><code>on</code> (Origin + Trivalent)</td>
             <td>HTTPS-only, no WebRTC IP leak, no metrics/sync/autofill/passwords/translate.</td>
             <td><code>off</code></td>
           </tr>
           <tr>
-            <td><code>ujust set-brave-devices</code></td>
-            <td><code>on</code> (Origin)</td>
+            <td><code>ujust set-brave-devices</code> / <code>set-trivalent-devices</code></td>
+            <td><code>on</code> (Origin + Trivalent)</td>
             <td>Block camera, mic, geo, WebUSB/Bluetooth/serial/HID, file-system API.</td>
             <td><code>off</code></td>
           </tr>
           <tr>
-            <td><code>ujust set-brave-jitless</code></td>
-            <td><code>on</code> (Origin)</td>
+            <td><code>ujust set-brave-jitless</code> / <code>set-trivalent-jitless</code></td>
+            <td><code>on</code> (Origin + Trivalent)</td>
             <td>JavaScript JIT off. Breaks some sites.</td>
             <td><code>off</code></td>
           </tr>
           <tr>
-            <td><code>ujust set-brave-extensions</code></td>
-            <td><code>block</code> (Origin)</td>
+            <td><code>ujust set-brave-extensions</code> / <code>set-trivalent-extensions</code></td>
+            <td><code>block</code> (Origin + Trivalent)</td>
             <td>Extension install blocklist <code>*</code>.</td>
             <td><code>allow</code></td>
           </tr>
           <tr>
-            <td><code>ujust set-brave-isolation</code></td>
-            <td><code>on</code> (Origin)</td>
+            <td><code>ujust set-brave-isolation</code> / <code>set-trivalent-isolation</code></td>
+            <td><code>on</code> (Origin + Trivalent)</td>
             <td>Disable3DAPIs (WebGL), WebGPU flag, SitePerProcess, origin-keyed processes.</td>
+            <td><code>off</code></td>
+          </tr>
+          <tr>
+            <td><code>ujust set-brave-sandbox</code> / <code>set-trivalent-sandbox</code></td>
+            <td><code>on</code> (Origin + Trivalent)</td>
+            <td>Audio sandbox, no screen capture, JS optimizer off, no WebRTC event logs / payment API / privacy-sandbox prompt.</td>
+            <td><code>off</code></td>
+          </tr>
+          <tr>
+            <td><code>ujust set-brave-devtools</code> / <code>set-trivalent-devtools</code></td>
+            <td><code>allow</code> (opt-in lock)</td>
+            <td>Lock <code>chrome://devtools</code>. Default unlocked.</td>
+            <td><code>lock</code> / <code>allow</code></td>
+          </tr>
+          <tr>
+            <td><code>ujust set-trivalent-network-sandbox</code></td>
+            <td><code>on</code> (Trivalent)</td>
+            <td>Force Network Service Sandbox. Stock leaves this off because it can clear cookies on exit.</td>
+            <td><code>off</code></td>
+          </tr>
+          <tr>
+            <td><code>ujust set-trivalent-referrers</code></td>
+            <td><code>on</code> (Trivalent)</td>
+            <td>Punycode domains + clear-cross-origin-referrers (flags their README lists as extra hardening).</td>
             <td><code>off</code></td>
           </tr>
           <tr>
             <td><code>ujust set-brave-bubblejail</code></td>
             <td><code>on</code> (Origin)</td>
-            <td>Wrap Origin’s desktop launcher in Bubblejail. GPU/audio may break.</td>
+            <td>Wrap Origin’s desktop launcher in Bubblejail. GPU/audio may break. Refused on Trivalent.</td>
             <td><code>off</code></td>
           </tr>
           <tr>
@@ -276,7 +308,11 @@ ujust set-brave-devices on|off
 ujust set-brave-jitless on|off
 ujust set-brave-extensions block|allow
 ujust set-brave-isolation on|off
-ujust set-brave-bubblejail on|off
+ujust set-brave-sandbox on|off
+ujust set-brave-devtools lock|allow
+ujust set-brave-bubblejail on|off          # Origin only
+ujust set-trivalent-network-sandbox on|off # Trivalent only
+ujust set-trivalent-referrers on|off       # Trivalent only
 ujust set-brew on|off
 ujust set-camera-mic on|off
 ujust set-admin-split on|off|add NAME
@@ -288,11 +324,12 @@ ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
 
     <h2 id="limits"><a href="#limits">Honest limits</a></h2>
     <div class="alert">
-      <p>Calling this “insecure Fedora” is false. Calling it “identical to secureblue” is also false. Origin is weaker than stock + Trivalent. Browserless is tighter than Origin until a browser is installed. Policies are not Vanadium patches.</p>
+      <p>Calling this “insecure Fedora” is false. Calling it “identical to secureblue” is also false. Origin is weaker than stock + Trivalent. <code>-trivalent</code> equals stock on the house browser and is stricter on extra policies + house locks. Browserless is tighter than Origin until a browser is installed. Policies are not Vanadium patches.</p>
     </div>
     <ul>
-      <li>No Vanadium-style Chromium compiler/seccomp patches. JIT-less and enterprise policy are not a substitute.</li>
-      <li><code>brave_t</code> is still unconfined-like. A tight jail is not shipped — Origin updates would break it, and it would still not be Trivalent.</li>
+      <li>Origin: no Vanadium-style Chromium compiler/seccomp patches. JIT-less and enterprise policy are not a substitute. Rebase to <code>*-trivalent</code> for the patches.</li>
+      <li><code>-trivalent</code> extra packs are managed JSON / <code>trivalent.conf.d</code> flags. They do not add compiler patches on top of what Trivalent already ships.</li>
+      <li><code>brave_t</code> (Origin) is still unconfined-like. A tight jail is not shipped — Origin updates would break it, and it would still not be Trivalent.</li>
       <li>Signing key is a GitHub secret, not a hardware key.</li>
       <li>We inherit their signed image; we do not rebuild their kernel or SLSA pipeline.</li>
       <li>Toolbox, brew, AppImage, and <code>rpm-ostree --disableexcludes</code> bypass the browserless seatbelt.</li>

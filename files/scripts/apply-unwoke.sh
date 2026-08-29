@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Shared build-time overlay: hide leftover Trivalent/Bazaar/store/full-Brave
-# launchers. Does not install a browser and does not touch harden_userns.
+# Shared build-time overlay: hide leftover Bazaar/store/full-Brave launchers.
+# Flavor scripts hide or keep trivalent.desktop. Does not touch harden_userns.
 set -oue pipefail
 
-for d in trivalent.desktop io.github.kolunmi.Bazaar.desktop \
+for d in io.github.kolunmi.Bazaar.desktop \
          org.gnome.Software.desktop org.kde.discover.desktop \
          brave-browser.desktop; do
   if [[ -f "/usr/share/applications/${d}" ]]; then

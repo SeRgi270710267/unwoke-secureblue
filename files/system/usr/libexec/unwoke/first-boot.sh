@@ -17,6 +17,10 @@ if [[ "${FLAVOR}" == "browserless" ]]; then
   if [[ -x /usr/libexec/unwoke/browser-guard.sh ]]; then
     /usr/libexec/unwoke/browser-guard.sh apply || true
   fi
+elif [[ "${FLAVOR}" == "trivalent" ]]; then
+  if command -v restorecon >/dev/null; then
+    restorecon -FR /usr/lib64/trivalent /usr/bin/trivalent 2>/dev/null || true
+  fi
 else
   if command -v restorecon >/dev/null; then
     restorecon -FR /opt/brave.com/brave-origin /usr/bin/brave-origin 2>/dev/null || true

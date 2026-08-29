@@ -27,6 +27,7 @@ modules:
 
   - type: script
     scripts:
+      - remove-trivalent.sh
       - apply-brave.sh
       - install-brave-selinux.sh
 

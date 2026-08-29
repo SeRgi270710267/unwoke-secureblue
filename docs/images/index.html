@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#050a16">
   <meta name="color-scheme" content="dark">
   <title>Images | Unwoke SecureBlue</title>
-  <meta name="description" content="Four public GHCR images: Silverblue and Kinoite, with and without NVIDIA open modules.">
+  <meta name="description" content="Twelve public GHCR images: Silverblue and Kinoite, NVIDIA open, Origin / Trivalent / browserless.">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css?v=4">
@@ -35,7 +35,7 @@
 
   <main id="content">
     <h1>Images</h1>
-    <p>Published as <code>ghcr.io/sergi270710267/&lt;name&gt;:latest</code>. All are public. No GitHub login to pull. Rebuilt twice a day, 08:00 and 20:00 UTC, plus every recipe push. Names ending in <code>-browserless</code> have no image browser. Every image gets the <a href="brand/">Unwoke wallpaper, lock screen, and blue accent</a>, Flathub/brew/Bluetooth/toolbox off until <code>ujust</code>, and the other overlay locks. Reverts: <a href="post-install/">Post-install</a>.</p>
+    <p>Published as <code>ghcr.io/sergi270710267/&lt;name&gt;:latest</code>. All are public. No GitHub login to pull. Rebuilt twice a day, 08:00 and 20:00 UTC, plus every recipe push. No suffix = Brave Origin. Names ending in <code>-trivalent</code> keep stock Trivalent plus extra policies. Names ending in <code>-browserless</code> have no image browser. Every image gets the <a href="brand/">Unwoke wallpaper, lock screen, and blue accent</a>, Flathub/brew/Bluetooth/toolbox off until <code>ujust</code>, and the other overlay locks. Reverts: <a href="post-install/">Post-install</a>.</p>
 
     <p class="notice"><code>nvidia-open</code> images are for NVIDIA GPUs Turing or newer (GTX 16xx / RTX 20xx and later): proprietary driver with NVIDIA’s open kernel modules, not Nouveau. The non-NVIDIA images use Nouveau and are a poor choice for those GPUs.</p>
 
@@ -69,6 +69,30 @@
             <td>KDE Plasma</td>
             <td>NVIDIA open modules</td>
             <td>Brave Origin</td>
+          </tr>
+          <tr>
+            <td><code>unwoke-silverblue-trivalent</code></td>
+            <td>GNOME</td>
+            <td>Nouveau</td>
+            <td>Trivalent</td>
+          </tr>
+          <tr>
+            <td><code>unwoke-silverblue-nvidia-open-trivalent</code></td>
+            <td>GNOME</td>
+            <td>NVIDIA open modules</td>
+            <td>Trivalent</td>
+          </tr>
+          <tr>
+            <td><code>unwoke-kinoite-trivalent</code></td>
+            <td>KDE Plasma</td>
+            <td>Nouveau</td>
+            <td>Trivalent</td>
+          </tr>
+          <tr>
+            <td><code>unwoke-kinoite-nvidia-open-trivalent</code></td>
+            <td>KDE Plasma</td>
+            <td>NVIDIA open modules</td>
+            <td>Trivalent</td>
           </tr>
           <tr>
             <td><code>unwoke-silverblue-browserless</code></td>

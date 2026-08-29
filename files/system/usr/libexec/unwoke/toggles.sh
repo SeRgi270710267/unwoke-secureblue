@@ -7,18 +7,35 @@ DEVICES_SRC="/usr/share/unwoke/brave-devices.json"
 JITLESS_SRC="/usr/share/unwoke/brave-jitless.json"
 EXT_SRC="/usr/share/unwoke/brave-extensions.json"
 ISO_SRC="/usr/share/unwoke/brave-isolation.json"
-POLICY_DIR="/etc/brave-origin/policies/managed"
-HARDEN_DST="${POLICY_DIR}/10-unwoke-hardening.json"
-DEVICES_DST="${POLICY_DIR}/15-unwoke-devices.json"
-JITLESS_DST="${POLICY_DIR}/20-unwoke-jitless.json"
-EXT_DST="${POLICY_DIR}/30-unwoke-extensions.json"
-ISO_DST="${POLICY_DIR}/40-unwoke-isolation.json"
+SANDBOX_SRC="/usr/share/unwoke/brave-sandbox.json"
+DEVTOOLS_SRC="/usr/share/unwoke/brave-devtools.json"
+
+HARDEN_FILE="10-unwoke-hardening.json"
+DEVICES_FILE="15-unwoke-devices.json"
+JITLESS_FILE="20-unwoke-jitless.json"
+EXT_FILE="30-unwoke-extensions.json"
+ISO_FILE="40-unwoke-isolation.json"
+SANDBOX_FILE="50-unwoke-sandbox.json"
+DEVTOOLS_FILE="60-unwoke-devtools.json"
+
 HARDEN_OFF="/etc/unwoke/brave-hardening.off"
 DEVICES_OFF="/etc/unwoke/brave-devices.off"
 JITLESS_OFF="/etc/unwoke/brave-jitless.off"
 EXT_OFF="/etc/unwoke/brave-extensions.off"
 ISO_OFF="/etc/unwoke/brave-isolation.off"
+SANDBOX_OFF="/etc/unwoke/brave-sandbox.off"
+DEVTOOLS_OFF="/etc/unwoke/brave-devtools.off"
 BUBBLE_OFF="/etc/unwoke/brave-bubblejail.off"
+NET_OFF="/etc/unwoke/trivalent-network-sandbox.off"
+REF_OFF="/etc/unwoke/trivalent-referrers.off"
+
+ISO_CONF_SRC="/usr/share/unwoke/trivalent-isolation.conf"
+NET_SRC="/usr/share/unwoke/trivalent-network-sandbox.conf"
+REF_SRC="/usr/share/unwoke/trivalent-referrers.conf"
+TRIV_CONF_D="/etc/trivalent/trivalent.conf.d"
+ISO_CONF="${TRIV_CONF_D}/40-unwoke-isolation.conf"
+NET_CONF="${TRIV_CONF_D}/50-unwoke-network-sandbox.conf"
+REF_CONF="${TRIV_CONF_D}/60-unwoke-referrers.conf"
 
 FLAVOR="brave-origin"
 if [[ -f /usr/share/unwoke/flavor ]]; then
@@ -39,37 +56,153 @@ bad() { printf '  [NO]  %s\n' "$*"; }
 info() { printf '  [--]  %s\n' "$*"; }
 
 is_browserless() { [[ "${FLAVOR}" == "browserless" ]]; }
+is_origin() { [[ "${FLAVOR}" == "brave-origin" ]]; }
+is_trivalent() { [[ "${FLAVOR}" == "trivalent" ]]; }
+has_browser_policies() { is_origin || is_trivalent; }
 
-need_origin() {
+browser_name() {
+  if is_trivalent; then
+    echo "Trivalent"
+  else
+    echo "Brave Origin"
+  fi
+}
+
+need_browser_policies() {
   if is_browserless; then
-    echo "This image is browserless. Rebase to an Origin image (no -browserless) for Brave Origin policies." >&2
+    echo "This image is browserless. Rebase to Origin (no suffix) or *-trivalent for browser policy packs." >&2
     exit 1
   fi
 }
 
+need_origin() {
+  if ! is_origin; then
+    echo "Bubblejail wrapping is Origin-only. Stock Trivalent already ships its own sandbox; their FAQ says not to Bubblejail it." >&2
+    exit 1
+  fi
+}
+
+need_trivalent() {
+  if ! is_trivalent; then
+    echo "This toggle is for -trivalent images (Trivalent conf.d / extra flags)." >&2
+    exit 1
+  fi
+}
+
+policy_dirs() {
+  if is_trivalent; then
+    printf '%s\n' /etc/trivalent/policies/managed /etc/chromium/policies/managed
+  else
+    printf '%s\n' /etc/brave-origin/policies/managed
+  fi
+}
+
+vendor_has() {
+  local file="$1"
+  if is_trivalent; then
+    [[ -f "/usr/etc/trivalent/policies/managed/${file}" ]] \
+      || [[ -f "/usr/etc/chromium/policies/managed/${file}" ]]
+  else
+    [[ -f "/usr/etc/brave-origin/policies/managed/${file}" ]]
+  fi
+}
+
+any_dst() {
+  local file="$1" d
+  while IFS= read -r d; do
+    [[ -n "${d}" && -f "${d}/${file}" ]] && return 0
+  done < <(policy_dirs)
+  return 1
+}
+
 policy_on() {
-  local src="$1" dst="$2" off="$3"
-  as_root mkdir -p "${POLICY_DIR}" /etc/unwoke
-  as_root cp -a "${src}" "${dst}"
+  local src="$1" file="$2" off="$3" d
+  as_root mkdir -p /etc/unwoke
+  while IFS= read -r d; do
+    [[ -n "${d}" ]] || continue
+    as_root mkdir -p "${d}"
+    as_root cp -a "${src}" "${d}/${file}"
+  done < <(policy_dirs)
   as_root rm -f "${off}"
 }
 
 policy_off() {
+  local file="$1" off="$2" d
+  as_root mkdir -p /etc/unwoke
+  while IFS= read -r d; do
+    [[ -n "${d}" ]] || continue
+    as_root rm -f "${d}/${file}"
+  done < <(policy_dirs)
+  as_root touch "${off}"
+}
+
+policy_status() {
+  local file="$1" off="$2"
+  if any_dst "${file}"; then
+    echo "on"
+  elif [[ -f "${off}" ]]; then
+    echo "off (${off})"
+  elif vendor_has "${file}"; then
+    echo "on (image default)"
+  else
+    echo "off"
+  fi
+}
+
+policy_is_on() {
+  local file="$1" off="$2"
+  [[ -f "${off}" ]] && return 1
+  any_dst "${file}" && return 0
+  vendor_has "${file}"
+}
+
+conf_on() {
+  local src="$1" dst="$2" off="$3"
+  as_root mkdir -p /etc/unwoke "$(dirname "${dst}")"
+  as_root cp -a "${src}" "${dst}"
+  as_root rm -f "${off}"
+}
+
+conf_off() {
   local dst="$1" off="$2"
   as_root mkdir -p /etc/unwoke
   as_root rm -f "${dst}"
   as_root touch "${off}"
 }
 
-policy_status() {
-  local dst="$1" off="$2"
+conf_status() {
+  local dst="$1" off="$2" vendor="$3"
   if [[ -f "${dst}" ]]; then
     echo "on (${dst})"
   elif [[ -f "${off}" ]]; then
     echo "off (${off})"
+  elif [[ -f "${vendor}" ]]; then
+    echo "on (image default)"
   else
     echo "off"
   fi
+}
+
+conf_is_on() {
+  local dst="$1" off="$2" vendor="$3"
+  [[ -f "${off}" ]] && return 1
+  [[ -f "${dst}" || -f "${vendor}" ]]
+}
+
+sync_isolation_conf() {
+  is_trivalent || return 0
+  if [[ -f "${ISO_OFF}" ]]; then
+    as_root rm -f "${ISO_CONF}"
+  else
+    as_root mkdir -p "${TRIV_CONF_D}"
+    as_root cp -a "${ISO_CONF_SRC}" "${ISO_CONF}"
+  fi
+}
+
+trivalent_present() {
+  [[ -e /usr/bin/trivalent ]] \
+    || [[ -e /usr/lib64/trivalent/trivalent ]] \
+    || [[ -e /usr/lib/trivalent/trivalent ]]
 }
 
 cmd_status() {
@@ -137,17 +270,60 @@ for d in j.get("deployments") or []:
     else
       ok "no Brave Origin"
     fi
+    if trivalent_present; then
+      bad "Trivalent present on a browserless image"
+    else
+      ok "no Trivalent"
+    fi
     if [[ -e /opt/brave.com/brave/brave ]]; then
       bad "full brave-browser is installed"
     else
       ok "no full brave-browser"
     fi
-    info "Brave Origin policies: n/a"
+    info "browser policies: n/a"
     if [[ -f /etc/unwoke/allow-browsers ]]; then
       bad "allow-browsers ON — easy host browser installs are unlocked"
     else
       ok "allow-browsers OFF — ujust set-allow-browsers on ALLOW to unlock"
     fi
+  elif is_trivalent; then
+    ok "flavor: trivalent (stock Trivalent + Unwoke policy packs)"
+    if command -v semodule >/dev/null && semodule -l 2>/dev/null | grep -qx unwoke_brave; then
+      bad "unwoke_brave loaded — trivalent flavor must not add brave_t"
+    else
+      ok "no brave_t (stock trivalent_t stays)"
+    fi
+    if command -v semodule >/dev/null && semodule -l 2>/dev/null | grep -Eqx 'trivalent|trivalent-selinux'; then
+      ok "Trivalent SELinux module listed"
+    else
+      info "Trivalent SELinux module name not listed (package still provides the jail)"
+    fi
+    if trivalent_present; then
+      ok "Trivalent binary present"
+    else
+      bad "Trivalent binary missing"
+    fi
+    if [[ -e /opt/brave.com/brave-origin/brave ]]; then
+      bad "Brave Origin ELF present on a trivalent image"
+    else
+      ok "no Brave Origin"
+    fi
+    if [[ -e /opt/brave.com/brave/brave ]]; then
+      bad "full brave-browser is also installed"
+    fi
+    echo "  -- Trivalent policy packs (restart Trivalent after changes) --"
+    status_packs
+    if conf_is_on "${NET_CONF}" "${NET_OFF}" /usr/etc/trivalent/trivalent.conf.d/50-unwoke-network-sandbox.conf; then
+      ok "Network Service Sandbox forced on (may clear cookies) — ujust set-trivalent-network-sandbox off"
+    else
+      info "Network Service Sandbox not forced — ujust set-trivalent-network-sandbox on"
+    fi
+    if conf_is_on "${REF_CONF}" "${REF_OFF}" /usr/etc/trivalent/trivalent.conf.d/60-unwoke-referrers.conf; then
+      ok "Punycode + clear-cross-origin-referrers flags on — ujust set-trivalent-referrers off"
+    else
+      info "Punycode / referrer flags off — ujust set-trivalent-referrers on"
+    fi
+    info "Bubblejail: n/a (do not wrap Trivalent; stock already jails it)"
   else
     if command -v semodule >/dev/null && semodule -l 2>/dev/null | grep -qx unwoke_brave; then
       ok "unwoke_brave SELinux module loaded (Brave userns via brave_t)"
@@ -163,31 +339,8 @@ for d in j.get("deployments") or []:
     if [[ -e /opt/brave.com/brave/brave ]]; then
       bad "full brave-browser is also installed; this overlay wants brave-origin only"
     fi
-    if [[ -f "${HARDEN_DST}" ]] || [[ -f /usr/etc/brave-origin/policies/managed/10-unwoke-hardening.json && ! -f "${HARDEN_OFF}" ]]; then
-      ok "Brave hardening pack on (HTTPS/metrics/autofill/passwords)"
-    else
-      info "Brave hardening pack off — ujust set-brave-hardening on"
-    fi
-    if [[ -f "${DEVICES_DST}" ]] || [[ -f /usr/etc/brave-origin/policies/managed/15-unwoke-devices.json && ! -f "${DEVICES_OFF}" ]]; then
-      ok "Brave device pack on (USB/BT/serial/camera/mic/geo blocked)"
-    else
-      info "Brave device pack off — ujust set-brave-devices on"
-    fi
-    if [[ -f "${JITLESS_DST}" ]] || [[ -f /usr/etc/brave-origin/policies/managed/20-unwoke-jitless.json && ! -f "${JITLESS_OFF}" ]]; then
-      ok "Brave JIT blocked (some sites break) — ujust set-brave-jitless off"
-    else
-      info "Brave JIT allowed — ujust set-brave-jitless on"
-    fi
-    if [[ -f "${EXT_DST}" ]] || [[ -f /usr/etc/brave-origin/policies/managed/30-unwoke-extensions.json && ! -f "${EXT_OFF}" ]]; then
-      ok "Brave extension installs blocked — ujust set-brave-extensions allow"
-    else
-      info "Brave extension installs allowed — ujust set-brave-extensions block"
-    fi
-    if [[ -f "${ISO_DST}" ]] || [[ -f /usr/etc/brave-origin/policies/managed/40-unwoke-isolation.json && ! -f "${ISO_OFF}" ]]; then
-      ok "Brave isolation pack on (no WebGL/WebGPU, SitePerProcess) — ujust set-brave-isolation off"
-    else
-      info "Brave isolation pack off — ujust set-brave-isolation on"
-    fi
+    echo "  -- Brave Origin policy packs (restart the browser after changes) --"
+    status_packs
     if [[ -f "${BUBBLE_OFF}" ]]; then
       info "Brave Bubblejail off — ujust set-brave-bubblejail on"
     else
@@ -223,14 +376,62 @@ for d in j.get("deployments") or []:
   if is_browserless; then
     echo "  ujust set-allow-browsers on ALLOW|off"
   else
-    echo "  ujust set-brave-hardening on|off"
+    echo "  ujust set-brave-hardening on|off     (also set-trivalent-hardening)"
     echo "  ujust set-brave-devices on|off"
     echo "  ujust set-brave-jitless on|off"
     echo "  ujust set-brave-extensions block|allow"
     echo "  ujust set-brave-isolation on|off"
-    echo "  ujust set-brave-bubblejail on|off"
+    echo "  ujust set-brave-sandbox on|off"
+    echo "  ujust set-brave-devtools lock|allow  (default allow)"
+    if is_origin; then
+      echo "  ujust set-brave-bubblejail on|off"
+    fi
+    if is_trivalent; then
+      echo "  ujust set-trivalent-network-sandbox on|off"
+      echo "  ujust set-trivalent-referrers on|off"
+    fi
   fi
   echo "Stock: ujust set-unconfined-userns  ujust set-kargs-hardening  ujust audit-secureblue"
+}
+
+status_packs() {
+  local b
+  b="$(browser_name)"
+  if policy_is_on "${HARDEN_FILE}" "${HARDEN_OFF}"; then
+    ok "${b} hardening pack on (HTTPS/metrics/autofill/passwords)"
+  else
+    info "${b} hardening pack off — ujust set-brave-hardening on"
+  fi
+  if policy_is_on "${DEVICES_FILE}" "${DEVICES_OFF}"; then
+    ok "${b} device pack on (USB/BT/serial/camera/mic/geo blocked)"
+  else
+    info "${b} device pack off — ujust set-brave-devices on"
+  fi
+  if policy_is_on "${JITLESS_FILE}" "${JITLESS_OFF}"; then
+    ok "${b} JIT blocked (some sites break) — ujust set-brave-jitless off"
+  else
+    info "${b} JIT allowed — ujust set-brave-jitless on"
+  fi
+  if policy_is_on "${EXT_FILE}" "${EXT_OFF}"; then
+    ok "${b} extension installs blocked — ujust set-brave-extensions allow"
+  else
+    info "${b} extension installs allowed — ujust set-brave-extensions block"
+  fi
+  if policy_is_on "${ISO_FILE}" "${ISO_OFF}"; then
+    ok "${b} isolation pack on (no WebGL/WebGPU, SitePerProcess) — ujust set-brave-isolation off"
+  else
+    info "${b} isolation pack off — ujust set-brave-isolation on"
+  fi
+  if policy_is_on "${SANDBOX_FILE}" "${SANDBOX_OFF}"; then
+    ok "${b} extra sandbox pack on (audio sandbox, no screen capture, no JS optimizer) — ujust set-brave-sandbox off"
+  else
+    info "${b} extra sandbox pack off — ujust set-brave-sandbox on"
+  fi
+  if policy_is_on "${DEVTOOLS_FILE}" "${DEVTOOLS_OFF}"; then
+    ok "${b} DevTools locked — ujust set-brave-devtools allow"
+  else
+    info "${b} DevTools allowed (default) — ujust set-brave-devtools lock"
+  fi
 }
 
 cmd_audit() {
@@ -238,6 +439,14 @@ cmd_audit() {
   fail=0
   command -v semodule >/dev/null && semodule -l 2>/dev/null | grep -qx harden_userns || fail=1
   if is_browserless; then
+    [[ ! -e /opt/brave.com/brave-origin/brave ]] || fail=1
+    [[ ! -e /opt/brave.com/brave/brave ]] || fail=1
+    trivalent_present && fail=1
+    if command -v semodule >/dev/null && semodule -l 2>/dev/null | grep -qx unwoke_brave; then
+      fail=1
+    fi
+  elif is_trivalent; then
+    trivalent_present || fail=1
     [[ ! -e /opt/brave.com/brave-origin/brave ]] || fail=1
     [[ ! -e /opt/brave.com/brave/brave ]] || fail=1
     if command -v semodule >/dev/null && semodule -l 2>/dev/null | grep -qx unwoke_brave; then
@@ -255,19 +464,49 @@ cmd_audit() {
 }
 
 cmd_pack() {
-  need_origin
-  local name="$1" src="$2" dst="$3" off="$4" action="${5:-status}"
+  need_browser_policies
+  local name="$1" src="$2" file="$3" off="$4" action="${5:-status}"
   case "${action}" in
-    on|enable|block)
-      policy_on "${src}" "${dst}" "${off}"
-      echo "${name} ON. Restart Brave Origin."
+    on|enable|block|lock)
+      policy_on "${src}" "${file}" "${off}"
+      if [[ "${file}" == "${ISO_FILE}" ]]; then
+        as_root mkdir -p /etc/unwoke
+        as_root rm -f "${ISO_OFF}"
+        sync_isolation_conf
+      fi
+      echo "${name} ON. Restart $(browser_name)."
       ;;
     off|disable|allow)
-      policy_off "${dst}" "${off}"
-      echo "${name} OFF. Restart Brave Origin."
+      policy_off "${file}" "${off}"
+      if [[ "${file}" == "${ISO_FILE}" ]]; then
+        sync_isolation_conf
+      fi
+      echo "${name} OFF. Restart $(browser_name)."
       ;;
     status)
-      policy_status "${dst}" "${off}"
+      policy_status "${file}" "${off}"
+      ;;
+    *)
+      echo "usage: on|off|status" >&2
+      exit 2
+      ;;
+  esac
+}
+
+cmd_conf() {
+  need_trivalent
+  local name="$1" src="$2" dst="$3" off="$4" action="${5:-status}" vendor="$6"
+  case "${action}" in
+    on|enable)
+      conf_on "${src}" "${dst}" "${off}"
+      echo "${name} ON. Restart Trivalent."
+      ;;
+    off|disable)
+      conf_off "${dst}" "${off}"
+      echo "${name} OFF. Restart Trivalent."
+      ;;
+    status)
+      conf_status "${dst}" "${off}" "${vendor}"
       ;;
     *)
       echo "usage: on|off|status" >&2
@@ -297,7 +536,7 @@ confirm_allow() {
 
 cmd_allow_browsers() {
   if ! is_browserless; then
-    echo "This toggle is for -browserless images. Origin images already ship Brave Origin." >&2
+    echo "This toggle is for -browserless images. Origin already ships Brave Origin; -trivalent already ships Trivalent." >&2
     exit 1
   fi
   local action="${1:-status}"
@@ -368,11 +607,39 @@ cmd_bubblejail() {
   esac
 }
 
+boot_pack() {
+  local src="$1" file="$2" off="$3" d
+  if [[ -f "${off}" ]]; then
+    while IFS= read -r d; do
+      [[ -n "${d}" ]] || continue
+      rm -f "${d}/${file}"
+    done < <(policy_dirs)
+    return 0
+  fi
+  [[ -f "${src}" ]] || return 0
+  while IFS= read -r d; do
+    [[ -n "${d}" ]] || continue
+    mkdir -p "${d}"
+    cp -a "${src}" "${d}/${file}" || true
+  done < <(policy_dirs)
+}
+
+boot_conf() {
+  local src="$1" dst="$2" off="$3"
+  if [[ -f "${off}" ]]; then
+    rm -f "${dst}"
+    return 0
+  fi
+  [[ -f "${src}" ]] || return 0
+  mkdir -p "$(dirname "${dst}")"
+  cp -a "${src}" "${dst}" || true
+}
+
 cmd_apply_boot() {
   [[ "$(id -u)" -eq 0 ]] || { echo "apply-boot needs root" >&2; exit 1; }
   mkdir -p /etc/unwoke
   if is_browserless; then
-    echo "unwoke: browserless — no Origin policies"
+    echo "unwoke: browserless — no browser policies"
     if [[ ! -f /etc/unwoke/flathub ]]; then
       printf 'off\n' > /etc/unwoke/flathub
     fi
@@ -380,12 +647,22 @@ cmd_apply_boot() {
       /usr/libexec/unwoke/flathub.sh apply-boot || true
     fi
   else
-    mkdir -p "${POLICY_DIR}"
-    [[ -f "${HARDEN_OFF}" ]] || cp -a "${HARDEN_SRC}" "${HARDEN_DST}" || true
-    [[ -f "${DEVICES_OFF}" ]] || cp -a "${DEVICES_SRC}" "${DEVICES_DST}" || true
-    [[ -f "${JITLESS_OFF}" ]] || cp -a "${JITLESS_SRC}" "${JITLESS_DST}" || true
-    [[ -f "${EXT_OFF}" ]] || cp -a "${EXT_SRC}" "${EXT_DST}" || true
-    [[ -f "${ISO_OFF}" ]] || cp -a "${ISO_SRC}" "${ISO_DST}" || true
+    boot_pack "${HARDEN_SRC}" "${HARDEN_FILE}" "${HARDEN_OFF}"
+    boot_pack "${DEVICES_SRC}" "${DEVICES_FILE}" "${DEVICES_OFF}"
+    boot_pack "${JITLESS_SRC}" "${JITLESS_FILE}" "${JITLESS_OFF}"
+    boot_pack "${EXT_SRC}" "${EXT_FILE}" "${EXT_OFF}"
+    boot_pack "${ISO_SRC}" "${ISO_FILE}" "${ISO_OFF}"
+    boot_pack "${SANDBOX_SRC}" "${SANDBOX_FILE}" "${SANDBOX_OFF}"
+    # DevTools pack is opt-in. Never restore from image default.
+    if [[ -f "${DEVTOOLS_OFF}" ]]; then
+      boot_pack "${DEVTOOLS_SRC}" "${DEVTOOLS_FILE}" "${DEVTOOLS_OFF}"
+    fi
+    if is_trivalent; then
+      mkdir -p "${TRIV_CONF_D}"
+      boot_conf "${ISO_CONF_SRC}" "${ISO_CONF}" "${ISO_OFF}"
+      boot_conf "${NET_SRC}" "${NET_CONF}" "${NET_OFF}"
+      boot_conf "${REF_SRC}" "${REF_CONF}" "${REF_OFF}"
+    fi
     if [[ ! -f /etc/unwoke/flathub ]]; then
       printf 'off\n' > /etc/unwoke/flathub
     fi
@@ -423,7 +700,7 @@ cmd_apply_user() {
   if [[ -x /usr/libexec/unwoke/theme.sh ]]; then
     /usr/libexec/unwoke/theme.sh apply-user-once || true
   fi
-  if ! is_browserless && [[ ! -f "${BUBBLE_OFF}" ]]; then
+  if is_origin && [[ ! -f "${BUBBLE_OFF}" ]]; then
     ensure_bubble_instance || true
   fi
 }
@@ -438,18 +715,31 @@ shift || true
 case "${main}" in
   status) cmd_status ;;
   audit) cmd_audit ;;
-  hardening) cmd_pack "Brave hardening pack" "${HARDEN_SRC}" "${HARDEN_DST}" "${HARDEN_OFF}" "${1:-status}" ;;
-  devices) cmd_pack "Brave device pack" "${DEVICES_SRC}" "${DEVICES_DST}" "${DEVICES_OFF}" "${1:-status}" ;;
-  jitless) cmd_pack "Brave JIT-less" "${JITLESS_SRC}" "${JITLESS_DST}" "${JITLESS_OFF}" "${1:-status}" ;;
+  hardening) cmd_pack "hardening pack" "${HARDEN_SRC}" "${HARDEN_FILE}" "${HARDEN_OFF}" "${1:-status}" ;;
+  devices) cmd_pack "device pack" "${DEVICES_SRC}" "${DEVICES_FILE}" "${DEVICES_OFF}" "${1:-status}" ;;
+  jitless) cmd_pack "JIT-less" "${JITLESS_SRC}" "${JITLESS_FILE}" "${JITLESS_OFF}" "${1:-status}" ;;
   extensions)
     case "${1:-status}" in
-      block|on|enable) cmd_pack "Brave extension block" "${EXT_SRC}" "${EXT_DST}" "${EXT_OFF}" on ;;
-      allow|off|disable) cmd_pack "Brave extension block" "${EXT_SRC}" "${EXT_DST}" "${EXT_OFF}" off ;;
-      status) cmd_pack "Brave extension block" "${EXT_SRC}" "${EXT_DST}" "${EXT_OFF}" status ;;
+      block|on|enable) cmd_pack "extension block" "${EXT_SRC}" "${EXT_FILE}" "${EXT_OFF}" on ;;
+      allow|off|disable) cmd_pack "extension block" "${EXT_SRC}" "${EXT_FILE}" "${EXT_OFF}" off ;;
+      status) cmd_pack "extension block" "${EXT_SRC}" "${EXT_FILE}" "${EXT_OFF}" status ;;
       *) echo "usage: ujust set-brave-extensions block|allow|status" >&2; exit 2 ;;
     esac
     ;;
-  isolation) cmd_pack "Brave isolation pack" "${ISO_SRC}" "${ISO_DST}" "${ISO_OFF}" "${1:-status}" ;;
+  isolation) cmd_pack "isolation pack" "${ISO_SRC}" "${ISO_FILE}" "${ISO_OFF}" "${1:-status}" ;;
+  sandbox) cmd_pack "extra sandbox pack" "${SANDBOX_SRC}" "${SANDBOX_FILE}" "${SANDBOX_OFF}" "${1:-status}" ;;
+  devtools)
+    case "${1:-status}" in
+      lock|on|enable|block) cmd_pack "DevTools lock" "${DEVTOOLS_SRC}" "${DEVTOOLS_FILE}" "${DEVTOOLS_OFF}" on ;;
+      allow|off|disable) cmd_pack "DevTools lock" "${DEVTOOLS_SRC}" "${DEVTOOLS_FILE}" "${DEVTOOLS_OFF}" off ;;
+      status) cmd_pack "DevTools lock" "${DEVTOOLS_SRC}" "${DEVTOOLS_FILE}" "${DEVTOOLS_OFF}" status ;;
+      *) echo "usage: ujust set-brave-devtools lock|allow|status" >&2; exit 2 ;;
+    esac
+    ;;
+  network-sandbox) cmd_conf "Network Service Sandbox" "${NET_SRC}" "${NET_CONF}" "${NET_OFF}" "${1:-status}" \
+    /usr/etc/trivalent/trivalent.conf.d/50-unwoke-network-sandbox.conf ;;
+  referrers) cmd_conf "Punycode + clear-cross-origin-referrers" "${REF_SRC}" "${REF_CONF}" "${REF_OFF}" "${1:-status}" \
+    /usr/etc/trivalent/trivalent.conf.d/60-unwoke-referrers.conf ;;
   allow-browsers) cmd_allow_browsers "${1:-status}" "${2:-}" ;;
   flathub) exec /usr/libexec/unwoke/flathub.sh "${1:-status}" ;;
   lockdown) exec /usr/libexec/unwoke/flatpak-lockdown.sh "${1:-status}" ;;

@@ -37,6 +37,14 @@ swap_desktop "trivalent.desktop" "${ORIGIN_DESKTOP}"
 swap_desktop "brave-browser.desktop" "${ORIGIN_DESKTOP}"
 swap_desktop "org.mozilla.firefox.desktop" "${ORIGIN_DESKTOP}"
 
+for d in trivalent.desktop brave-browser.desktop \
+         io.github.kolunmi.Bazaar.desktop org.gnome.Software.desktop \
+         org.kde.discover.desktop; do
+  if [[ -f "/usr/share/applications/${d}" ]]; then
+    grep -q '^Hidden=' "/usr/share/applications/${d}" || echo 'Hidden=true' >> "/usr/share/applications/${d}"
+  fi
+done
+
 mkdir -p /usr/share/applications /usr/etc/xdg
 cat > /usr/share/applications/mimeapps.list <<EOF
 [Default Applications]

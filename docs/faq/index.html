@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#050a16">
   <meta name="color-scheme" content="dark">
   <title>FAQ | Unwoke SecureBlue</title>
-  <meta name="description" content="Affiliation, Origin vs browserless, toggles, Flathub, Flatpak lockdown, theme, signing.">
+  <meta name="description" content="Affiliation, Origin vs Trivalent vs browserless, toggles, Flathub, Flatpak lockdown, theme, signing.">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css?v=4">
@@ -41,7 +41,10 @@
     <p>No. Personal overlay. Their project is <a href="https://secureblue.dev">secureblue.dev</a>. Use that if you want the official images, Trivalent, Bazaar, and the <a href="https://secureblue.dev/code-of-conduct">Contributor Covenant</a>. Our <a href="conduct/">conduct</a> is the opposite of that document.</p>
 
     <h2 id="safer"><a href="#safer">Is this more secure than stock secureblue?</a></h2>
-    <p>Origin images: no. Stock + Trivalent is tighter. Browserless images: tighter than Origin because there is no fat <code>brave_t</code> and no Chromium in the image. That only lasts until you install a browser. It is not “safer than Trivalent while browsing.”</p>
+    <p>Origin images: no. Stock + Trivalent is tighter on the browser. <code>-trivalent</code> images: equal on the house browser (same binary, patches, SELinux), stricter on extra policies and house locks (no store, Flathub/brew/Bluetooth/toolbox off, camera lock, …). Browserless: tighter than Origin because there is no fat <code>brave_t</code> and no Chromium in the image. That only lasts until you install a browser. It is not “safer than Trivalent while browsing.”</p>
+
+    <h2 id="trivalent"><a href="#trivalent">What is the Trivalent flavor?</a></h2>
+    <p>Rebase to <code>unwoke-silverblue-trivalent</code> (or kinoite / nvidia-open). We keep stock Trivalent and <code>trivalent-selinux</code>. We do not load <code>brave_t</code>. Extra Chromium managed policies (JIT-less, no WebGL, extension block, device guards, extra sandbox) and two flag packs (Network Service Sandbox, punycode/referrers) default on and revert with <code>ujust set-trivalent-*</code> (same packs as <code>set-brave-*</code>). This does not add Vanadium compiler patches on top of what Trivalent already ships. Do not Bubblejail it.</p>
 
     <h2 id="browserless"><a href="#browserless">What is the browserless flavor?</a></h2>
     <p>Same overlay: Trivalent, Bazaar, and GUI stores are gone. Unlike the default images, we do <em>not</em> install Brave Origin, do not load <code>brave_t</code>, and do not add Flathub. Rebase to <code>unwoke-silverblue-browserless</code> (or kinoite / nvidia-open variants).</p>
@@ -53,7 +56,7 @@
     <p>Brave Origin is a separate Linux package (<code>brave-origin</code>) with extras compiled out. Binary path: <code>/opt/brave.com/brave-origin/brave</code>. We do not install <code>brave-browser</code>. It is still Chromium-family software, not Trivalent.</p>
 
     <h2 id="store"><a href="#store">Where is the software store?</a></h2>
-    <p>There isn’t one. Bazaar, GNOME Software, and Plasma Discover are removed. Flathub is <strong>off</strong> on both flavors until <code>ujust set-flathub verified</code> (stock-like) or <code>full</code>.</p>
+    <p>There isn’t one. Bazaar, GNOME Software, and Plasma Discover are removed. Flathub is <strong>off</strong> on every flavor until <code>ujust set-flathub verified</code> (stock-like) or <code>full</code>.</p>
 
     <h2 id="toggles"><a href="#toggles">What ujust commands did you add?</a></h2>
     <p>Stock secureblue commands stay. Overlay extras, all reversible, are listed on <a href="features/#toggles">Features</a>. Short list:</p>
@@ -66,7 +69,11 @@ ujust set-brave-devices on|off
 ujust set-brave-jitless on|off
 ujust set-brave-extensions block|allow
 ujust set-brave-isolation on|off
+ujust set-brave-sandbox on|off
+ujust set-brave-devtools lock|allow
 ujust set-brave-bubblejail on|off
+ujust set-trivalent-network-sandbox on|off
+ujust set-trivalent-referrers on|off
 ujust set-brew on|off
 ujust set-camera-mic on|off
 ujust set-admin-split on|off|add NAME
@@ -77,9 +84,9 @@ ujust set-unwoke-theme apply
 ujust set-allow-browsers on ALLOW</code></pre>
 
     <h2 id="jitless"><a href="#jitless">A site broke after install</a></h2>
-    <p>JIT-less is <strong>on</strong> by default on Origin. Turn it off and restart Brave Origin:</p>
+    <p>JIT-less is <strong>on</strong> by default on Origin and Trivalent. Turn it off and restart the browser:</p>
 <pre><code>ujust set-brave-jitless off</code></pre>
-    <p>Camera/mic/USB in the browser: <code>ujust set-brave-devices off</code> and if the kernel lock is on, <code>ujust set-camera-mic on</code>. WebGL/WebGPU: <code>ujust set-brave-isolation off</code>. Passwords/autofill: <code>ujust set-brave-hardening off</code>. Extensions: <code>ujust set-brave-extensions allow</code>.</p>
+    <p>Camera/mic/USB in the browser: <code>ujust set-brave-devices off</code> and if the kernel lock is on, <code>ujust set-camera-mic on</code>. WebGL/WebGPU: <code>ujust set-brave-isolation off</code>. Passwords/autofill: <code>ujust set-brave-hardening off</code>. Extensions: <code>ujust set-brave-extensions allow</code>. Trivalent cookie wipes: <code>ujust set-trivalent-network-sandbox off</code>.</p>
 
     <h2 id="lockdown"><a href="#lockdown">Flatpaks do nothing / need a million permissions</a></h2>
     <p>Permission lockdown is <strong>on</strong> by default (stock ships it as opt-in). Grant per-app in Flatseal, or:</p>
@@ -107,10 +114,10 @@ ujust set-allow-browsers on ALLOW</code></pre>
     <p>Default Unwoke navy wallpaper, a darker lock image, dark style, GNOME named accent <code>blue</code>, GTK/KDE <code>#3b6cff</code>. Gallery: <a href="brand/">Brand</a>. GNOME has no classic screensaver; the lock screen is that image. Re-apply: <code>ujust set-unwoke-theme apply</code>.</p>
 
     <h2 id="bubblejail"><a href="#bubblejail">What is set-brave-bubblejail?</a></h2>
-    <p>Extra sandbox around Origin’s desktop launcher. Default <strong>on</strong>. GPU, PipeWire, and portals may break. <code>ujust set-brave-bubblejail off</code> if the window will not start.</p>
+    <p>Extra sandbox around Origin’s desktop launcher. Default <strong>on</strong>. GPU, PipeWire, and portals may break. <code>ujust set-brave-bubblejail off</code> if the window will not start. On <code>-trivalent</code> this command is refused: stock already jails Trivalent, and their FAQ says Bubblejail on Trivalent is broken.</p>
 
     <h2 id="userns"><a href="#userns">Did you turn user namespaces back on?</a></h2>
-    <p>Not globally. <code>harden_userns</code> stays on. On Origin images, Brave Origin is labeled <code>brave_t</code> and that domain is on secureblue’s userns allow-list. Browserless images do not add that exception — same as stock with Trivalent removed. Unconfined apps still cannot create user namespaces.</p>
+    <p>Not globally. <code>harden_userns</code> stays on. On Origin images, Brave Origin is labeled <code>brave_t</code> and that domain is on secureblue’s userns allow-list. Trivalent images keep stock <code>trivalent_t</code> only. Browserless images do not add an extra domain — same as stock with Trivalent removed. Unconfined apps still cannot create user namespaces.</p>
 
     <h2 id="name"><a href="#name">Why Unwoke SecureBlue that way?</a></h2>
     <p><em>Unwoke</em> is the adjective/verb modifier. <em>SecureBlue</em> is one proper name (S and B capped), not “Secure Blue”. Repo and GHCR slugs stay lowercase because registries do.</p>

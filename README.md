@@ -1,14 +1,14 @@
 # Unwoke SecureBlue
 
-**secureblue’s hardening. Brave Origin *or* no browser. Terminal, no curator store.**
+**secureblue’s hardening. Brave Origin, stock Trivalent, or no browser. Terminal, no curator store.**
 
 The product name is **Unwoke SecureBlue**. *Unwoke* is the modifier (adjective/verb). *SecureBlue* is one word, S and B capped — not “Secure Blue”, not `unwoke-secureblue` in titles. Git and GHCR stay lowercase (`unwoke-secureblue`, `unwoke-silverblue`) because registries and rebase commands are slugs.
 
-This is a daily overlay on official [secureblue](https://secureblue.dev) images. It is **not** a fork and **not** affiliated with them. Their kernel hardening, `hardened_malloc`, SELinux, no Xwayland by default, and automatic updates stay. We only strip the two product decisions that lock the desktop: **Trivalent** and **Bazaar**. No GUI software store is added back. Two flavors: **Brave Origin**, or **browserless** (no Trivalent, no Origin, no `brave_t`).
+This is a daily overlay on official [secureblue](https://secureblue.dev) images. It is **not** a fork and **not** affiliated with them. Their kernel hardening, `hardened_malloc`, SELinux, no Xwayland by default, and automatic updates stay. We strip **Bazaar** and GUI stores on every image. Default images also strip Trivalent and ship **Brave Origin**. `*-trivalent` keeps stock Trivalent (patches + SELinux) and adds extra reversible Chromium policies. `*-browserless` ships no house browser.
 
 Site: [sergi270710267.github.io/unwoke-secureblue](https://sergi270710267.github.io/unwoke-secureblue/). Overlay delta and toggles: [Features](https://sergi270710267.github.io/unwoke-secureblue/features/). Wallpaper/lock/accent: [Brand](https://sergi270710267.github.io/unwoke-secureblue/brand/). What changed: [Changelog](https://sergi270710267.github.io/unwoke-secureblue/changelog/) (rebuilt with the site from public git subjects). Stock secureblue FAQ/features/install are mirrored daily under `/secureblue/` (Apache-2.0, not affiliated); our pages are never overwritten.
 
-Images: `ghcr.io/sergi270710267/unwoke-silverblue` · `unwoke-kinoite` · `*-nvidia-open` · `*-browserless`
+Images: `ghcr.io/sergi270710267/unwoke-silverblue` · `unwoke-kinoite` · `*-nvidia-open` · `*-trivalent` · `*-browserless`
 
 ---
 
@@ -16,31 +16,38 @@ Images: `ghcr.io/sergi270710267/unwoke-silverblue` · `unwoke-kinoite` · `*-nvi
 
 Stock secureblue is a serious hardened Fedora Atomic. It also ships a house browser and a house app store that decide what you may install.
 
-| | Stock [secureblue](https://secureblue.dev) | Origin images | Browserless images (`*-browserless`) |
-| --- | --- | --- | --- |
-| Browser | [Trivalent](https://github.com/secureblue/Trivalent) — their Chromium, default, SELinux-confined | **[Brave Origin](https://brave.com/origin/linux/)** standalone RPM (`brave-origin`). Default browser. Runs in `brave_t`. | **None.** No Trivalent, no Origin. `harden_userns` is stock (Flatpak only). |
-| App store | [Bazaar](https://github.com/secureblue/bazaar-rpm) — curated catalog | **None.** No Flathub until `ujust set-flathub verified`. | **None.** Same. |
-| User namespaces | Off for unconfined; on for Flatpak and Trivalent | Same, plus `brave_t` on their userns allow-list so Origin’s sandbox can start | Same as stock with Trivalent gone: unconfined blocked, Flatpak allowed, no extra domain |
+| | Stock [secureblue](https://secureblue.dev) | Origin images | Trivalent images (`*-trivalent`) | Browserless images (`*-browserless`) |
+| --- | --- | --- | --- | --- |
+| Browser | [Trivalent](https://github.com/secureblue/Trivalent) — their Chromium, default, SELinux-confined | **[Brave Origin](https://brave.com/origin/linux/)** standalone RPM (`brave-origin`). Default browser. Runs in `brave_t`. | **Stock Trivalent** (same patches + SELinux) plus extra reversible policies | **None.** No Trivalent, no Origin. `harden_userns` is stock (Flatpak only). |
+| App store | [Bazaar](https://github.com/secureblue/bazaar-rpm) — curated catalog | **None.** No Flathub until `ujust set-flathub verified`. | **None.** Same. | **None.** Same. |
+| User namespaces | Off for unconfined; on for Flatpak and Trivalent | Same, plus `brave_t` on their userns allow-list so Origin’s sandbox can start | Same as stock. No `brave_t`. | Same as stock with Trivalent gone: unconfined blocked, Flatpak allowed, no extra domain |
 
-`brave_t` (Origin images only) is an unconfined-like domain so Brave Origin can run. It is **not** Trivalent’s tight confinement. Browserless does not load it.
+`brave_t` (Origin images only) is an unconfined-like domain so Brave Origin can run. It is **not** Trivalent’s tight confinement. Trivalent and browserless do not load it.
+
+`*-trivalent` equals stock on the house browser and is stricter on extra Chromium policies + house locks. Extra JSON is not a new compiler patch.
 
 Browserless is safer than Origin **until you install a browser**. Easy host installs are blocked until `ujust set-allow-browsers on ALLOW` (Flatpak mask + rpm-ostree exclude). That is a seatbelt: toolbox, brew, AppImage, and `rpm-ostree --disableexcludes` still work. It is not a Trivalent replacement.
 
-What we *can* do on Brave Origin is force Chromium enterprise policies and keep their `ujust` surface. Stock commands still work (`ujust set-unconfined-userns`, `ujust set-kargs-hardening`, `ujust audit-secureblue`, …). Overlay extras:
+What we *can* do on Origin and Trivalent is force Chromium enterprise policies and keep their `ujust` surface. Stock commands still work (`ujust set-unconfined-userns`, `ujust set-kargs-hardening`, `ujust audit-secureblue`, …). Overlay extras:
 
 ```bash
 ujust unwoke-status
 ujust audit-unwoke
 
-# Origin (each has on/off; restart Brave Origin after policy changes)
+# Origin and Trivalent (each has on/off; restart the browser after policy changes)
+# set-trivalent-* is the same pack under a clearer name on -trivalent images
 ujust set-brave-hardening on|off     # HTTPS, no metrics, no autofill/passwords (default on)
 ujust set-brave-devices on|off       # camera/mic/geo/USB/BT/serial blocked (default on)
 ujust set-brave-jitless on|off       # no JS JIT; breaks some sites (default on)
 ujust set-brave-extensions block|allow
 ujust set-brave-isolation on|off     # no WebGL/WebGPU; SitePerProcess (default on)
-ujust set-brave-bubblejail on|off    # default on; GPU may break
+ujust set-brave-sandbox on|off       # audio sandbox, no screen capture, no JS optimizer
+ujust set-brave-devtools lock|allow  # default allow (opt-in)
+ujust set-brave-bubblejail on|off    # Origin only; default on; GPU may break
+ujust set-trivalent-network-sandbox on|off  # Trivalent only; may clear cookies
+ujust set-trivalent-referrers on|off        # Trivalent only; punycode + strip referrers
 
-# Both flavors
+# All flavors
 ujust set-flathub verified|full|off  # default off both flavors; verified = stock
 ujust set-bluetooth on|off           # default off; Wi-Fi stays
 ujust set-toolbox on|off             # default off; /usr/bin/toolbox is a wrapper
@@ -70,6 +77,10 @@ We did **not** gut SELinux, kernel args, `hardened_malloc`, disk encryption, or 
 | `unwoke-silverblue-nvidia-open` | GNOME | NVIDIA open (GTX 16xx / RTX+) | Brave Origin |
 | `unwoke-kinoite` | KDE Plasma | Nouveau | Brave Origin |
 | `unwoke-kinoite-nvidia-open` | KDE Plasma | NVIDIA open (GTX 16xx / RTX+) | Brave Origin |
+| `unwoke-silverblue-trivalent` | GNOME | Nouveau | Trivalent |
+| `unwoke-silverblue-nvidia-open-trivalent` | GNOME | NVIDIA open | Trivalent |
+| `unwoke-kinoite-trivalent` | KDE Plasma | Nouveau | Trivalent |
+| `unwoke-kinoite-nvidia-open-trivalent` | KDE Plasma | NVIDIA open | Trivalent |
 | `unwoke-silverblue-browserless` | GNOME | Nouveau | none |
 | `unwoke-silverblue-nvidia-open-browserless` | GNOME | NVIDIA open | none |
 | `unwoke-kinoite-browserless` | KDE Plasma | Nouveau | none |
@@ -99,7 +110,7 @@ systemctl reboot
 
 Empty disk: flash a [secureblue ISO](https://secureblue.dev/install) first (encrypt, wheel, enroll their Secure Boot key), then the commands above.
 
-KDE → `unwoke-kinoite`. NVIDIA → add `-nvidia-open`. No browser → add `-browserless` (e.g. `unwoke-silverblue-browserless`).
+KDE → `unwoke-kinoite`. NVIDIA → add `-nvidia-open`. Keep Trivalent → add `-trivalent`. No browser → add `-browserless` (e.g. `unwoke-silverblue-browserless`).
 
 ```bash
 cosign verify --key cosign.pub ghcr.io/sergi270710267/unwoke-silverblue
@@ -128,7 +139,7 @@ image-version: latest
 
 1. secureblue builds and **cosign-signs** `ghcr.io/secureblue/…-hardened`.
 2. Our CI downloads [their public key](https://github.com/secureblue/secureblue/blob/live/cosign.pub), checks it still matches `keys/secureblue.pub` in this repo, **`cosign verify`s the base**, then **pins that digest** so `:latest` cannot swap mid-build.
-3. We drop Trivalent+Bazaar+GUI stores+full `brave-browser`. Origin images then layer **Brave Origin** (`brave-origin`) and a `brave_t` SELinux domain. Browserless images skip that. Then we **cosign-sign our image** with `cosign.pub` in this repo.
+3. We drop Bazaar+GUI stores+full `brave-browser`. Origin images also drop Trivalent, then layer **Brave Origin** (`brave-origin`) and a `brave_t` SELinux domain. `-trivalent` images keep stock Trivalent and add extra policies. Browserless images drop Trivalent and skip Origin. Then we **cosign-sign our image** with `cosign.pub` in this repo.
 4. Your PC pulls `ghcr.io/sergi270710267/unwoke-…` and, after the signed rebase, verifies **our** signature.
 
 That is as close as an overlay gets to “updating from their source” without merging their git. We do **not** rebuild their kernel or re-run their SLSA pipeline; we inherit whatever they already shipped, after checking their signature.
@@ -148,11 +159,11 @@ Your machine then follows this repo with normal `rpm-ostree` updates.
 
 | Change | File |
 | --- | --- |
-| Packages | `recipes/common.yml` |
-| Browser / first-boot | `files/scripts/apply-unwoke.sh` |
-| Brave SELinux / userns | `files/scripts/install-brave-selinux.sh`, `files/system/usr/share/unwoke/selinux/` |
+| Packages | `recipes/common.yml` (stores); `remove-trivalent.sh` on Origin/browserless |
+| Browser / first-boot | `files/scripts/apply-{unwoke,brave,trivalent,browserless}.sh` |
+| Brave SELinux / userns | `files/scripts/install-brave-selinux.sh`, `files/system/usr/share/unwoke/selinux/` (Origin only) |
 | ujust extras | `files/justfiles/unwoke.just`, `files/system/usr/libexec/unwoke/toggles.sh` |
-| GNOME favorites | `files/gschema-overrides/zz2-unwoke.gschema.override` |
+| GNOME favorites | `files/gschema-overrides/zz2-unwoke*.gschema.override` |
 
 ---
 
