@@ -12,6 +12,7 @@ import datetime as dt
 import html
 import json
 import os
+import re
 import ssl
 import urllib.error
 import urllib.request
@@ -31,6 +32,13 @@ UA = "unwoke-stock-feats"
 
 def esc(s: str) -> str:
     return html.escape(s or "", quote=True)
+
+
+def display_title(title: str, number: int) -> str:
+    """[FEAT] is their request prefix, not a shipped feature."""
+    t = (title or "").strip()
+    t = re.sub(r"^\[(FEAT|FEATURE|ENHANCEMENT)\]\s*", "", t, flags=re.I)
+    return t or f"#{number}"
 
 
 def token() -> str:
@@ -194,11 +202,11 @@ def card(item: dict) -> str:
         lag = age_words((parse_day(closed) - sday).days)
 
     if k == "ahead":
-        status, klass = "Still open on stock", "feat-open"
-        race = f"Opened {esc(created)}. We shipped {esc(shipped)}."
+        status, klass = "Not shipped on stock", "feat-open"
+        race = f"Opened {esc(created)} as a request. We shipped {esc(shipped)}."
         if wait:
             race += f" They had been asking for {esc(wait)}."
-        race += " This card stays until they ship."
+        race += " Still open there, so they have not shipped it. This card stays until they do."
     elif k == "after":
         status, klass = "They shipped after us", "feat-after"
         race = f"We shipped {esc(shipped)}. They closed {esc(closed or 'later')}."
@@ -245,7 +253,7 @@ def card(item: dict) -> str:
         f'      <article class="feat-card {klass}">\n'
         f'        <p class="feat-status">{esc(status)}</p>\n'
         f'        <p class="tag">{esc(item.get("tag") or "Stock")}</p>\n'
-        f"        <h3>{esc(item.get('title') or f'#{n}')}</h3>\n"
+        f"        <h3>{esc(display_title(item.get('title') or '', n))}</h3>\n"
         f'        <p class="feat-race">{race}</p>\n'
         f"        <p>{esc(item.get('we') or '')}</p>\n"
         f"        {revert_html(item.get('revert') or '')}\n"
@@ -321,7 +329,7 @@ def main() -> int:
         section(
             "Still ahead of stock",
             "ahead",
-            "These tickets are still open on their tracker. Defaults here. They stay in this list until they ship.",
+            "Open [FEAT] tickets on their GitHub. That means requested, not shipped. Defaults here until they close the ticket.",
             ahead,
             "None yet — we would have no open tickets left to beat them on.",
         )

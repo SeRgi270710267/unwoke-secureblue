@@ -44,7 +44,7 @@
     <p class="eyebrow">Their GitHub</p>
     <h1>Shipped first</h1>
     <p class="lead">We watch official <a href="https://github.com/secureblue/secureblue/issues">secureblue issues</a>. Every ticket we shipped first <strong>stays on this page</strong>. Open ones stay until they ship. When they ship, the card moves and says they shipped <strong>after us</strong>. If we later copy their better patch, that is written here on purpose.</p>
-    <p class="notice"><strong>Not affiliated. Not auto-copied.</strong> Open/closed and their closing PR refresh on every site deploy. A human still decides whether their patch is better. Same signed kernel. No fork. No weaker SELinux.</p>
+    <p class="notice"><strong>[FEAT] is a request, not a release.</strong> On their tracker that prefix means “please add this.” An <em>open</em> ticket means they have <strong>not</strong> shipped it. We already did. Closed after our date means they shipped later. Not affiliated. We do not auto-copy their patch.</p>
     <div class="factory-stamp" data-factory-stamp>Checking last green…</div>
 
     <div class="score-row">
@@ -55,58 +55,58 @@
 
 <!-- feats-generated:start -->
     <h2 id="ahead"><a href="#ahead">Still ahead of stock</a></h2>
-    <p>These tickets are still open on their tracker. Defaults here. They stay in this list until they ship.</p>
+    <p>Open [FEAT] tickets on their GitHub. That means requested, not shipped. Defaults here until they close the ticket.</p>
     <div class="feat-grid">
       <article class="feat-card feat-open">
-        <p class="feat-status">Still open on stock</p>
+        <p class="feat-status">Not shipped on stock</p>
         <p class="tag">Apps</p>
-        <h3>[FEAT] Add more filesystem permissions to Harden Flatpak command</h3>
-        <p class="feat-race">Opened 2026-01-30. We shipped 2026-08-29. They had been asking for 7 months. This card stays until they ship.</p>
+        <h3>Add more filesystem permissions to Harden Flatpak command</h3>
+        <p class="feat-race">Opened 2026-01-30 as a request. We shipped 2026-08-29. They had been asking for 7 months. Still open there, so they have not shipped it. This card stays until they do.</p>
         <p>Extra xdg folders plus host-root cut by default. Not host-os (hardened_malloc needs host-os:ro).</p>
         <p class="feat-revert"><span>Revert</span> <code>ujust set-flatpak-lockdown off</code></p>
         <p class="feat-links"><a href="https://github.com/secureblue/secureblue/issues/1885">Stock #1885</a> · <a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/2e4bf8f"><code>2e4bf8f</code></a> · <a href="features/#toggles">On Unwoke</a></p>
       </article>
       <article class="feat-card feat-open">
-        <p class="feat-status">Still open on stock</p>
+        <p class="feat-status">Not shipped on stock</p>
         <p class="tag">Apps</p>
-        <h3>[FEAT] Allow blocking flatpaks from creating record streams</h3>
-        <p class="feat-race">Opened 2026-04-23. We shipped 2026-08-29. They had been asking for 4 months. This card stays until they ship.</p>
+        <h3>Allow blocking flatpaks from creating record streams</h3>
+        <p class="feat-race">Opened 2026-04-23 as a request. We shipped 2026-08-29. They had been asking for 4 months. Still open there, so they have not shipped it. This card stays until they do.</p>
         <p>Pulse and PipeWire capture blocked for Flatpaks, independent of folder lockdown. Native speakers stay.</p>
         <p class="feat-revert"><span>Revert</span> <code>ujust set-flatpak-record off</code></p>
         <p class="feat-links"><a href="https://github.com/secureblue/secureblue/issues/2156">Stock #2156</a> · <a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/2e4bf8f"><code>2e4bf8f</code></a> · <a href="tutorials/camera-mic/">On Unwoke</a></p>
       </article>
       <article class="feat-card feat-open">
-        <p class="feat-status">Still open on stock</p>
+        <p class="feat-status">Not shipped on stock</p>
         <p class="tag">Network</p>
-        <h3>[FEAT] add network fs toggle</h3>
-        <p class="feat-race">Opened 2026-06-15. We shipped 2026-08-29. They had been asking for 2 months. This card stays until they ship.</p>
+        <h3>add network fs toggle</h3>
+        <p class="feat-race">Opened 2026-06-15 as a request. We shipped 2026-08-29. They had been asking for 2 months. Still open there, so they have not shipped it. This card stays until they do.</p>
         <p>NFS and CIFS client modules blacklisted. Stock already masks the NFS server; we never unmask the server.</p>
         <p class="feat-revert"><span>Revert</span> <code>ujust set-network-fs on</code></p>
         <p class="feat-links"><a href="https://github.com/secureblue/secureblue/issues/2354">Stock #2354</a> · <a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/2e4bf8f"><code>2e4bf8f</code></a> · <a href="tutorials/network-fs/">On Unwoke</a></p>
       </article>
       <article class="feat-card feat-open">
-        <p class="feat-status">Still open on stock</p>
+        <p class="feat-status">Not shipped on stock</p>
         <p class="tag">USB install</p>
-        <h3>[FEAT] Make disk encryption opt-out instead of opt-in in anaconda</h3>
-        <p class="feat-race">Opened 2026-07-14. We shipped 2026-08-29. They had been asking for 2 months. This card stays until they ship.</p>
+        <h3>Make disk encryption opt-out instead of opt-in in anaconda</h3>
+        <p class="feat-race">Opened 2026-07-14 as a request. We shipped 2026-08-29. They had been asking for 2 months. Still open there, so they have not shipped it. This card stays until they do.</p>
         <p>Empty-disk Anaconda starts with LUKS on. You can still untick Encrypt.</p>
         <p class="feat-revert"><span>Revert</span> <code>Untick Encrypt in Anaconda</code></p>
         <p class="feat-links"><a href="https://github.com/secureblue/secureblue/issues/2432">Stock #2432</a> · <a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/2e4bf8f"><code>2e4bf8f</code></a> · <a href="install/">On Unwoke</a></p>
       </article>
       <article class="feat-card feat-open">
-        <p class="feat-status">Still open on stock</p>
+        <p class="feat-status">Not shipped on stock</p>
         <p class="tag">Trust</p>
-        <h3>[FEAT] Report installed Flatpak browsers in `ujust audit-secureblue`</h3>
-        <p class="feat-race">Opened 2026-08-13. We shipped 2026-08-29. They had been asking for 16 days. This card stays until they ship.</p>
+        <h3>Report installed Flatpak browsers in `ujust audit-secureblue`</h3>
+        <p class="feat-race">Opened 2026-08-13 as a request. We shipped 2026-08-29. They had been asking for 16 days. Still open there, so they have not shipped it. This card stays until they do.</p>
         <p>ujust audit-unwoke warns if a Flatpak web browser is installed, and fails on browserless.</p>
         <p class="feat-revert"><span>Revert</span> Hygiene, not a lock. Uninstall the Flatpak if it should not be there.</p>
         <p class="feat-links"><a href="https://github.com/secureblue/secureblue/issues/2508">Stock #2508</a> · <a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/2e4bf8f"><code>2e4bf8f</code></a> · <a href="tutorials/check-health/">On Unwoke</a></p>
       </article>
       <article class="feat-card feat-open">
-        <p class="feat-status">Still open on stock</p>
+        <p class="feat-status">Not shipped on stock</p>
         <p class="tag">USB install</p>
         <h3>Set higher default memory parameter for LUKS in ISOs</h3>
-        <p class="feat-race">Opened 2026-08-21. We shipped 2026-08-29. They had been asking for 8 days. This card stays until they ship.</p>
+        <p class="feat-race">Opened 2026-08-21 as a request. We shipped 2026-08-29. They had been asking for 8 days. Still open there, so they have not shipped it. This card stays until they do.</p>
         <p>Argon2id memory cost 2 GiB (RFC 9106) on the live ISO and /usr/etc/cryptsetup.conf.</p>
         <p class="feat-revert"><span>Revert</span> Weaker if you format LUKS yourself without that conf</p>
         <p class="feat-links"><a href="https://github.com/secureblue/secureblue/issues/2526">Stock #2526</a> · <a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/2e4bf8f"><code>2e4bf8f</code></a> · <a href="install/">On Unwoke</a></p>
