@@ -1,0 +1,107 @@
+{
+  "comment": "Map stock secureblue issues to Unwoke-only, revertable ujust. Never applied to a bake. Skip if it cannot hit Silverblue/Kinoite overlay or we have no allowlisted revert.",
+  "skip_users": ["dependabot[bot]"],
+  "skip_labels": ["cicd", "dependencies", "github_actions"],
+  "skip_title": ["dependabot", "codeql", "bump github/", "chore(deps)"],
+  "skip_if_only": ["sericea", "cosmic", "securecore", "iot-main", "iot-nvidia"],
+  "fixes": {
+    "bluetooth": {
+      "code": "ujust set-bluetooth on",
+      "revert": "ujust set-bluetooth off",
+      "note": "Stock only loads BT modules. We also mask the service and rfkill. Wi-Fi is not touched."
+    },
+    "camera": {
+      "code": "ujust set-camera-mic on",
+      "revert": "ujust set-camera-mic off",
+      "note": "Capture is locked here by default. Speakers stay. Browser policy is a second door: ujust set-brave-devices off if needed."
+    },
+    "xwayland": {
+      "code": "ujust set-xwayland on",
+      "revert": "ujust set-xwayland off",
+      "note": "Stock command. Security degradation. Prefer a Wayland app."
+    },
+    "flathub": {
+      "code": "ujust set-flathub verified",
+      "revert": "ujust set-flathub off",
+      "note": "There is no Bazaar. Verified remote only unless you mean ujust set-flathub full."
+    },
+    "brew": {
+      "code": "ujust set-brew on",
+      "revert": "ujust set-brew off",
+      "note": "New shell after. Stock ships brew on PATH; we do not."
+    },
+    "toolbox": {
+      "code": "ujust set-toolbox on",
+      "revert": "ujust set-toolbox off",
+      "note": "Wrappers until you opt in. Then stock distrobox-assemble works. podman stays."
+    },
+    "userns": {
+      "code": "ujust set-container-userns on",
+      "revert": "ujust set-container-userns off",
+      "note": "Stock command. Needed for Distrobox/Podman. Security degradation."
+    },
+    "unconfined-userns": {
+      "code": "ujust set-unconfined-userns on",
+      "revert": "ujust set-unconfined-userns off",
+      "note": "Stock command. Other browsers / Electron / bubblejail. Security degradation."
+    },
+    "jit": {
+      "code": "ujust set-brave-jitless off",
+      "revert": "ujust set-brave-jitless on",
+      "note": "Origin and *-trivalent. Restart the browser. One site is not a reason to flatten every pack."
+    },
+    "webgl": {
+      "code": "ujust set-brave-isolation off",
+      "revert": "ujust set-brave-isolation on",
+      "note": "WebGL/WebGPU. Restart the browser."
+    },
+    "devices": {
+      "code": "ujust set-brave-devices off",
+      "revert": "ujust set-brave-devices on",
+      "note": "Site camera/mic/USB/geo. Restart the browser. Also ujust set-camera-mic on for the hardware lock."
+    },
+    "vpn": {
+      "code": "ujust install-proton\n# or: ujust install-ivpn\n# or: ujust install-mullvad",
+      "revert": "Remove the WireGuard connection in Network settings. Do not leave an RPM origin you did not want.",
+      "note": "WireGuard import first. No Snap, no store. Official app only after checksum/gpg and an asked extra origin."
+    },
+    "usb": {
+      "code": "ujust setup-usbguard",
+      "revert": "Follow their docs to disable USBGuard. That is weaker.",
+      "note": "Stock command. Allow what is plugged in now."
+    },
+    "vm": {
+      "code": "ujust set-xwayland on",
+      "revert": "ujust set-xwayland off",
+      "note": "SPICE/clipboard on a secureblue guest often needs Xwayland. Do not setenforce 0."
+    },
+    "nvidia": {
+      "code": "rpm-ostree rebase ostree-image-signed:docker://ghcr.io/sergi270710267/unwoke-silverblue-nvidia-open-trivalent:latest",
+      "revert": "Rebase back to the non-NVIDIA Unwoke name you were on.",
+      "note": "Use an Unwoke *-nvidia-open image, not stock's. Then first-boot signed origin. Not Ventoy."
+    },
+    "nags": {
+      "code": "ujust set-stock-nags on",
+      "revert": "ujust set-stock-nags off",
+      "note": "We mask some stock user units. This turns those nags back on. Our signed-reboot nag is separate."
+    }
+  },
+  "rules": [
+    {"id": "bluetooth", "any": ["bluetooth", "bluez", "airpods", "bt headphone"]},
+    {"id": "camera", "any": ["webcam", "camera module", "microphone", "pipewire camera"]},
+    {"id": "xwayland", "any": ["xwayland", "x11 app", "x11 backend"]},
+    {"id": "flathub", "any": ["flathub", "flatpak install", "no software store"]},
+    {"id": "brew", "any": ["homebrew", "brew install", "linuxbrew"]},
+    {"id": "toolbox", "any": ["toolbox", "distrobox"]},
+    {"id": "userns", "any": ["oci permission denied", "container-userns", "podman.*permission"]},
+    {"id": "unconfined-userns", "any": ["unconfined-userns", "electron", "bwrap: creating new namespace"]},
+    {"id": "jit", "any": ["javascript", "jit-less", "jitless", "v8"]},
+    {"id": "webgl", "any": ["webgl", "webgpu", "three.js"]},
+    {"id": "devices", "any": ["getusermedia", "site camera", "site mic"]},
+    {"id": "vpn", "any": ["wireguard", "protonvpn", "mullvad", "install-vpn", "dns leak"]},
+    {"id": "usb", "any": ["usbguard", "mtp"]},
+    {"id": "vm", "any": ["spice", "libvirt", "virt-manager", "vsock", "kvm"]},
+    {"id": "nvidia", "any": ["nvidia", "nvenc", "cuda"], "title_only": true, "need_bug": true},
+    {"id": "nags", "any": ["notification every", "too many notification", "update notification"], "title_only": true}
+  ]
+}

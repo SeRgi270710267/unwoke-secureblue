@@ -57,6 +57,11 @@ jobs:
       - name: Generate tutorials hub from vendor list
         run: python3 docs/_tools/generate-tutorials.py
 
+      - name: Stock issues that hit Unwoke
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 docs/_tools/generate-stock-issues.py
+
       - name: Last-green factory stamp
         env:
           GITHUB_TOKEN: ${{ github.token }}

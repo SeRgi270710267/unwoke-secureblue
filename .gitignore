@@ -11,6 +11,7 @@ docs/secureblue/
 docs/changelog/
 docs/status.json
 docs/progress.json
+docs/stock-issues/
 .github/workflows/isos/prep_rootfs.generated.sh
 upstream-drift/
 __pycache__/

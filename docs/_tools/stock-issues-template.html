@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#050a16">
   <meta name="color-scheme" content="dark">
-  <title>Changelog | Unwoke SecureBlue</title>
-  <meta name="description" content="Public overlay changes. Subjects only; secrets and internal notes are dropped. Rebuilt with the site.">
+  <title>Workarounds | Unwoke SecureBlue</title>
+  <meta name="description" content="Open stock secureblue issues that can hit this overlay, with revertable Unwoke ujust. Never applied to a bake.">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css?v=13">
@@ -21,13 +21,13 @@
         <li><a href="compared/">Compared</a></li>
         <li><a href="factory/">Factory</a></li>
         <li><a href="brand/">Brand</a></li>
-        <li aria-current="page"><a href="changelog/">Changelog</a></li>
+        <li><a href="changelog/">Changelog</a></li>
         <li><a href="images/">Images</a></li>
         <li><a href="install/">Install</a></li>
         <li><a href="post-install/">Post-install</a></li>
         <li><a href="tutorials/">Tutorials</a></li>
         <li><a href="faq/">FAQ</a></li>
-        <li><a href="stock-issues/">Workarounds</a></li>
+        <li aria-current="page"><a href="stock-issues/">Workarounds</a></li>
         <li><a href="contributing/">Contributing</a></li>
         <li><a href="conduct/">Conduct</a></li>
         <li><a href="donate/">Donate</a></li>
@@ -37,18 +37,19 @@
     </nav>
   </header>
   <main id="content">
-    <h1>Changelog</h1>
-    <p>Public git subjects from <code>main</code>, grouped by day. Built at Pages deploy. No commit bodies, no diffs, no file lists. Subjects that look like secrets, keys, tokens, or passwords are dropped.</p>
-    <p class="notice">This is not a CVE feed and not stock secureblue’s changelog. Full public history: <a href="https://github.com/SeRgi270710267/unwoke-secureblue/commits/main">GitHub commits</a>. Compared ledger and the home “What’s new” list are the people-facing cut of the same git.</p>
-    __HIGHLIGHTS__
+    <h1>Workarounds</h1>
+    <p>Open issues from <a href="https://github.com/secureblue/secureblue/issues">secureblue/secureblue</a> that look like they can hit <strong>this overlay</strong> (Silverblue/Kinoite, Trivalent/Origin, Flatpak, BT, camera, …). Each card is a <strong>possible revertable ujust</strong> from our allowlist. Nothing here is baked into GHCR. PRs, Dependabot, CI, Sway/COSMIC/IoT, and issues with no overlay mapping are omitted.</p>
+    <div class="alert caution">
+      <p>These are not patches. <code>setenforce 0</code>, unsigned rebase, <code>gpgcheck=0</code>, and “disable the firewall” are never suggested. If the stock issue is in their kernel, wait for their signed image — we overlay, we do not fork.</p>
+    </div>
     __BODY__
-    <p class="mirror-meta">Generated __FETCHED__ from <code>__SHA__</code>. __COUNT__ public entries. Overlay files MIT. Not affiliated with secureblue.</p>
+    <p class="mirror-meta">Generated __FETCHED__. __KEPT__ shown after scanning __SCANNED__ open items. Not affiliated with secureblue.</p>
   </main>
   <footer>
     <a class="brand" href="./"><img src="assets/logo.svg?v=4" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
     <ul id="social">
-      <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commits/main">GitHub commits</a></li>
-      <li><a href="features/">Features</a></li>
+      <li><a href="https://github.com/secureblue/secureblue/issues">Their issues</a></li>
+      <li><a href="tutorials/">Tutorials</a></li>
     </ul>
     <p>Not affiliated with secureblue.</p>
   </footer>
