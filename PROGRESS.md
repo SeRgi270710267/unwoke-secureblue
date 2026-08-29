@@ -161,7 +161,7 @@ Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only
 
 - Pickup phrase: continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.
 - `install-oras.sh` and `.github/workflows/isos/**` are in `build.yml` paths-ignore. Do not cancel a bake that is already running.
-- USB ISO: old `ublue-os/titanoboa@main` failed (no `iso.yaml`, [33246595295](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33246595295)). `RoyalOughtness/titanoboa` died in 2s on `setup-just` and hard-codes their pubkeys ([33247362623](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33247362623)). Drive `ublue-os/titanoboa@840217d` Justfile with checksum-pinned `just`. If green, download the artifact (14 days). Make the GHCR `*-iso` package Public.
+- USB ISO: wrap itself is green (~14 min, `output.iso` then `chown`). Run [33249371957](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33249371957) still died in **Checksum** (~5 s) because `cosign sign-blob --key` uploaded to public Rekor/Fulcio. Fix: `--tlog-upload=false`, write PEM via Python (not `printf`), verify-blob with `--insecure-ignore-tlog`. Drive `ublue-os/titanoboa@840217d`. If green, download the artifact (14 days). Make the GHCR `*-iso` package Public.
 - Do not add `on: push` to `iso.yml` or `verify.yml`.
 - Confirm on a real rebase: `ujust setup` / `ujust why` / `ujust unwoke-status` / `ujust audit-unwoke` (wallpaper, policies, trampoline, leftover Trivalent gone on Origin/browserless). First-session window + why-menu ship on the next overlay bake.
 - Hard-refresh Pages if Install / Changelog look cached.

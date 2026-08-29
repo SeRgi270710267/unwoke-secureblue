@@ -193,16 +193,18 @@ jobs:
       - name: Checksum and sign sums
         env:
           COSIGN_PASSWORD: ""
+          COSIGN_YES: "1"
           COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
           IMAGE_NAME: ${{ matrix.image }}
         run: |
           set -euo pipefail
           ISO_SRC="${GITHUB_WORKSPACE}/${IMAGE_NAME}.iso"
           echo "Looking for ${ISO_SRC}"
-          ls -lh "${ISO_SRC}" || true
-          find "${GITHUB_WORKSPACE}" -name '*.iso' -printf '%s %p\n' | sort -n || true
-          [[ -f "${ISO_SRC}" ]] || {
-            echo "FAIL: ISO not at ${ISO_SRC}" >&2
+          ls -lh "${ISO_SRC}"
+          bytes="$(stat -c '%s' "${ISO_SRC}")"
+          echo "ISO bytes=${bytes}"
+          [[ "${bytes}" -gt 104857600 ]] || {
+            echo "FAIL: ISO too small (${bytes} bytes)" >&2
             exit 1
           }
           DATE_SUFFIX="$(date -u +%Y%m%d)"
@@ -210,15 +212,29 @@ jobs:
           ISO="output/${IMAGE_NAME}-${DATE_SUFFIX}.iso"
           mv -f "${ISO_SRC}" "${ISO}"
           (cd output && sha256sum "$(basename "${ISO}")" | tee SHA256SUMS)
-          KEY="${RUNNER_TEMP}/unwoke-cosign.key"
+          export KEY="${RUNNER_TEMP}/unwoke-cosign.key"
           umask 077
-          printf '%s\n' "${COSIGN_PRIVATE_KEY}" > "${KEY}"
+          python3 -c 'import os, pathlib; p=pathlib.Path(os.environ["KEY"]); p.write_text(os.environ["COSIGN_PRIVATE_KEY"], encoding="utf-8")'
           [[ -s "${KEY}" ]] || {
             echo "FAIL: SIGNING_SECRET empty" >&2
             exit 1
           }
-          COSIGN_OCI_EXPERIMENTAL=0 cosign sign-blob --yes --key "${KEY}" \
-            output/SHA256SUMS --output-signature output/SHA256SUMS.sig
+          python3 -c 'import os, pathlib; t=pathlib.Path(os.environ["KEY"]).read_text(encoding="utf-8");
+print("key bytes", len(t.encode()));
+lines=[ln for ln in t.splitlines() if "BEGIN" in ln or "END" in ln];
+print("\n".join(lines) or "FAIL: no PEM BEGIN/END");
+raise SystemExit(0 if any("BEGIN" in ln for ln in lines) else 1)'
+          export COSIGN_PASSWORD="${COSIGN_PASSWORD}"
+          export COSIGN_YES=1
+          export COSIGN_OCI_EXPERIMENTAL=0
+          # Key signatures only. Do not talk to public Rekor/Fulcio (that 5s death).
+          COSIGN_OCI_EXPERIMENTAL=0 cosign sign-blob --yes --tlog-upload=false --key "${KEY}" \
+            --output-signature output/SHA256SUMS.sig \
+            output/SHA256SUMS
+          COSIGN_OCI_EXPERIMENTAL=0 cosign verify-blob --key cosign.pub \
+            --insecure-ignore-tlog \
+            --signature output/SHA256SUMS.sig \
+            output/SHA256SUMS
           shred -u "${KEY}" || rm -f "${KEY}"
           echo "ISO_FILE=${ISO}" >> "${GITHUB_ENV}"
 
@@ -239,14 +255,15 @@ jobs:
             "${ISO_FILE}:application/vnd.unwoke.iso" \
             "output/SHA256SUMS:text/plain" \
             "output/SHA256SUMS.sig:application/octet-stream"
-          extra=()
-          if cosign verify --help 2>&1 | grep -q -- '--new-bundle-format'; then
-            extra+=(--new-bundle-format=false)
-          fi
-          KEY="${RUNNER_TEMP}/unwoke-cosign.key"
+          export KEY="${RUNNER_TEMP}/unwoke-cosign.key"
           umask 077
-          printf '%s\n' "${COSIGN_PRIVATE_KEY}" > "${KEY}"
-          COSIGN_OCI_EXPERIMENTAL=0 cosign sign --yes --key "${KEY}" \
+          python3 -c 'import os, pathlib; pathlib.Path(os.environ["KEY"]).write_text(os.environ["COSIGN_PRIVATE_KEY"], encoding="utf-8")'
+          extra=()
+          if cosign sign --help 2>&1 | grep -q -- '--tlog-upload'; then
+            extra+=(--tlog-upload=false)
+          fi
+          COSIGN_YES=1 COSIGN_OCI_EXPERIMENTAL=0 cosign sign --yes --key "${KEY}" \
+            "${extra[@]}" \
             "${ISO_PKG}:latest"
           shred -u "${KEY}" || rm -f "${KEY}"
 

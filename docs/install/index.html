@@ -92,8 +92,8 @@
       <li>Pull with <a href="https://oras.land/docs/installation">oras</a> (Linux/macOS) when the package exists:</li>
     </ol>
 <pre><code id="cmd-iso">oras pull ghcr.io/sergi270710267/unwoke-silverblue-iso:latest
-cosign verify --key cosign.pub ghcr.io/sergi270710267/unwoke-silverblue-iso:latest
-cosign verify-blob --key cosign.pub --signature SHA256SUMS.sig SHA256SUMS
+cosign verify --key cosign.pub --insecure-ignore-tlog ghcr.io/sergi270710267/unwoke-silverblue-iso:latest
+cosign verify-blob --key cosign.pub --insecure-ignore-tlog --signature SHA256SUMS.sig SHA256SUMS
 sha256sum -c SHA256SUMS</code></pre>
     <ol start="3">
       <li>Flash with Fedora Media Writer, <code>dd</code>, or Rufus. <strong>Not Ventoy.</strong></li>
@@ -177,8 +177,8 @@ ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
         "cosign verify --key cosign.pub ghcr.io/sergi270710267/" + name;
       iso.textContent =
         "oras pull ghcr.io/sergi270710267/" + name + "-iso:latest\n" +
-        "cosign verify --key cosign.pub ghcr.io/sergi270710267/" + name + "-iso:latest\n" +
-        "cosign verify-blob --key cosign.pub --signature SHA256SUMS.sig SHA256SUMS\n" +
+        "cosign verify --key cosign.pub --insecure-ignore-tlog ghcr.io/sergi270710267/" + name + "-iso:latest\n" +
+        "cosign verify-blob --key cosign.pub --insecure-ignore-tlog --signature SHA256SUMS.sig SHA256SUMS\n" +
         "sha256sum -c SHA256SUMS";
       checkIso(name);
     }
