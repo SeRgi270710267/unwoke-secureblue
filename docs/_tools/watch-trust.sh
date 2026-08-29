@@ -26,22 +26,35 @@ else
 fi
 
 echo "== titanoboa pin =="
-pin="$(python3 - <<'PY'
-from pathlib import Path
-import re, sys
-text = Path(".github/workflows/iso.yml").read_text(encoding="utf-8")
-m = re.search(
-    r"repository:\s*ublue-os/titanoboa\s*\n\s*ref:\s*([0-9a-f]{7,40})",
-    text,
-)
-if not m:
-    sys.exit("could not parse titanoboa pin from iso.yml")
-print(m.group(1))
-PY
-)"
-echo "pin ${pin}"
-if git ls-remote "https://github.com/ublue-os/titanoboa.git" "${pin}" | grep -q .; then
-  echo "titanoboa pin still on GitHub"
+# git ls-remote URL SHA only matches refs (heads/tags named that SHA), not
+# commit objects. Our pin is ublue-os/titanoboa@840217d (tag v0.2). Asking
+# ls-remote for the SHA opened a false titanoboa-pin issue. Ask GitHub for
+# the commit; never bump the pin.
+pin_py="${ROOT}/docs/_tools/titanoboa-pin.py"
+[[ -f "${pin_py}" ]] || { echo "missing ${pin_py}" >&2; exit 1; }
+read -r repo pin < <(python3 "${pin_py}")
+echo "pin ${repo}@${pin}"
+pin_ok=0
+sha=""
+if command -v gh >/dev/null && [[ -n "${GH_TOKEN:-${GITHUB_TOKEN:-}}" ]]; then
+  sha="$(gh api "repos/${repo}/commits/${pin}" --jq .sha 2>/dev/null || true)"
+fi
+if [[ -z "${sha}" ]]; then
+  sha="$(curl -fsSL "https://api.github.com/repos/${repo}/commits/${pin}" \
+    | python3 -c 'import json,sys; print(json.load(sys.stdin).get("sha",""))' \
+    2>/dev/null || true)"
+fi
+if [[ -n "${sha}" && "${sha}" == "${pin}"* ]]; then
+  pin_ok=1
+fi
+if [[ "${pin_ok}" -eq 0 ]]; then
+  # Last resort: a tag or branch still points at that object.
+  if git ls-remote "https://github.com/${repo}.git" | awk '{print $1}' | grep -qi "^${pin}"; then
+    pin_ok=1
+  fi
+fi
+if [[ "${pin_ok}" -eq 1 ]]; then
+  echo "titanoboa pin still on GitHub (${sha:-${pin}})"
   bash "${ALARM}" pin close || true
 else
   echo "TITANOBOA PIN MISSING — not auto-bumping"

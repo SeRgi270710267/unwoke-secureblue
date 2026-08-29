@@ -109,7 +109,9 @@ Do **not** auto-bump to \`@main\`. Read the new commit, pin a hash, re-dispatch 
 - SHA: \`${GITHUB_SHA}\`
 - Run: ${RUN_URL}
 
-Open the Packages settings URL printed in that run (or GitHub → Packages → the \`unwoke-*\` package → Change visibility → Public). One click. After that this job is a no-op and this issue closes.
+The twelve OS images are often already Public. The leftover is usually a first \`unwoke-*-iso\` USB wrap.
+
+Open GitHub → Packages → that package → Package settings → Change visibility → Public. One click. After that this job is a no-op and this issue closes.
 Do not make the bake fail over this. Do not switch the registry."
     CLOSE="GHCR Unwoke packages are Public: ${RUN_URL}"
     ;;
@@ -132,6 +134,12 @@ The mirror still injected a \`ujust why\` / \`ujust setup\` box so people are no
     exit 1
     ;;
 esac
+
+if [[ -n "${ALARM_EXTRA:-}" ]]; then
+  BODY="${BODY}
+
+${ALARM_EXTRA}"
+fi
 
 command -v gh >/dev/null || { echo "gh missing" >&2; exit 1; }
 [[ -n "${GITHUB_REPOSITORY:-}" ]] || { echo "GITHUB_REPOSITORY unset" >&2; exit 1; }

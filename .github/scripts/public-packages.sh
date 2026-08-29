@@ -62,11 +62,30 @@ if [[ -n "${listed}" ]]; then
 fi
 
 still_private=0
+private_names=()
+
+# GITHUB_TOKEN often cannot PATCH visibility. Anonymous OCI pull is the
+# rebase/USB truth: 200 = public even if the Packages API still says private.
+anon_pull_ok() {
+  local name="$1"
+  local tok code
+  tok="$(curl -fsSL --retry 3 --retry-delay 1 \
+      "https://ghcr.io/token?service=ghcr.io&scope=repository:${OWNER}/${name}:pull" \
+      | python3 -c 'import json,sys; print(json.load(sys.stdin).get("token",""))' \
+      2>/dev/null || true)"
+  [[ -n "${tok}" ]] || return 1
+  code="$(curl -sS -o /dev/null -w '%{http_code}' \
+      -H "Authorization: Bearer ${tok}" \
+      -H "Accept: application/vnd.oci.image.index.v1+json, application/vnd.oci.image.manifest.v1+json, application/vnd.docker.distribution.manifest.v2+json" \
+      "https://ghcr.io/v2/${OWNER}/${name}/manifests/latest" || true)"
+  [[ "${code}" == "200" ]]
+}
 
 set_public() {
   local name="$1"
-  local vis
+  local vis settings
   vis="$(gh api "users/${OWNER}/packages/container/${name}" --jq .visibility 2>/dev/null || echo missing)"
+  settings="https://github.com/users/${OWNER}/packages/container/${name}/settings"
   case "${vis}" in
     public)
       echo "public  ${name}"
@@ -77,6 +96,10 @@ set_public() {
       return 0
       ;;
   esac
+  if anon_pull_ok "${name}"; then
+    echo "public  ${name} (anonymous pull; Packages API still ${vis})"
+    return 0
+  fi
   echo "private ${name} — trying to publish"
   if gh api --method PATCH \
       -H "Accept: application/vnd.github.package-deletes-preview+json" \
@@ -91,9 +114,14 @@ set_public() {
     echo "now public ${name}"
     return 0
   fi
-  echo "WARN: still private: https://github.com/users/${OWNER}/packages/container/${name}/settings"
+  if anon_pull_ok "${name}"; then
+    echo "now public ${name} (anonymous pull)"
+    return 0
+  fi
+  echo "WARN: still private: ${settings}"
   echo "      GitHub → Packages → ${name} → Change visibility → Public (one click, then this job is a no-op)"
   still_private=$((still_private + 1))
+  private_names+=("${name}")
   return 0
 }
 
@@ -109,7 +137,15 @@ fi
 ROOT="${GITHUB_WORKSPACE:-.}"
 if [[ "${ALARM:-}" == "1" && -f "${ROOT}/.github/scripts/issue-alarm.sh" ]]; then
   if [[ "${still_private}" -gt 0 ]]; then
-    bash "${ROOT}/.github/scripts/issue-alarm.sh" packages open || true
+    extra="Still private after the factory tried Public:"
+    for n in "${private_names[@]}"; do
+      extra="${extra}
+- \`${n}\` → https://github.com/users/${OWNER}/packages/container/${n}/settings"
+    done
+    extra="${extra}
+
+Anonymous rebase of the twelve OS images can already work. The usual leftover is a first \`*-iso\` USB wrap. One Public click on each URL. Do not bump titanoboa or switch registry."
+    ALARM_EXTRA="${extra}" bash "${ROOT}/.github/scripts/issue-alarm.sh" packages open || true
   else
     bash "${ROOT}/.github/scripts/issue-alarm.sh" packages close || true
   fi

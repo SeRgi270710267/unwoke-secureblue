@@ -99,7 +99,7 @@
           </tr>
           <tr>
             <td>First GHCR push is private</td>
-            <td>Tries Public after overlay, ISO, and twice-daily trust-watch. Opens <code>ghcr-private</code> with the click URL if GitHub still refuses the token. Closes after the click</td>
+            <td>Tries Public after overlay, ISO, and twice-daily trust-watch. Anonymous OCI pull is the truth (OS images can already be Public while a first <code>*-iso</code> wrap is not). Opens <code>ghcr-private</code> with each leftover settings URL. Closes after the click</td>
             <td>Fail the bake. Auto-guess a different registry</td>
           </tr>
           <tr>
@@ -114,7 +114,7 @@
           </tr>
           <tr>
             <td>Titanoboa pin commit disappears</td>
-            <td>Opens <code>titanoboa-pin</code> before Sunday wrap mystery-fails</td>
+            <td>Opens <code>titanoboa-pin</code> only if the pinned <em>commit object</em> 404s (not <code>git ls-remote SHA</code>, which misses tag v0.2)</td>
             <td>Auto-bump to <code>@main</code></td>
           </tr>
           <tr>
