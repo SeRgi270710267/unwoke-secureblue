@@ -163,6 +163,7 @@ Stock `ujust` still works.
 20. **Search + undo + offline help:** `.desktop` launchers so GNOME/KDE search hits Bluetooth/camera/Flathub/sites/USB. Setup **You loosened** / `ujust loosened` puts locks back. Tutorials copied to `/usr/share/unwoke/help/` (`open-tutorial.sh` prefers local). Overlay bake required. No auto-unlock.
 21. **Last-green stamp + Reboot on the nag:** Pages writes `status.json` (bake + inspect + ISO if green). Home/Install/Images/Compared show it. `notify-reboot.sh` adds a Reboot button when libnotify supports `--action`; timer waits up to 180s. Overlay bake for the button. No lock loosened.
 22. **Proton.me wizard (no store):** `ujust install-proton` / Setup → Proton.me. Trivalent first; VPN WireGuard; official Mail/Pass RPM only after SHA512 + asked `set-unconfined-userns`. No unverified Flathub. Tutorial + Compared. Overlay bake required.
+23. **IVPN wizard (no store):** `ujust install-ivpn`. WireGuard import first. Official Fedora repo + `ivpn`/`ivpn-ui` only after you accept an extra RPM origin. No Snap. Tutorial + Compared. Overlay bake required.
 
 Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only / `iso.yml` pushes should not rebuild images (`build.yml` paths-ignore).
 

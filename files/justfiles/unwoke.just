@@ -26,6 +26,11 @@ install-proton:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/install-proton.sh
 
+# IVPN (ivpn.net). WireGuard first. Official repo only after you accept an extra RPM origin.
+install-ivpn:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/install-ivpn.sh
+
 # Show this overlay's flavor / remotes / policy / store status
 unwoke-status:
     #!/usr/bin/bash

@@ -17,9 +17,10 @@ case "${1:-}" in
   --hardware|hardware) jump="hardware" ;;
   --loosened|loosened) jump="loosened" ;;
   --proton|proton) jump="proton" ;;
+  --ivpn|ivpn) jump="ivpn" ;;
   "" ) ;;
   *)
-    echo "usage: setup.sh [--broken|--stock|--hardware|--loosened|--proton]" >&2
+    echo "usage: setup.sh [--broken|--stock|--hardware|--loosened|--proton|--ivpn]" >&2
     exit 2
     ;;
 esac
@@ -92,6 +93,7 @@ menu() {
   5) Create a daily (non-wheel) user
   6) You turned something off (put it back)
   7) Proton.me apps (web first; hashed RPM only if you insist)
+  8) IVPN (WireGuard first; official repo only if you insist)
   s) Show status
   r) Reboot now
   n) Do not show this on login again
@@ -367,6 +369,7 @@ loop() {
     hardware) hardware_loop ;;
     loosened) loosened_loop ;;
     proton) bash /usr/libexec/unwoke/install-proton.sh ;;
+    ivpn) bash /usr/libexec/unwoke/install-ivpn.sh ;;
   esac
   while true; do
     menu
@@ -384,6 +387,7 @@ loop() {
       5) create_daily ;;
       6) loosened_loop ;;
       7) bash /usr/libexec/unwoke/install-proton.sh ;;
+      8) bash /usr/libexec/unwoke/install-ivpn.sh ;;
       s|S) run_toggle status ;;
       r|R)
         echo "Rebooting."

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=IVPN (Unwoke)
+GenericName=IVPN
+Comment=No store. Opens Unwoke IVPN setup: WireGuard first, official repo only if you insist.
+Exec=/usr/libexec/unwoke/first-session.sh --force --ivpn
+Icon=/usr/share/pixmaps/unwoke-logo.svg
+Terminal=false
+Categories=Settings;Network;
+Keywords=ivpn;vpn;wireguard;antitracker;privacy;
+StartupNotify=true

@@ -244,7 +244,7 @@
           </tr>
           <tr>
             <td>Stock <code>ujust install-steam</code> / VPN helpers; no Proton wizard; Bazaar for the rest</td>
-            <td><code>ujust install-proton</code> / Setup → Proton.me: Trivalent first, WireGuard for VPN, official RPM only after SHA512 and an asked userns toggle. No unverified Flathub. Beats a store for Mail/Pass/VPN.</td>
+            <td><code>ujust install-proton</code> / Setup → Proton.me: Trivalent first, WireGuard for VPN, official RPM only after SHA512 and an asked userns toggle. No unverified Flathub. Beats a store for Mail/Pass/VPN. <code>ujust install-ivpn</code>: WireGuard first; official IVPN repo only if you need in-app AntiTracker. No Snap.</td>
           </tr>
           <tr>
             <td>Private GHCR packages block anonymous rebase</td>
@@ -282,6 +282,12 @@
           <tr><th>When</th><th>What landed</th><th>Vs stock</th><th>Where</th></tr>
         </thead>
         <tbody>
+          <tr>
+            <td>2026-08-29</td>
+            <td><code>ujust install-ivpn</code> + Setup tab: IVPN WireGuard first; official Fedora repo + <code>ivpn</code>/<code>ivpn-ui</code> only after you accept an extra RPM origin. No Snap. Tutorial.</td>
+            <td>Same steam-style wizard as Proton. Stricter than stock Bazaar/Snap. AntiTracker needs their official app (asked).</td>
+            <td>Next overlay bake + Pages</td>
+          </tr>
           <tr>
             <td>2026-08-29</td>
             <td><code>ujust install-proton</code> + Setup tab: proton.me apps without a store. Web in Trivalent (default). VPN WireGuard. Official Mail/Pass RPM only after SHA512 and a Yes to unconfined userns. No Flathub wrappers.</td>

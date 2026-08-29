@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>IVPN | Tutorials | Unwoke SecureBlue</title>
+  <meta name="description" content="Install IVPN the strict way: WireGuard import first, official Fedora repo only after you accept an extra RPM origin. No Snap, no store.">
+  <base href="/unwoke-secureblue/">
+  <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css?v=9">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="./"><img src="assets/logo.svg?v=4" alt="">Unwoke SecureBlue</a></li>
+        <li><a href="features/">Features</a></li>
+        <li><a href="compared/">Compared</a></li>
+        <li><a href="brand/">Brand</a></li>
+        <li><a href="changelog/">Changelog</a></li>
+        <li><a href="images/">Images</a></li>
+        <li><a href="install/">Install</a></li>
+        <li><a href="post-install/">Post-install</a></li>
+        <li aria-current="page"><a href="tutorials/">Tutorials</a></li>
+        <li><a href="faq/">FAQ</a></li>
+        <li><a href="contributing/">Contributing</a></li>
+        <li><a href="conduct/">Conduct</a></li>
+        <li><a href="donate/">Donate</a></li>
+        <li><a href="secureblue/">Their docs</a></li>
+        <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main id="content">
+    <p class="eyebrow">Network</p>
+    <h1>IVPN without a store</h1>
+    <p><span class="chip">Keep locked</span> IVPN (ivpn.net) is a <strong>VPN</strong>. AntiTracker and multi-hop live in their official app — they do not ship Mail/Pass/Drive. Same wizard pattern as <a href="tutorials/proton/">Proton</a> and stock <code>ujust install-steam</code>.</p>
+    <div class="alert tip">
+      <p><strong>Secure default.</strong> <code>ujust install-ivpn</code> option 1: import their WireGuard file in Network Settings. No extra daemon, no extra repo, no Snap. Flathub stays off. Firewalld stays on.</p>
+    </div>
+    <ol class="steps">
+      <li>
+        <h3>WireGuard import (recommended)</h3>
+        <pre><code>ujust install-ivpn</code></pre>
+        <p>Sign in at ivpn.net → VPN Accounts → WireGuard → download a <code>.conf</code>. GNOME rejects filenames longer than 15 characters (“Cannot Import VPN”). Then Settings → Network → VPN → Import, or:</p>
+        <pre><code>nmcli connection import type wireguard file /path/to/short.conf</code></pre>
+        <p>Keep the VPN’s DNS. Do not enable Trivalent DoH. If you customized Unbound: <code>ujust dns-selector</code> → system default. See also <a href="tutorials/vpn-dns/">VPN without DNS leaks</a>.</p>
+      </li>
+      <li>
+        <h3>Official CLI / UI only if you need in-app AntiTracker</h3>
+        <p>Option 3 follows <a href="https://www.ivpn.net/knowledgebase/linux/fedora-silverblue/">their Silverblue doc</a>: HTTPS Fedora repo (<code>gpgcheck</code> checked), then <code>rpm-ostree install ivpn</code>, optional <code>ivpn-ui</code>, reboot, then <code>run0 systemctl enable --now ivpn-service</code>. That is an extra RPM origin. Weaker than WireGuard; stronger than Snap.</p>
+      </li>
+      <li>
+        <h3>What we will not automate</h3>
+        <p>Snap (<code>snap install ivpn</code>), a GUI store, turning off firewalld for their UFW kill-switch notes, unfiltered Flathub. Search GNOME/KDE for “IVPN” to open this wizard.</p>
+      </li>
+    </ol>
+    <nav class="tutorial-nav" aria-label="Adjacent tutorials">
+      <a href="tutorials/proton/">Previous: Proton.me</a>
+      <a href="tutorials/">All tutorials</a>
+      <a href="tutorials/vpn-dns/">Next: VPN without DNS leaks</a>
+    </nav>
+  </main>
+  <footer>
+    <a class="brand" href="./"><img src="assets/logo.svg?v=4" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="tutorials/">Tutorials</a></li>
+      <li><a href="compared/">Compared</a></li>
+      <li><a href="faq/">FAQ</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

@@ -19,6 +19,7 @@ for arg in "$@"; do
     --daily) jump+=(--daily) ;;
     --loosened) jump+=(--loosened) ;;
     --proton) jump+=(--proton) ;;
+    --ivpn) jump+=(--ivpn) ;;
   esac
 done
 

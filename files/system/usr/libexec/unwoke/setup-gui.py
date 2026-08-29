@@ -202,8 +202,17 @@ class SetupWindow(Gtk.Window):
         self._fill_loosened()
         nb.append_page(self._scroll(self.loosened_box), Gtk.Label(label="You loosened"))
         nb.append_page(self._scroll(self._page_proton()), Gtk.Label(label="Proton.me"))
+        nb.append_page(self._scroll(self._page_ivpn()), Gtk.Label(label="IVPN"))
 
-        jump_map = {"broken": 2, "stock": 3, "hardware": 1, "daily": 4, "loosened": 5, "proton": 6}
+        jump_map = {
+            "broken": 2,
+            "stock": 3,
+            "hardware": 1,
+            "daily": 4,
+            "loosened": 5,
+            "proton": 6,
+            "ivpn": 7,
+        }
         if jump in jump_map:
             nb.set_current_page(jump_map[jump])
 
@@ -250,6 +259,9 @@ class SetupWindow(Gtk.Window):
         pr = Gtk.Button(label="Proton.me apps (no store)")
         pr.connect("clicked", lambda *_: self.nb.set_current_page(6))
         box.pack_start(pr, False, False, 0)
+        iv = Gtk.Button(label="IVPN (WireGuard first)")
+        iv.connect("clicked", lambda *_: self.nb.set_current_page(7))
+        box.pack_start(iv, False, False, 0)
         return box
 
     def _fill_loosened(self) -> None:
@@ -551,6 +563,52 @@ class SetupWindow(Gtk.Window):
                 return
         info(self, "No terminal", f"Run: ujust install-proton   or   bash /usr/libexec/unwoke/install-proton.sh {flag}")
 
+    def _page_ivpn(self) -> Gtk.Box:
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        box.set_margin_start(16)
+        box.set_margin_end(16)
+        box.set_margin_top(12)
+        box.pack_start(
+            Gtk.Label(
+                label="IVPN is a VPN (AntiTracker is in their official app). Strictest: WireGuard import. No Snap. Official Fedora repo only after you accept an extra RPM origin.",
+                xalign=0,
+                wrap=True,
+            ),
+            False,
+            False,
+            8,
+        )
+        items = [
+            ("WireGuard import (recommended)", "No daemon, no extra repo. DNS stays on the tunnel.", "--wg"),
+            ("Open IVPN account in Trivalent", "Download a short-named .conf (GNOME: 15 chars max).", "--account"),
+            ("Official CLI + optional UI (signed Fedora repo)", "Their Silverblue path. Weaker than WireGuard; needed for in-app AntiTracker.", "--repo"),
+            ("Stock ujust install-vpn", "If present. You still confirm their prompts.", "--stock"),
+        ]
+        for title, blurb, flag in items:
+            box.pack_start(
+                row(title, blurb, lambda f=flag: self.run_ivpn(f), "ivpn"),
+                False,
+                False,
+                0,
+            )
+        return box
+
+    def run_ivpn(self, flag: str) -> None:
+        cmd = (
+            f"bash /usr/libexec/unwoke/install-ivpn.sh {flag}; echo; "
+            "read -r -p 'Enter to close... ' _ || true"
+        )
+        for term in (
+            ["ptyxis", "--", "bash", "-lc", cmd],
+            ["kgx", "-e", "bash", "-lc", cmd],
+            ["gnome-terminal", "--", "bash", "-lc", cmd],
+            ["konsole", "-e", "bash", "-lc", cmd],
+        ):
+            if subprocess.call(["bash", "-lc", f"command -v {term[0]}"], stdout=subprocess.DEVNULL) == 0:
+                subprocess.Popen(term)
+                return
+        info(self, "No terminal", f"Run: ujust install-ivpn   or   bash /usr/libexec/unwoke/install-ivpn.sh {flag}")
+
     def run_stock(self, recipe: str) -> None:
         cmd = f"ujust {recipe}; echo; read -r -p 'Enter to close... ' _ || true"
         if not confirm(self, "Run stock command?", f"ujust {recipe}\nOverlay locks are unchanged."):
@@ -623,6 +681,7 @@ def main() -> int:
     p.add_argument("--daily", action="store_true")
     p.add_argument("--loosened", action="store_true")
     p.add_argument("--proton", action="store_true")
+    p.add_argument("--ivpn", action="store_true")
     args = p.parse_args()
     jump = ""
     if args.broken:
@@ -637,6 +696,8 @@ def main() -> int:
         jump = "loosened"
     elif args.proton:
         jump = "proton"
+    elif args.ivpn:
+        jump = "ivpn"
     if not os.environ.get("DISPLAY") and not os.environ.get("WAYLAND_DISPLAY"):
         return 2
     win = SetupWindow(jump)
