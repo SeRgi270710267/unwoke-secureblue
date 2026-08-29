@@ -164,6 +164,7 @@ Stock `ujust` still works.
 21. **Last-green stamp + Reboot on the nag:** Pages writes `status.json` (bake + inspect + ISO if green). Home/Install/Images/Compared show it. `notify-reboot.sh` adds a Reboot button when libnotify supports `--action`; timer waits up to 180s. Overlay bake for the button. No lock loosened.
 22. **Proton.me wizard (no store):** `ujust install-proton` / Setup → Proton.me. Trivalent first; VPN WireGuard; official Mail/Pass RPM only after SHA512 + asked `set-unconfined-userns`. No unverified Flathub. Tutorial + Compared. Overlay bake required.
 23. **IVPN wizard (no store):** `ujust install-ivpn`. WireGuard import first. Official Fedora repo + `ivpn`/`ivpn-ui` only after you accept an extra RPM origin. No Snap. Tutorial + Compared. Overlay bake required.
+24. **Vendor installer watch:** `vendor-installers.json` + `vendor.py` shared by wizards and CI. `vendor-watch.yml` twice daily probes Proton version.json (RPM+SHA512+URL) and IVPN repo (gpgcheck). Failure opens one `vendor-installers` issue — **no auto-merge**. Add a JSON stanza when we add another vendor. Overlay bake for image copy; workflow is paths-ignored.
 
 Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only / `iso.yml` pushes should not rebuild images (`build.yml` paths-ignore).
 

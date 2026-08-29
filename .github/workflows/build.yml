@@ -13,6 +13,8 @@ on:
       - ".github/workflows/isos/**"
       - ".github/workflows/verify.yml"
       - ".github/workflows/pages.yml"
+      - ".github/workflows/vendor-watch.yml"
+      - ".github/scripts/vendor-alarm.sh"
       - ".github/scripts/install-just.sh"
       - ".github/scripts/install-oras.sh"
       - ".github/scripts/public-packages.sh"

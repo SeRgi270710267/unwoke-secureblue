@@ -143,6 +143,14 @@ if [[ ! -f "${work}/usr/libexec/unwoke/install-ivpn.sh" ]]; then
   echo "FAIL: missing install-ivpn.sh" >&2
   fail=1
 fi
+if [[ ! -f "${work}/usr/libexec/unwoke/vendor.py" ]]; then
+  echo "FAIL: missing vendor.py" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/share/unwoke/vendor-installers.json" ]]; then
+  echo "FAIL: missing vendor-installers.json" >&2
+  fail=1
+fi
 
 selinux_mentions_origin() {
   grep -R -q '/opt/brave.com/brave-origin' \

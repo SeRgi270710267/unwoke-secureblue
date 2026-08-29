@@ -3,8 +3,9 @@
 # Strictest path first. Nothing auto-unlocks. No Flathub, no store.
 set -euo pipefail
 
-MAIL_JSON="https://proton.me/download/mail/linux/version.json"
-PASS_JSON="https://proton.me/download/PassDesktop/linux/x64/version.json"
+VENDOR="/usr/libexec/unwoke/vendor.py"
+MAIL_KEY="proton_mail"
+PASS_KEY="proton_pass"
 
 ask() {
   local prompt="$1" def="${2:-N}"
@@ -25,36 +26,11 @@ open_url() {
 }
 
 pick_rpm() {
-  local json_url="$1"
-  python3 - "$json_url" <<'PY'
-import json, sys, urllib.request
-url = sys.argv[1]
-with urllib.request.urlopen(url, timeout=30) as resp:
-    data = json.load(resp)
-releases = data.get("Releases") or []
-order = ("Stable", "EarlyAccess", "Alpha")
-for cat in order:
-    for rel in releases:
-        if rel.get("CategoryName") != cat:
-            continue
-        for f in rel.get("File") or []:
-            ident = (f.get("Identifier") or "") + " " + (f.get("Url") or "")
-            if "rpm" not in ident.lower():
-                continue
-            sha = f.get("Sha512CheckSum") or ""
-            u = f.get("Url") or ""
-            ver = rel.get("Version") or ""
-            if u and sha:
-                print(ver)
-                print(u)
-                print(sha)
-                raise SystemExit(0)
-raise SystemExit("no RPM + SHA512 in version.json")
-PY
+  python3 "${VENDOR}" pick "$1"
 }
 
 install_official_rpm() {
-  local name="$1" json_url="$2"
+  local name="$1" key="$2"
   echo
   echo "=== Desktop ${name} (official RPM) ==="
   echo "This is NOT the strictest path. Strictest: Trivalent at proton.me."
@@ -74,9 +50,9 @@ install_official_rpm() {
       ujust set-unconfined-userns on || echo "userns toggle failed; continue with hash+layer if you still want it"
     fi
   fi
-  echo "Fetching ${json_url}"
+  echo "Fetching official version.json via vendor.py (${key})"
   local ver url sha
-  mapfile -t meta < <(pick_rpm "${json_url}")
+  mapfile -t meta < <(pick_rpm "${key}")
   ver="${meta[0]:-}"
   url="${meta[1]:-}"
   sha="${meta[2]:-}"
@@ -179,8 +155,8 @@ jump="${1:-}"
 case "${jump}" in
   --web|web) open_web; exit 0 ;;
   --vpn|vpn) vpn_wireguard; exit 0 ;;
-  --mail-rpm) install_official_rpm mail "${MAIL_JSON}"; exit 0 ;;
-  --pass-rpm) install_official_rpm pass "${PASS_JSON}"; exit 0 ;;
+  --mail-rpm) install_official_rpm mail "${MAIL_KEY}"; exit 0 ;;
+  --pass-rpm) install_official_rpm pass "${PASS_KEY}"; exit 0 ;;
   --vpn-gui) vpn_gui; exit 0 ;;
   ""|--menu) ;;
   *) echo "usage: install-proton.sh [--web|--vpn|--mail-rpm|--pass-rpm|--vpn-gui]" >&2; exit 2 ;;
@@ -195,8 +171,8 @@ while true; do
   case "${ans}" in
     1) open_web ;;
     2) vpn_wireguard ;;
-    3) install_official_rpm mail "${MAIL_JSON}" ;;
-    4) install_official_rpm pass "${PASS_JSON}" ;;
+    3) install_official_rpm mail "${MAIL_KEY}" ;;
+    4) install_official_rpm pass "${PASS_KEY}" ;;
     5) vpn_gui ;;
     t|T) bash /usr/libexec/unwoke/open-tutorial.sh proton || true ;;
     q|Q|"") exit 0 ;;

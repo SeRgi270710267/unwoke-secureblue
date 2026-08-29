@@ -2,8 +2,9 @@
 # Guided IVPN (ivpn.net) install. Strictest path first. No store, no Snap.
 set -euo pipefail
 
-REPO_URL="https://repo.ivpn.net/stable/fedora/generic/ivpn.repo"
-ACCOUNT_URL="https://www.ivpn.net/account/"
+VENDOR="/usr/libexec/unwoke/vendor.py"
+REPO_URL="$(python3 "${VENDOR}" url ivpn_repo 2>/dev/null || echo "https://repo.ivpn.net/stable/fedora/generic/ivpn.repo")"
+ACCOUNT_URL="$(python3 "${VENDOR}" url ivpn_account 2>/dev/null || echo "https://www.ivpn.net/account/")"
 WG_HELP="https://www.ivpn.net/setup/linux-wireguard"
 SILVERBLUE="https://www.ivpn.net/knowledgebase/linux/fedora-silverblue/"
 

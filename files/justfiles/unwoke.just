@@ -31,6 +31,11 @@ install-ivpn:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/install-ivpn.sh
 
+# Probe Proton/IVPN URLs and version.json (does not install, does not unlock).
+check-vendor-installers:
+    #!/usr/bin/bash
+    exec python3 /usr/libexec/unwoke/vendor.py check --probe-rpm
+
 # Show this overlay's flavor / remotes / policy / store status
 unwoke-status:
     #!/usr/bin/bash

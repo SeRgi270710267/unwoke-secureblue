@@ -1,0 +1,44 @@
+{
+  "comment": "Single list for ujust install-proton / install-ivpn and vendor-watch CI. Add a stanza when we add a vendor. CI does not auto-merge URL changes.",
+  "vendors": {
+    "proton_mail": {
+      "kind": "proton-version-json",
+      "json_urls": [
+        "https://proton.me/download/mail/linux/version.json"
+      ],
+      "need": "rpm",
+      "docs": "https://proton.me/support/set-up-proton-mail-linux"
+    },
+    "proton_pass": {
+      "kind": "proton-version-json",
+      "json_urls": [
+        "https://proton.me/download/PassDesktop/linux/x64/version.json",
+        "https://proton.me/download/pass/linux/version.json"
+      ],
+      "need": "rpm",
+      "docs": "https://proton.me/support/set-up-proton-pass-linux"
+    },
+    "proton_mail_web": {
+      "kind": "https-ok",
+      "url": "https://mail.proton.me/"
+    },
+    "proton_pass_web": {
+      "kind": "https-ok",
+      "url": "https://pass.proton.me/"
+    },
+    "proton_vpn_downloads": {
+      "kind": "https-ok",
+      "url": "https://account.protonvpn.com/downloads"
+    },
+    "ivpn_repo": {
+      "kind": "yum-repo",
+      "url": "https://repo.ivpn.net/stable/fedora/generic/ivpn.repo",
+      "require_gpgcheck": true,
+      "docs": "https://www.ivpn.net/knowledgebase/linux/fedora-silverblue/"
+    },
+    "ivpn_account": {
+      "kind": "https-ok",
+      "url": "https://www.ivpn.net/account/"
+    }
+  }
+}
