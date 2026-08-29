@@ -80,6 +80,22 @@ cmd_apply_boot() {
   fi
 }
 
+cmd_add_stdin() {
+  local name="${1:-}" pass=""
+  [[ "${name}" =~ ^[a-z_][a-z0-9_-]*$ ]] || { echo "invalid username" >&2; exit 2; }
+  IFS= read -r pass || true
+  [[ -n "${pass}" ]] || { echo "empty password" >&2; exit 2; }
+  mkdir -p /etc/unwoke
+  if ! create_daily "${name}" "${pass}"; then
+    echo "Could not create ${name}" >&2
+    exit 1
+  fi
+  rm -f "${OFF}"
+  inject_pam
+  touch "${DONE}"
+  echo "Daily user ${name}. Log in as ${name} on the greeter. Admin: Ctrl+Alt+F3 + run0."
+}
+
 cmd_setup_prompt() {
   [[ "$(id -u)" -eq 0 ]] || exit 0
   mkdir -p /etc/unwoke
@@ -91,29 +107,48 @@ cmd_setup_prompt() {
     touch "${DONE}"
     exit 0
   fi
-  echo
-  echo "Unwoke SecureBlue: create a daily (non-wheel) user."
-  echo "Wheel stays for TTY/run0. The greeter will not list wheel after this."
-  echo "Skip: wait 5 minutes or leave username empty (GUI lock stays pending)."
-  echo
-  local name pass pass2
-  printf "Daily username: "
-  read -r name || true
-  name="$(printf '%s' "${name}" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')"
+  export TERM="${TERM:-linux}"
+  export NCURSES_NO_UTF8_ACS=1
+  local name="" pass="" pass2=""
+  if command -v dialog >/dev/null && [[ -t 0 ]]; then
+    dialog --backtitle "Unwoke SecureBlue" --title "This is not frozen" --msgbox \
+      "Create a daily (non-wheel) user before the greeter.\n\nThis screen is supposed to be here. GNOME/KDE starts after you finish or skip.\n\nWheel stays for Ctrl+Alt+F3 and run0.\nSkip: Cancel, or leave the username empty (5 minute timeout also skips)." \
+      16 60 || true
+    name="$(dialog --stdout --inputbox "Daily username (lowercase)" 8 40 || true)"
+    name="$(printf '%s' "${name}" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')"
+    if [[ -n "${name}" ]]; then
+      pass="$(dialog --stdout --insecure --passwordbox "Password for ${name}" 8 40 || true)"
+      pass2="$(dialog --stdout --insecure --passwordbox "Password again" 8 40 || true)"
+    fi
+  else
+    echo
+    echo "=============================================="
+    echo "  Unwoke SecureBlue — this is not frozen"
+    echo "=============================================="
+    echo "Create a daily (non-wheel) user before the greeter."
+    echo "GNOME/KDE starts after this. Wheel stays for TTY/run0."
+    echo "Skip: wait 5 minutes or leave username empty."
+    echo
+    printf "Daily username: "
+    read -r name || true
+    name="$(printf '%s' "${name}" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')"
+    if [[ -n "${name}" ]]; then
+      printf "Password: "
+      stty -echo 2>/dev/null || true
+      read -r pass || true
+      stty echo 2>/dev/null || true
+      echo
+      printf "Password again: "
+      stty -echo 2>/dev/null || true
+      read -r pass2 || true
+      stty echo 2>/dev/null || true
+      echo
+    fi
+  fi
   if [[ -z "${name}" ]]; then
-    echo "Skipped. Later: ujust set-admin-split add NAME"
+    echo "Skipped. Later: Unwoke setup → Daily user, or ujust set-admin-split add NAME"
     exit 0
   fi
-  printf "Password: "
-  stty -echo 2>/dev/null || true
-  read -r pass || true
-  stty echo 2>/dev/null || true
-  echo
-  printf "Password again: "
-  stty -echo 2>/dev/null || true
-  read -r pass2 || true
-  stty echo 2>/dev/null || true
-  echo
   if [[ -z "${pass}" || "${pass}" != "${pass2}" ]]; then
     echo "Passwords empty or mismatch. Skipped. ujust set-admin-split add ${name}"
     exit 0
@@ -182,6 +217,10 @@ case "${1:-status}" in
   on|enable) cmd_on ;;
   off|disable) cmd_off ;;
   add) cmd_add "${2:-}" ;;
+  add-stdin)
+    [[ "$(id -u)" -eq 0 ]] || { echo "add-stdin needs root/run0" >&2; exit 1; }
+    cmd_add_stdin "${2:-}"
+    ;;
   apply-boot) cmd_apply_boot ;;
   setup-prompt) cmd_setup_prompt ;;
   status) cmd_status ;;

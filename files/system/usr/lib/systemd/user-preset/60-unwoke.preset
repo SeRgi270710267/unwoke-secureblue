@@ -1,5 +1,6 @@
 enable unwoke-browser-guard.service
 enable unwoke-user-defaults.service
+enable unwoke-signed-nag.timer
 disable image-deprecation-notice.service
 disable secureblue-update-verification.service
 disable secureblue-update-verification.timer

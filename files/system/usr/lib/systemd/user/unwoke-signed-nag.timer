@@ -1,0 +1,10 @@
+[Unit]
+Description=Unwoke: repeat signed-reboot nag while a staged image exists
+
+[Timer]
+OnStartupSec=2min
+OnUnitActiveSec=15min
+Persistent=false
+
+[Install]
+WantedBy=timers.target

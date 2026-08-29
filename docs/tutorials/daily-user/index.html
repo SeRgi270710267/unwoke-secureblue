@@ -40,8 +40,8 @@
     <p><span class="chip">Keep locked</span> Wheel on the greeter is a larger target (password sniffing, prompt spoofing). The standard is a daily non-wheel user on GNOME/KDE, and wheel only for TTY / <code>run0</code>.</p>
     <ol class="steps">
       <li>
-        <h3>Prefer the first-boot prompt</h3>
-        <p>On tty1 before GDM/SDDM, the overlay asks for a daily username and password. Create it. After that, wheel is blocked from graphical login. Empty name or 5-minute timeout skips; the lock stays pending.</p>
+        <h3>Prefer the first-boot screen</h3>
+        <p>Before GDM/SDDM, an installer-style dialog asks for a daily username and password. The greeter does not start until you finish or skip. That is the same split as before — we did not let wheel onto the GUI first. Empty name, Cancel, or a 5-minute timeout skips; the lock stays pending. Then: Unwoke setup → Daily user.</p>
       </li>
       <li>
         <h3>Or add one later</h3>

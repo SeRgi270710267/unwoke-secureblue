@@ -1,11 +1,24 @@
 #!/usr/bin/env bash
-# Graphical login helper: reboot nag + optional setup window.
+# Graphical login helper: reboot nag + setup window.
 # Does not change locks by itself.
 set -euo pipefail
 
 SEEN="${XDG_CONFIG_HOME:-$HOME/.config}/unwoke/setup-seen"
 STAGED="/etc/unwoke/signed-staged"
 SETUP="/usr/libexec/unwoke/setup.sh"
+GUI="/usr/libexec/unwoke/setup-gui.py"
+
+force=0
+jump=()
+for arg in "$@"; do
+  case "${arg}" in
+    --force|--gui) force=1 ;;
+    --broken) jump+=(--broken) ;;
+    --stock) jump+=(--stock) ;;
+    --hardware) jump+=(--hardware) ;;
+    --daily) jump+=(--daily) ;;
+  esac
+done
 
 notify() {
   command -v notify-send >/dev/null || return 0
@@ -14,21 +27,47 @@ notify() {
 
 if [[ -f "${STAGED}" ]]; then
   notify "Reboot to lock updates" \
-    "A signed Unwoke image is staged. Reboot once. Until then updates are not stamp-checked."
+    "A signed Unwoke image is staged. Reboot once. Until then updates are not stamp-checked. This nag repeats until you reboot."
 fi
 
-[[ -x "${SETUP}" ]] || exit 0
-[[ ! -f "${SEEN}" ]] || exit 0
+[[ -x "${SETUP}" || -x "${GUI}" ]] || exit 0
+if [[ "${force}" -eq 0 && -f "${SEEN}" ]]; then
+  exit 0
+fi
 
-notify "Unwoke setup" \
-  "A window will open. Locks stay on unless you turn one off. Later: ujust setup"
+if [[ "${force}" -eq 0 ]]; then
+  notify "Unwoke setup" \
+    "A window will open. Locks stay on unless you turn one off. App grid: Unwoke setup."
+fi
 
-# Already in a terminal (ujust first-session).
-if [[ -t 0 && -t 1 ]]; then
+run_gui() {
+  [[ -x "${GUI}" ]] || return 1
+  command -v python3 >/dev/null || return 1
+  python3 "${GUI}" "${jump[@]}"
+}
+
+run_tty() {
+  if [[ ${#jump[@]} -gt 0 ]]; then
+    exec bash "${SETUP}" "${jump[0]}"
+  fi
   exec bash "${SETUP}"
+}
+
+if [[ -t 0 && -t 1 && "${force}" -eq 0 ]]; then
+  if run_gui; then
+    exit 0
+  fi
+  run_tty
+fi
+
+if run_gui; then
+  exit 0
 fi
 
 cmd='bash /usr/libexec/unwoke/setup.sh; echo; read -r -p "Enter to close... " _ || true'
+if [[ ${#jump[@]} -gt 0 ]]; then
+  cmd="bash /usr/libexec/unwoke/setup.sh ${jump[0]}; echo; read -r -p \"Enter to close... \" _ || true"
+fi
 
 if command -v ptyxis >/dev/null; then
   exec ptyxis -- bash -lc "${cmd}"
@@ -42,4 +81,4 @@ fi
 if command -v konsole >/dev/null; then
   exec konsole -e bash -lc "${cmd}"
 fi
-exec bash "${SETUP}"
+run_tty

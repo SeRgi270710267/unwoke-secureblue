@@ -5,16 +5,16 @@
 # First-session menu. Defaults stay locked unless you turn one off.
 setup:
     #!/usr/bin/bash
-    exec /usr/libexec/unwoke/setup.sh
+    exec /usr/libexec/unwoke/first-session.sh --force
 
 unwoke-setup:
     #!/usr/bin/bash
-    exec /usr/libexec/unwoke/setup.sh
+    exec /usr/libexec/unwoke/first-session.sh --force
 
-# Jump to "something seems broken" in the same menu. Does not auto-unlock.
+# Jump to "something seems broken". Does not auto-unlock.
 why:
     #!/usr/bin/bash
-    exec /usr/libexec/unwoke/setup.sh --broken
+    exec /usr/libexec/unwoke/first-session.sh --force --broken
 
 # Show this overlay's flavor / remotes / policy / store status
 unwoke-status:

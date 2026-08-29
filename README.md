@@ -100,7 +100,7 @@ rpm-ostree rebase ostree-unverified-registry:ghcr.io/sergi270710267/unwoke-silve
 systemctl reboot
 ```
 
-That first switch **cannot** check our stamp yet (your PC does not have our key). After that reboot, a first-boot service **queues the signed image**. Reboot **one more time** when `rpm-ostree status` shows a staged signed deployment (or after a few minutes on the network). From then on, updates must match our `cosign.pub`. After the first graphical login, `ujust setup` (also an autostart window) explains the locks; `ujust why` if something looks broken. Nothing unlocks unless you pick it. Everyday tasks (apps, Bluetooth, camera, USB, updates) with the secure path first: [Tutorials](https://sergi270710267.github.io/unwoke-secureblue/tutorials/).
+That first switch **cannot** check our stamp yet (your PC does not have our key). After that reboot, a first-boot service **queues the signed image**. Reboot **one more time** when `rpm-ostree status` shows a staged signed deployment (or after a few minutes on the network). From then on, updates must match our `cosign.pub`. After the first graphical login, **Unwoke setup** (app grid + autostart; also `ujust setup`) explains the locks; `ujust why` if something looks broken. Nothing unlocks unless you pick it. Everyday tasks: [Tutorials](https://sergi270710267.github.io/unwoke-secureblue/tutorials/).
 
 If it did not auto-stage (no network on first boot), do it yourself:
 

@@ -1,0 +1,7 @@
+[Unit]
+Description=Unwoke: nag until the signed image is booted
+ConditionPathExists=/etc/unwoke/signed-staged
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash /usr/libexec/unwoke/signed-nag.sh

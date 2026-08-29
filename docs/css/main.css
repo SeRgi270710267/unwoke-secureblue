@@ -444,6 +444,45 @@ main img {
   color: var(--accent);
 }
 
+.copy-wrap {
+  position: relative;
+}
+
+.copy-wrap pre {
+  padding-top: 2.4rem;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.45rem;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--on-accent);
+  background: var(--accent);
+  border: none;
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+}
+
+.copy-btn:hover {
+  background: var(--accent-hover);
+}
+
+.iso-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin: 0.75rem 0 1rem;
+}
+
+.install-path[hidden] {
+  display: none !important;
+}
+
 select {
   appearance: none;
   font-family: inherit;

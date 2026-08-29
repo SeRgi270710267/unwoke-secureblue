@@ -47,11 +47,11 @@
         <p>The first rebase cannot check our stamp yet. After that boot, a service stages <code>ostree-image-signed</code>. A notification and the MOTD say so. Reboot once more. Until then, updates are not locked to <code>cosign.pub</code>.</p>
         <pre><code>rpm-ostree status
 ujust setup</code></pre>
-        <p>In setup: <code>r</code> reboots. If nothing staged, wait on the network or run the signed rebase from <a href="install/#signed">Install</a>.</p>
+        <p>In Unwoke setup (app grid, or <code>ujust setup</code>): Reboot now. The nag repeats every login and every 15 minutes until you reboot. If nothing staged, wait on the network or run the signed rebase from <a href="install/#signed">Install</a>.</p>
       </li>
       <li>
         <h3>Use the setup window — do not hunt a wiki</h3>
-        <p>First graphical login opens a terminal with the same menu as <code>ujust setup</code>. Later, <code>ujust why</code> if something looks broken. Nothing turns off until you pick it.</p>
+        <p>First graphical login opens <strong>Unwoke setup</strong> (also in the app grid). Same stamps as <code>ujust setup</code>. Later, <code>ujust why</code> if something looks broken. Tutorial buttons open these pages. Nothing turns off until you pick it.</p>
       </li>
       <li>
         <h3>Keep defaults unless you have a named need</h3>
@@ -69,7 +69,7 @@ ujust audit-secureblue</code></pre>
       </li>
     </ol>
     <div class="alert">
-      <p>tty1 may ask for a daily (non-wheel) username before the greeter. That is <a href="tutorials/daily-user/">admin-split</a>, not a hung install. Empty name or a 5-minute skip leaves the lock pending.</p>
+      <p>Before the greeter, an installer-style screen asks for a daily (non-wheel) username. That is <a href="tutorials/daily-user/">admin-split</a>, not a hung install. The greeter does not start until you finish or skip. Empty name, Cancel, or a 5-minute skip leaves the lock pending — then Unwoke setup → Daily user is the graphical path. We do not let wheel onto the greeter first; that would be a weaker split.</p>
     </div>
     <nav class="tutorial-nav" aria-label="Adjacent tutorials">
       <span></span>

@@ -9,7 +9,7 @@
   <meta name="description" content="Install Unwoke SecureBlue from a USB ISO (no stock first) or rebase from Fedora Atomic, then reboot into the signed deployment.">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
-  <link rel="stylesheet" href="css/main.css?v=6">
+  <link rel="stylesheet" href="css/main.css?v=8">
 </head>
 <body>
   <a class="skip" href="#content">Skip to content</a>
@@ -59,6 +59,14 @@
       </fieldset>
     </div>
     <p>Image: <code id="picked-name">unwoke-silverblue</code></p>
+    <div class="pick-grid">
+      <fieldset>
+        <legend>You are installing from</legend>
+        <label><input type="radio" name="os" value="windows" checked> Windows</label>
+        <label><input type="radio" name="os" value="linux"> Linux (already Fedora Atomic / secureblue)</label>
+        <label><input type="radio" name="os" value="mac"> macOS</label>
+      </fieldset>
+    </div>
     <details class="pick-more">
       <summary>All twelve names</summary>
       <div class="select-group">
@@ -79,9 +87,14 @@
       </div>
     </details>
 
+    <div id="path-usb" class="install-path">
     <h2 id="usb"><a href="#usb">Empty disk: Unwoke USB ISO</a></h2>
     <p>This wraps the GHCR image you picked. You do <em>not</em> install stock secureblue first. GitHub will not host a 3 GB file as a normal release, so the ISO lives as a GHCR package plus a 14-day Actions download. The OS rebase path below does not wait on this baker.</p>
     <p id="iso-status" class="iso-status">Checking whether a USB ISO was published…</p>
+    <p id="iso-actions" class="iso-actions" hidden>
+      <a class="button" id="iso-download" href="#">Download USB (GitHub login)</a>
+      <span id="iso-hint" class="eyebrow">Artifact is the flashable file. GHCR <code>-iso</code> is oras below.</span>
+    </p>
     <ol>
       <li>Get an ISO:
         <ul>
@@ -97,14 +110,16 @@ cosign verify --key cosign.pub --insecure-ignore-tlog ghcr.io/sergi270710267/unw
 cosign verify-blob --key cosign.pub --insecure-ignore-tlog --signature SHA256SUMS.sig SHA256SUMS
 sha256sum -c SHA256SUMS</code></pre>
     <ol start="3">
-      <li>Flash with Fedora Media Writer, <code>dd</code>, or Rufus. <strong>Not Ventoy.</strong></li>
+      <li id="flash-step">Flash with <span id="flash-tool">Rufus</span>. <strong>Not Ventoy.</strong></li>
       <li>Boot, install, encrypt the disk, join <code>wheel</code>. Enroll the <strong>secureblue</strong> Secure Boot key when prompted — the kernel is still theirs.</li>
       <li>After the first boot, wait for the signed deployment (<code>rpm-ostree status</code>) and reboot once more. Same as the rebase path.</li>
     </ol>
     <div class="alert">
       <p>Enable Secure Boot, update the BIOS, and set a BIOS password if you care about that threat model — same advice as <a href="https://secureblue.dev/install">their install page</a>. The live USB session is for install; the installed system is the signed Unwoke image.</p>
     </div>
+    </div>
 
+    <div id="path-rebase" class="install-path">
     <h2 id="rebase"><a href="#rebase">Already on Atomic: rebase</a></h2>
     <p>This switch cannot check our stamp yet (your PC does not have our key):</p>
 <pre><code id="cmd-unverified">rpm-ostree rebase ostree-unverified-registry:ghcr.io/sergi270710267/unwoke-silverblue:latest
@@ -115,13 +130,14 @@ systemctl reboot</code></pre>
     <p>If it did not auto-stage (no network on first boot):</p>
 <pre><code id="cmd-signed">rpm-ostree rebase ostree-image-signed:docker://ghcr.io/sergi270710267/unwoke-silverblue:latest
 systemctl reboot</code></pre>
+    </div>
 
     <h2 id="stock-iso"><a href="#stock-iso">Empty disk via stock ISO</a></h2>
     <p>Still valid: flash a <a href="https://secureblue.dev/install">secureblue ISO</a>, encrypt, enroll their key, then rebase. Use this if you want their installer and do not want to wait for an Unwoke ISO build.</p>
 
     <h2 id="after"><a href="#after">After install</a></h2>
     <p>Stock secureblue post-install still applies. Full overlay + their steps: <a href="post-install/">Post-install</a>. Their page only (mirrored daily): <a href="secureblue/post-install/">secureblue/post-install</a>.</p>
-    <p>After the first graphical login, a setup window explains the locks (nothing turns off unless you pick it). Same menu later: <code>ujust setup</code>. If Bluetooth, Flathub, brew, webcam, WebGL, or the greeter is “broken,” it is a default lock — <code>ujust why</code> maps the usual ones without auto-unlocking. Step-by-step: <a href="tutorials/">Tutorials</a>. Full table: <a href="post-install/">Post-install</a>.</p>
+    <p>After the first graphical login, a setup window explains the locks (nothing turns off unless you pick it). Same later: app grid → <strong>Unwoke setup</strong>, or <code>ujust setup</code>. If Bluetooth, Flathub, brew, webcam, WebGL, or the greeter is “broken,” it is a default lock — <code>ujust why</code>. Step-by-step: <a href="tutorials/">Tutorials</a>. Full table: <a href="post-install/">Post-install</a>.</p>
 <pre><code>ujust setup
 ujust why
 ujust unwoke-status
@@ -158,6 +174,11 @@ ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
     const verify = document.getElementById("cmd-verify");
     const iso = document.getElementById("cmd-iso");
     const isoStatus = document.getElementById("iso-status");
+    const isoActions = document.getElementById("iso-actions");
+    const isoDownload = document.getElementById("iso-download");
+    const flashTool = document.getElementById("flash-tool");
+    const pathUsb = document.getElementById("path-usb");
+    const pathRebase = document.getElementById("path-rebase");
     const isoHtmlCache = {};
     let isoSeq = 0;
     let lastGreenIso = undefined;
@@ -182,6 +203,29 @@ ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
         "cosign verify-blob --key cosign.pub --insecure-ignore-tlog --signature SHA256SUMS.sig SHA256SUMS\n" +
         "sha256sum -c SHA256SUMS";
       checkIso(name);
+      applyOs();
+    }
+    function applyOs() {
+      const os = document.querySelector('input[name="os"]:checked').value;
+      if (flashTool) {
+        flashTool.textContent =
+          os === "windows" ? "Rufus (dd mode) or Fedora Media Writer" :
+          os === "mac" ? "Fedora Media Writer or dd" :
+          "Fedora Media Writer or dd";
+      }
+      if (os === "linux") {
+        if (pathRebase) pathRebase.hidden = false;
+        if (pathUsb) pathUsb.hidden = false;
+        if (pathRebase && pathUsb) {
+          pathUsb.parentNode.insertBefore(pathRebase, pathUsb);
+        }
+      } else {
+        if (pathUsb) pathUsb.hidden = false;
+        if (pathRebase) pathRebase.hidden = false;
+        if (pathRebase && pathUsb) {
+          pathUsb.parentNode.insertBefore(pathUsb, pathRebase);
+        }
+      }
     }
     async function lastGreenIsoRun() {
       if (lastGreenIso !== undefined) return lastGreenIso;
@@ -204,7 +248,15 @@ ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
     async function checkIso(name) {
       if (!isoStatus) return;
       if (isoHtmlCache[name]) {
-        isoStatus.innerHTML = isoHtmlCache[name];
+        isoStatus.innerHTML = isoHtmlCache[name].html;
+        if (isoActions && isoDownload) {
+          if (isoHtmlCache[name].runHref) {
+            isoDownload.href = isoHtmlCache[name].runHref;
+            isoActions.hidden = false;
+          } else {
+            isoActions.hidden = true;
+          }
+        }
         return;
       }
       const seq = ++isoSeq;
@@ -219,9 +271,13 @@ ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
       } catch (e) { /* offline / rate limit */ }
       if (seq !== isoSeq) return;
       let html;
+      let runHref = "";
       if (pkg && pkg.visibility === "public") {
         html =
           "USB ISO package is public for <code>" + name + "</code>. Pull with oras below, then verify with <code>cosign.pub</code>.";
+        const run = await lastGreenIsoRun();
+        if (seq !== isoSeq) return;
+        if (run) runHref = run.html_url;
       } else if (pkg) {
         html =
           "A <code>" + name + "-iso</code> package exists but is still private. Rebase below works. After the baker is green, the package must be Public (factory job tries this).";
@@ -229,6 +285,7 @@ ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
         const run = await lastGreenIsoRun();
         if (seq !== isoSeq) return;
         if (run) {
+          runHref = run.html_url;
           html =
             "Last green USB bake: <a href=\"" + run.html_url + "\">Actions run</a> (GitHub login to download the artifact). The GHCR <code>-iso</code> package for this image is not listed yet — rebase still works.";
         } else {
@@ -236,13 +293,49 @@ ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
             "No USB ISO published yet. Use rebase below, or a stock secureblue ISO then rebase. The baker is separate and does not block the OS.";
         }
       }
-      isoHtmlCache[name] = html;
+      isoHtmlCache[name] = { html, runHref };
       isoStatus.innerHTML = html;
+      if (isoActions && isoDownload) {
+        if (runHref) {
+          isoDownload.href = runHref;
+          isoActions.hidden = false;
+        } else {
+          isoActions.hidden = true;
+        }
+      }
+    }
+    function enhanceCopy() {
+      document.querySelectorAll("main pre").forEach((pre) => {
+        if (pre.parentElement && pre.parentElement.classList.contains("copy-wrap")) return;
+        const wrap = document.createElement("div");
+        wrap.className = "copy-wrap";
+        pre.parentNode.insertBefore(wrap, pre);
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "copy-btn";
+        btn.textContent = "Copy";
+        btn.addEventListener("click", async () => {
+          const t = (pre.querySelector("code") || pre).textContent;
+          try {
+            await navigator.clipboard.writeText(t);
+            btn.textContent = "Copied";
+            setTimeout(() => { btn.textContent = "Copy"; }, 1500);
+          } catch (e) {
+            btn.textContent = "Select and copy";
+          }
+        });
+        wrap.appendChild(btn);
+        wrap.appendChild(pre);
+      });
     }
     document.querySelectorAll('input[name="desk"], input[name="gpu"], input[name="browser"]').forEach((el) => {
       el.addEventListener("change", () => render(fromRadios()));
     });
+    document.querySelectorAll('input[name="os"]').forEach((el) => {
+      el.addEventListener("change", applyOs);
+    });
     select.addEventListener("change", () => render(select.value));
+    enhanceCopy();
     render(fromRadios());
   </script>
 </body>

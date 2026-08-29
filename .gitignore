@@ -11,3 +11,5 @@ docs/secureblue/
 docs/changelog/
 .github/workflows/isos/prep_rootfs.generated.sh
 upstream-drift/
+__pycache__/
+*.py[cod]

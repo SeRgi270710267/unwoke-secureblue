@@ -7,4 +7,4 @@ X-GNOME-Autostart-enabled=true
 X-GNOME-Autostart-Delay=8
 X-KDE-autostart-after=panel
 OnlyShowIn=GNOME;KDE;LXQt;
-NoDisplay=false
+NoDisplay=true

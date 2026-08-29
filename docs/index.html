@@ -9,7 +9,7 @@
   <meta name="description" content="Unwoke SecureBlue: a personal overlay on official secureblue images. Brave Origin, stock Trivalent, or browserless. No GUI software store. Not affiliated with secureblue.">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
-  <link rel="stylesheet" href="css/main.css?v=7">
+  <link rel="stylesheet" href="css/main.css?v=8">
   <meta property="og:title" content="Unwoke SecureBlue">
   <meta property="og:description" content="secureblue’s hardening. Brave Origin, Trivalent, or no browser. No curator store.">
   <meta property="og:type" content="website">
@@ -55,7 +55,7 @@
     <h2 id="about"><a href="#about">About</a></h2>
     <p><strong>Unwoke SecureBlue</strong> is a daily <a href="https://blue-build.org/">BlueBuild</a> overlay on official <a href="https://secureblue.dev">secureblue</a> Fedora Atomic images. Kernel hardening, SELinux, <code>hardened_malloc</code>, closed firewall, and their <code>ujust</code> commands stay. We only change two product decisions: the house browser and the house app store.</p>
     <p>Default images ship the standalone <strong>Brave Origin</strong> RPM (<code>brave-origin</code>), not full <code>brave-browser</code>. <strong>Trivalent</strong> images (<code>*-trivalent</code>) keep stock <a href="https://github.com/secureblue/Trivalent">Trivalent</a> — Vanadium patches and their SELinux jail — and add extra reversible Chromium policies stock does not force. <strong>Browserless</strong> images (<code>*-browserless</code>) strip Trivalent and install nothing: no Origin, no <code>brave_t</code>, stock <code>harden_userns</code>. There is no GUI software store and no Flathub remote until <code>ujust set-flathub verified</code>. Every extra lock has a <code>ujust</code> to turn it off.</p>
-    <p>It is shipped as OCI bootable container images. Rebase onto one of them from secureblue or any Fedora Atomic desktop. After login, <code>ujust setup</code> (also an autostart window) explains the locks without turning them off. If something looks broken: <code>ujust why</code> — same locks, no auto-unlock. Everyday tasks the secure way: <a href="tutorials/">Tutorials</a>. For details, see the <a href="features/">features list</a>.</p>
+    <p>It is shipped as OCI bootable container images. Rebase onto one of them from secureblue or any Fedora Atomic desktop. After login, <strong>Unwoke setup</strong> (app grid + autostart; also <code>ujust setup</code>) explains the locks without turning them off. If something looks broken: <code>ujust why</code> — same locks, no auto-unlock. Everyday tasks the secure way: <a href="tutorials/">Tutorials</a>. For details, see the <a href="features/">features list</a>.</p>
 
     <div class="cards">
       <div class="card">

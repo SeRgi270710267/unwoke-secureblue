@@ -44,6 +44,15 @@ run_toggle() {
   "${TOGGLES}" "$@" || echo "That toggle did not finish. Locks are unchanged if it aborted."
 }
 
+TUTORIALS="https://sergi270710267.github.io/unwoke-secureblue/tutorials"
+open_tutorial() {
+  local slug="${1:-}"
+  echo "Tutorial: ${TUTORIALS}/${slug}/"
+  read -r -p "Open in browser? [y/N] " ans || return 0
+  [[ "${ans}" == [yY] ]] || return 0
+  bash /usr/libexec/unwoke/open-tutorial.sh "${slug}" || true
+}
+
 run_stock() {
   local recipe="$1"
   shift
@@ -151,11 +160,11 @@ hardware_loop() {
     echo
     read -r -p "Choice: " ans || return 0
     case "${ans}" in
-      1) run_toggle flathub verified ;;
-      2) run_toggle bluetooth on ;;
-      3) run_toggle camera-mic on ;;
-      4) run_toggle toolbox on ;;
-      5) run_toggle brew on ;;
+      1) run_toggle flathub verified; open_tutorial install-apps ;;
+      2) run_toggle bluetooth on; open_tutorial bluetooth ;;
+      3) run_toggle camera-mic on; open_tutorial camera-mic ;;
+      4) run_toggle toolbox on; open_tutorial toolbox ;;
+      5) run_toggle brew on; open_tutorial install-apps ;;
       6) run_toggle extra-daemons on ;;
       7)
         if [[ "${FLAVOR}" == "browserless" ]]; then
@@ -181,34 +190,42 @@ broken_loop() {
       1)
         run_toggle jitless off
         echo "Restart the house browser."
+        open_tutorial sites-broken
         ;;
       2)
         run_toggle devices off
         echo "If the webcam is still dead at the kernel: turn camera/mic on from menu 2."
         echo "Restart the house browser."
+        open_tutorial camera-mic
         ;;
       3)
         run_toggle hardening off
         echo "Restart the house browser."
+        open_tutorial sites-broken
         ;;
       4)
         run_toggle extensions allow
         echo "Restart the house browser."
+        open_tutorial sites-broken
         ;;
       5)
         run_toggle isolation off
         echo "Restart the house browser."
+        open_tutorial sites-broken
         ;;
       6)
         run_toggle lockdown off
+        open_tutorial install-apps
         ;;
       7)
         run_toggle sandbox off
         echo "Restart the house browser."
+        open_tutorial screen-share
         ;;
       8)
         run_toggle admin-split off
         echo "Wheel can use the greeter again. TTY and run0 always worked."
+        open_tutorial daily-user
         ;;
       9)
         case "${FLAVOR}" in
@@ -258,6 +275,7 @@ stock_loop() {
       3)
         run_stock setup-usbguard \
           "USBGuard: generate a policy from currently attached USB devices and block others."
+        open_tutorial usb
         ;;
       4)
         run_stock audit-secureblue \

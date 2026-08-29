@@ -40,8 +40,8 @@
 
     <h2 id="overlay"><a href="#overlay">Unwoke SecureBlue</a></h2>
     <ol>
-      <li>After the first rebase reboot, a notification (and MOTD) says when the signed image is staged. Reboot once more. Same menu: <code>ujust setup</code> → Reboot now.</li>
-      <li>A first-login window lists the locks. Nothing turns off unless you pick it. Hide it with option <code>n</code>, or run <code>ujust setup</code> later. Option <code>3</code> (or <code>ujust why</code>) is “this is a lock, not a bug.” Option <code>4</code> is leftover stock steps (Secure Boot key, kargs, USBGuard) — it does not change overlay locks.</li>
+      <li>After the first rebase reboot, a notification (and MOTD) says when the signed image is staged. It repeats every login and every 15 minutes until you reboot. App grid → Unwoke setup → Reboot now.</li>
+      <li>A first-login window lists the locks. Nothing turns off unless you pick it. Hide it on login, or open <strong>Unwoke setup</strong> / <code>ujust setup</code> later. <code>ujust why</code> is “this is a lock, not a bug.” Stock leftover (Secure Boot key, kargs, USBGuard) does not change overlay locks. Tutorial buttons open <a href="tutorials/">Tutorials</a>.</li>
       <li>Confirm the overlay:</li>
     </ol>
 <pre><code>ujust setup

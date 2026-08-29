@@ -56,7 +56,7 @@ trap 'rm -rf "${work}"' EXIT
 echo "inspect: export ${IMG}"
 crane export "${IMG}" - | python3 "${extract}" "${work}" "${work}/members.txt" \
   usr/share/unwoke usr/bin usr/lib64 usr/libexec opt usr/share/applications \
-  etc/selinux usr/etc
+  usr/lib/systemd etc/selinux usr/etc
 
 if [[ ! -s "${work}/members.txt" ]]; then
   echo "FAIL: export produced no file list from ${IMG}" >&2
@@ -109,6 +109,18 @@ if [[ ! -f "${work}/usr/libexec/unwoke/first-session.sh" ]]; then
 fi
 if [[ ! -f "${work}/usr/etc/xdg/autostart/unwoke-first-session.desktop" ]]; then
   echo "FAIL: missing first-session autostart" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/libexec/unwoke/setup-gui.py" ]]; then
+  echo "FAIL: missing /usr/libexec/unwoke/setup-gui.py" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/share/applications/unwoke-setup.desktop" ]]; then
+  echo "FAIL: missing Unwoke setup launcher" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/lib/systemd/user/unwoke-signed-nag.timer" ]]; then
+  echo "FAIL: missing signed-nag timer" >&2
   fail=1
 fi
 

@@ -155,6 +155,7 @@ Stock `ujust` still works.
 14. **First-session setup (no lock loosened):** `ujust setup` / autostart window. Reboot nag when `/etc/unwoke/signed-staged` exists. Install page is three questions, not twelve names. Overlay bake required for the window; Pages for the picker.
 15. **Guided recovery + factory public packages (ISO still separate):** `ujust why` / setup option 3 maps “broken” to the matching lock (does not auto-unlock). Option 4 runs leftover stock `ujust` (Secure Boot key, kargs, USBGuard) on confirm. After a green overlay bake, `public-packages.sh` tries to set GHCR packages Public (warn-only; does not fail the bake). Install page queries GitHub for a last-green USB ISO and says so if none exists.
 16. **Tutorials tab (Pages):** everyday tasks with the secure path first (first hour, apps without a store, Bluetooth, camera, USBGuard, updates/rollback, daily user, VPN DNS, toolbox, health check). Does not auto-unlock. Docs-only — no overlay bake.
+17. **Desktop UX without loosening locks:** GTK **Unwoke setup** window (app grid + autostart; TUI fallback). Same stamps as `ujust`. Tutorial buttons. Repeating signed-reboot nag (login + 15 min timer) until `/etc/unwoke/signed-staged` is gone. Daily-user still **before the greeter** (dialog installer screen, not wheel-on-GDM-first). Install page: Windows/Linux/macOS order, copy buttons, USB download CTA when a green bake exists.
 
 Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only / `iso.yml` pushes should not rebuild images (`build.yml` paths-ignore).
 
@@ -164,7 +165,7 @@ Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only
 - `install-oras.sh` and `.github/workflows/isos/**` are in `build.yml` paths-ignore. Do not cancel a bake that is already running.
 - USB ISO: wrap itself is green (~14 min, `output.iso` then `chown`). Run [33249371957](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33249371957) still died in **Checksum** (~5 s) because `cosign sign-blob --key` uploaded to public Rekor/Fulcio. Fix: `--tlog-upload=false`, write PEM via Python (not `printf`), verify-blob with `--insecure-ignore-tlog`. Drive `ublue-os/titanoboa@840217d`. If green, download the artifact (14 days). Make the GHCR `*-iso` package Public.
 - Do not add `on: push` to `iso.yml` or `verify.yml`.
-- Confirm on a real rebase: `ujust setup` / `ujust why` / `ujust unwoke-status` / `ujust audit-unwoke` (wallpaper, policies, trampoline, leftover Trivalent gone on Origin/browserless). First-session window + why-menu ship on the next overlay bake.
+- Confirm on a real rebase: app grid **Unwoke setup** / `ujust setup` / `ujust why` / `ujust unwoke-status` / `ujust audit-unwoke`. Setup window + signed nag + daily-user dialog ship on the **next overlay bake**. Pages has the Install picker/copy/USB CTA immediately.
 - Hard-refresh Pages if Install / Changelog look cached.
 - Do not start a tight `brave_t` jail unless the owner asks again and accepts breakage.
 - Origin/browserless still strip Trivalent. The dedicated `*-trivalent` flavor keeps it. Do not add a GUI store. Do not add xscreensaver. Do not Bubblejail Trivalent.

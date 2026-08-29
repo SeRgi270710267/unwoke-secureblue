@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Unwoke setup
+Comment=Explain overlay locks; do not change them unless you choose
+Exec=/usr/libexec/unwoke/first-session.sh --force
+Icon=/usr/share/pixmaps/unwoke-logo.svg
+Terminal=false
+Categories=Settings;System;
+Keywords=unwoke;setup;secureblue;flathub;bluetooth;lock;
+StartupNotify=true
