@@ -20,6 +20,9 @@ fi
 [[ -x "${SETUP}" ]] || exit 0
 [[ ! -f "${SEEN}" ]] || exit 0
 
+notify "Unwoke setup" \
+  "A window will open. Locks stay on unless you turn one off. Later: ujust setup"
+
 # Already in a terminal (ujust first-session).
 if [[ -t 0 && -t 1 ]]; then
   exec bash "${SETUP}"

@@ -29,6 +29,7 @@ Display: **Unwoke SecureBlue** (`Unwoke` = modifier; `SecureBlue` = one word, S+
 - Automatic snapshot refresh: `.github/scripts/auto-refresh-snapshots.sh` on main. If stock `harden_flatpak.py` / `flatpak.just` change and pass a targeting scan, CI commits snapshots and regenerates `flatpak-lockdown-lists.sh`. Overlay is not blocked. Runtime still uses Unwoke scripts. Poison (file names Unwoke) is not auto-copied.
 - Stock `ujust harden-flatpak` hits `/usr/libexec/secureblue/harden_flatpak.py`, which is an Unwoke trampoline (`os.execv` to `/usr/libexec/unwoke/harden-flatpak.sh`). Compose fails if that trampoline is missing. Inspect also checks it.
 - Post-publish inspect: after each non-PR BlueBuild, **before** `attest-build-provenance`. `.github/scripts/inspect-flavor.sh` crane-exports GHCR `:latest`. Cosign must use classic `.sig` tags (`COSIGN_OCI_EXPERIMENTAL=0`, `--new-bundle-format=false` if the flag exists) — GitHub certificate attestations otherwise fail with `expected key signature, not certificate`. Flavor ELF checks use tar member types (file/symlink/hardlink), not leftover empty dirs. Origin ELF is often a hardlink. Twice-daily `verify.yml` is schedule + dispatch only (`pick` job builds the matrix — same `matrix`-in-`if` rule as `iso.yml`). Do not add `on: push`. Does not auto-accept a new `cosign.pub`.
+- Auto-public GHCR: after BlueBuild (success or failure of the matrix), `.github/scripts/public-packages.sh` tries to set `unwoke-*` container packages Public so anonymous rebase works. **Warn-only** — never fails the bake. `GITHUB_TOKEN` often cannot flip visibility; the log then prints the Packages settings URL. One manual Public click is enough after that.
 - Extract helper: `.github/scripts/extract-prefixes.py` (stream tar; `extractfile()` only on regular files; copy hardlinks if the target is already extracted). Crane for canary/inspect is checksum-pinned `v0.20.3` in `install-crane.sh`.
 - Factory alarm: one GitHub issue, label `factory-alarm`, reused. Opened/commented when canary/watch/build/inspect fails (not on PRs). Closed only when canary + watch + bluebuild are all green. Issue #4 was closed on the green run above. A canary hit or key rotation is not auto-merged.
 - `remove-trivalent.sh` (Origin + browserless): `dnf remove` then `rm` leftover `/usr/bin/trivalent` and `/usr/lib64/trivalent`. Inspect fails if those remain.
@@ -91,6 +92,8 @@ Site palette: navy `#050a16` / `#0a1328`, accent `#3b6cff`. Brand tab shows the 
 ## ujust extras
 
 ```
+ujust setup
+ujust why
 ujust unwoke-status
 ujust audit-unwoke
 ujust set-flathub verified|full|off
@@ -150,6 +153,7 @@ Stock `ujust` still works.
 12. **Direct USB ISO** (`iso.yml`): Titanoboa wrap of published Unwoke image. Dispatch any of 12. Weekly Sunday 10:00 UTC the four default desktops → `ghcr.io/sergi270710267/<name>-iso:latest` (oras + cosign). Artifacts 14 days. Does not block overlay.
 13. **This PC pickup (2026-08-29):** cloned/pulled `29be70c`. Dispatch of `iso` failed on `matrix` in job `if`, then the wrap failed because old titanoboa wanted `iso.yaml`. Switched to RoyalOughtness/titanoboa + Anaconda live hooks.
 14. **First-session setup (no lock loosened):** `ujust setup` / autostart window. Reboot nag when `/etc/unwoke/signed-staged` exists. Install page is three questions, not twelve names. Overlay bake required for the window; Pages for the picker.
+15. **Guided recovery + factory public packages (ISO still separate):** `ujust why` / setup option 3 maps “broken” to the matching lock (does not auto-unlock). Option 4 runs leftover stock `ujust` (Secure Boot key, kargs, USBGuard) on confirm. After a green overlay bake, `public-packages.sh` tries to set GHCR packages Public (warn-only; does not fail the bake). Install page queries GitHub for a last-green USB ISO and says so if none exists.
 
 Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only / `iso.yml` pushes should not rebuild images (`build.yml` paths-ignore).
 
@@ -159,7 +163,7 @@ Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only
 - `install-oras.sh` and `.github/workflows/isos/**` are in `build.yml` paths-ignore. Do not cancel a bake that is already running.
 - USB ISO: old `ublue-os/titanoboa@main` failed (no `iso.yaml`, [33246595295](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33246595295)). `RoyalOughtness/titanoboa` died in 2s on `setup-just` and hard-codes their pubkeys ([33247362623](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33247362623)). Drive `ublue-os/titanoboa@840217d` Justfile with checksum-pinned `just`. If green, download the artifact (14 days). Make the GHCR `*-iso` package Public.
 - Do not add `on: push` to `iso.yml` or `verify.yml`.
-- Confirm on a real rebase: `ujust setup` / `ujust unwoke-status` / `ujust audit-unwoke` (wallpaper, policies, trampoline, leftover Trivalent gone on Origin/browserless). First-session window ships on the next overlay bake.
+- Confirm on a real rebase: `ujust setup` / `ujust why` / `ujust unwoke-status` / `ujust audit-unwoke` (wallpaper, policies, trampoline, leftover Trivalent gone on Origin/browserless). First-session window + why-menu ship on the next overlay bake.
 - Hard-refresh Pages if Install / Changelog look cached.
 - Do not start a tight `brave_t` jail unless the owner asks again and accepts breakage.
 - Origin/browserless still strip Trivalent. The dedicated `*-trivalent` flavor keeps it. Do not add a GUI store. Do not add xscreensaver. Do not Bubblejail Trivalent.

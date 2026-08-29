@@ -432,6 +432,18 @@ main img {
   margin: 0.5rem 0 1rem;
 }
 
+.iso-status {
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-card);
+  color: var(--text-muted);
+}
+
+.iso-status a {
+  color: var(--accent);
+}
+
 select {
   appearance: none;
   font-family: inherit;

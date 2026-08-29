@@ -11,6 +11,11 @@ unwoke-setup:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/setup.sh
 
+# Jump to "something seems broken" in the same menu. Does not auto-unlock.
+why:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/setup.sh --broken
+
 # Show this overlay's flavor / remotes / policy / store status
 unwoke-status:
     #!/usr/bin/bash

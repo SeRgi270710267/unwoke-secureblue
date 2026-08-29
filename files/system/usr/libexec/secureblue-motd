@@ -9,6 +9,7 @@ if [ -f /etc/unwoke/signed-staged ]; then
   echo "Signed image staged — reboot once to lock updates."
 fi
 echo "Setup:   ujust setup"
+echo "Broken?: ujust why          (lock, not a bug — nothing unlocks until you pick it)"
 echo "Status:  ujust unwoke-status"
 echo "Toggles: ujust (see the Features page). Site: https://sergi270710267.github.io/unwoke-secureblue/"
 echo "Hide this: ujust toggle-user-motd   (stock stamp still works)"

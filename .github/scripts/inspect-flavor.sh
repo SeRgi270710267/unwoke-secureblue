@@ -103,6 +103,14 @@ if [[ ! -f "${work}/usr/libexec/unwoke/setup.sh" ]]; then
   echo "FAIL: missing /usr/libexec/unwoke/setup.sh" >&2
   fail=1
 fi
+if [[ ! -f "${work}/usr/libexec/unwoke/first-session.sh" ]]; then
+  echo "FAIL: missing /usr/libexec/unwoke/first-session.sh" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/etc/xdg/autostart/unwoke-first-session.desktop" ]]; then
+  echo "FAIL: missing first-session autostart" >&2
+  fail=1
+fi
 
 selinux_mentions_origin() {
   grep -R -q '/opt/brave.com/brave-origin' \

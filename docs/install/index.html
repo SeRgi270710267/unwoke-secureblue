@@ -9,7 +9,7 @@
   <meta name="description" content="Install Unwoke SecureBlue from a USB ISO (no stock first) or rebase from Fedora Atomic, then reboot into the signed deployment.">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
-  <link rel="stylesheet" href="css/main.css?v=5">
+  <link rel="stylesheet" href="css/main.css?v=6">
 </head>
 <body>
   <a class="skip" href="#content">Skip to content</a>
@@ -79,15 +79,17 @@
     </details>
 
     <h2 id="usb"><a href="#usb">Empty disk: Unwoke USB ISO</a></h2>
-    <p>This wraps the GHCR image you picked. You do <em>not</em> install stock secureblue first. GitHub will not host a 3 GB file as a normal release, so the ISO lives as a GHCR artifact plus a 14-day Actions download.</p>
+    <p>This wraps the GHCR image you picked. You do <em>not</em> install stock secureblue first. GitHub will not host a 3 GB file as a normal release, so the ISO lives as a GHCR package plus a 14-day Actions download. The OS rebase path below does not wait on this baker.</p>
+    <p id="iso-status" class="iso-status">Checking whether a USB ISO was published…</p>
     <ol>
       <li>Get an ISO:
         <ul>
-          <li><strong>Any flavor, on demand:</strong> GitHub → Actions → <strong>iso</strong> → Run workflow → pick the same image as above → download the artifact.</li>
-          <li><strong>Four defaults, weekly:</strong> Silverblue/Kinoite × Origin/Trivalent are published to <code>ghcr.io/sergi270710267/&lt;name&gt;-iso:latest</code> each Sunday.</li>
+          <li><strong>When a bake is green:</strong> pull <code>ghcr.io/sergi270710267/&lt;name&gt;-iso:latest</code> (box above) or download the Actions artifact (GitHub login).</li>
+          <li><strong>Any flavor, on demand:</strong> GitHub → Actions → <strong>iso</strong> → Run workflow → pick the same image as above.</li>
+          <li><strong>Four defaults, weekly</strong> (Sunday 10:00 UTC) once the baker is green: Silverblue/Kinoite × Origin/Trivalent.</li>
         </ul>
       </li>
-      <li>Pull a weekly ISO (Linux/macOS, <a href="https://oras.land/docs/installation">oras</a> installed):</li>
+      <li>Pull with <a href="https://oras.land/docs/installation">oras</a> (Linux/macOS) when the package exists:</li>
     </ol>
 <pre><code id="cmd-iso">oras pull ghcr.io/sergi270710267/unwoke-silverblue-iso:latest
 cosign verify --key cosign.pub ghcr.io/sergi270710267/unwoke-silverblue-iso:latest
@@ -118,8 +120,9 @@ systemctl reboot</code></pre>
 
     <h2 id="after"><a href="#after">After install</a></h2>
     <p>Stock secureblue post-install still applies. Full overlay + their steps: <a href="post-install/">Post-install</a>. Their page only (mirrored daily): <a href="secureblue/post-install/">secureblue/post-install</a>.</p>
-    <p>After the first graphical login, a setup window explains the locks (nothing turns off unless you pick it). Same menu later: <code>ujust setup</code>. If Bluetooth, Flathub, brew, webcam, WebGL, or the greeter is “broken,” it is a default lock. Full table: <a href="post-install/">Post-install</a>.</p>
+    <p>After the first graphical login, a setup window explains the locks (nothing turns off unless you pick it). Same menu later: <code>ujust setup</code>. If Bluetooth, Flathub, brew, webcam, WebGL, or the greeter is “broken,” it is a default lock — <code>ujust why</code> maps the usual ones without auto-unlocking. Full table: <a href="post-install/">Post-install</a>.</p>
 <pre><code>ujust setup
+ujust why
 ujust unwoke-status
 ujust audit-unwoke
 ujust set-flathub verified      # Flatpak remote (off by default)
@@ -145,12 +148,18 @@ ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
     <p>Not affiliated with secureblue.</p>
   </footer>
   <script>
+    const OWNER = "SeRgi270710267";
+    const OWNER_LC = "sergi270710267";
     const select = document.getElementById("image-select");
     const picked = document.getElementById("picked-name");
     const unverified = document.getElementById("cmd-unverified");
     const signed = document.getElementById("cmd-signed");
     const verify = document.getElementById("cmd-verify");
     const iso = document.getElementById("cmd-iso");
+    const isoStatus = document.getElementById("iso-status");
+    const isoHtmlCache = {};
+    let isoSeq = 0;
+    let lastGreenIso = undefined;
     function fromRadios() {
       const desk = document.querySelector('input[name="desk"]:checked').value;
       const gpu = document.querySelector('input[name="gpu"]:checked').value;
@@ -171,6 +180,63 @@ ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
         "cosign verify --key cosign.pub ghcr.io/sergi270710267/" + name + "-iso:latest\n" +
         "cosign verify-blob --key cosign.pub --signature SHA256SUMS.sig SHA256SUMS\n" +
         "sha256sum -c SHA256SUMS";
+      checkIso(name);
+    }
+    async function lastGreenIsoRun() {
+      if (lastGreenIso !== undefined) return lastGreenIso;
+      try {
+        const r = await fetch(
+          "https://api.github.com/repos/" + OWNER + "/unwoke-secureblue/actions/workflows/iso.yml/runs?status=success&per_page=20",
+          { headers: { Accept: "application/vnd.github+json" } }
+        );
+        if (r.ok) {
+          const j = await r.json();
+          lastGreenIso = (j.workflow_runs || []).find((w) => w.conclusion === "success") || null;
+        } else {
+          lastGreenIso = null;
+        }
+      } catch (e) {
+        lastGreenIso = null;
+      }
+      return lastGreenIso;
+    }
+    async function checkIso(name) {
+      if (!isoStatus) return;
+      if (isoHtmlCache[name]) {
+        isoStatus.innerHTML = isoHtmlCache[name];
+        return;
+      }
+      const seq = ++isoSeq;
+      isoStatus.textContent = "Checking whether a USB ISO was published…";
+      let pkg = null;
+      try {
+        const r = await fetch(
+          "https://api.github.com/users/" + OWNER + "/packages/container/" + encodeURIComponent(name + "-iso"),
+          { headers: { Accept: "application/vnd.github+json" } }
+        );
+        if (r.ok) pkg = await r.json();
+      } catch (e) { /* offline / rate limit */ }
+      if (seq !== isoSeq) return;
+      let html;
+      if (pkg && pkg.visibility === "public") {
+        html =
+          "USB ISO package is public for <code>" + name + "</code>. Pull with oras below, then verify with <code>cosign.pub</code>.";
+      } else if (pkg) {
+        html =
+          "A <code>" + name + "-iso</code> package exists but is still private. Rebase below works. After the baker is green, the package must be Public (factory job tries this).";
+      } else {
+        const run = await lastGreenIsoRun();
+        if (seq !== isoSeq) return;
+        if (run) {
+          html =
+            "Last green USB bake: <a href=\"" + run.html_url + "\">Actions run</a> (GitHub login to download the artifact). The GHCR <code>-iso</code> package for this image is not listed yet — rebase still works.";
+        } else {
+          html =
+            "No USB ISO published yet. Use rebase below, or a stock secureblue ISO then rebase. The baker is separate and does not block the OS.";
+        }
+      }
+      isoHtmlCache[name] = html;
+      isoStatus.innerHTML = html;
     }
     document.querySelectorAll('input[name="desk"], input[name="gpu"], input[name="browser"]').forEach((el) => {
       el.addEventListener("change", () => render(fromRadios()));
