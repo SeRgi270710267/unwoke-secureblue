@@ -151,6 +151,29 @@ if [[ ! -f "${work}/usr/share/unwoke/vendor-installers.json" ]]; then
   echo "FAIL: missing vendor-installers.json" >&2
   fail=1
 fi
+if [[ ! -f "${work}/usr/libexec/unwoke/install-vendor.sh" ]]; then
+  echo "FAIL: missing install-vendor.sh" >&2
+  fail=1
+fi
+if ! python3 - "${work}/usr/share/unwoke/vendor-installers.json" <<'PY'
+import json, sys
+from pathlib import Path
+p = Path(sys.argv[1])
+d = json.loads(p.read_text(encoding="utf-8"))
+v = d.get("vendors") or {}
+if not v:
+    print("FAIL: vendors{} empty", file=sys.stderr)
+    raise SystemExit(1)
+for name, spec in v.items():
+    if not spec.get("kind"):
+        print(f"FAIL: vendor {name} missing kind", file=sys.stderr)
+        raise SystemExit(1)
+print("vendors", len(v), *sorted(v))
+PY
+then
+  echo "FAIL: vendor-installers.json invalid" >&2
+  fail=1
+fi
 
 selinux_mentions_origin() {
   grep -R -q '/opt/brave.com/brave-origin' \

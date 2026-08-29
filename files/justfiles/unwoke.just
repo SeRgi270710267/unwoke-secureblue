@@ -36,6 +36,12 @@ check-vendor-installers:
     #!/usr/bin/bash
     exec python3 /usr/libexec/unwoke/vendor.py check --probe-rpm
 
+# Any vendors{} key. New app = JSON stanza, then this command + CI watch/heal.
+[positional-arguments]
+install-vendor *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/install-vendor.sh "$@"
+
 # Show this overlay's flavor / remotes / policy / store status
 unwoke-status:
     #!/usr/bin/bash

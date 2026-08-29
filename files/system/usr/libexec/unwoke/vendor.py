@@ -213,7 +213,7 @@ def check_yum_repo(text: str, require_gpg: bool) -> None:
 
 def check_one(name: str, spec: dict, probe_rpm: bool) -> str:
     kind = spec.get("kind")
-    if kind == "https-ok":
+    if kind in ("https-ok", "wireguard-import"):
         url = spec["url"]
         head_or_probe(url)
         return f"ok  {name}  {url}"
@@ -348,7 +348,7 @@ def try_heal(name: str, spec: dict, probe_rpm: bool) -> tuple[dict | None, str]:
             except Exception:
                 continue
         return None, ""
-    if kind == "https-ok":
+    if kind in ("https-ok", "wireguard-import"):
         cands = [spec.get("url") or ""] + alt_hosts(spec.get("url") or "") + discovered
         for u in cands:
             if not allowed(u):
@@ -379,6 +379,24 @@ def cmd_pick(name: str) -> int:
             last = exc
     print(f"FAIL pick {name}: {last}", file=sys.stderr)
     return 1
+
+
+def cmd_list() -> int:
+    for name, spec in load()["vendors"].items():
+        title = spec.get("title") or name
+        kind = spec.get("kind") or ""
+        sys.stdout.write(f"{name}\t{kind}\t{title}\n")
+    return 0
+
+
+def cmd_spec(name: str) -> int:
+    spec = load()["vendors"].get(name)
+    if not spec:
+        print(f"unknown vendor {name}", file=sys.stderr)
+        return 1
+    json.dump(spec, sys.stdout, indent=2)
+    sys.stdout.write("\n")
+    return 0
 
 
 def cmd_url(name: str) -> int:
@@ -457,7 +475,7 @@ def cmd_check(probe_rpm: bool) -> int:
 def main(argv: list[str]) -> int:
     if len(argv) < 2 or argv[1] in ("-h", "--help"):
         print(
-            "usage: vendor.py check [--probe-rpm] | heal [--probe-rpm] | pick NAME | url NAME",
+            "usage: vendor.py check|heal [--probe-rpm] | list | spec NAME | pick NAME | url NAME",
             file=sys.stderr,
         )
         return 2
@@ -467,12 +485,16 @@ def main(argv: list[str]) -> int:
         return cmd_check(probe)
     if cmd == "heal":
         return cmd_heal(probe)
+    if cmd == "list":
+        return cmd_list()
+    if cmd == "spec" and len(argv) >= 3:
+        return cmd_spec(argv[2])
     if cmd == "pick" and len(argv) >= 3:
         return cmd_pick(argv[2])
     if cmd == "url" and len(argv) >= 3:
         return cmd_url(argv[2])
     print(
-        "usage: vendor.py check [--probe-rpm] | heal [--probe-rpm] | pick NAME | url NAME",
+        "usage: vendor.py check|heal [--probe-rpm] | list | spec NAME | pick NAME | url NAME",
         file=sys.stderr,
     )
     return 2

@@ -165,6 +165,7 @@ Stock `ujust` still works.
 22. **Proton.me wizard (no store):** `ujust install-proton` / Setup → Proton.me. Trivalent first; VPN WireGuard; official Mail/Pass RPM only after SHA512 + asked `set-unconfined-userns`. No unverified Flathub. Tutorial + Compared. Overlay bake required.
 23. **IVPN wizard (no store):** `ujust install-ivpn`. WireGuard import first. Official Fedora repo + `ivpn`/`ivpn-ui` only after you accept an extra RPM origin. No Snap. Tutorial + Compared. Overlay bake required.
 24. **Vendor installer watch:** live SHA512; heal also covers redirects, field renames, sidecar checksums, www, repo path, retries on 429/5xx (no rewrite). Allowlisted HTTPS + checksum/gpg only. Flathub/HTTP still a human issue.
+25. **Every vendors{} key is first-class:** `install-vendor.sh`, Setup tab Strict apps, generated `.desktop` files, inspect JSON, CI check/heal. New app = JSON stanza, not a Proton/IVPN-only fork of the watch.
 
 Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only / `iso.yml` pushes should not rebuild images (`build.yml` paths-ignore).
 

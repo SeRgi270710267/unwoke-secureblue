@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import subprocess
 import sys
@@ -203,6 +204,7 @@ class SetupWindow(Gtk.Window):
         nb.append_page(self._scroll(self.loosened_box), Gtk.Label(label="You loosened"))
         nb.append_page(self._scroll(self._page_proton()), Gtk.Label(label="Proton.me"))
         nb.append_page(self._scroll(self._page_ivpn()), Gtk.Label(label="IVPN"))
+        nb.append_page(self._scroll(self._page_vendors()), Gtk.Label(label="Strict apps"))
 
         jump_map = {
             "broken": 2,
@@ -212,6 +214,7 @@ class SetupWindow(Gtk.Window):
             "loosened": 5,
             "proton": 6,
             "ivpn": 7,
+            "vendors": 8,
         }
         if jump in jump_map:
             nb.set_current_page(jump_map[jump])
@@ -262,6 +265,9 @@ class SetupWindow(Gtk.Window):
         iv = Gtk.Button(label="IVPN (WireGuard first)")
         iv.connect("clicked", lambda *_: self.nb.set_current_page(7))
         box.pack_start(iv, False, False, 0)
+        va = Gtk.Button(label="All strict apps (vendor list)")
+        va.connect("clicked", lambda *_: self.nb.set_current_page(8))
+        box.pack_start(va, False, False, 0)
         return box
 
     def _fill_loosened(self) -> None:
@@ -609,6 +615,57 @@ class SetupWindow(Gtk.Window):
                 return
         info(self, "No terminal", f"Run: ujust install-ivpn   or   bash /usr/libexec/unwoke/install-ivpn.sh {flag}")
 
+    def _page_vendors(self) -> Gtk.Box:
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        box.set_margin_start(16)
+        box.set_margin_end(16)
+        box.set_margin_top(12)
+        box.pack_start(
+            Gtk.Label(
+                label="Every vendors{} key. Add a stanza to vendor-installers.json — CI watch/heal and this tab pick it up. Nothing auto-unlocks.",
+                xalign=0,
+                wrap=True,
+            ),
+            False,
+            False,
+            8,
+        )
+        path = Path("/usr/share/unwoke/vendor-installers.json")
+        vendors = {}
+        if path.is_file():
+            vendors = json.loads(path.read_text(encoding="utf-8")).get("vendors") or {}
+        for name, spec in vendors.items():
+            title = spec.get("title") or name
+            kind = spec.get("kind") or ""
+            tut = spec.get("tutorial")
+            rec = "Recommended. " if spec.get("strictest") else "Asked downgrade. "
+            blurb = rec + kind
+            box.pack_start(
+                row(title, blurb, lambda n=name: self.run_vendor(n), tut),
+                False,
+                False,
+                0,
+            )
+        if not vendors:
+            box.pack_start(Gtk.Label(label="No vendor-installers.json on this image.", xalign=0), False, False, 0)
+        return box
+
+    def run_vendor(self, name: str) -> None:
+        cmd = (
+            f"bash /usr/libexec/unwoke/install-vendor.sh {name}; echo; "
+            "read -r -p 'Enter to close... ' _ || true"
+        )
+        for term in (
+            ["ptyxis", "--", "bash", "-lc", cmd],
+            ["kgx", "-e", "bash", "-lc", cmd],
+            ["gnome-terminal", "--", "bash", "-lc", cmd],
+            ["konsole", "-e", "bash", "-lc", cmd],
+        ):
+            if subprocess.call(["bash", "-lc", f"command -v {term[0]}"], stdout=subprocess.DEVNULL) == 0:
+                subprocess.Popen(term)
+                return
+        info(self, "No terminal", f"Run: ujust install-vendor {name}")
+
     def run_stock(self, recipe: str) -> None:
         cmd = f"ujust {recipe}; echo; read -r -p 'Enter to close... ' _ || true"
         if not confirm(self, "Run stock command?", f"ujust {recipe}\nOverlay locks are unchanged."):
@@ -682,6 +739,7 @@ def main() -> int:
     p.add_argument("--loosened", action="store_true")
     p.add_argument("--proton", action="store_true")
     p.add_argument("--ivpn", action="store_true")
+    p.add_argument("--vendors", action="store_true")
     args = p.parse_args()
     jump = ""
     if args.broken:
@@ -698,6 +756,8 @@ def main() -> int:
         jump = "proton"
     elif args.ivpn:
         jump = "ivpn"
+    elif args.vendors:
+        jump = "vendors"
     if not os.environ.get("DISPLAY") and not os.environ.get("WAYLAND_DISPLAY"):
         return 2
     win = SetupWindow(jump)

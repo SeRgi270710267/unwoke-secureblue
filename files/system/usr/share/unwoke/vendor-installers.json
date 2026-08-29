@@ -1,44 +1,81 @@
 {
-  "comment": "Single list for wizards and vendor-watch. Version/SHA512 are fetched live. If a URL moves, CI heal() updates this file from official docs on allowlisted HTTPS hosts. Still no Flathub, no gpgcheck=0, no auto schema guess.",
+  "comment": "THE list. vendor.py check/heal, Setup, ujust install-vendor, and search launchers all iterate every vendors{} key. Add a stanza for a new strict app — do not special-case Proton/IVPN in CI. Live SHA512; heal allowlisted HTTPS only.",
   "vendors": {
+    "proton_mail_web": {
+      "kind": "https-ok",
+      "title": "Proton Mail (Trivalent)",
+      "group": "proton",
+      "tutorial": "proton",
+      "keywords": "proton;mail;email",
+      "url": "https://mail.proton.me/",
+      "strictest": true
+    },
+    "proton_pass_web": {
+      "kind": "https-ok",
+      "title": "Proton Pass (Trivalent)",
+      "group": "proton",
+      "tutorial": "proton",
+      "keywords": "proton;pass;password",
+      "url": "https://pass.proton.me/",
+      "strictest": true
+    },
+    "proton_vpn_downloads": {
+      "kind": "wireguard-import",
+      "title": "Proton VPN WireGuard",
+      "group": "proton",
+      "tutorial": "proton",
+      "keywords": "proton;vpn;wireguard",
+      "url": "https://account.protonvpn.com/downloads",
+      "strictest": true
+    },
     "proton_mail": {
       "kind": "proton-version-json",
+      "title": "Proton Mail desktop RPM",
+      "group": "proton",
+      "tutorial": "proton",
+      "keywords": "proton;mail;rpm",
       "json_urls": [
         "https://proton.me/download/mail/linux/version.json"
       ],
       "need": "rpm",
-      "docs": "https://proton.me/support/set-up-proton-mail-linux"
+      "docs": "https://proton.me/support/set-up-proton-mail-linux",
+      "strictest": false
     },
     "proton_pass": {
       "kind": "proton-version-json",
+      "title": "Proton Pass desktop RPM",
+      "group": "proton",
+      "tutorial": "proton",
+      "keywords": "proton;pass;rpm",
       "json_urls": [
         "https://proton.me/download/PassDesktop/linux/x64/version.json",
         "https://proton.me/download/pass/linux/version.json"
       ],
       "need": "rpm",
-      "docs": "https://proton.me/support/set-up-proton-pass-linux"
+      "docs": "https://proton.me/support/set-up-proton-pass-linux",
+      "strictest": false
     },
-    "proton_mail_web": {
-      "kind": "https-ok",
-      "url": "https://mail.proton.me/"
-    },
-    "proton_pass_web": {
-      "kind": "https-ok",
-      "url": "https://pass.proton.me/"
-    },
-    "proton_vpn_downloads": {
-      "kind": "https-ok",
-      "url": "https://account.protonvpn.com/downloads"
+    "ivpn_account": {
+      "kind": "wireguard-import",
+      "title": "IVPN WireGuard",
+      "group": "ivpn",
+      "tutorial": "ivpn",
+      "keywords": "ivpn;vpn;wireguard",
+      "url": "https://www.ivpn.net/account/",
+      "strictest": true
     },
     "ivpn_repo": {
       "kind": "yum-repo",
+      "title": "IVPN official CLI/UI repo",
+      "group": "ivpn",
+      "tutorial": "ivpn",
+      "keywords": "ivpn;rpm;antitracker",
       "url": "https://repo.ivpn.net/stable/fedora/generic/ivpn.repo",
       "require_gpgcheck": true,
-      "docs": "https://www.ivpn.net/knowledgebase/linux/fedora-silverblue/"
-    },
-    "ivpn_account": {
-      "kind": "https-ok",
-      "url": "https://www.ivpn.net/account/"
+      "packages": ["ivpn"],
+      "packages_optional": ["ivpn-ui"],
+      "docs": "https://www.ivpn.net/knowledgebase/linux/fedora-silverblue/",
+      "strictest": false
     }
   }
 }

@@ -90,6 +90,9 @@ ujust set-allow-browsers on ALLOW</code></pre>
     <h2 id="setup"><a href="#setup">What is ujust setup / ujust why?</a></h2>
     <p>First graphical login opens a window that <em>explains</em> the locks. Nothing turns off unless you pick it. Same later: app grid → <strong>Unwoke setup</strong>, or <code>ujust setup</code>. Search GNOME/KDE for Bluetooth, camera, Flathub, or “websites broken.” <code>ujust why</code> / Setup → You loosened puts locks back. Tutorial buttons open offline help on the disk, then the site. Leftover stock steps (their Secure Boot key, kargs, USBGuard) are theirs, not overlay unlocks. The daily-user screen before the greeter is supposed to be there — not a hung install.</p>
 
+    <h2 id="add-vendor"><a href="#add-vendor">How do we add another strict app?</a></h2>
+    <p>One stanza in <code>files/system/usr/share/unwoke/vendor-installers.json</code> (kind, URLs, title). That is the only list. <code>vendor.py check/heal</code>, Setup → Strict apps, <code>ujust install-vendor NAME</code>, search launchers, and twice-daily CI all iterate <em>every</em> key. Do not add a Proton/IVPN-only special case. Curated menus can stay as shortcuts.</p>
+
     <h2 id="vendor-watch"><a href="#vendor-watch">Will Proton/IVPN installers break when they change their site?</a></h2>
     <p>Usual vendor-side breakage is handled without you: new version/SHA, redirects, www vs bare host, renamed JSON fields, checksum in a sidecar file, repo path change, short outages (retried). CI heals the list when the new location is still HTTPS on their host with SHA512/SHA256 or <code>gpgcheck=1</code>. 5xx/timeouts are retried, not rewritten. Flathub, HTTP, or no checksum still opens an issue. On the image: <code>ujust check-vendor-installers</code>.</p>
 

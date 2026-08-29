@@ -61,8 +61,33 @@ chmod a+x /usr/libexec/unwoke/setup.sh /usr/libexec/unwoke/first-session.sh \
   /usr/libexec/unwoke/setup-gui.py /usr/libexec/unwoke/signed-nag.sh \
   /usr/libexec/unwoke/notify-reboot.sh /usr/libexec/unwoke/open-tutorial.sh \
   /usr/libexec/unwoke/install-proton.sh /usr/libexec/unwoke/install-ivpn.sh \
-  /usr/libexec/unwoke/vendor.py \
+  /usr/libexec/unwoke/install-vendor.sh /usr/libexec/unwoke/vendor.py \
   /usr/libexec/unwoke/toggles.sh /usr/libexec/unwoke/first-boot.sh 2>/dev/null || true
+
+# One .desktop per vendors{} key so GNOME/KDE search finds new apps without extra files.
+python3 - <<'PY' || true
+import json
+from pathlib import Path
+p = Path("/usr/share/unwoke/vendor-installers.json")
+dstdir = Path("/usr/share/applications")
+if p.is_file() and dstdir.is_dir():
+    vendors = json.loads(p.read_text(encoding="utf-8")).get("vendors") or {}
+    for name, spec in vendors.items():
+        title = spec.get("title") or name
+        kw = spec.get("keywords") or name.replace("_", ";")
+        body = f"""[Desktop Entry]
+Type=Application
+Name={title} (Unwoke)
+Comment=Strict installer from vendor-installers.json. Nothing auto-unlocks.
+Exec=/usr/libexec/unwoke/install-vendor.sh {name}
+Icon=/usr/share/pixmaps/unwoke-logo.svg
+Terminal=true
+Categories=Settings;
+Keywords={kw};unwoke;vendor;
+StartupNotify=true
+"""
+        (dstdir / f"unwoke-vendor-{name}.desktop").write_text(body, encoding="utf-8")
+PY
 
 if command -v glib-compile-schemas >/dev/null && [[ -d /usr/share/glib-2.0/schemas ]]; then
   glib-compile-schemas /usr/share/glib-2.0/schemas || true

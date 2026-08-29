@@ -20,6 +20,7 @@ for arg in "$@"; do
     --loosened) jump+=(--loosened) ;;
     --proton) jump+=(--proton) ;;
     --ivpn) jump+=(--ivpn) ;;
+    --vendors) jump+=(--vendors) ;;
   esac
 done
 
