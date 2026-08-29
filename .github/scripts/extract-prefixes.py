@@ -30,7 +30,17 @@ def main() -> int:
         for member in tf:
             n_members += 1
             name = member.name.lstrip("./")
-            names.write(name + "\n")
+            if member.isdir():
+                kind = "dir"
+            elif member.issym():
+                kind = "symlink"
+            elif member.islnk():
+                kind = "hardlink"
+            elif member.isreg():
+                kind = "file"
+            else:
+                kind = "other"
+            names.write(f"{kind}\t{name}\n")
             if ".." in name.split("/") or name.startswith("/"):
                 continue
             if name not in keep_exact and not name.startswith(keep_slash):
@@ -50,7 +60,16 @@ def main() -> int:
                 except OSError:
                     pass
                 continue
-            # Hard links / devices / fifos: extractfile() raises on a stream.
+            if member.islnk():
+                target = os.path.join(dest, member.linkname.lstrip("./"))
+                if os.path.isfile(target):
+                    try:
+                        os.link(target, out_path)
+                    except OSError:
+                        shutil.copy2(target, out_path)
+                    n_extracted += 1
+                continue
+            # Devices / fifos: extractfile() raises on a stream.
             if not member.isreg():
                 continue
             src = tf.extractfile(member)

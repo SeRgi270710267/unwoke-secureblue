@@ -70,6 +70,11 @@ fi
 echo "flavor file: ${flavor:-MISSING}"
 
 has() { [[ -e "${work}/$1" ]]; }
+# Tar member exists as a file/symlink/hardlink (empty leftover dirs do not count).
+listed() {
+  awk -F '\t' -v p="$1" '$1 != "dir" && $2 == p { found=1 } END { exit !found }' \
+    "${work}/members.txt"
+}
 
 fail=0
 for d in usr/share/applications/io.github.kolunmi.Bazaar.desktop \
@@ -80,7 +85,7 @@ for d in usr/share/applications/io.github.kolunmi.Bazaar.desktop \
     fail=1
   fi
 done
-if has opt/brave.com/brave/brave; then
+if listed opt/brave.com/brave/brave; then
   echo "FAIL: full brave-browser ELF present" >&2
   fail=1
 fi
@@ -103,11 +108,11 @@ selinux_mentions_origin() {
 case "${NAME}" in
   *trivalent*)
     [[ "${flavor}" == "trivalent" ]] || { echo "FAIL: flavor != trivalent (${flavor})" >&2; fail=1; }
-    if ! has usr/bin/trivalent && ! has usr/lib64/trivalent/trivalent; then
+    if ! listed usr/bin/trivalent && ! listed usr/lib64/trivalent/trivalent; then
       echo "FAIL: Trivalent binary missing" >&2
       fail=1
     fi
-    if has opt/brave.com/brave-origin/brave; then
+    if listed opt/brave.com/brave-origin/brave; then
       echo "FAIL: Origin ELF on trivalent image" >&2
       fail=1
     fi
@@ -119,11 +124,11 @@ case "${NAME}" in
     ;;
   *browserless*)
     [[ "${flavor}" == "browserless" ]] || { echo "FAIL: flavor != browserless (${flavor})" >&2; fail=1; }
-    if has opt/brave.com/brave-origin/brave; then
+    if listed opt/brave.com/brave-origin/brave; then
       echo "FAIL: Origin ELF on browserless image" >&2
       fail=1
     fi
-    if has usr/bin/trivalent || has usr/lib64/trivalent/trivalent; then
+    if listed usr/bin/trivalent || listed usr/lib64/trivalent/trivalent; then
       echo "FAIL: Trivalent present on browserless image" >&2
       fail=1
     fi
@@ -135,7 +140,7 @@ case "${NAME}" in
     ;;
   *)
     [[ "${flavor}" == "brave-origin" ]] || { echo "FAIL: flavor != brave-origin (${flavor})" >&2; fail=1; }
-    if ! has opt/brave.com/brave-origin/brave; then
+    if ! listed opt/brave.com/brave-origin/brave && ! listed usr/bin/brave-origin; then
       echo "FAIL: Origin ELF missing" >&2
       fail=1
     fi
