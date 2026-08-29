@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>Compared to stock | Unwoke SecureBlue</title>
+  <meta name="description" content="Easy words, then a detailed ledger: how Unwoke SecureBlue is stricter or easier than stock secureblue, and where stock still wins.">
+  <base href="/unwoke-secureblue/">
+  <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css?v=8">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="./"><img src="assets/logo.svg?v=4" alt="">Unwoke SecureBlue</a></li>
+        <li><a href="features/">Features</a></li>
+        <li aria-current="page"><a href="compared/">Compared</a></li>
+        <li><a href="brand/">Brand</a></li>
+        <li><a href="changelog/">Changelog</a></li>
+        <li><a href="images/">Images</a></li>
+        <li><a href="install/">Install</a></li>
+        <li><a href="post-install/">Post-install</a></li>
+        <li><a href="tutorials/">Tutorials</a></li>
+        <li><a href="faq/">FAQ</a></li>
+        <li><a href="contributing/">Contributing</a></li>
+        <li><a href="conduct/">Conduct</a></li>
+        <li><a href="donate/">Donate</a></li>
+        <li><a href="secureblue/">Their docs</a></li>
+        <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="content">
+    <h1>Compared to stock</h1>
+    <p>This page is the living list of how Unwoke is <strong>stricter</strong>, <strong>easier</strong>, or <strong>not better</strong> than official <a href="https://secureblue.dev">secureblue</a>. The four-column table stays on <a href="features/">Features</a>. When we ship something, it gets a line here.</p>
+    <p class="notice"><strong>Not affiliated.</strong> We overlay their already-signed images. Kernel, SELinux, <code>hardened_malloc</code>, firewall, USBGuard, <code>run0</code> — that is still them. We did not rewrite the OS.</p>
+
+    <h2 id="easy"><a href="#easy">Easy words</a></h2>
+    <p>Stock is a locked-down Fedora Atomic desktop with Trivalent and a curated store (Bazaar). Unwoke is that same OS with different house rules and a first-day conversation.</p>
+    <ul>
+      <li><strong>Same foundation.</strong> Their signed image, their kernel hardening, their SELinux. We layer on top. Not a fork.</li>
+      <li><strong>No curator store.</strong> Bazaar / GNOME Software / Discover are gone. Flathub is off until you turn verified apps on. That is a security choice, not a missing package.</li>
+      <li><strong>More things start off.</strong> Bluetooth, brew, toolbox, camera/mic, extra daemons. You turn on only what you need.</li>
+      <li><strong>The first hour talks to you.</strong> Stock dumps you into a hardened desktop and a wiki. We open <strong>Unwoke setup</strong>, nag until the signed update is actually booted, and map “this is broken” to “this is a lock.”</li>
+      <li><strong>Three browsers, not one.</strong> Keep their Trivalent (plus extra policies), use Brave Origin, or ship no image browser. Stock only ships Trivalent.</li>
+    </ul>
+    <div class="alert">
+      <p><strong>The one sentence people get wrong.</strong> Default Origin images are <em>not</em> a tighter browser than stock + Trivalent. No Vanadium patches, fat <code>brave_t</code>. For the same house browser as stock, plus extra locks: rebase to <code>*-trivalent</code>.</p>
+    </div>
+
+    <h2 id="score"><a href="#score">Scorecard</a></h2>
+    <div class="cards">
+      <div class="card">
+        <p class="eyebrow">House rules</p>
+        <h3>Stricter by default</h3>
+        <p>No store. Flathub/brew/BT/toolbox/camera off. Flatpak lockdown on. Extra Chromium packs on Origin and Trivalent flavors. Wheel off the greeter after a daily user exists.</p>
+      </div>
+      <div class="card">
+        <p class="eyebrow">First days</p>
+        <h3>Easier to live with</h3>
+        <p>Setup window, app-grid launcher, <code>ujust why</code>, tutorials, signed-reboot nag, three-question install picker, leftover stock steps in one menu. Same locks, less “is it broken?”</p>
+      </div>
+      <div class="card">
+        <p class="eyebrow">Factory</p>
+        <h3>We watch the oven</h3>
+        <p>Canary on their signed base, pin digest, inspect every flavor, twice-daily rebuild, one factory-alarm issue. They cannot push to our GHCR. Canary hits still need a human.</p>
+      </div>
+      <div class="card">
+        <p class="eyebrow">Browser</p>
+        <h3>Stock still wins Origin</h3>
+        <p>Trivalent + Vanadium + <code>trivalent_t</code> is the tighter house browser. Our <code>*-trivalent</code> flavor <em>is</em> that, plus extra reversible policies. Origin is a different product decision.</p>
+      </div>
+    </div>
+
+    <h2 id="stricter"><a href="#stricter">Where we are stricter than stock</a></h2>
+    <p>Every line is a default. Each has a revert. Nothing here auto-unlocks.</p>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr><th>Thing</th><th>Stock</th><th>Unwoke</th><th>Revert</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>GUI software store</td>
+            <td>Bazaar (curated catalog)</td>
+            <td>Removed. No Discover / GNOME Software either</td>
+            <td>None. Use Flathub via terminal if you want apps</td>
+          </tr>
+          <tr>
+            <td>Flathub</td>
+            <td>Verified remote typical</td>
+            <td>Off until you choose</td>
+            <td><code>ujust set-flathub verified</code> (not <code>full</code> unless you mean it)</td>
+          </tr>
+          <tr>
+            <td>Flatpak permission lockdown</td>
+            <td>Opt-in</td>
+            <td>On</td>
+            <td><code>ujust set-flatpak-lockdown off</code> (or grant in Flatseal)</td>
+          </tr>
+          <tr>
+            <td>Homebrew</td>
+            <td>Shipped</td>
+            <td>Off</td>
+            <td><code>ujust set-brew on</code></td>
+          </tr>
+          <tr>
+            <td>Bluetooth</td>
+            <td>Available</td>
+            <td>Service masked + rfkill. Wi-Fi stays</td>
+            <td><code>ujust set-bluetooth on</code></td>
+          </tr>
+          <tr>
+            <td>toolbox / distrobox</td>
+            <td>On PATH</td>
+            <td>Wrappers until you opt in. podman stays</td>
+            <td><code>ujust set-toolbox on</code></td>
+          </tr>
+          <tr>
+            <td>Camera / mic hardware</td>
+            <td>Available</td>
+            <td>Kernel modules + udev locked. Speakers stay</td>
+            <td><code>ujust set-camera-mic on</code></td>
+          </tr>
+          <tr>
+            <td>Avahi / ModemManager</td>
+            <td>Typically on</td>
+            <td>Masked</td>
+            <td><code>ujust set-extra-daemons on</code></td>
+          </tr>
+          <tr>
+            <td>Wheel on the greeter</td>
+            <td>Daily user is often wheel</td>
+            <td>Daily non-wheel user before GDM/SDDM, then wheel blocked from GUI</td>
+            <td><code>ujust set-admin-split off</code> (weaker split)</td>
+          </tr>
+          <tr>
+            <td>JavaScript JIT (Origin + <code>*-trivalent</code>)</td>
+            <td>Allowed in Trivalent</td>
+            <td>Blocked by policy</td>
+            <td><code>ujust set-brave-jitless off</code></td>
+          </tr>
+          <tr>
+            <td>WebGL / WebGPU</td>
+            <td>Allowed</td>
+            <td>Off</td>
+            <td><code>ujust set-brave-isolation off</code></td>
+          </tr>
+          <tr>
+            <td>Extensions</td>
+            <td>Allowed</td>
+            <td>Installs blocked</td>
+            <td><code>ujust set-brave-extensions allow</code></td>
+          </tr>
+          <tr>
+            <td>Site camera / mic / USB / geo</td>
+            <td>Permission prompts</td>
+            <td>Blocked by policy</td>
+            <td><code>ujust set-brave-devices off</code></td>
+          </tr>
+          <tr>
+            <td>HTTPS / metrics / autofill / passwords</td>
+            <td>Mostly compile-time on Trivalent</td>
+            <td>Managed JSON pack on (additive on Trivalent)</td>
+            <td><code>ujust set-brave-hardening off</code></td>
+          </tr>
+          <tr>
+            <td>Screen capture / extra sandbox</td>
+            <td>No extra pack</td>
+            <td>On</td>
+            <td><code>ujust set-brave-sandbox off</code></td>
+          </tr>
+          <tr>
+            <td>Trivalent Network Service Sandbox</td>
+            <td>Off in settings (can wipe cookies)</td>
+            <td><code>*-trivalent</code> only: forced on</td>
+            <td><code>ujust set-trivalent-network-sandbox off</code></td>
+          </tr>
+          <tr>
+            <td>Punycode + strip referrers</td>
+            <td>Optional flags</td>
+            <td><code>*-trivalent</code>: on via conf.d</td>
+            <td><code>ujust set-trivalent-referrers off</code></td>
+          </tr>
+          <tr>
+            <td>Origin extra sandbox</td>
+            <td>n/a (they do not ship Origin)</td>
+            <td>Bubblejail on the Origin launcher, default on</td>
+            <td><code>ujust set-brave-bubblejail off</code>. Refused on Trivalent (their FAQ)</td>
+          </tr>
+          <tr>
+            <td>Host browsers on browserless</td>
+            <td>n/a</td>
+            <td>Blocked until you type ALLOW</td>
+            <td><code>ujust set-allow-browsers on ALLOW</code></td>
+          </tr>
+          <tr>
+            <td>Update origin after first rebase</td>
+            <td>You type the signed rebase</td>
+            <td>First-boot stages <code>ostree-image-signed</code> and nags until you reboot</td>
+            <td>Do not go back to unverified</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="easier"><a href="#easier">Where we are easier than stock</a></h2>
+    <p>This is the part that does not loosen a lock. Stock is also <code>ujust</code>. We added a conversation around the extra knobs.</p>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr><th>Pain on stock / a raw overlay</th><th>What Unwoke does</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Hardened desktop looks “broken” (no store, no BT, sites without JIT)</td>
+            <td><strong>Unwoke setup</strong> in the app grid and on first login. <code>ujust why</code> maps the symptom to the lock. Tutorial button. Nothing turns off until you pick it.</td>
+          </tr>
+          <tr>
+            <td>Signed rebase is a second command people forget</td>
+            <td>First-boot stages it. Notification every login and every 15 minutes until you reboot onto the signed image.</td>
+          </tr>
+          <tr>
+            <td>Twelve image names</td>
+            <td>Install page: three questions (GNOME/KDE, NVIDIA, Origin/Trivalent/none). Copy buttons. Windows / Linux / macOS order.</td>
+          </tr>
+          <tr>
+            <td>Two post-installs (overlay + theirs)</td>
+            <td>Setup → leftover stock: Secure Boot key, kargs, USBGuard, on confirm. Their page still exists. Overlay locks unchanged.</td>
+          </tr>
+          <tr>
+            <td>tty1 daily-user prompt looks like a hung install</td>
+            <td>Installer-style “this is not frozen” dialog. Greeter still waits. Skip is still skip. Then Setup → Daily user.</td>
+          </tr>
+          <tr>
+            <td>Wiki of <code>ujust</code> commands</td>
+            <td><a href="tutorials/">Tutorials</a> with the secure path first. Features table for the rest.</td>
+          </tr>
+          <tr>
+            <td>Private GHCR packages block anonymous rebase</td>
+            <td>Factory job tries to set packages Public after a bake. Warn-only if GitHub’s token cannot flip it.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="factory"><a href="#factory">Factory (you never see this, you still benefit)</a></h2>
+    <p>Stock ships images. We rebuild <em>on top of</em> those images twice a day and refuse to bake if their signed base looks tampered <em>in the clear</em>.</p>
+    <ul>
+      <li>Download their public key, check it still matches our copy, <code>cosign verify</code> the base, pin the digest so <code>:latest</code> cannot swap mid-build.</li>
+      <li>Canary: crane-export the signed base (do not run it, do not docker-pull it). If it names this repo, our GHCR, or <code>/usr/share/unwoke</code>, the overlay does not bake.</li>
+      <li>Inspect every published flavor: our signature, right browser binary, no leftover Trivalent on Origin/browserless, store launchers hidden, setup files present.</li>
+      <li>One GitHub issue if the factory is red. Closed only when canary + watch + bake are green.</li>
+      <li>Canary hits and a new <code>keys/secureblue.pub</code> are <strong>not</strong> auto-merged. That is the security boundary.</li>
+    </ul>
+    <p>Stock cannot push to <code>ghcr.io/sergi270710267</code>. After the signed reboot, your PC follows our key, not theirs.</p>
+
+    <h2 id="stock-wins"><a href="#stock-wins">Where stock still wins</a></h2>
+    <ul>
+      <li><strong>House browser on default images.</strong> Trivalent (Vanadium patches, tight <code>trivalent_t</code>) is stricter than Brave Origin (policies + fat <code>brave_t</code>). Use <code>*-trivalent</code> if that is what you wanted.</li>
+      <li><strong>No extra userns domain on stock.</strong> Origin adds <code>brave_t</code> to the userns allow-list. Trivalent and browserless flavors do not.</li>
+      <li><strong>Their ISO is a known-good empty-disk path today.</strong> Our USB wrap is a baker on GitHub. Until a run is green with a downloadable artifact, flash theirs then rebase. We do not pretend otherwise.</li>
+      <li><strong>Their docs and community.</strong> We mirror their pages daily. Canonical is still <a href="https://secureblue.dev">secureblue.dev</a>.</li>
+      <li><strong>We are one person’s overlay.</strong> Their project is bigger. That is not a security feature for us; it is honesty.</li>
+    </ul>
+
+    <h2 id="ledger"><a href="#ledger">Ledger (what we added, so this page stays true)</a></h2>
+    <p>Newest first. This is how we keep score. Overlay items need an image rebuild. Pages items go live with the site.</p>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr><th>When</th><th>What landed</th><th>Vs stock</th><th>Where</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2026-08-29</td>
+            <td>GTK Unwoke setup, app-grid launcher, tutorial buttons, repeating signed-reboot nag, installer-style daily-user dialog (greeter still waits)</td>
+            <td>Easier. Same locks. Not wheel-on-GDM-first</td>
+            <td>Next overlay bake</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td>Tutorials tab; install picker (three questions); copy buttons; Windows/Linux/macOS order; USB download CTA when a bake is green</td>
+            <td>Easier to install and live with</td>
+            <td>Pages</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><code>ujust why</code> / setup “looks broken”; leftover stock steps (key, kargs, USBGuard) on confirm</td>
+            <td>Guided recovery. Does not auto-unlock</td>
+            <td>Overlay</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td>First-boot stages signed origin; MOTD/nags; factory public-packages job (warn-only)</td>
+            <td>People stop sitting on unverified <code>:latest</code></td>
+            <td>Overlay + Actions</td>
+          </tr>
+          <tr>
+            <td>2026-08</td>
+            <td>Canary + digest pin + post-publish inspect + twice-daily bake + factory-alarm issue</td>
+            <td>Hostile-in-the-clear base cannot silently become our GHCR image</td>
+            <td>Actions</td>
+          </tr>
+          <tr>
+            <td>2026-08</td>
+            <td><code>*-trivalent</code> flavor: stock Trivalent + extra reversible policies; Origin; browserless</td>
+            <td>Choice stock does not offer. Trivalent flavor is stock’s browser plus extra locks</td>
+            <td>12 GHCR images</td>
+          </tr>
+          <tr>
+            <td>2026-08</td>
+            <td>No Bazaar/stores; Flathub/brew/BT/toolbox/camera off; lockdown on; extra Chromium packs; admin-split; Bubblejail on Origin only</td>
+            <td>Stricter house. Every extra lock has a revert</td>
+            <td>Overlay</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Day-by-day git subjects: <a href="changelog/">Changelog</a>. Toggle list: <a href="features/#toggles">Features</a>. How to actually do the tasks: <a href="tutorials/">Tutorials</a>.</p>
+  </main>
+
+  <footer>
+    <a class="brand" href="./"><img src="assets/logo.svg?v=4" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="features/">Features</a></li>
+      <li><a href="tutorials/">Tutorials</a></li>
+      <li><a href="faq/">FAQ</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

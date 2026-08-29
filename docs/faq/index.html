@@ -18,6 +18,7 @@
       <ul>
         <li><a href="./"><img src="assets/logo.svg?v=4" alt="">Unwoke SecureBlue</a></li>
         <li><a href="features/">Features</a></li>
+        <li><a href="compared/">Compared</a></li>
         <li><a href="brand/">Brand</a></li>
         <li><a href="changelog/">Changelog</a></li>
         <li><a href="images/">Images</a></li>
@@ -42,7 +43,7 @@
     <p>No. Personal overlay. Their project is <a href="https://secureblue.dev">secureblue.dev</a>. Use that if you want the official images, Trivalent, Bazaar, and the <a href="https://secureblue.dev/code-of-conduct">Contributor Covenant</a>. Our <a href="conduct/">conduct</a> is the opposite of that document.</p>
 
     <h2 id="safer"><a href="#safer">Is this more secure than stock secureblue?</a></h2>
-    <p>Origin images: no. Stock + Trivalent is tighter on the browser. <code>-trivalent</code> images: equal on the house browser (same binary, patches, SELinux), stricter on extra policies and house locks (no store, Flathub/brew/Bluetooth/toolbox off, camera lock, …). Browserless: tighter than Origin because there is no fat <code>brave_t</code> and no Chromium in the image. That only lasts until you install a browser. It is not “safer than Trivalent while browsing.”</p>
+    <p>Origin images: no. Stock + Trivalent is tighter on the browser. <code>-trivalent</code> images: equal on the house browser (same binary, patches, SELinux), stricter on extra policies and house locks (no store, Flathub/brew/Bluetooth/toolbox off, camera lock, …). Browserless: tighter than Origin because there is no fat <code>brave_t</code> and no Chromium in the image. That only lasts until you install a browser. It is not “safer than Trivalent while browsing.” Living list (easy words + every lock): <a href="compared/">Compared to stock</a>.</p>
 
     <h2 id="trivalent"><a href="#trivalent">What is the Trivalent flavor?</a></h2>
     <p>Rebase to <code>unwoke-silverblue-trivalent</code> (or kinoite / nvidia-open). We keep stock Trivalent and <code>trivalent-selinux</code>. We do not load <code>brave_t</code>. Extra Chromium managed policies (JIT-less, no WebGL, extension block, device guards, extra sandbox) and two flag packs (Network Service Sandbox, punycode/referrers) default on and revert with <code>ujust set-trivalent-*</code> (same packs as <code>set-brave-*</code>). This does not add Vanadium compiler patches on top of what Trivalent already ships. Do not Bubblejail it.</p>

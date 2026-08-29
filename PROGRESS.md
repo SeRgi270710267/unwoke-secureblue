@@ -156,6 +156,7 @@ Stock `ujust` still works.
 15. **Guided recovery + factory public packages (ISO still separate):** `ujust why` / setup option 3 maps “broken” to the matching lock (does not auto-unlock). Option 4 runs leftover stock `ujust` (Secure Boot key, kargs, USBGuard) on confirm. After a green overlay bake, `public-packages.sh` tries to set GHCR packages Public (warn-only; does not fail the bake). Install page queries GitHub for a last-green USB ISO and says so if none exists.
 16. **Tutorials tab (Pages):** everyday tasks with the secure path first (first hour, apps without a store, Bluetooth, camera, USBGuard, updates/rollback, daily user, VPN DNS, toolbox, health check). Does not auto-unlock. Docs-only — no overlay bake.
 17. **Desktop UX without loosening locks:** GTK **Unwoke setup** window (app grid + autostart; TUI fallback). Same stamps as `ujust`. Tutorial buttons. Repeating signed-reboot nag (login + 15 min timer) until `/etc/unwoke/signed-staged` is gone. Daily-user still **before the greeter** (dialog installer screen, not wheel-on-GDM-first). Install page: Windows/Linux/macOS order, copy buttons, USB download CTA when a green bake exists.
+18. **Compared tab (Pages):** living list vs stock — easy words, stricter table, easier table, factory, where stock still wins, dated ledger. Update this page when we ship a lock or a UX win. Does not auto-unlock. Docs-only.
 
 Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only / `iso.yml` pushes should not rebuild images (`build.yml` paths-ignore).
 
