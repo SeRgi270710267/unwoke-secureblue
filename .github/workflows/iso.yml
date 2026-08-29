@@ -108,11 +108,11 @@ jobs:
       - name: Pull image (root, podman)
         run: sudo podman pull "${{ env.IMAGE_REF }}"
 
-      # ublue-os/titanoboa@main is the old LiveCD that requires
-      # /usr/lib/bootc-image-builder/iso.yaml in the OS image. Stock and
-      # Unwoke do not ship that file, so the wrap died after squashfs.
-      # RoyalOughtness/titanoboa is the Anaconda installer builder secureblue
-      # uses on the same bases.
+      # ublue-os/titanoboa@main (5c457c3) is the old LiveCD that requires
+      # iso.yaml in the OS image. The GitHub action at 840217d still uses
+      # extractions/setup-just, which exited 1 in two seconds here. Drive
+      # that Justfile ourselves with a checksum-pinned just binary.
+      # RoyalOughtness/titanoboa hard-codes secureblue.pub paths — skip it.
       - name: Materialize ISO hooks
         env:
           IMAGE_REF: ${{ env.IMAGE_REF }}
@@ -128,23 +128,47 @@ jobs:
           out = pathlib.Path(".github/workflows/isos/prep_rootfs.generated.sh")
           out.write_text(text.replace("@IMAGE_REF@", ref), encoding="utf-8")
           out.chmod(0o755)
-          initramfs = pathlib.Path(".github/workflows/isos/prep_initramfs.sh")
-          initramfs.chmod(0o755)
+          pathlib.Path(".github/workflows/isos/prep_initramfs.sh").chmod(0o755)
           print(f"ISO hook IMAGE_REF={ref}")
           PY
 
+      - name: Install just
+        run: bash .github/scripts/install-just.sh
+
+      - name: Checkout titanoboa
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: ublue-os/titanoboa
+          ref: 840217d97bd0bc9a52466508c54d8dda5c5ba2fd
+          path: titanoboa
+          persist-credentials: false
+
       - name: Build ISO
         id: build
-        uses: RoyalOughtness/titanoboa@3d19fdfa8bff13542c0bb92620ed7826f1bbe82c # pin (secureblue ISO builder)
-        with:
-          image-ref: ${{ env.IMAGE_REF }}
-          container-image: ${{ env.IMAGE_REF }}
-          hook-post-rootfs: ${{ github.workspace }}/.github/workflows/isos/prep_rootfs.generated.sh
-          hook-pre-initramfs: ${{ github.workspace }}/.github/workflows/isos/prep_initramfs.sh
-          livesys: "true"
-          compression: squashfs
-          builder-distro: fedora
-          iso-dest: ${{ github.workspace }}/${{ matrix.image }}.iso
+        env:
+          IMAGE_REF: ${{ env.IMAGE_REF }}
+          IMAGE_NAME: ${{ matrix.image }}
+        run: |
+          set -euo pipefail
+          export PATH="${HOME}/.local/bin:${PATH}"
+          command -v just
+          just --version
+          HOOK_POST="$(realpath .github/workflows/isos/prep_rootfs.generated.sh)"
+          HOOK_PRE="$(realpath .github/workflows/isos/prep_initramfs.sh)"
+          DEST="${GITHUB_WORKSPACE}/${IMAGE_NAME}.iso"
+          cd titanoboa
+          # justfile uses podman -it; allocate a PTY so CI is not "not a TTY".
+          sudo --preserve-env=PATH,CI \
+            env \
+            CI=true \
+            HOOK_post_rootfs="${HOOK_POST}" \
+            HOOK_pre_initramfs="${HOOK_PRE}" \
+            TITANOBOA_BUILDER_DISTRO=fedora \
+            script -q -e -c "just build '${IMAGE_REF}' 1 none squashfs NONE '${IMAGE_REF}' 1" /dev/null
+          sudo chown "$(id -u):$(id -g)" output.iso
+          mkdir -p "$(dirname "${DEST}")"
+          mv output.iso "${DEST}"
+          echo "iso-dest=${DEST}" >> "${GITHUB_OUTPUT}"
 
       - name: Checksum and sign sums
         env:

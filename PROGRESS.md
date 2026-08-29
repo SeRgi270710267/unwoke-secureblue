@@ -156,7 +156,7 @@ Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only
 
 - Pickup phrase: continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.
 - `install-oras.sh` and `.github/workflows/isos/**` are in `build.yml` paths-ignore. Do not cancel a bake that is already running.
-- USB ISO: first wrap of `unwoke-silverblue-trivalent` with old titanoboa **failed** ([33246595295](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33246595295)) — missing `iso.yaml`. Retry after the RoyalOughtness/titanoboa switch. If green, download the artifact (14 days). Make the GHCR `*-iso` package Public.
+- USB ISO: old `ublue-os/titanoboa@main` failed (no `iso.yaml`, [33246595295](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33246595295)). `RoyalOughtness/titanoboa` died in 2s on `setup-just` and hard-codes their pubkeys ([33247362623](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33247362623)). Drive `ublue-os/titanoboa@840217d` Justfile with checksum-pinned `just`. If green, download the artifact (14 days). Make the GHCR `*-iso` package Public.
 - Do not add `on: push` to `iso.yml` or `verify.yml`.
 - Confirm on a real rebase: `ujust unwoke-status` / `ujust audit-unwoke` (wallpaper, policies, trampoline, leftover Trivalent gone on Origin/browserless).
 - Hard-refresh Pages if Install / Changelog look cached.
