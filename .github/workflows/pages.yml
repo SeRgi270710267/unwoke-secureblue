@@ -39,6 +39,9 @@ jobs:
           /tmp/sbdocs/bin/pip install "markdown==3.8.2"
           /tmp/sbdocs/bin/python .github/scripts/mirror-secureblue-docs.py
 
+      - name: Generate people-facing progress
+        run: python3 docs/_tools/generate-progress.py
+
       - name: Generate public changelog
         run: python3 docs/_tools/generate-changelog.py
 

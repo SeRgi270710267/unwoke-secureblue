@@ -155,7 +155,7 @@ ujust set-allow-browsers on ALLOW</code></pre>
     <p><em>Unwoke</em> is the adjective/verb modifier. <em>SecureBlue</em> is one proper name (S and B capped), not “Secure Blue”. Repo and GHCR slugs stay lowercase because registries do.</p>
 
     <h2 id="changelog"><a href="#changelog">Where is the changelog?</a></h2>
-    <p><a href="changelog/">Changelog</a> is rebuilt with the site from public git subjects (title + date + short hash). No commit bodies, diffs, or file lists. Subjects that look like secrets, keys, tokens, or passwords are dropped. Full public history stays on GitHub.</p>
+    <p><a href="changelog/">Changelog</a> is rebuilt with the site from public git subjects (title + date + short hash). The top of that page, Home “What’s new”, and the Compared ledger are the people-facing cut (overlay, install, tutorials). Factory-only commits stay off those lists. Optional <code>People:</code> / <code>Vs:</code> / <code>Where:</code> in a commit body write the Compared row in easy words. No commit bodies, diffs, or file lists in the public log. Subjects that look like secrets are dropped.</p>
 
     <h2 id="updates"><a href="#updates">How do updates work?</a></h2>
     <p>Not a git fork. CI pulls their signed image, verifies it with their public key, pins the digest, layers this overlay, and cosign-signs the result. Your machine follows <code>ghcr.io/sergi270710267/…</code> with rpm-ostree after the signed rebase. Rebuilds at 08:00 and 20:00 UTC. CI refuses to overlay if the stock image names this overlay (see <a href="#hostile-base">Could stock target this overlay?</a>).</p>

@@ -1,0 +1,35 @@
+{
+  "comment": "Hand-kept history from before git auto-progress. Generator prepends newer people-facing commits. Do not duplicate a git subject here.",
+  "rows": [
+    {
+      "day": "2026-08-29",
+      "what": "Vendor-watch, Setup Strict apps, and ujust install-vendor iterate every vendors{} key. New app = JSON stanza. Heal still HTTPS+checksum only.",
+      "vs": "Next strict app is not a Proton/IVPN special case. CI and search include it automatically.",
+      "where": "Actions + overlay (manifest on disk)"
+    },
+    {
+      "day": "2026-08-29",
+      "what": "ujust install-ivpn / install-mullvad / install-proton: WireGuard or Trivalent first; official RPM/repo only after checksum or gpgcheck and an asked extra origin. No store, no Snap, no unverified Flathub.",
+      "vs": "Easier than hunting RPMs. Stricter than stock Bazaar/Snap.",
+      "where": "Overlay bake + Pages tutorials"
+    },
+    {
+      "day": "2026-08-29",
+      "what": "GTK Unwoke setup, app-grid search for locks, You loosened, offline help, repeating signed-reboot nag with a Reboot button, Trivalent as the recommended default.",
+      "vs": "Easier first day. Same locks. Origin is an explicit pick.",
+      "where": "Overlay bake + Pages"
+    },
+    {
+      "day": "2026-08-29",
+      "what": "USB ISO baker (Titanoboa wrap) plus rebase path. Not Ventoy. Their Secure Boot key.",
+      "vs": "Empty disk without installing stock first. Their ISO picker is still nicer.",
+      "where": "Weekly ISO + GHCR -iso"
+    },
+    {
+      "day": "2026-08",
+      "what": "Canary + digest pin + post-publish inspect + twice-daily bake + factory-alarm. *-trivalent / Origin / browserless. No Bazaar; Flathub/brew/BT/toolbox/camera off; extra Chromium packs; admin-split.",
+      "vs": "Hostile-in-the-clear base cannot silently become our GHCR image. Stricter house; every extra lock has a revert.",
+      "where": "12 GHCR images + Actions"
+    }
+  ]
+}

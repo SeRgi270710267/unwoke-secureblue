@@ -336,6 +336,24 @@ main.mirror pre {
   overflow-x: auto;
 }
 
+ul.whats-new {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 2rem;
+}
+
+ul.whats-new li {
+  border-bottom: 1px solid var(--white-08);
+  padding: 0.65rem 0;
+}
+
+ul.whats-new time {
+  display: inline-block;
+  min-width: 7.5rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
 main.mirror .docs-index {
   display: grid;
   gap: 1.25rem;

@@ -47,6 +47,13 @@
 # files/    scripts, SELinux, policies, just
 # docs/     this site (not the mirrored tree)</code></pre>
     <p><code>docs/secureblue/</code> is generated in CI from their markdown. Do not edit it by hand.</p>
+    <h2 id="site-progress"><a href="#site-progress">Tell people automatically</a></h2>
+    <p>Pages rebuilds Home “What’s new”, the Compared ledger, and Changelog highlights from <code>main</code>. You do not edit those tables by hand for ordinary work. Factory-only commits (CI pins, snapshot hashes) stay off the human lists.</p>
+    <p>If the git subject is not enough, add three lines to the commit body. They become the Compared row:</p>
+<pre><code>People: Easy sentence a daily user should read.
+Vs: How this is stricter or easier than stock.
+Where: Pages now / Next overlay bake / USB ISO</code></pre>
+    <p>Seed for older history: <code>docs/_tools/people-seed.json</code>. Toggles on <a href="features/">Features</a> stay a written spec (wrong automation would lie).</p>
 
     <h2 id="stock"><a href="#stock">Stock secureblue (mirrored)</a></h2>
     <p>Their contributing guide — Discord, AI ban, pre-commit, test-build forks of <em>their</em> image recipes — is pulled daily. That process contributes to <strong>secureblue</strong>, not this overlay.</p>

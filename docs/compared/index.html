@@ -277,97 +277,285 @@
     </ul>
 
     <h2 id="ledger"><a href="#ledger">Ledger (what we added, so this page stays true)</a></h2>
-    <p>Newest first. This is how we keep score. Overlay items need an image rebuild. Pages items go live with the site.</p>
+    <p>Newest first. Rebuilt with the site from <code>main</code> (people-facing commits) plus a short seed for early history. Factory-only git (CI pins, snapshot hashes) is omitted. Overlay items still need an image rebuild. Add <code>People:</code> / <code>Vs:</code> / <code>Where:</code> in a commit body to write the Compared row in easy words — otherwise the git subject is used.</p>
     <div class="table-container">
       <table>
         <thead>
           <tr><th>When</th><th>What landed</th><th>Vs stock</th><th>Where</th></tr>
         </thead>
         <tbody>
+<!-- progress-generated:start -->
           <tr>
             <td>2026-08-29</td>
-            <td>Whole-factory auto-heal map plus sit-back nags: ISO/Pages alarms, GHCR-private issue until one Public click, stock-key and titanoboa-pin issues (no auto-accept), stock snapshot URL relocate inside their repo. Canary/keys/new hosts/titanoboa bump still human.</td>
-            <td>You get an issue when a lane is red instead of discovering it later. Sync does not mean weaker locks. Private GHCR nags until one click.</td>
-            <td>Pages <a href="factory/">Factory</a> now; overlay bake (already running) for inspect/help stubs; trust-watch on verify twice a day</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/edbab0d"><code class="hash">edbab0d</code></a> Fix site copy and make the stock docs mirror usable.</td>
+            <td>—</td>
+            <td>Pages now</td>
           </tr>
           <tr>
             <td>2026-08-29</td>
-            <td>Vendor-watch, Setup Strict apps, and <code>ujust install-vendor</code> iterate every <code>vendors{}</code> key. New app = JSON stanza. Heal still HTTPS+checksum only.</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/68c5369"><code class="hash">68c5369</code></a> Nag leftover human gates without auto-trusting them.</td>
+            <td>—</td>
+            <td>Pages now; USB ISO</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/fc1f293"><code class="hash">fc1f293</code></a> Keep the factory in sync without weakening locks.</td>
+            <td>—</td>
+            <td>Next overlay bake; Pages now; USB ISO</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/4630f0e"><code class="hash">4630f0e</code></a> Generate the tutorials hub from the vendor list at Pages deploy.</td>
+            <td>—</td>
+            <td>Next overlay bake; Pages now</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/7de7b1d"><code class="hash">7de7b1d</code></a> Add Mullvad VPN to the shared vendor list (WireGuard first).</td>
+            <td>—</td>
+            <td>Next overlay bake; Pages now; Strict apps list</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/4e2597b"><code class="hash">4e2597b</code></a> Every vendors{} key is watched, healed, and installable.</td>
+            <td>—</td>
+            <td>Next overlay bake; Pages now; Strict apps list</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/8992187"><code class="hash">8992187</code></a> Record first green Unwoke USB ISO (Trivalent GNOME, run 20).</td>
+            <td>—</td>
+            <td>Pages now</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/0dde9ab"><code class="hash">0dde9ab</code></a> Heal usual Proton/IVPN breakage, not only moved URLs.</td>
+            <td>—</td>
+            <td>Next overlay bake; Pages now</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/818f4f9"><code class="hash">818f4f9</code></a> Heal vendor URLs when Proton/IVPN move files on their own HTTPS.</td>
+            <td>—</td>
+            <td>Next overlay bake; Pages now; Strict apps list</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/ccb6297"><code class="hash">ccb6297</code></a> ISO: upload artifact even if GHCR publish has no Cosign sig.</td>
+            <td>—</td>
+            <td>USB ISO</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/447505d"><code class="hash">447505d</code></a> Watch Proton/IVPN installer contracts so wizards do not rot.</td>
+            <td>—</td>
+            <td>Next overlay bake; Pages now; Strict apps list</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/1e44479"><code class="hash">1e44479</code></a> ujust install-ivpn: WireGuard first, official repo only if asked.</td>
+            <td>—</td>
+            <td>Next overlay bake; Pages now</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/2916879"><code class="hash">2916879</code></a> ujust install-proton: web first, SHA512 RPMs, asked locks.</td>
+            <td>—</td>
+            <td>Next overlay bake; Pages now</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/469a745"><code class="hash">469a745</code></a> ISO: keep the wrap if Cosign cannot reach public Rekor.</td>
+            <td>—</td>
+            <td>USB ISO</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/7636ea0"><code class="hash">7636ea0</code></a> Last-green stamp on the site; Reboot button on the signed nag.</td>
+            <td>—</td>
+            <td>Next overlay bake; Pages now</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/9c5e28b"><code class="hash">9c5e28b</code></a> ISO: sign SHA256SUMS in the wrap step, no path handoff.</td>
+            <td>—</td>
+            <td>USB ISO</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/0e3ba3e"><code class="hash">0e3ba3e</code></a> Search finds locks; You loosened puts them back; help works offline.</td>
+            <td>—</td>
+            <td>Next overlay bake; Pages now</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/7014a98"><code class="hash">7014a98</code></a> Recommend Trivalent as the default flavor.</td>
+            <td>—</td>
+            <td>Pages now; USB ISO</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/b2a9a05"><code class="hash">b2a9a05</code></a> Add Compared tab: living list vs stock secureblue.</td>
+            <td>—</td>
+            <td>Pages now</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/6e6fbb9"><code class="hash">6e6fbb9</code></a> ISO: hash in the wrap step so checksum cannot lose the file.</td>
+            <td>—</td>
+            <td>USB ISO</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/77569a8"><code class="hash">77569a8</code></a> Desktop setup window, app-grid launcher, repeating signed nag.</td>
+            <td>—</td>
+            <td>Next overlay bake; Pages now</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/1e24977"><code class="hash">1e24977</code></a> Add Tutorials tab: everyday tasks, secure path first.</td>
+            <td>—</td>
+            <td>Pages now</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/5b13ff5"><code class="hash">5b13ff5</code></a> Fix iso.yml YAML: keep PEM check on one line so dispatch works.</td>
+            <td>—</td>
+            <td>USB ISO</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/cd9c734"><code class="hash">cd9c734</code></a> ISO checksum: sign with our key only, skip public Rekor.</td>
+            <td>—</td>
+            <td>Pages now; USB ISO</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/4b16973"><code class="hash">4b16973</code></a> Guided recovery in setup; auto-public GHCR; honest USB status.</td>
+            <td>—</td>
+            <td>Next overlay bake; Pages now</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/1323a2a"><code class="hash">1323a2a</code></a> First-session setup and a three-question install picker.</td>
+            <td>—</td>
+            <td>Next overlay bake; Pages now</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/73ac2f2"><code class="hash">73ac2f2</code></a> ISO checksum: find the file, reject tiny ISOs, sign from a key file.</td>
+            <td>—</td>
+            <td>USB ISO</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/27cef02"><code class="hash">27cef02</code></a> ISO checksum: use workspace path, not empty action output.</td>
+            <td>—</td>
+            <td>USB ISO</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/15c318d"><code class="hash">15c318d</code></a> ISO: run titanoboa Justfile with pinned just, skip setup-just.</td>
+            <td>—</td>
+            <td>USB ISO</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/51abaa4"><code class="hash">51abaa4</code></a> Fix USB ISO: use Anaconda Titanoboa, not the old iso.yaml LiveCD.</td>
+            <td>—</td>
+            <td>USB ISO</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/b6ee5f4"><code class="hash">b6ee5f4</code></a> Fix ISO/verify dispatch: pick job, no matrix in job if.</td>
+            <td>—</td>
+            <td>USB ISO</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/af7de25"><code class="hash">af7de25</code></a> Direct USB install: wrap Unwoke GHCR images, no stock ISO required.</td>
+            <td>—</td>
+            <td>Pages now; USB ISO</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/40c09c7"><code class="hash">40c09c7</code></a> Fix canary on Atomic images; auto-inspect GHCR; one factory-alarm issue.</td>
+            <td>—</td>
+            <td>Next overlay bake; Pages now</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/76cadad"><code class="hash">76cadad</code></a> Do not block overlay when stock scripts change; still alarm and attach the new files.</td>
+            <td>—</td>
+            <td>Pages now</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/953c7a5"><code class="hash">953c7a5</code></a> Mask stock nags, replace MOTD, sanitize mirrored docs, watch flatpak.just.</td>
+            <td>—</td>
+            <td>Next overlay bake; Pages now</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/c481e82"><code class="hash">c481e82</code></a> Stop running stock harden_flatpak.py; watch it for changes.</td>
+            <td>—</td>
+            <td>Next overlay bake; Pages now</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/95bfb8f"><code class="hash">95bfb8f</code></a> Refuse to overlay if a signed stock image names Unwoke.</td>
+            <td>—</td>
+            <td>Pages now</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/3cdaeb8"><code class="hash">3cdaeb8</code></a> Features comparison: give Trivalent its own column on every row.</td>
+            <td>—</td>
+            <td>Pages now</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/7697d05"><code class="hash">7697d05</code></a> Add Trivalent image flavor with extra reversible Chromium policies.</td>
+            <td>—</td>
+            <td>Next overlay bake; Pages now; USB ISO</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/0a540c7"><code class="hash">0a540c7</code></a> Stronger toolbox wrappers, tty1 daily-user prompt, mask Avahi and ModemManager</td>
+            <td>—</td>
+            <td>Next overlay bake; Pages now</td>
+          </tr>
+          <tr>
+            <td>2026-08-29</td>
+            <td>Vendor-watch, Setup Strict apps, and ujust install-vendor iterate every vendors{} key. New app = JSON stanza. Heal still HTTPS+checksum only.</td>
             <td>Next strict app is not a Proton/IVPN special case. CI and search include it automatically.</td>
             <td>Actions + overlay (manifest on disk)</td>
           </tr>
           <tr>
             <td>2026-08-29</td>
-            <td><code>ujust install-ivpn</code> + Setup tab: IVPN WireGuard first; official Fedora repo + <code>ivpn</code>/<code>ivpn-ui</code> only after you accept an extra RPM origin. No Snap. Tutorial.</td>
-            <td>Same steam-style wizard as Proton. Stricter than stock Bazaar/Snap. AntiTracker needs their official app (asked).</td>
-            <td>Next overlay bake + Pages</td>
+            <td>ujust install-ivpn / install-mullvad / install-proton: WireGuard or Trivalent first; official RPM/repo only after checksum or gpgcheck and an asked extra origin. No store, no Snap, no unverified Flathub.</td>
+            <td>Easier than hunting RPMs. Stricter than stock Bazaar/Snap.</td>
+            <td>Overlay bake + Pages tutorials</td>
           </tr>
           <tr>
             <td>2026-08-29</td>
-            <td><code>ujust install-proton</code> + Setup tab: proton.me apps without a store. Web in Trivalent (default). VPN WireGuard. Official Mail/Pass RPM only after SHA512 and a Yes to unconfined userns. No Flathub wrappers.</td>
-            <td>Easier than hunting RPMs. Stricter than stock+Bazaar or unverified Flatpaks. Same locks unless you say yes.</td>
-            <td>Next overlay bake + Pages tutorial</td>
+            <td>GTK Unwoke setup, app-grid search for locks, You loosened, offline help, repeating signed-reboot nag with a Reboot button, Trivalent as the recommended default.</td>
+            <td>Easier first day. Same locks. Origin is an explicit pick.</td>
+            <td>Overlay bake + Pages</td>
           </tr>
           <tr>
             <td>2026-08-29</td>
-            <td>Last-green bake/inspect stamp on the site. Signed-reboot nag has a <strong>Reboot</strong> button (libnotify --action).</td>
-            <td>Trust without opening GitHub. Second reboot is one click. Stock has neither.</td>
-            <td>Pages now; Reboot button on next overlay bake</td>
-          </tr>
-          <tr>
-            <td>2026-08-29</td>
-            <td>GNOME/KDE search finds Bluetooth, camera, Flathub, broken sites, USB. Setup tab <strong>You loosened</strong> with put-back. Tutorials also live under <code>/usr/share/unwoke/help/</code> for offline first hour.</td>
-            <td>Beats stock Settings hunt. Same locks. Undo is obvious. Help works with no network.</td>
-            <td>Next overlay bake</td>
-          </tr>
-          <tr>
-            <td>2026-08-29</td>
-            <td>Recommended default is <code>*-trivalent</code> (tightest house browser we ship). Origin is an explicit picker choice, not the first radio.</td>
-            <td>People who wanted max browser lock no longer land on Origin by accident. GHCR unsuffixed names unchanged.</td>
-            <td>Pages + weekly ISO list</td>
-          </tr>
-          <tr>
-            <td>2026-08-29</td>
-            <td>GTK Unwoke setup, app-grid launcher, tutorial buttons, repeating signed-reboot nag, installer-style daily-user dialog (greeter still waits)</td>
-            <td>Easier. Same locks. Not wheel-on-GDM-first</td>
-            <td>Next overlay bake</td>
-          </tr>
-          <tr>
-            <td>2026-08-29</td>
-            <td>Tutorials tab; install picker (three questions); copy buttons; Windows/Linux/macOS order; USB download CTA when a bake is green</td>
-            <td>Easier to install and live with</td>
-            <td>Pages</td>
-          </tr>
-          <tr>
-            <td>2026-08-29</td>
-            <td><code>ujust why</code> / setup “looks broken”; leftover stock steps (key, kargs, USBGuard) on confirm</td>
-            <td>Guided recovery. Does not auto-unlock</td>
-            <td>Overlay</td>
-          </tr>
-          <tr>
-            <td>2026-08-29</td>
-            <td>First-boot stages signed origin; MOTD/nags; factory public-packages job (warn-only)</td>
-            <td>People stop sitting on unverified <code>:latest</code></td>
-            <td>Overlay + Actions</td>
+            <td>USB ISO baker (Titanoboa wrap) plus rebase path. Not Ventoy. Their Secure Boot key.</td>
+            <td>Empty disk without installing stock first. Their ISO picker is still nicer.</td>
+            <td>Weekly ISO + GHCR -iso</td>
           </tr>
           <tr>
             <td>2026-08</td>
-            <td>Canary + digest pin + post-publish inspect + twice-daily bake + factory-alarm issue</td>
-            <td>Hostile-in-the-clear base cannot silently become our GHCR image</td>
-            <td>Actions</td>
+            <td>Canary + digest pin + post-publish inspect + twice-daily bake + factory-alarm. *-trivalent / Origin / browserless. No Bazaar; Flathub/brew/BT/toolbox/camera off; extra Chromium packs; admin-split.</td>
+            <td>Hostile-in-the-clear base cannot silently become our GHCR image. Stricter house; every extra lock has a revert.</td>
+            <td>12 GHCR images + Actions</td>
           </tr>
-          <tr>
-            <td>2026-08</td>
-            <td><code>*-trivalent</code> flavor: stock Trivalent + extra reversible policies; Origin; browserless</td>
-            <td>Choice stock does not offer. Trivalent flavor is stock’s browser plus extra locks</td>
-            <td>12 GHCR images</td>
-          </tr>
-          <tr>
-            <td>2026-08</td>
-            <td>No Bazaar/stores; Flathub/brew/BT/toolbox/camera off; lockdown on; extra Chromium packs; admin-split; Bubblejail on Origin only</td>
-            <td>Stricter house. Every extra lock has a revert</td>
-            <td>Overlay</td>
-          </tr>
+    <!-- progress-generated:end -->
         </tbody>
       </table>
     </div>

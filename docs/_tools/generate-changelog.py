@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import datetime as dt
 import html
+import json
 import re
 import subprocess
 import sys
@@ -102,9 +103,33 @@ def main() -> int:
         rows = []
         sha = "unknown"
     body = render(rows) if rows else "<p>No public entries yet.</p>"
+    highlights = ""
+    prog = ROOT / "docs" / "progress.json"
+    if prog.is_file():
+        try:
+            data = json.loads(prog.read_text(encoding="utf-8"))
+            items = []
+            for row in (data.get("rows") or [])[:12]:
+                what = html.escape(row.get("what") or "")
+                day = html.escape(row.get("day") or "")
+                url = row.get("url") or ""
+                if url.startswith("https://github.com/"):
+                    what = f'<a href="{html.escape(url, quote=True)}">{what}</a>'
+                items.append(f"<li><time>{day}</time> {what}</li>")
+            if items:
+                highlights = (
+                    '<h2 id="highlights">For people (not factory noise)</h2>\n'
+                    "<p>Overlay, install, tutorials, and other human pages. "
+                    "Optional <code>People:</code> / <code>Vs:</code> / <code>Where:</code> "
+                    "in the commit body become the Compared row. Full subject log below.</p>\n"
+                    '<ul class="whats-new">\n' + "\n".join(items) + "\n</ul>"
+                )
+        except (OSError, json.JSONDecodeError):
+            highlights = ""
     fetched = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     html_out = (
-        TEMPLATE.replace("__BODY__", body)
+        TEMPLATE.replace("__HIGHLIGHTS__", highlights)
+        .replace("__BODY__", body)
         .replace("__FETCHED__", fetched)
         .replace("__SHA__", html.escape(sha))
         .replace("__COUNT__", str(len(rows)))
