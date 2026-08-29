@@ -45,7 +45,8 @@
 <pre><code>ujust unwoke-status
 ujust audit-unwoke
 ujust audit-secureblue</code></pre>
-    <p>Full toggle table: <a href="features/#toggles">Features</a>. Defaults are already on except Bubblejail and allow-browsers. Restart Brave Origin after policy changes.</p>
+    <p>Full toggle table: <a href="features/#toggles">Features</a>. Restart Brave Origin after policy changes. If something “broke,” it is usually a default lock — run the matching <code>on</code> (or <code>off</code> for Origin packs).</p>
+    <p><strong>Default off</strong> (stock has these on): Flathub, Homebrew, Bluetooth, toolbox/distrobox, camera/mic hardware. <strong>Default on</strong> (loosen with <code>off</code>): Flatpak lockdown, Origin policy packs, Bubblejail, isolation. <strong>Browserless only:</strong> host browsers stay blocked until <code>ujust set-allow-browsers on ALLOW</code>.</p>
     <div class="table-container">
       <table>
         <thead>

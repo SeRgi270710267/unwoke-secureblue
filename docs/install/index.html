@@ -71,10 +71,16 @@ systemctl reboot</code></pre>
 
     <h2 id="after"><a href="#after">After install</a></h2>
     <p>Stock secureblue post-install still applies. Full overlay + their steps: <a href="post-install/">Post-install</a>. Their page only (mirrored daily): <a href="secureblue/post-install/">secureblue/post-install</a>.</p>
-    <p>Overlay extras (defaults are already on except Bubblejail and allow-browsers):</p>
+    <p>Then <code>ujust unwoke-status</code>. If Bluetooth, Flathub, brew, webcam, WebGL, or the greeter is “broken,” it is probably a default lock — turn that one thing back on. Full table: <a href="post-install/">Post-install</a>.</p>
 <pre><code>ujust unwoke-status
-ujust audit-unwoke</code></pre>
-    <p>To loosen a default, see <a href="post-install/">Post-install</a>. <code>ujust set-allow-browsers on ALLOW</code> is <strong>browserless only</strong> and stays off until you opt in.</p>
+ujust audit-unwoke
+ujust set-flathub verified      # Flatpak remote (off by default)
+ujust set-bluetooth on          # Wi-Fi is not touched
+ujust set-toolbox on            # toolbox + distrobox
+ujust set-brew on
+ujust set-camera-mic on
+ujust set-brave-bubblejail off  # if Origin has no GPU
+ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
 
     <h2 id="verify"><a href="#verify">Verify an image</a></h2>
 <pre><code id="cmd-verify">cosign verify --key cosign.pub ghcr.io/sergi270710267/unwoke-silverblue</code></pre>

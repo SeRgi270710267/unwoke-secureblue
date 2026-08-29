@@ -84,6 +84,12 @@ ujust set-allow-browsers on ALLOW</code></pre>
     <p>Permission lockdown is <strong>on</strong> by default (stock ships it as opt-in). Grant per-app in Flatseal, or:</p>
 <pre><code>ujust set-flatpak-lockdown off</code></pre>
 
+    <h2 id="bluetooth"><a href="#bluetooth">Bluetooth does not work</a></h2>
+    <p>Off by default (service masked + <code>rfkill block bluetooth</code>). Wi-Fi is not touched. <code>ujust set-bluetooth on</code>.</p>
+
+    <h2 id="toolbox"><a href="#toolbox">toolbox / distrobox: command not allowed</a></h2>
+    <p>Off by default on PATH (tighter than stock). <code>podman</code> stays so Flatpak is not wrecked. <code>ujust set-toolbox on</code> then a new shell. Typing <code>/usr/bin/toolbox</code> still works — seatbelt, not a prison.</p>
+
     <h2 id="brew"><a href="#brew">Where is brew?</a></h2>
     <p>Off by default — stock secureblue ships Homebrew. Enable: <code>ujust set-brew on</code> then a new shell.</p>
 
