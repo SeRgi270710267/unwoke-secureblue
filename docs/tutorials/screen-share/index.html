@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>Screen share | Tutorials | Unwoke SecureBlue</title>
+  <meta name="description" content="Sandbox pack blocks capture. Loosen that, not JIT, hardening, or Xwayland.">
+  <base href="/unwoke-secureblue/">
+  <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css?v=7">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="./"><img src="assets/logo.svg?v=4" alt="">Unwoke SecureBlue</a></li>
+        <li><a href="features/">Features</a></li>
+        <li><a href="brand/">Brand</a></li>
+        <li><a href="changelog/">Changelog</a></li>
+        <li><a href="images/">Images</a></li>
+        <li><a href="install/">Install</a></li>
+        <li><a href="post-install/">Post-install</a></li>
+        <li aria-current="page"><a href="tutorials/">Tutorials</a></li>
+        <li><a href="faq/">FAQ</a></li>
+        <li><a href="contributing/">Contributing</a></li>
+        <li><a href="conduct/">Conduct</a></li>
+        <li><a href="donate/">Donate</a></li>
+        <li><a href="secureblue/">Their docs</a></li>
+        <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main id="content">
+
+    <p class="eyebrow">Meetings</p>
+    <h1>Screen share</h1>
+    <p><span class="chip">Keep locked</span> Extra sandbox pack: audio sandbox on, screen capture off, JS optimizer off. Xwayland is still off (stock). Wayland portals are the path, not “enable X11 for Zoom.”</p>
+    <ol class="steps">
+      <li>
+        <h3>Try the portal first</h3>
+        <p>GNOME/KDE picker for a window or display. If the site or Flatpak never prompts, it is often policy, not a missing pipewire package.</p>
+      </li>
+      <li>
+        <h3>Loosen only the sandbox pack</h3>
+        <pre><code>ujust set-brave-sandbox off</code></pre>
+        <p>Restart the house browser. Do not turn isolation off (WebGL/WebGPU) or JIT on for a meeting. Do not turn Xwayland on unless their FAQ says that exact app is X-only — and treat that app as untrusted.</p>
+      </li>
+    </ol>
+    <p>Related: <a href="tutorials/camera-mic/">camera and mic</a>. Bubblejail on Origin can also break PipeWire/portals — <code>ujust why</code> option for GPU/audio, or <code>ujust set-brave-bubblejail off</code>.</p>
+    <nav class="tutorial-nav" aria-label="Adjacent tutorials">
+      <a href="tutorials/camera-mic/">Previous: Webcam and microphone</a>
+      <a href="tutorials/">All tutorials</a>
+      <a href="tutorials/sites-broken/">Next: A site looks broken</a>
+    </nav>
+  </main>
+  <footer>
+    <a class="brand" href="./"><img src="assets/logo.svg?v=4" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="tutorials/">Tutorials</a></li>
+      <li><a href="post-install/">Post-install</a></li>
+      <li><a href="faq/">FAQ</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

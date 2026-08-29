@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>toolbox / distrobox | Tutorials | Unwoke SecureBlue</title>
+  <meta name="description" content="Off by default. Prefer Flatpak. Enable wrappers only for a pet container.">
+  <base href="/unwoke-secureblue/">
+  <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css?v=7">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="./"><img src="assets/logo.svg?v=4" alt="">Unwoke SecureBlue</a></li>
+        <li><a href="features/">Features</a></li>
+        <li><a href="brand/">Brand</a></li>
+        <li><a href="changelog/">Changelog</a></li>
+        <li><a href="images/">Images</a></li>
+        <li><a href="install/">Install</a></li>
+        <li><a href="post-install/">Post-install</a></li>
+        <li aria-current="page"><a href="tutorials/">Tutorials</a></li>
+        <li><a href="faq/">FAQ</a></li>
+        <li><a href="contributing/">Contributing</a></li>
+        <li><a href="conduct/">Conduct</a></li>
+        <li><a href="donate/">Donate</a></li>
+        <li><a href="secureblue/">Their docs</a></li>
+        <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main id="content">
+
+    <p class="eyebrow">Containers</p>
+    <h1>toolbox / distrobox</h1>
+    <p><span class="chip">Keep locked</span> <code>/usr/bin/toolbox</code> and <code>distrobox*</code> are wrappers until you opt in. <code>podman</code> stays (Flatpak needs it). A pet Fedora toolbox is a whole extra distro: packages, debug symbols, and habits that skip the host lockdown.</p>
+    <ol class="steps">
+      <li>
+        <h3>Prefer not to</h3>
+        <p>CLI tools that exist as Flatpak or as a one-off in the house browser should stay there. Development that needs a fat userspace is the honest case for toolbox.</p>
+      </li>
+      <li>
+        <h3>Turn the real bins back on</h3>
+        <pre><code>ujust set-toolbox on</code></pre>
+        <p>Then use toolbox/distrobox as on stock Atomic. User namespaces for unconfined stay off; Flatpak userns stays on. If a container fails, read <a href="secureblue/faq/">their FAQ</a> (userns / malloc) before disabling <code>harden_userns</code> — we keep that module on.</p>
+      </li>
+    </ol>
+    <div class="alert">
+      <p>Full <code>/usr/bin/toolbox</code> is a bypass of the PATH stub. That is why the default is a wrapper, not a missing package. Off again: <code>ujust set-toolbox off</code>.</p>
+    </div>
+    <nav class="tutorial-nav" aria-label="Adjacent tutorials">
+      <a href="tutorials/vpn-dns/">Previous: VPN without DNS leaks</a>
+      <a href="tutorials/">All tutorials</a>
+      <span></span>
+    </nav>
+  </main>
+  <footer>
+    <a class="brand" href="./"><img src="assets/logo.svg?v=4" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="tutorials/">Tutorials</a></li>
+      <li><a href="post-install/">Post-install</a></li>
+      <li><a href="faq/">FAQ</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>Webcam and microphone | Tutorials | Unwoke SecureBlue</title>
+  <meta name="description" content="Two doors: kernel lock, then browser policy. Open the smallest one.">
+  <base href="/unwoke-secureblue/">
+  <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css?v=7">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="./"><img src="assets/logo.svg?v=4" alt="">Unwoke SecureBlue</a></li>
+        <li><a href="features/">Features</a></li>
+        <li><a href="brand/">Brand</a></li>
+        <li><a href="changelog/">Changelog</a></li>
+        <li><a href="images/">Images</a></li>
+        <li><a href="install/">Install</a></li>
+        <li><a href="post-install/">Post-install</a></li>
+        <li aria-current="page"><a href="tutorials/">Tutorials</a></li>
+        <li><a href="faq/">FAQ</a></li>
+        <li><a href="contributing/">Contributing</a></li>
+        <li><a href="conduct/">Conduct</a></li>
+        <li><a href="donate/">Donate</a></li>
+        <li><a href="secureblue/">Their docs</a></li>
+        <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main id="content">
+
+    <p class="eyebrow">Calls</p>
+    <h1>Webcam and microphone</h1>
+    <p><span class="chip">Keep locked</span> Speakers and USB headset <em>playback</em> stay. Capture is locked at the kernel (modules + udev) and again in Origin/Trivalent policy. Open the kernel if a native/Flatpak app needs it; open the browser pack only if the <em>website</em> needs it.</p>
+    <ol class="steps">
+      <li>
+        <h3>Hardware for local apps</h3>
+        <pre><code>ujust set-camera-mic on</code></pre>
+        <p>Then replug the webcam or <code>run0 modprobe uvcvideo</code>. Flatpak apps still need a device grant in Flatseal. This does not by itself give <code>meet.example</code> the camera.</p>
+      </li>
+      <li>
+        <h3>Websites are a second door</h3>
+        <p>Device policy blocks camera/mic/geo/USB/serial/HID/FS API in the house browser. If a video call is in the browser:</p>
+        <pre><code>ujust set-brave-devices off</code></pre>
+        <p>Restart Origin or Trivalent. That is a wide hole (USB and HID go with it). Prefer a Flatpak client with a tight Flatseal grant when you can.</p>
+      </li>
+    </ol>
+    <div class="alert">
+      <p>Browserless: there is no house browser policy. Host browsers stay blocked until <code>ujust set-allow-browsers on ALLOW</code>. A random Firefox is usually worse than stock Trivalent — rebase to <code>*-trivalent</code> if you wanted a jailed Chromium.</p>
+    </div>
+    <nav class="tutorial-nav" aria-label="Adjacent tutorials">
+      <a href="tutorials/bluetooth/">Previous: Bluetooth headphones</a>
+      <a href="tutorials/">All tutorials</a>
+      <a href="tutorials/screen-share/">Next: Screen share</a>
+    </nav>
+  </main>
+  <footer>
+    <a class="brand" href="./"><img src="assets/logo.svg?v=4" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="tutorials/">Tutorials</a></li>
+      <li><a href="post-install/">Post-install</a></li>
+      <li><a href="faq/">FAQ</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

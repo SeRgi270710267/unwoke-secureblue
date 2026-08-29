@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>A site looks broken | Tutorials | Unwoke SecureBlue</title>
+  <meta name="description" content="JIT-less, WebGL, extensions. Map the symptom; do not disable the whole browser.">
+  <base href="/unwoke-secureblue/">
+  <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css?v=7">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="./"><img src="assets/logo.svg?v=4" alt="">Unwoke SecureBlue</a></li>
+        <li><a href="features/">Features</a></li>
+        <li><a href="brand/">Brand</a></li>
+        <li><a href="changelog/">Changelog</a></li>
+        <li><a href="images/">Images</a></li>
+        <li><a href="install/">Install</a></li>
+        <li><a href="post-install/">Post-install</a></li>
+        <li aria-current="page"><a href="tutorials/">Tutorials</a></li>
+        <li><a href="faq/">FAQ</a></li>
+        <li><a href="contributing/">Contributing</a></li>
+        <li><a href="conduct/">Conduct</a></li>
+        <li><a href="donate/">Donate</a></li>
+        <li><a href="secureblue/">Their docs</a></li>
+        <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main id="content">
+
+    <p class="eyebrow">Web</p>
+    <h1>A site looks broken</h1>
+    <p><span class="chip">Keep locked</span> Banking and boring sites should work. Games, WebGL maps, extension stores, and some SPAs will not. That is the lock. Fast path: <code>ujust why</code>.</p>
+    <ol class="steps">
+      <li>
+        <h3>Name the symptom</h3>
+        <p>Blank canvas / maps / 3D → isolation (WebGL/WebGPU). “This page needs JIT” / broken editors → JIT-less. No password save → hardening pack. Cannot install an extension → extension block (keep it). Cookies vanish on Trivalent → network sandbox.</p>
+      </li>
+      <li>
+        <h3>Change one pack, then restart the browser</h3>
+        <pre><code>ujust why
+# or, only the one you need:
+ujust set-brave-jitless off
+ujust set-brave-isolation off
+ujust set-brave-hardening off
+ujust set-trivalent-network-sandbox off</code></pre>
+        <p>Trivalent aliases exist as <code>set-trivalent-*</code> for the same packs. Origin GPU/audio dead is Bubblejail, not JIT.</p>
+      </li>
+      <li>
+        <h3>Do not flatten the profile</h3>
+        <p>Turning every pack off to watch one video is how you recreate stock Chrome. Leave extensions blocked. Leave hardening on if you only needed WebGL. DevTools stay allowed unless you lock them.</p>
+      </li>
+    </ol>
+    <div class="alert">
+      <p>Need a tighter house browser than Origin? Rebase to <code>*-trivalent</code> (Vanadium patches + <code>trivalent_t</code>). Need no image browser? Browserless, then you still should not install a random Firefox. See <a href="faq/">FAQ</a>.</p>
+    </div>
+    <nav class="tutorial-nav" aria-label="Adjacent tutorials">
+      <a href="tutorials/screen-share/">Previous: Screen share</a>
+      <a href="tutorials/">All tutorials</a>
+      <a href="tutorials/vpn-dns/">Next: VPN without DNS leaks</a>
+    </nav>
+  </main>
+  <footer>
+    <a class="brand" href="./"><img src="assets/logo.svg?v=4" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="tutorials/">Tutorials</a></li>
+      <li><a href="post-install/">Post-install</a></li>
+      <li><a href="faq/">FAQ</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

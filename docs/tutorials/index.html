@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>Tutorials | Unwoke SecureBlue</title>
+  <meta name="description" content="Everyday Unwoke SecureBlue tasks the secure way: first hour, apps without a store, Bluetooth, camera, USBGuard, updates, rollback.">
+  <base href="/unwoke-secureblue/">
+  <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css?v=7">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="./"><img src="assets/logo.svg?v=4" alt="">Unwoke SecureBlue</a></li>
+        <li><a href="features/">Features</a></li>
+        <li><a href="brand/">Brand</a></li>
+        <li><a href="changelog/">Changelog</a></li>
+        <li><a href="images/">Images</a></li>
+        <li><a href="install/">Install</a></li>
+        <li><a href="post-install/">Post-install</a></li>
+        <li aria-current="page"><a href="tutorials/">Tutorials</a></li>
+        <li><a href="faq/">FAQ</a></li>
+        <li><a href="contributing/">Contributing</a></li>
+        <li><a href="conduct/">Conduct</a></li>
+        <li><a href="donate/">Donate</a></li>
+        <li><a href="secureblue/">Their docs</a></li>
+        <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="content">
+    <h1>Tutorials</h1>
+    <p>Common things people actually do on this desktop, written as the <strong>secure path first</strong>. Locks stay on unless you turn one off. Same commands as <code>ujust setup</code> / <code>ujust why</code> — this is the long form, with why.</p>
+    <div class="alert tip">
+      <p><strong>How to use these.</strong> The recommended step is the one that keeps the lock. “If you must” is optional and named as a security trade. Nothing here auto-unlocks Flathub, Bluetooth, the webcam, JIT, or the store (there is no store).</p>
+    </div>
+    <p>Install and first rebase: <a href="install/">Install</a>. Overlay + leftover stock checklist: <a href="post-install/">Post-install</a>. Stock-only topics (Xwayland, malloc, AppImage): <a href="secureblue/faq/">their FAQ</a>.</p>
+
+    <p class="section-label">First days</p>
+    <div class="cards">
+      <a class="card" href="tutorials/first-hour/">
+        <p class="eyebrow">Start</p>
+        <h3>The first hour</h3>
+        <p>Login window, signed reboot, keep defaults. The machine is supposed to feel strict.</p>
+      </a>
+      <a class="card" href="tutorials/updates/">
+        <p class="eyebrow">Stay current</p>
+        <h3>Updates and rollback</h3>
+        <p>Updates are automatic and signed. Check status, reboot, roll back if a bake is bad.</p>
+      </a>
+      <a class="card" href="tutorials/check-health/">
+        <p class="eyebrow">Trust</p>
+        <h3>Check the box is what we shipped</h3>
+        <p>Status, overlay audit, stock audit, cosign. Five minutes, no extra software.</p>
+      </a>
+      <a class="card" href="tutorials/daily-user/">
+        <p class="eyebrow">Accounts</p>
+        <h3>Daily user vs wheel</h3>
+        <p>Graphical session as a non-admin. <code>run0</code> when you need privilege. That is the standard.</p>
+      </a>
+    </div>
+
+    <p class="section-label">Apps and files</p>
+    <div class="cards">
+      <a class="card" href="tutorials/install-apps/">
+        <p class="eyebrow">Software</p>
+        <h3>Install an app</h3>
+        <p>No GUI store. Verified Flathub, then Flatpak. Lockdown stays; grant in Flatseal.</p>
+      </a>
+      <a class="card" href="tutorials/usb/">
+        <p class="eyebrow">Peripherals</p>
+        <h3>USB sticks and gadgets</h3>
+        <p>USBGuard: allow what is plugged in now, block the rest. Do this once, on purpose.</p>
+      </a>
+    </div>
+
+    <p class="section-label">Hardware people expect to “just work”</p>
+    <div class="cards">
+      <a class="card" href="tutorials/bluetooth/">
+        <p class="eyebrow">Radio</p>
+        <h3>Bluetooth headphones</h3>
+        <p>Off on purpose. Wi-Fi is already on. Turn BT on only if you need it.</p>
+      </a>
+      <a class="card" href="tutorials/camera-mic/">
+        <p class="eyebrow">Calls</p>
+        <h3>Webcam and microphone</h3>
+        <p>Kernel lock and browser policy are two different doors. Open the smallest one.</p>
+      </a>
+      <a class="card" href="tutorials/screen-share/">
+        <p class="eyebrow">Meetings</p>
+        <h3>Screen share</h3>
+        <p>Extra sandbox blocks capture. Loosen that pack, not the whole browser.</p>
+      </a>
+    </div>
+
+    <p class="section-label">Browser and network</p>
+    <div class="cards">
+      <a class="card" href="tutorials/sites-broken/">
+        <p class="eyebrow">Web</p>
+        <h3>A site looks broken</h3>
+        <p>Usually JIT-less or WebGL. That is a lock. Do not flatten every policy for one page.</p>
+      </a>
+      <a class="card" href="tutorials/vpn-dns/">
+        <p class="eyebrow">Network</p>
+        <h3>VPN without DNS leaks</h3>
+        <p>Keep system DNS on the VPN’s resolver. Skip Trivalent DoH if you tunnel.</p>
+      </a>
+    </div>
+
+    <p class="section-label">Power tools</p>
+    <div class="cards">
+      <a class="card" href="tutorials/toolbox/">
+        <p class="eyebrow">Containers</p>
+        <h3>toolbox / distrobox</h3>
+        <p>Off. Prefer Flatpak. Turn the wrappers back into real bins only when you need a pet container.</p>
+      </a>
+    </div>
+  </main>
+
+  <footer>
+    <a class="brand" href="./"><img src="assets/logo.svg?v=4" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="install/">Install</a></li>
+      <li><a href="post-install/">Post-install</a></li>
+      <li><a href="faq/">FAQ</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

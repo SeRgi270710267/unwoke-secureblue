@@ -154,6 +154,7 @@ Stock `ujust` still works.
 13. **This PC pickup (2026-08-29):** cloned/pulled `29be70c`. Dispatch of `iso` failed on `matrix` in job `if`, then the wrap failed because old titanoboa wanted `iso.yaml`. Switched to RoyalOughtness/titanoboa + Anaconda live hooks.
 14. **First-session setup (no lock loosened):** `ujust setup` / autostart window. Reboot nag when `/etc/unwoke/signed-staged` exists. Install page is three questions, not twelve names. Overlay bake required for the window; Pages for the picker.
 15. **Guided recovery + factory public packages (ISO still separate):** `ujust why` / setup option 3 maps “broken” to the matching lock (does not auto-unlock). Option 4 runs leftover stock `ujust` (Secure Boot key, kargs, USBGuard) on confirm. After a green overlay bake, `public-packages.sh` tries to set GHCR packages Public (warn-only; does not fail the bake). Install page queries GitHub for a last-green USB ISO and says so if none exists.
+16. **Tutorials tab (Pages):** everyday tasks with the secure path first (first hour, apps without a store, Bluetooth, camera, USBGuard, updates/rollback, daily user, VPN DNS, toolbox, health check). Does not auto-unlock. Docs-only — no overlay bake.
 
 Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only / `iso.yml` pushes should not rebuild images (`build.yml` paths-ignore).
 

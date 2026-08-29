@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>Bluetooth headphones | Tutorials | Unwoke SecureBlue</title>
+  <meta name="description" content="Bluetooth is masked. Wi-Fi stays. Turn it on only if you need it.">
+  <base href="/unwoke-secureblue/">
+  <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css?v=7">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="./"><img src="assets/logo.svg?v=4" alt="">Unwoke SecureBlue</a></li>
+        <li><a href="features/">Features</a></li>
+        <li><a href="brand/">Brand</a></li>
+        <li><a href="changelog/">Changelog</a></li>
+        <li><a href="images/">Images</a></li>
+        <li><a href="install/">Install</a></li>
+        <li><a href="post-install/">Post-install</a></li>
+        <li aria-current="page"><a href="tutorials/">Tutorials</a></li>
+        <li><a href="faq/">FAQ</a></li>
+        <li><a href="contributing/">Contributing</a></li>
+        <li><a href="conduct/">Conduct</a></li>
+        <li><a href="donate/">Donate</a></li>
+        <li><a href="secureblue/">Their docs</a></li>
+        <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main id="content">
+
+    <p class="eyebrow">Radio</p>
+    <h1>Bluetooth headphones</h1>
+    <p><span class="chip">Keep locked</span> Overlay default: <code>bluetooth.service</code> masked and rfkill blocked. Wi-Fi is not touched. Headphones not pairing is usually this lock, not a missing driver.</p>
+    <ol class="steps">
+      <li>
+        <h3>Decide you need the radio</h3>
+        <p>Wired or 2.4 GHz dongles that already work do not need this. More radio is more attack surface (and more metadata).</p>
+      </li>
+      <li>
+        <h3>Turn only Bluetooth on</h3>
+        <pre><code>ujust set-bluetooth on</code></pre>
+        <p>Same as setup → turn something on → Bluetooth. Pair from GNOME/KDE settings as usual.</p>
+      </li>
+      <li>
+        <h3>Browser Bluetooth APIs are separate</h3>
+        <p>Site access to Bluetooth/USB/HID is still blocked by the device policy pack. That is good. Do not turn <code>set-brave-devices off</code> to pair headphones — the desktop stack is enough.</p>
+      </li>
+    </ol>
+    <p>Off again: <code>ujust set-bluetooth off</code>. Stock also documents BT on their images; our default is stricter.</p>
+    <nav class="tutorial-nav" aria-label="Adjacent tutorials">
+      <a href="tutorials/usb/">Previous: USB sticks and gadgets</a>
+      <a href="tutorials/">All tutorials</a>
+      <a href="tutorials/camera-mic/">Next: Webcam and microphone</a>
+    </nav>
+  </main>
+  <footer>
+    <a class="brand" href="./"><img src="assets/logo.svg?v=4" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="tutorials/">Tutorials</a></li>
+      <li><a href="post-install/">Post-install</a></li>
+      <li><a href="faq/">FAQ</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>
