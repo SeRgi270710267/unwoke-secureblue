@@ -133,7 +133,7 @@ def write_missing_page(slug: str, items: list[tuple[str, dict]]) -> None:
   <meta name="description" content="Strict installer for {esc(slug)}. Generated from vendor-installers.json.">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
-  <link rel="stylesheet" href="css/main.css?v=9">
+  <link rel="stylesheet" href="css/main.css?v=12">
 </head>
 <body>
   <a class="skip" href="#content">Skip to content</a>
@@ -179,7 +179,7 @@ def write_hub(core: dict, grouped: OrderedDict) -> None:
         '  <meta name="description" content="Everyday Unwoke tasks the secure way. Vendor apps are generated from vendor-installers.json.">',
         '  <base href="/unwoke-secureblue/">',
         '  <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">',
-        '  <link rel="stylesheet" href="css/main.css?v=9">',
+        '  <link rel="stylesheet" href="css/main.css?v=12">',
         "</head>",
         "<body>",
         '  <a class="skip" href="#content">Skip to content</a>',

@@ -141,16 +141,18 @@ pre code {
 
 #site-menu {
   background: var(--bg-nav);
-  white-space: nowrap;
   border-bottom: 1px solid var(--border);
 }
 
 #site-menu ul {
   display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  margin: 0;
+  flex-wrap: wrap;
+  overflow: visible;
+  justify-content: flex-start;
+  align-items: stretch;
+  margin: 0 auto;
   padding: 0;
+  max-width: 90rem;
 }
 
 #site-menu ul li {
@@ -167,12 +169,17 @@ pre code {
   display: flex;
   align-items: center;
   text-decoration: none;
-  padding: 1em;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.8125rem;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 #site-menu ul li:first-child a {
   font-weight: 700;
   letter-spacing: -0.02em;
+  font-size: 0.875rem;
+  padding-left: 0.85rem;
 }
 
 #site-menu ul li a:visited {
@@ -188,10 +195,10 @@ pre code {
 }
 
 #site-menu img {
-  height: 1.8rem;
-  width: 1.8rem;
-  margin-right: 0.5rem;
-  border-radius: 6px;
+  height: 1.35rem;
+  width: 1.35rem;
+  margin-right: 0.4rem;
+  border-radius: 5px;
 }
 
 #site-menu ul li img {
