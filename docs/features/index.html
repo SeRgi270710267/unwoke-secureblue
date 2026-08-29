@@ -67,8 +67,8 @@
           <tr>
             <td>App store</td>
             <td>Bazaar — curated catalog</td>
-            <td>None. Flathub-<strong>verified</strong> CLI remote.</td>
-            <td>None. No Flathub until you opt in.</td>
+            <td>None. No Flathub until <code>ujust set-flathub verified</code>.</td>
+            <td>None. Same.</td>
           </tr>
           <tr>
             <td>User namespaces</td>
@@ -103,6 +103,16 @@
             <td colspan="2">GUI lock for wheel once a non-wheel user exists. <code>ujust set-admin-split off</code> or <code>add NAME</code></td>
           </tr>
           <tr>
+            <td>Bluetooth</td>
+            <td>Available</td>
+            <td colspan="2">Off until <code>ujust set-bluetooth on</code>. Wi-Fi stays.</td>
+          </tr>
+          <tr>
+            <td>toolbox / distrobox</td>
+            <td>Available</td>
+            <td colspan="2">Off until <code>ujust set-toolbox on</code>. podman stays.</td>
+          </tr>
+          <tr>
             <td>Look</td>
             <td>Their defaults</td>
             <td colspan="2">Unwoke wallpaper, lock screen, dark, blue accent. <a href="brand/">Brand</a></td>
@@ -118,7 +128,7 @@
       <li><strong>SELinux:</strong> fat <code>brave_t</code> (<code>unconfined_domain</code>) plus CIL allow-list so Chromium’s userns sandbox can start while <code>harden_userns</code> stays on. SUID stripped under <code>/opt/brave.com/brave-origin</code>.</li>
       <li><strong>Browserless flavor:</strong> nothing put back. systemd units remask Flatpak browsers and rpm-ostree-exclude them until the allow toggle.</li>
       <li><strong>Chromium managed policies</strong> in <code>/etc/brave-origin/policies/managed/</code>, split into reversible packs (hardening, devices, JIT-less, extensions).</li>
-      <li>Flathub <code>verified</code> / <code>full</code> / <code>off</code>. Origin default verified (stock). Browserless default off.</li>
+      <li>Flathub <code>off</code> by default (stricter than stock). <code>ujust set-flathub verified</code> to match them.</li>
       <li>Flatpak permission lockdown (same cuts as their <code>ujust flatpak-permissions-lockdown</code>) default <strong>on</strong>.</li>
       <li>Bubblejail wrapper on the Origin desktop launcher (default on; <code>ujust set-brave-bubblejail off</code>).</li>
       <li>Homebrew off (stock ships it). Camera/mic locked at module+udev. Wheel GUI lock after a daily user exists.</li>
@@ -155,8 +165,8 @@
           </tr>
           <tr>
             <td><code>ujust set-flathub</code></td>
-            <td>Origin: <code>verified</code>. Browserless: <code>off</code></td>
-            <td>System Flathub remote.</td>
+            <td><code>off</code> both flavors</td>
+            <td>System Flathub remote. Stock uses verified.</td>
             <td><code>verified</code> / <code>full</code> / <code>off</code></td>
           </tr>
           <tr>
@@ -220,6 +230,18 @@
             <td><code>off</code> / <code>add NAME</code></td>
           </tr>
           <tr>
+            <td><code>ujust set-bluetooth</code></td>
+            <td><code>off</code></td>
+            <td>Mask bluetooth.service, rfkill block bluetooth. Wi-Fi unchanged.</td>
+            <td><code>on</code></td>
+          </tr>
+          <tr>
+            <td><code>ujust set-toolbox</code></td>
+            <td><code>off</code></td>
+            <td>Shadow toolbox + distrobox on PATH. Full path still a bypass.</td>
+            <td><code>on</code></td>
+          </tr>
+          <tr>
             <td><code>ujust set-allow-browsers</code></td>
             <td><code>off</code> (browserless)</td>
             <td>Unmask Flatpak browsers, drop rpm exclude. Needs <code>ALLOW</code>. Seatbelt, not a prison.</td>
@@ -247,6 +269,8 @@ ujust set-brave-bubblejail on|off
 ujust set-brew on|off
 ujust set-camera-mic on|off
 ujust set-admin-split on|off|add NAME
+ujust set-bluetooth on|off
+ujust set-toolbox on|off
 ujust set-unwoke-theme apply
 ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
 

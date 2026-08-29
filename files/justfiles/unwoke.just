@@ -12,7 +12,7 @@ audit-unwoke:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh audit
 
-# System Flathub: verified (default on Origin) | full | off
+# System Flathub: off (default, both flavors) | verified | full
 [positional-arguments]
 set-flathub *args:
     #!/usr/bin/bash
@@ -77,6 +77,18 @@ set-camera-mic *args:
 set-admin-split *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh admin-split "$@"
+
+# Bluetooth. Default off. Wi-Fi is not touched.
+[positional-arguments]
+set-bluetooth *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh bluetooth "$@"
+
+# toolbox + distrobox. Default off. podman stays. New shell after change.
+[positional-arguments]
+set-toolbox *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh toolbox "$@"
 
 # Re-apply Unwoke wallpaper + accent (GNOME schema / KDE wallpaper). Settings still override.
 [positional-arguments]

@@ -41,7 +41,11 @@ Display: **Unwoke SecureBlue** (`Unwoke` = modifier; `SecureBlue` = one word, S+
 - jitless — `DefaultJavaScriptJitSetting: 2`
 - extensions — blocklist `*`
 
-**Flathub:** Origin default `verified`; browserless default `off`; `ujust set-flathub verified|full|off`.
+**Flathub:** default `off` on Origin and browserless (stricter than stock verified). `ujust set-flathub verified|full|off`.
+
+**Bluetooth:** default off (`bluetooth.service` masked + rfkill). Wi-Fi stays. `ujust set-bluetooth on`.
+
+**toolbox/distrobox:** default off (PATH stub). podman stays. `ujust set-toolbox on`. Full `/usr/bin/toolbox` is a bypass.
 
 **Flatpak lockdown:** default on (stock’s cuts, system + user). `ujust set-flatpak-lockdown off`.
 
@@ -75,6 +79,8 @@ ujust set-brave-bubblejail on|off
 ujust set-brew on|off
 ujust set-camera-mic on|off
 ujust set-admin-split on|off|add NAME
+ujust set-bluetooth on|off
+ujust set-toolbox on|off
 ujust set-unwoke-theme apply
 ujust set-allow-browsers on ALLOW   # browserless
 ```

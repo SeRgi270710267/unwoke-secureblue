@@ -25,11 +25,7 @@ default_mode() {
     tr -d '[:space:]' < "${STAMP}"
     return
   fi
-  if [[ "${FLAVOR}" == "browserless" ]]; then
-    echo off
-  else
-    echo verified
-  fi
+  echo off
 }
 
 delete_system_flathub() {
@@ -80,11 +76,11 @@ cmd_set() {
   as_root /usr/bin/bash /usr/libexec/unwoke/flathub.sh apply-root "${mode}"
   echo "Flathub system remote: ${mode}"
   if [[ "${mode}" == "verified" ]]; then
-    echo "Only Flathub-verified apps. ujust set-flathub full  to match today's Origin, or off."
+    echo "Only Flathub-verified apps (stock). ujust set-flathub off  to drop the remote."
   elif [[ "${mode}" == "full" ]]; then
-    echo "Unfiltered Flathub. ujust set-flathub verified  to match stock."
+    echo "Unfiltered Flathub. ujust set-flathub verified  for stock-like, or off."
   else
-    echo "No system Flathub remote. ujust set-flathub verified  to add it back."
+    echo "No system Flathub remote (default). ujust set-flathub verified  to match stock."
   fi
 }
 

@@ -19,7 +19,7 @@ Stock secureblue is a serious hardened Fedora Atomic. It also ships a house brow
 | | Stock [secureblue](https://secureblue.dev) | Origin images | Browserless images (`*-browserless`) |
 | --- | --- | --- | --- |
 | Browser | [Trivalent](https://github.com/secureblue/Trivalent) — their Chromium, default, SELinux-confined | **[Brave Origin](https://brave.com/origin/linux/)** standalone RPM (`brave-origin`). Default browser. Runs in `brave_t`. | **None.** No Trivalent, no Origin. `harden_userns` is stock (Flatpak only). |
-| App store | [Bazaar](https://github.com/secureblue/bazaar-rpm) — curated catalog | **None.** Flathub-**verified** CLI remote (`ujust set-flathub full\|off`). | **None.** Flathub is **not** added. Use `brew` / `rpm-ostree`. |
+| App store | [Bazaar](https://github.com/secureblue/bazaar-rpm) — curated catalog | **None.** No Flathub until `ujust set-flathub verified`. | **None.** Same. |
 | User namespaces | Off for unconfined; on for Flatpak and Trivalent | Same, plus `brave_t` on their userns allow-list so Origin’s sandbox can start | Same as stock with Trivalent gone: unconfined blocked, Flatpak allowed, no extra domain |
 
 `brave_t` (Origin images only) is an unconfined-like domain so Brave Origin can run. It is **not** Trivalent’s tight confinement. Browserless does not load it.
@@ -41,7 +41,9 @@ ujust set-brave-isolation on|off     # no WebGL/WebGPU; SitePerProcess (default 
 ujust set-brave-bubblejail on|off    # default on; GPU may break
 
 # Both flavors
-ujust set-flathub verified|full|off  # Origin default verified; browserless default off
+ujust set-flathub verified|full|off  # default off both flavors; verified = stock
+ujust set-bluetooth on|off           # default off; Wi-Fi stays
+ujust set-toolbox on|off             # default off (toolbox + distrobox)
 ujust set-flatpak-lockdown on|off    # default on; apps need Flatseal
 ujust set-brew on|off                # default off (stock ships Homebrew)
 ujust set-camera-mic on|off          # default locked (uvcvideo + capture nodes)

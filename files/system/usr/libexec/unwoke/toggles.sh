@@ -115,6 +115,12 @@ for d in j.get("deployments") or []:
   if [[ -x /usr/libexec/unwoke/admin-split.sh ]]; then
     info "admin-split: $(/usr/libexec/unwoke/admin-split.sh status)"
   fi
+  if [[ -x /usr/libexec/unwoke/bluetooth.sh ]]; then
+    info "bluetooth: $(/usr/libexec/unwoke/bluetooth.sh status)"
+  fi
+  if [[ -x /usr/libexec/unwoke/toolbox.sh ]]; then
+    info "toolbox/distrobox: $(/usr/libexec/unwoke/toolbox.sh status)"
+  fi
 
   if is_browserless; then
     ok "flavor: browserless (no image browser)"
@@ -208,6 +214,8 @@ for d in j.get("deployments") or []:
   echo "  ujust set-brew on|off"
   echo "  ujust set-camera-mic on|off"
   echo "  ujust set-admin-split on|off|add NAME"
+  echo "  ujust set-bluetooth on|off"
+  echo "  ujust set-toolbox on|off"
   if is_browserless; then
     echo "  ujust set-allow-browsers on ALLOW|off"
   else
@@ -295,7 +303,7 @@ cmd_allow_browsers() {
       as_root /usr/libexec/unwoke/browser-guard.sh lift
       /usr/libexec/unwoke/browser-guard.sh unmask-user || true
       echo "Host browser installs unlocked."
-      echo "Flathub follows ujust set-flathub (default verified, not full)."
+      echo "Flathub stays as you set it (default off). Flatpak browsers: ujust set-flathub verified"
       echo "This does not make the box as tight as stock secureblue + Trivalent."
       ;;
     off|disable)
@@ -375,7 +383,7 @@ cmd_apply_boot() {
     [[ -f "${EXT_OFF}" ]] || cp -a "${EXT_SRC}" "${EXT_DST}" || true
     [[ -f "${ISO_OFF}" ]] || cp -a "${ISO_SRC}" "${ISO_DST}" || true
     if [[ ! -f /etc/unwoke/flathub ]]; then
-      printf 'verified\n' > /etc/unwoke/flathub
+      printf 'off\n' > /etc/unwoke/flathub
     fi
     if [[ -x /usr/libexec/unwoke/flathub.sh ]]; then
       /usr/libexec/unwoke/flathub.sh apply-boot || true
@@ -393,6 +401,12 @@ cmd_apply_boot() {
   if [[ -x /usr/libexec/unwoke/admin-split.sh ]]; then
     /usr/libexec/unwoke/admin-split.sh apply-boot || true
   fi
+  if [[ -x /usr/libexec/unwoke/bluetooth.sh ]]; then
+    /usr/libexec/unwoke/bluetooth.sh apply-boot || true
+  fi
+  if [[ -x /usr/libexec/unwoke/toolbox.sh ]]; then
+    /usr/libexec/unwoke/toolbox.sh apply-boot || true
+  fi
 }
 
 cmd_apply_user() {
@@ -408,7 +422,7 @@ cmd_apply_user() {
 }
 
 usage() {
-  echo "usage: toggles.sh status|audit|hardening|devices|jitless|extensions|isolation|allow-browsers|flathub|lockdown|bubblejail|brew|camera-mic|admin-split|apply-boot|apply-user" >&2
+  echo "usage: toggles.sh ... brew|camera-mic|admin-split|bluetooth|toolbox|apply-boot|apply-user" >&2
   exit 2
 }
 
@@ -436,6 +450,8 @@ case "${main}" in
   brew) exec /usr/libexec/unwoke/brew.sh "${1:-status}" ;;
   camera-mic) exec /usr/libexec/unwoke/camera-mic.sh "${1:-status}" ;;
   admin-split) exec /usr/libexec/unwoke/admin-split.sh "${1:-status}" "${2:-}" ;;
+  bluetooth) exec /usr/libexec/unwoke/bluetooth.sh "${1:-status}" ;;
+  toolbox) exec /usr/libexec/unwoke/toolbox.sh "${1:-status}" ;;
   apply-boot) cmd_apply_boot ;;
   apply-user) cmd_apply_user ;;
   *) usage ;;

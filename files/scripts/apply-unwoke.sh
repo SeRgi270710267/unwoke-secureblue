@@ -13,6 +13,18 @@ done
 
 rm -rf /usr/share/bazaar || true
 
+BLOCK=/usr/share/unwoke/blocked-bin
+mkdir -p "${BLOCK}"
+if [[ -f "${BLOCK}/deny-toolbox.sh" ]]; then
+  chmod a+x "${BLOCK}/deny-toolbox.sh"
+  for n in toolbox distrobox distrobox-create distrobox-enter distrobox-list \
+           distrobox-rm distrobox-stop distrobox-upgrade distrobox-ephemeral \
+           distrobox-generate-entry distrobox-assemble distrobox-host-exec \
+           distrobox-export distrobox-init distrobox-clone; do
+    ln -sf deny-toolbox.sh "${BLOCK}/${n}"
+  done
+fi
+
 if command -v systemctl >/dev/null; then
   systemctl enable unwoke-first-boot.service || true
   systemctl enable unwoke-browser-guard.service || true
