@@ -25,7 +25,8 @@ Display: **Unwoke SecureBlue** (`Unwoke` = modifier; `SecureBlue` = one word, S+
 - First rebase is `ostree-unverified-registry`; first-boot promotes `ostree-image-signed`.
 - Image CI: `.github/workflows/build.yml` (paths-ignore docs). Pages: `.github/workflows/pages.yml` from `docs/`.
 - Base canary: `.github/scripts/scan-base-canary.sh` runs on the four official bases *before* the 12-image matrix. Inspects (docker create/copy, never run) for needles in `.github/scripts/base-canary-needles.txt`. Hit = no overlay. Does not catch a generic backdoor or obfuscation. Stock still cannot push to this GitHub/GHCR; user machines follow Unwoke GHCR after signed rebase.
-- Do not exec stock `harden_flatpak.py`. Unwoke uses `files/system/usr/libexec/unwoke/harden-flatpak.sh`. Snapshot + hash: `files/upstream-snapshots/secureblue/harden_flatpak.py` watched by `.github/scripts/check-upstream-watch.sh`. Drift fails the image build until the snapshot is recopied and the Unwoke script is updated if behavior changed.
+- Do not exec stock `harden_flatpak.py`. Unwoke uses `files/system/usr/libexec/unwoke/harden-flatpak.sh`. Snapshots: `harden_flatpak.py` + `flatpak.just` watched by `.github/scripts/check-upstream-watch.sh`. Drift fails the image build until reviewed.
+- Stock MOTD replaced (`usr/libexec/secureblue-motd`). User nags masked by default: deprecation notice, update-verification, flatpak-setup (`ujust set-stock-nags on` to restore). Key-enrollment check stays. Docs mirror sanitizes script-like HTML.
 - Daily image rebuilds 08:00 and 20:00 UTC. Docs mirror of secureblue.dev at 09:30 UTC into generated `docs/secureblue/` (gitignored).
 
 ## What the overlay does

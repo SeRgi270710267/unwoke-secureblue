@@ -52,6 +52,7 @@ ujust set-flathub verified|full|off  # default off both flavors; verified = stoc
 ujust set-bluetooth on|off           # default off; Wi-Fi stays
 ujust set-toolbox on|off             # default off; /usr/bin/toolbox is a wrapper
 ujust set-extra-daemons on|off       # default off (Avahi + ModemManager)
+ujust set-stock-nags on|off          # default off (their deprecation/update-verify/flatpak-setup)
 ujust set-flatpak-lockdown on|off    # default on; apps need Flatseal
 ujust set-brew on|off                # default off (stock ships Homebrew)
 ujust set-camera-mic on|off          # default locked (uvcvideo + capture nodes)

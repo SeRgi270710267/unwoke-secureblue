@@ -156,6 +156,12 @@ set-extra-daemons *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh extra-daemons "$@"
 
+# Stock deprecation / update-verify / flatpak-setup user units. Default off (masked).
+[positional-arguments]
+set-stock-nags *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh stock-nags "$@"
+
 # Re-apply Unwoke wallpaper + accent (GNOME schema / KDE wallpaper). Settings still override.
 [positional-arguments]
 set-unwoke-theme *args:

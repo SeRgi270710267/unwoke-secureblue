@@ -1,3 +1,4 @@
 # sha256  git-raw-url  snapshot-path
 # If CI fails here, stock changed the file. Review, recopy snapshot, update this hash.
 c88624a6744bfaab71b52ffae872eb1fa1d6c755a7ecf3d8ff482792e9f2d1ef https://raw.githubusercontent.com/secureblue/secureblue/live/files/system/desktop/usr/libexec/secureblue/harden_flatpak.py files/upstream-snapshots/secureblue/harden_flatpak.py
+12458d9d519bfdf855cb475b42b46f79a0c458361c407deac2be980b109b5e94 https://raw.githubusercontent.com/secureblue/secureblue/live/files/justfiles/desktop/flatpak.just files/upstream-snapshots/secureblue/flatpak.just

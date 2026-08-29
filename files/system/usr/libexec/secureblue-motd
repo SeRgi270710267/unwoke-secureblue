@@ -1,0 +1,10 @@
+#!/bin/sh
+# Replaces stock secureblue-motd (donate/Discord/deprecated-rebase tips).
+# Stock profile.d still calls this path; we own the file.
+echo "Unwoke SecureBlue — overlay, not affiliated with secureblue."
+if [ -f /usr/share/unwoke/flavor ]; then
+  echo "Flavor: $(tr -d '[:space:]' </usr/share/unwoke/flavor)"
+fi
+echo "Status:  ujust unwoke-status"
+echo "Toggles: ujust (see the Features page). Site: https://sergi270710267.github.io/unwoke-secureblue/"
+echo "Hide this: ujust toggle-user-motd   (stock stamp still works)"

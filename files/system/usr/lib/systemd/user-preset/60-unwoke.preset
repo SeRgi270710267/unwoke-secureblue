@@ -1,2 +1,8 @@
 enable unwoke-browser-guard.service
 enable unwoke-user-defaults.service
+disable image-deprecation-notice.service
+disable secureblue-update-verification.service
+disable secureblue-update-verification.timer
+disable secureblue-flatpak-setup.service
+disable secureblue-flatpak-setup.timer
+

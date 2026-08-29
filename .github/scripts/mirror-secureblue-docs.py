@@ -6,6 +6,7 @@ Writes only under docs/secureblue/. Never touches docs/faq, docs/features, etc.
 from __future__ import annotations
 
 import datetime as dt
+import html
 import json
 import os
 import re
@@ -88,11 +89,32 @@ def parse_front(text: str) -> tuple[dict, str]:
 
 def alerts_to_html(text: str) -> str:
     def repl(m: re.Match[str]) -> str:
-        kind = m.group(1).lower()
+        kind = html.escape(m.group(1).lower(), quote=True)
         body = m.group(2).replace("\\'", "'").replace("<br>", "\n")
+        body = html.escape(body, quote=False).replace("\n", "<br>\n")
         return f"\n\n<div class=\"alert {kind}\"><p>{body}</p></div>\n\n"
 
     return INCLUDE_RE.sub(repl, text)
+
+
+_UNSAFE_HTML = re.compile(
+    r"<(script|iframe|object|embed|form|link|meta|base)\b[^>]*>.*?</\1\s*>"
+    r"|<(script|iframe|object|embed|form|link|meta|base)\b[^>]*/?>"
+    r"|\son[a-z]+\s*="
+    r"|javascript:"
+    r"|data:text/html",
+    re.I | re.S,
+)
+
+
+def sanitize_html(fragment: str) -> str:
+    """Drop script-like markup from mirrored markdown HTML. Not a full browser sandbox."""
+    prev = None
+    out = fragment
+    while prev != out:
+        prev = out
+        out = _UNSAFE_HTML.sub("", out)
+    return out
 
 
 def rewrite_html(html: str, permalinks: dict[str, str]) -> str:
@@ -187,6 +209,7 @@ def main() -> int:
             extensions=["extra", "sane_lists", "toc"],
         )
         body_html = rewrite_html(body_html, permalinks)
+        body_html = sanitize_html(body_html)
         extra = {
             "/donate": DONATE_NOTICE,
             "/post-install": POSTINSTALL_NOTICE,
