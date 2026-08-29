@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>Privacy vs stock | Unwoke SecureBlue</title>
+  <meta name="description" content="Where Unwoke phones home less than stock secureblue — without turning off SELinux, Safe Browsing, or firmware updates. Every extra is a lock with a ujust revert.">
+  <base href="/unwoke-secureblue/">
+  <link rel="icon" href="assets/logo.svg?v=5" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css?v=15">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="./"><img src="assets/logo.svg?v=5" alt="">Unwoke SecureBlue</a></li>
+        <li><a href="features/">Features</a></li>
+        <li><a href="compared/">Compared</a></li>
+        <li aria-current="page"><a href="privacy/">Privacy</a></li>
+        <li><a href="factory/">Factory</a></li>
+        <li><a href="brand/">Brand</a></li>
+        <li><a href="changelog/">Changelog</a></li>
+        <li><a href="images/">Images</a></li>
+        <li><a href="install/">Install</a></li>
+        <li><a href="post-install/">Post-install</a></li>
+        <li><a href="tutorials/">Tutorials</a></li>
+        <li><a href="faq/">FAQ</a></li>
+        <li><a href="stock-issues/">Workarounds</a></li>
+        <li><a href="contributing/">Contributing</a></li>
+        <li><a href="conduct/">Conduct</a></li>
+        <li><a href="donate/">Donate</a></li>
+        <li><a href="secureblue/">Their docs</a></li>
+        <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="content">
+    <p class="eyebrow">Vs stock secureblue</p>
+    <h1>We phone home less. The locks stay.</h1>
+    <p class="lead">Stock is already a privacy-respecting security OS. Unwoke does not replace their kernel or Trivalent jail. We turn off leftover <strong>census, LAN identifiers, and Google extras</strong> they still ship, and we default more radios and stores off. If a change would weaken Safe Browsing, firmware updates, or SELinux, it is <strong>not</strong> a default — it is optional and warned.</p>
+    <p><span class="chip">Security first</span> <span class="chip">Every line reverts</span> <span class="chip">Not a fork</span></p>
+    <div class="alert tip">
+      <p><strong>One sentence.</strong> Same signed secureblue image. Fewer conversations with Fedora, the LAN, and Google. Same firewall, same USBGuard, malware lists still on. Recommended flavor: <code>*-trivalent</code>.</p>
+    </div>
+
+    <h2 id="story"><a href="#story">Four quiet rooms</a></h2>
+    <div class="cards">
+      <div class="card">
+        <p class="eyebrow">01 · Fedora</p>
+        <h3>No machine census</h3>
+        <p>Stock runs <code>rpm-ostree-countme.timer</code>: a bi-weekly “how many of us are there” ping to mirrors. We mask it. Fedora does not get a unique-ish count of your box. Revert: <code>ujust set-countme on</code>.</p>
+      </div>
+      <div class="card">
+        <p class="eyebrow">02 · Online check</p>
+        <h3>No “am I online?” GET</h3>
+        <p>GNOME/NetworkManager fetches a Fedora/GNOME URL whenever you join a network. That is how they learn you came online. We disable it. Hotel captive-portal pages may need <code>ujust set-connectivity-check on</code>.</p>
+      </div>
+      <div class="card">
+        <p class="eyebrow">03 · The LAN</p>
+        <h3>No hostname on DHCP</h3>
+        <p>Stock randomizes MAC, then still announces your hostname and a stable DHCPv6 DUID. We do not send hostname, use MAC-based DHCP ids, IPv6 stable-privacy, and turn off LLMNR/mDNS registration. Their own ticket for this was never shipped. Revert: <code>ujust set-dhcp-hostname on</code>.</p>
+      </div>
+      <div class="card">
+        <p class="eyebrow">04 · The browser</p>
+        <h3>No Google extras. Safe Browsing stays.</h3>
+        <p>Hardening pack: no metrics, sync, autofill, saved passwords, translate, hyperlink <code>ping</code>, Privacy Sandbox (Topics/ads), Cast beacon, or Chrome-to-Google time. Prefetch off. WebRTC does not leak local IPs. <strong>Safe Browsing stays on</strong> — turning it off is a security cut, so it is not a default.</p>
+      </div>
+    </div>
+
+    <h2 id="table"><a href="#table">Stock still does this. We default it off.</a></h2>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr><th>What leaks or talks</th><th>Stock secureblue</th><th>Unwoke default</th><th>If you need it</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>rpm-ostree countme</td>
+            <td>Timer on</td>
+            <td>Masked every boot</td>
+            <td><code>ujust set-countme on</code></td>
+          </tr>
+          <tr>
+            <td>Connectivity HTTP check</td>
+            <td>On (Fedora/GNOME URI)</td>
+            <td>Off</td>
+            <td><code>ujust set-connectivity-check on</code></td>
+          </tr>
+          <tr>
+            <td>DHCP hostname / DUID / LLMNR</td>
+            <td>Sent; MAC random only</td>
+            <td>Not sent; stable-privacy; no LLMNR/mDNS register</td>
+            <td><code>ujust set-dhcp-hostname on</code></td>
+          </tr>
+          <tr>
+            <td>File thumbnails</td>
+            <td>On (FAQ says turn them off)</td>
+            <td>Off (GNOME Files + Dolphin)</td>
+            <td><code>ujust set-thumbnails on</code></td>
+          </tr>
+          <tr>
+            <td>Avahi / ModemManager</td>
+            <td>Typically left on</td>
+            <td>Masked</td>
+            <td><code>ujust set-extra-daemons on</code></td>
+          </tr>
+          <tr>
+            <td>Bluetooth</td>
+            <td>Modules available</td>
+            <td>Service masked + rfkill</td>
+            <td><code>ujust set-bluetooth on</code></td>
+          </tr>
+          <tr>
+            <td>Camera / mic hardware</td>
+            <td>Present</td>
+            <td>Modules + udev locked; speakers stay</td>
+            <td><code>ujust set-camera-mic on</code></td>
+          </tr>
+          <tr>
+            <td>App store / Flathub / brew</td>
+            <td>Bazaar + verified Flathub; brew on PATH</td>
+            <td>No store; remotes off</td>
+            <td><code>ujust set-flathub verified</code> / <code>set-brew on</code></td>
+          </tr>
+          <tr>
+            <td>Chromium metrics, sync, ping, Privacy Sandbox, Cast, Google time</td>
+            <td>Stock Trivalent compile defaults</td>
+            <td>Hardening pack forces them off</td>
+            <td><code>ujust set-brave-hardening off</code> <em>(warned loosen)</em></td>
+          </tr>
+          <tr>
+            <td>GNOME “remember app usage”</td>
+            <td>On</td>
+            <td>Off</td>
+            <td>GNOME Settings (user override)</td>
+          </tr>
+          <tr>
+            <td>Safe Browsing (malware/phishing lists)</td>
+            <td>On</td>
+            <td><strong>On</strong> — we will not default this off</td>
+            <td>Do not ask us to kill it “for privacy”</td>
+          </tr>
+          <tr>
+            <td>fwupd / LVFS firmware</td>
+            <td>On</td>
+            <td><strong>On</strong> — firmware vulns are security</td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="fingerprint"><a href="#fingerprint">The honest fingerprint paragraph</a></h2>
+    <p>Quieter Fedora and LAN is <strong>not</strong> a website fingerprint. Extra <strong>browser security packs</strong> (JIT-less, WebGL off, no extensions, site camera blocked) <strong>are</strong>. We still ship those packs: security first. Stock Trivalent is already a small crowd; our packs make it smaller. Best crowd on Unwoke is still <code>*-trivalent</code> (same binary and jail as stock). Origin is a smaller crowd and a fatter SELinux domain.</p>
+    <p>If you <em>choose</em> to look closer to stock Trivalent: one pack, then restart the browser. Setup warns. Full text: <a href="tutorials/fingerprint/">Fingerprinting vs locks</a>.</p>
+<pre><code>ujust set-brave-jitless off    # security down for that pack
+ujust set-brave-isolation off
+ujust set-brave-devices off</code></pre>
+    <div class="alert caution">
+      <p>There is no overlay that is both “stricter than stock Trivalent” and “as anonymous as Chrome.” We will not install an anti-detect browser, turn off Safe Browsing, or add extra Cloudflare DoH on top of <code>ujust dns-selector</code> to pretend otherwise.</p>
+    </div>
+
+    <h2 id="self-heal"><a href="#self-heal">It stays off</a></h2>
+    <p>Every boot, <code>privacy.sh apply-boot</code> remasks countme and rewrites NetworkManager / resolved drop-ins unless you stamped <code>/etc/unwoke/allow-*</code>. Inspect fails the image bake if those files vanish. Same pattern as Bluetooth and Avahi.</p>
+
+    <p><a class="button" href="install/">Get Unwoke SecureBlue</a> <a href="compared/">Compared</a> · <a href="features/">Features</a> · <a href="tutorials/fingerprint/">Fingerprint tutorial</a></p>
+  </main>
+
+  <footer>
+    <a class="brand" href="./"><img src="assets/logo.svg?v=5" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="compared/">Compared</a></li>
+      <li><a href="install/">Install</a></li>
+      <li><a href="tutorials/fingerprint/">Fingerprinting</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

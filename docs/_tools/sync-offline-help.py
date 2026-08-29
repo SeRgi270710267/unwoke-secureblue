@@ -34,6 +34,7 @@ def rewrite(html: str, depth: int) -> str:
         "brand",
         "changelog",
         "factory",
+        "privacy",
         "stock-issues",
         "secureblue",
     ):

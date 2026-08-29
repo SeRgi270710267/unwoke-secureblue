@@ -229,6 +229,16 @@ main img {
   margin: 0 auto;
 }
 
+.lead {
+  font-size: 1.18rem;
+  line-height: 1.55;
+  max-width: 44rem;
+}
+
+h1 + .lead {
+  margin-top: 0.4rem;
+}
+
 .hero {
   display: flex;
   align-items: center;

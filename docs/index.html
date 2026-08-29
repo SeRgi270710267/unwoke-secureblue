@@ -22,6 +22,7 @@
         <li aria-current="page"><a href="./"><img src="assets/logo.svg?v=4" alt="">Unwoke SecureBlue</a></li>
         <li><a href="features/">Features</a></li>
         <li><a href="compared/">Compared</a></li>
+        <li><a href="privacy/">Privacy</a></li>
         <li><a href="factory/">Factory</a></li>
         <li><a href="brand/">Brand</a></li>
         <li><a href="changelog/">Changelog</a></li>
@@ -43,7 +44,7 @@
   <div class="hero">
     <div>
       <h1 id="name" class="wordmark"><a href="#name"><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a></h1>
-      <p>A security-focused Fedora Atomic desktop: secureblue’s hardening, Brave Origin or stock Trivalent or no browser, no curator store. Unwoke look by default.</p>
+      <p>secureblue’s hardening. Quieter than stock: less Fedora census, less LAN identity, less Google extras. Same locks. No curator store.</p>
       <a class="button" href="install/">Get Unwoke SecureBlue</a>
     </div>
     <figure class="device-img">
@@ -71,7 +72,7 @@
     <h2 id="about"><a href="#about">About</a></h2>
     <p><strong>Unwoke SecureBlue</strong> is a twice-daily <a href="https://blue-build.org/">BlueBuild</a> overlay on official <a href="https://secureblue.dev">secureblue</a> Fedora Atomic images. Kernel hardening, SELinux, <code>hardened_malloc</code>, closed firewall, and their <code>ujust</code> commands stay. We change house rules on top: no curator store, extra default-off locks (Flathub, brew, Bluetooth, toolbox, camera/mic), a first-day setup window, and a recommended <code>*-trivalent</code> house browser (Origin and browserless stay as named choices).</p>
     <p><strong>Recommended default:</strong> <code>*-trivalent</code> — stock <a href="https://github.com/secureblue/Trivalent">Trivalent</a> (Vanadium patches and their SELinux jail) plus extra reversible Chromium policies stock does not force. Unsuffixed names ship standalone <strong>Brave Origin</strong> (<code>brave-origin</code>, not full <code>brave-browser</code>) — looser SELinux, pick it on purpose. <strong>Browserless</strong> (<code>*-browserless</code>) strips Trivalent and installs nothing: no Origin, no <code>brave_t</code>, stock <code>harden_userns</code>. There is no GUI software store and no Flathub remote until <code>ujust set-flathub verified</code>. Every extra lock has a <code>ujust</code> to turn it off.</p>
-    <p>Shipped as OCI bootable container images. Empty disk: an Unwoke USB ISO. Already on Fedora Atomic / secureblue: rebase. After login, <strong>Unwoke setup</strong> (app grid + autostart; also <code>ujust setup</code>) explains the locks without turning them off. If something looks broken: <code>ujust why</code> — same locks, no auto-unlock. Everyday tasks: <a href="tutorials/">Tutorials</a>. Full delta: <a href="features/">Features</a>. Vs stock: <a href="compared/">Compared</a>.</p>
+    <p>Shipped as OCI bootable container images. Empty disk: an Unwoke USB ISO. Already on Fedora Atomic / secureblue: rebase. After login, <strong>Unwoke setup</strong> (app grid + autostart; also <code>ujust setup</code>) explains the locks without turning them off. If something looks broken: <code>ujust why</code> — same locks, no auto-unlock. Everyday tasks: <a href="tutorials/">Tutorials</a>. Privacy vs stock: <a href="privacy/">Privacy</a>. Full delta: <a href="features/">Features</a>. Scorecard: <a href="compared/">Compared</a>.</p>
 
     <div class="cards">
       <div class="card">
@@ -90,6 +91,10 @@
         <h3>Unwoke look</h3>
         <p>Navy wallpaper, lock screen, dark style, blue accent. Every extra lock is a <code>ujust</code>. See <a href="brand/">Brand</a> and <a href="features/#toggles">toggles</a>.</p>
       </div>
+      <a class="card" href="privacy/">
+        <h3>Privacy vs stock</h3>
+        <p>We phone home less. Countme, connectivity check, DHCP hostname, Privacy Sandbox, Cast — off. Safe Browsing stays on. Every line reverts.</p>
+      </a>
       <a class="card" href="compared/">
         <h3>Compared to stock</h3>
         <p>Easy words, then the full list: stricter defaults, easier first day, where stock still wins.</p>
