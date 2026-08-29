@@ -156,102 +156,101 @@ def wrap_tables(fragment: str) -> str:
     return fragment
 
 
-# Stock snippets that do the wrong thing (or not enough) on Unwoke.
-# Inserted under the matching stock <pre> or paragraph at mirror time.
-UNWOKE_CMDS: tuple[dict[str, object], ...] = (
-    {
-        "id": "flathub",
-        "needles": ("ujust set-flathub-unfiltered", "Software store"),
-        "code": "ujust set-flathub verified\n# or: ujust set-flathub full",
-        "note": "Flathub is <strong>off</strong> here. There is no Bazaar/GNOME Software/Discover. "
-        "<code>verified</code> matches stock’s default remote. <code>full</code> is their unfiltered.",
-        "more": ("tutorials/install-apps/", "Install an app"),
-    },
-    {
-        "id": "vpn",
-        "needles": ("ujust install-vpn",),
-        "code": "ujust install-proton\nujust install-ivpn\nujust install-mullvad\nujust install-vendor NAME",
-        "note": "WireGuard import first (no extra daemon). Official RPM/repo only after live SHA512 "
-        "or <code>gpgcheck=1</code>, and only if you accept the extra origin. No Snap, no unverified Flathub.",
-        "more": ("tutorials/", "Tutorials"),
-    },
-    {
-        "id": "rebase-stock",
-        "needles": ("ujust rebase-secureblue", "bootc switch ghcr.io/secureblue"),
-        "code": "rpm-ostree rebase ostree-image-signed:docker://ghcr.io/sergi270710267/unwoke-silverblue-trivalent:latest",
-        "note": "That stock command rebases you <strong>off Unwoke</strong> onto their GHCR. Stay on "
-        "<code>ghcr.io/sergi270710267/…</code> after the signed reboot. Pick the flavor on "
-        '<a href="install/">Install</a>.',
-        "more": ("images/", "Our images"),
-    },
-    {
-        "id": "bluetooth",
-        "needles": ("ujust set-bluetooth-modules",),
-        "code": "ujust set-bluetooth on",
-        "note": "Stock only loads BT kernel modules. We also mask <code>bluetooth.service</code> and "
-        "<code>rfkill</code>. The stock command alone is not enough here. Wi-Fi is not touched.",
-        "more": ("tutorials/bluetooth/", "Bluetooth tutorial"),
-    },
-    {
-        "id": "webcam",
-        "needles": ("ujust set-webcam-modules",),
-        "code": "ujust set-camera-mic on",
-        "note": "Webcam/mic capture is <strong>already locked</strong> (speakers stay). Stock’s command "
-        "turns modules off; you want the opposite to use a camera. Then grant the browser: "
-        "<code>ujust set-brave-devices off</code> if policy is blocking it.",
-        "more": ("tutorials/camera-mic/", "Camera / mic"),
-    },
-    {
-        "id": "avahi",
-        "needles": ("unmask avahi-daemon", "systemctl unmask avahi"),
-        "code": "ujust set-extra-daemons on",
-        "note": "Avahi and ModemManager are masked on Unwoke. That one toggle is the overlay path. "
-        "cups/geoclue stay stock’s masks. Then still open firewall mDNS as they describe.",
-        "more": ("faq/#daemons", "Our FAQ"),
-    },
-    {
-        "id": "brew",
-        "needles": ("brew install", "Why does secureblue include Homebrew"),
-        "code": "ujust set-brew on\n# new shell, then brew works like stock",
-        "note": "Homebrew is off until you toggle it. Stock ships it on PATH.",
-        "more": ("faq/#brew", "Our FAQ"),
-    },
-    {
-        "id": "toolbox",
-        "needles": ("ujust distrobox-assemble", "distrobox-assemble"),
-        "code": "ujust set-toolbox on",
-        "note": "<code>toolbox</code> / <code>distrobox</code> are wrappers until you opt in. "
-        "<code>podman</code> stays. Then their Distrobox command works.",
-        "more": ("tutorials/toolbox/", "toolbox tutorial"),
-    },
-    {
-        "id": "audit",
-        "needles": ("ujust audit-secureblue",),
-        "code": "ujust audit-unwoke\nujust unwoke-status",
-        "note": "Stock audit still applies (their kernel, USBGuard, kargs). Also run the overlay check "
-        "so trampoline / flavor / no leftover store are covered.",
-        "more": ("tutorials/check-health/", "Check health"),
-    },
-    {
-        "id": "admin",
-        "needles": ("ujust create-admin",),
-        "code": "ujust set-admin-split add NAME\n# or skip the first-boot prompt: ujust set-admin-split off",
-        "note": "Unwoke already asks for a daily (non-wheel) user before GDM/SDDM. Stock "
-        "<code>create-admin</code> still exists if you skipped that. Wheel is blocked from the greeter.",
-        "more": ("tutorials/daily-user/", "Daily user"),
-    },
-    {
-        "id": "trivalent-flags",
-        "needles": ("chrome://flags", "Trivalent post-install"),
-        "code": "ujust set-trivalent-network-sandbox on   # default on *-trivalent\nujust set-trivalent-referrers on",
-        "note": "On <code>*-trivalent</code>, JIT-less / no WebGL / extension block / NSS may already be "
-        "forced by overlay policy. Origin uses <code>ujust set-brave-*</code>. Do not Bubblejail Trivalent.",
-        "more": ("features/#trivalent", "Trivalent flavor"),
-    },
-)
+CMDS_JSON = ROOT / "docs" / "_tools" / "stock-unwoke-cmds.json"
+JUST = ROOT / "files" / "justfiles" / "unwoke.just"
+UJUST_NAME = re.compile(r"ujust\s+([a-z][a-z0-9-]*)", re.I)
+RISKY_UJUST = re.compile(r"^(set|toggle|install|rebase)-")
+RECIPE_NAME = re.compile(r"^([a-z][a-z0-9-]*)(?:\s+\*args)?:", re.M)
 
 PRE_BLOCK = re.compile(r"<pre\b[^>]*>.*?</pre>", re.I | re.S)
 P_BLOCK = re.compile(r"<p\b[^>]*>.*?</p>", re.I | re.S)
+
+
+def load_unwoke_recipes() -> set[str]:
+    if not JUST.is_file():
+        return set()
+    return set(RECIPE_NAME.findall(JUST.read_text(encoding="utf-8")))
+
+
+def load_cmd_book() -> tuple[list[dict[str, object]], set[str]]:
+    data = json.loads(CMDS_JSON.read_text(encoding="utf-8"))
+    cmds: list[dict[str, object]] = []
+    for raw in data.get("cmds") or []:
+        spec = dict(raw)
+        needles = spec.get("needles") or []
+        spec["needles"] = tuple(str(n) for n in needles)
+        more = spec.get("more")
+        if isinstance(more, list) and len(more) == 2:
+            spec["more"] = (str(more[0]), str(more[1]))
+        cmds.append(spec)
+    same = {str(x) for x in (data.get("same") or [])}
+    return cmds, same
+
+
+def discover_ujust(text: str) -> set[str]:
+    return {m.group(1).lower() for m in UJUST_NAME.finditer(text)}
+
+
+def pair_recipe(stock_cmd: str, recipes: set[str]) -> str | None:
+    if stock_cmd in recipes:
+        return stock_cmd
+    for suf in ("-modules", "-unfiltered", "-unverified", "-secureblue"):
+        if stock_cmd.endswith(suf):
+            cand = stock_cmd[: -len(suf)]
+            if cand in recipes:
+                return cand
+            if cand.startswith("set-") and cand in recipes:
+                return cand
+    return None
+
+
+def extra_specs_for_page(
+    page_text: str,
+    book: list[dict[str, object]],
+    same: set[str],
+    recipes: set[str],
+    unmatched: list[str],
+    auto_ids: list[str],
+) -> list[dict[str, object]]:
+    covered: set[str] = set(same)
+    for spec in book:
+        for n in spec.get("needles") or ():
+            covered.update(discover_ujust(str(n)))
+    extra: list[dict[str, object]] = []
+    for cmd in sorted(discover_ujust(page_text)):
+        if cmd in covered:
+            continue
+        pair = pair_recipe(cmd, recipes)
+        if pair and pair != cmd:
+            extra.append(
+                {
+                    "id": f"auto-{cmd}",
+                    "needles": (f"ujust {cmd}",),
+                    "code": f"ujust {pair} on",
+                    "note": "Auto-paired from the overlay justfile "
+                    f"(<code>{html.escape(cmd)}</code> → <code>{html.escape(pair)}</code>). "
+                    "Default may be off. Does not auto-unlock. If the pairing is wrong, add a "
+                    "stanza to <code>docs/_tools/stock-unwoke-cmds.json</code>.",
+                    "more": ("faq/", "Our FAQ"),
+                }
+            )
+            auto_ids.append(f"{cmd}->{pair}")
+            continue
+        if RISKY_UJUST.match(cmd):
+            extra.append(
+                {
+                    "id": f"unknown-{cmd}",
+                    "needles": (f"ujust {cmd}",),
+                    "code": "ujust why\nujust setup",
+                    "note": "New stock command with no Unwoke mapping yet. Overlay defaults may "
+                    "already be stricter. Do not assume their on/off direction. A factory issue "
+                    "stays open until <code>stock-unwoke-cmds.json</code> gets a real stanza.",
+                    "more": ("tutorials/", "Tutorials"),
+                }
+            )
+            if cmd not in unmatched:
+                unmatched.append(cmd)
+    return extra
 
 
 def _unwoke_box(spec: dict[str, object]) -> str:
@@ -260,9 +259,9 @@ def _unwoke_box(spec: dict[str, object]) -> str:
     note = str(spec["note"])
     more = spec.get("more")
     extra = ""
-    if isinstance(more, tuple) and len(more) == 2:
+    if isinstance(more, (tuple, list)) and len(more) == 2:
         extra = (
-            f' <a href="{html.escape(more[0], quote=True)}">{html.escape(more[1])}</a>.'
+            f' <a href="{html.escape(str(more[0]), quote=True)}">{html.escape(str(more[1]))}</a>.'
         )
     return (
         f'<div class="alert note unwoke-cmd" data-unwoke-cmd="{sid}">'
@@ -278,9 +277,9 @@ def _contains(hay: str, needles: tuple[str, ...]) -> bool:
     return any(n.lower() in low for n in needles)
 
 
-def annotate_unwoke_commands(fragment: str) -> str:
+def annotate_unwoke_commands(fragment: str, specs: list[dict[str, object]]) -> str:
     """Under stock commands that differ here, add the Unwoke ujust. Idempotent."""
-    for spec in UNWOKE_CMDS:
+    for spec in specs:
         sid = str(spec["id"])
         if f'data-unwoke-cmd="{sid}"' in fragment:
             continue
@@ -481,6 +480,15 @@ def main() -> int:
             if old.is_file():
                 old.unlink()
 
+    try:
+        book, same = load_cmd_book()
+    except (OSError, json.JSONDecodeError) as exc:
+        print(f"stock-unwoke-cmds.json: {exc}", file=sys.stderr)
+        book, same = [], set()
+    recipes = load_unwoke_recipes()
+    unmatched: list[str] = []
+    auto_ids: list[str] = []
+
     index_links = []
     for permalink, title, description, body_md in pages:
         body_md = alerts_to_html(body_md)
@@ -494,7 +502,10 @@ def main() -> int:
         body_html = replace_stock_forms(body_html)
         body_html = wrap_tables(body_html)
         body_html = sanitize_html(body_html)
-        body_html = annotate_unwoke_commands(body_html)
+        specs = book + extra_specs_for_page(
+            body_md, book, same, recipes, unmatched, auto_ids
+        )
+        body_html = annotate_unwoke_commands(body_html, specs)
         extra = PAGE_NOTICES.get(permalink.rstrip("/"), "")
         if extra:
             body_html = extra + body_html
@@ -562,6 +573,18 @@ def main() -> int:
         ),
         encoding="utf-8",
     )
+    report = {
+        "unmatched": sorted(set(unmatched)),
+        "auto": auto_ids,
+        "mapped": [str(s.get("id")) for s in book],
+    }
+    (OUT / "unwoke-cmd-report.json").write_text(
+        json.dumps(report, indent=2) + "\n", encoding="utf-8"
+    )
+    if unmatched:
+        print("UNMATCHED stock ujust (add stock-unwoke-cmds.json): " + ", ".join(report["unmatched"]))
+    else:
+        print("stock ujust footnotes: all mapped or known-same")
     print(f"mirrored {len(pages)} pages from secureblue.dev @{sha} -> {OUT}")
     return 0
 

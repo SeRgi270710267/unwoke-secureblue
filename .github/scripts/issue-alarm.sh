@@ -3,7 +3,7 @@
 # Usage: issue-alarm.sh <iso|pages|factory|vendor> open|close
 set -euo pipefail
 
-preset="${1:?usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages open|close}"
+preset="${1:?usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds open|close}"
 cmd="${2:-open}"
 RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
@@ -113,8 +113,22 @@ Open the Packages settings URL printed in that run (or GitHub → Packages → t
 Do not make the bake fail over this. Do not switch the registry."
     CLOSE="GHCR Unwoke packages are Public: ${RUN_URL}"
     ;;
+  mirror-cmds)
+    TITLE="Stock docs grew a ujust we do not footnote yet"
+    LABEL="mirror-cmds"
+    COLOR="FBCA04"
+    DESC="Mirrored secureblue.dev documents a new set-/toggle-/install-/rebase- command"
+    BODY="Stock docs mention a \`ujust\` that is not in \`docs/_tools/stock-unwoke-cmds.json\` and did not auto-pair to an overlay recipe.
+
+- Workflow: \`${GITHUB_WORKFLOW}\`
+- SHA: \`${GITHUB_SHA}\`
+- Run: ${RUN_URL}
+
+The mirror still injected a \`ujust why\` / \`ujust setup\` box so people are not left with only their snippet. Add a real stanza (needles, Unwoke code, note). Do **not** auto-unlock Flathub/Bluetooth to make their command work. Do not treat this as a canary hit."
+    CLOSE="Stock ujust footnotes mapped again: ${RUN_URL}"
+    ;;
   *)
-    echo "usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages open|close" >&2
+    echo "usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds open|close" >&2
     exit 1
     ;;
 esac

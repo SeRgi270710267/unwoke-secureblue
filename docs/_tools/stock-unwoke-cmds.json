@@ -1,0 +1,119 @@
+{
+  "comment": "Stock snippets that differ on Unwoke. Mirror injects a box under each needle. New stock ujust names are auto-paired to overlay recipes (set-foo-modules → set-foo) or get a why/setup box + mirror-cmds issue. Do not add Flathub/on as a silent default.",
+  "same": [
+    "enroll-secureblue-secure-boot-key",
+    "set-kargs-hardening",
+    "remove-kargs-hardening",
+    "bios",
+    "setup-usbguard",
+    "dns-selector",
+    "toggle-mac-randomization",
+    "toggle-bash-environment-lockdown",
+    "setup-luks-fido2-unlock",
+    "setup-luks-tpm-unlock",
+    "set-xwayland",
+    "set-cups",
+    "set-container-userns",
+    "set-unconfined-userns",
+    "set-ptrace",
+    "set-anticheat-support",
+    "install-steam",
+    "install-docker",
+    "uninstall-docker",
+    "install-dangerzone",
+    "harden-flatpak",
+    "override-enable-module",
+    "override-reset-module",
+    "toggle-ghns",
+    "toggle-gnome-extensions",
+    "set-libvirt-daemons",
+    "update-system",
+    "set-bluetooth-modules",
+    "set-webcam-modules",
+    "set-flathub-unfiltered",
+    "install-vpn",
+    "rebase-secureblue",
+    "create-admin",
+    "audit-secureblue",
+    "distrobox-assemble"
+  ],
+  "cmds": [
+    {
+      "id": "flathub",
+      "needles": ["ujust set-flathub-unfiltered", "Software store"],
+      "code": "ujust set-flathub verified\n# or: ujust set-flathub full",
+      "note": "Flathub is <strong>off</strong> here. There is no Bazaar/GNOME Software/Discover. <code>verified</code> matches stock’s default remote. <code>full</code> is their unfiltered.",
+      "more": ["tutorials/install-apps/", "Install an app"]
+    },
+    {
+      "id": "vpn",
+      "needles": ["ujust install-vpn"],
+      "code": "ujust install-proton\nujust install-ivpn\nujust install-mullvad\nujust install-vendor NAME",
+      "note": "WireGuard import first (no extra daemon). Official RPM/repo only after live SHA512 or <code>gpgcheck=1</code>, and only if you accept the extra origin. No Snap, no unverified Flathub.",
+      "more": ["tutorials/", "Tutorials"]
+    },
+    {
+      "id": "rebase-stock",
+      "needles": ["ujust rebase-secureblue", "bootc switch ghcr.io/secureblue"],
+      "code": "rpm-ostree rebase ostree-image-signed:docker://ghcr.io/sergi270710267/unwoke-silverblue-trivalent:latest",
+      "note": "That stock command rebases you <strong>off Unwoke</strong> onto their GHCR. Stay on <code>ghcr.io/sergi270710267/…</code> after the signed reboot. Pick the flavor on <a href=\"install/\">Install</a>.",
+      "more": ["images/", "Our images"]
+    },
+    {
+      "id": "bluetooth",
+      "needles": ["ujust set-bluetooth-modules"],
+      "code": "ujust set-bluetooth on",
+      "note": "Stock only loads BT kernel modules. We also mask <code>bluetooth.service</code> and <code>rfkill</code>. The stock command alone is not enough here. Wi-Fi is not touched.",
+      "more": ["tutorials/bluetooth/", "Bluetooth tutorial"]
+    },
+    {
+      "id": "webcam",
+      "needles": ["ujust set-webcam-modules"],
+      "code": "ujust set-camera-mic on",
+      "note": "Webcam/mic capture is <strong>already locked</strong> (speakers stay). Stock’s command turns modules off; you want the opposite to use a camera. Then grant the browser: <code>ujust set-brave-devices off</code> if policy is blocking it.",
+      "more": ["tutorials/camera-mic/", "Camera / mic"]
+    },
+    {
+      "id": "avahi",
+      "needles": ["unmask avahi-daemon", "systemctl unmask avahi"],
+      "code": "ujust set-extra-daemons on",
+      "note": "Avahi and ModemManager are masked on Unwoke. That one toggle is the overlay path. cups/geoclue stay stock’s masks. Then still open firewall mDNS as they describe.",
+      "more": ["faq/#daemons", "Our FAQ"]
+    },
+    {
+      "id": "brew",
+      "needles": ["brew install", "Why does secureblue include Homebrew"],
+      "code": "ujust set-brew on\n# new shell, then brew works like stock",
+      "note": "Homebrew is off until you toggle it. Stock ships it on PATH.",
+      "more": ["faq/#brew", "Our FAQ"]
+    },
+    {
+      "id": "toolbox",
+      "needles": ["ujust distrobox-assemble", "distrobox-assemble"],
+      "code": "ujust set-toolbox on",
+      "note": "<code>toolbox</code> / <code>distrobox</code> are wrappers until you opt in. <code>podman</code> stays. Then their Distrobox command works.",
+      "more": ["tutorials/toolbox/", "toolbox tutorial"]
+    },
+    {
+      "id": "audit",
+      "needles": ["ujust audit-secureblue"],
+      "code": "ujust audit-unwoke\nujust unwoke-status",
+      "note": "Stock audit still applies (their kernel, USBGuard, kargs). Also run the overlay check so trampoline / flavor / no leftover store are covered.",
+      "more": ["tutorials/check-health/", "Check health"]
+    },
+    {
+      "id": "admin",
+      "needles": ["ujust create-admin"],
+      "code": "ujust set-admin-split add NAME\n# or skip the first-boot prompt: ujust set-admin-split off",
+      "note": "Unwoke already asks for a daily (non-wheel) user before GDM/SDDM. Stock <code>create-admin</code> still exists if you skipped that. Wheel is blocked from the greeter.",
+      "more": ["tutorials/daily-user/", "Daily user"]
+    },
+    {
+      "id": "trivalent-flags",
+      "needles": ["chrome://flags", "Trivalent post-install"],
+      "code": "ujust set-trivalent-network-sandbox on   # default on *-trivalent\nujust set-trivalent-referrers on",
+      "note": "On <code>*-trivalent</code>, JIT-less / no WebGL / extension block / NSS may already be forced by overlay policy. Origin uses <code>ujust set-brave-*</code>. Do not Bubblejail Trivalent.",
+      "more": ["features/#trivalent", "Trivalent flavor"]
+    }
+  ]
+}
