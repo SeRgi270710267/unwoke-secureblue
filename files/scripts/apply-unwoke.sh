@@ -57,26 +57,32 @@ if command -v systemctl >/dev/null; then
   systemctl enable unwoke-admin-split-setup.service || true
 fi
 
-chmod a+x /usr/libexec/unwoke/setup.sh /usr/libexec/unwoke/first-session.sh \
-  /usr/libexec/unwoke/setup-gui.py /usr/libexec/unwoke/signed-nag.sh \
-  /usr/libexec/unwoke/notify-reboot.sh /usr/libexec/unwoke/open-tutorial.sh \
-  /usr/libexec/unwoke/install-proton.sh /usr/libexec/unwoke/install-ivpn.sh \
-  /usr/libexec/unwoke/install-mullvad.sh \
-  /usr/libexec/unwoke/install-vendor.sh /usr/libexec/unwoke/vendor.py \
-  /usr/libexec/unwoke/toggles.sh /usr/libexec/unwoke/first-boot.sh 2>/dev/null || true
+# Every new libexec file is executable. Do not keep a name list.
+find /usr/libexec/unwoke -maxdepth 1 -type f -exec chmod a+x {} + 2>/dev/null || true
 
-# One .desktop per vendors{} key so GNOME/KDE search finds new apps without extra files.
-python3 - <<'PY' || true
+# One .desktop per vendors{} key + missing offline help stubs from the same JSON.
+# Fail compose if the list is empty or invalid so the image cannot ship half-synced.
+python3 - <<'PY'
+import html
 import json
 from pathlib import Path
+
 p = Path("/usr/share/unwoke/vendor-installers.json")
+if not p.is_file():
+    raise SystemExit("FAIL: missing vendor-installers.json")
+vendors = json.loads(p.read_text(encoding="utf-8")).get("vendors") or {}
+if not vendors:
+    raise SystemExit("FAIL: vendors{} empty")
 dstdir = Path("/usr/share/applications")
-if p.is_file() and dstdir.is_dir():
-    vendors = json.loads(p.read_text(encoding="utf-8")).get("vendors") or {}
-    for name, spec in vendors.items():
-        title = spec.get("title") or name
-        kw = spec.get("keywords") or name.replace("_", ";")
-        body = f"""[Desktop Entry]
+dstdir.mkdir(parents=True, exist_ok=True)
+help_root = Path("/usr/share/unwoke/help")
+slugs = {}
+for name, spec in vendors.items():
+    if not spec.get("kind"):
+        raise SystemExit(f"FAIL: vendor {name} missing kind")
+    title = spec.get("title") or name
+    kw = spec.get("keywords") or name.replace("_", ";")
+    body = f"""[Desktop Entry]
 Type=Application
 Name={title} (Unwoke)
 Comment=Strict installer from vendor-installers.json. Nothing auto-unlocks.
@@ -87,7 +93,50 @@ Categories=Settings;
 Keywords={kw};unwoke;vendor;
 StartupNotify=true
 """
-        (dstdir / f"unwoke-vendor-{name}.desktop").write_text(body, encoding="utf-8")
+    (dstdir / f"unwoke-vendor-{name}.desktop").write_text(body, encoding="utf-8")
+    slug = spec.get("tutorial") or spec.get("group") or name.replace("_", "-")
+    slugs.setdefault(slug, []).append((name, spec))
+help_root.mkdir(parents=True, exist_ok=True)
+for slug, items in slugs.items():
+    dest = help_root / slug / "index.html"
+    if dest.is_file():
+        continue
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    titles = [spec.get("title") or n for n, spec in items]
+    h1 = html.escape(titles[0] if len(titles) == 1 else slug.replace("-", " ").title())
+    lis = []
+    for n, spec in items:
+        t = html.escape(spec.get("title") or n)
+        lis.append(f"<li><strong>{t}</strong> — <code>ujust install-vendor {html.escape(n)}</code></li>")
+    dest.write_text(
+        f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{h1} | Unwoke help</title>
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+  <nav id="site-menu" aria-label="Primary">
+    <ul>
+      <li><a href="../index.html">Unwoke help (offline)</a></li>
+    </ul>
+  </nav>
+  <main>
+    <h1>{h1}</h1>
+    <p>Generated from <code>vendor-installers.json</code>. Nothing auto-unlocks. No store.</p>
+    <ul>
+      {"".join(lis)}
+    </ul>
+  </main>
+</body>
+</html>
+""",
+        encoding="utf-8",
+    )
+    print(f"vendor help stub {dest}")
+print(f"vendor desktops {len(vendors)}; help slugs {len(slugs)}")
 PY
 
 if command -v glib-compile-schemas >/dev/null && [[ -d /usr/share/glib-2.0/schemas ]]; then

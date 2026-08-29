@@ -58,6 +58,7 @@ def main() -> int:
         "overlay": last_success(owner, repo, "build.yml"),
         "inspect": last_success(owner, repo, "verify.yml"),
         "iso": last_success(owner, repo, "iso.yml"),
+        "vendor": last_success(owner, repo, "vendor-watch.yml"),
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")

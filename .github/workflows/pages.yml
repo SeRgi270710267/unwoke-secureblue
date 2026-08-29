@@ -58,3 +58,34 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+
+  pages-alarm:
+    name: Pages alarm
+    if: always() && !cancelled() && github.actor != 'dependabot[bot]'
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Open or update alarm
+        if: needs.deploy.result == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash .github/scripts/issue-alarm.sh pages open
+
+      - name: Close alarm
+        if: needs.deploy.result == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash .github/scripts/issue-alarm.sh pages close

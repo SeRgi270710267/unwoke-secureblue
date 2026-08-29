@@ -33,6 +33,7 @@ def rewrite(html: str, depth: int) -> str:
         "images",
         "brand",
         "changelog",
+        "factory",
         "secureblue",
     ):
         html = html.replace(f'href="{page}/"', f'href="{SITE}/{page}/"')

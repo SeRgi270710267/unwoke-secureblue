@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>Factory | Unwoke SecureBlue</title>
+  <meta name="description" content="What the Unwoke factory auto-heals, what still needs a human, and why the human gates exist. Nothing here auto-unlocks.">
+  <base href="/unwoke-secureblue/">
+  <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css?v=9">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="./"><img src="assets/logo.svg?v=4" alt="">Unwoke SecureBlue</a></li>
+        <li><a href="features/">Features</a></li>
+        <li><a href="compared/">Compared</a></li>
+        <li aria-current="page"><a href="factory/">Factory</a></li>
+        <li><a href="brand/">Brand</a></li>
+        <li><a href="changelog/">Changelog</a></li>
+        <li><a href="images/">Images</a></li>
+        <li><a href="install/">Install</a></li>
+        <li><a href="post-install/">Post-install</a></li>
+        <li><a href="tutorials/">Tutorials</a></li>
+        <li><a href="faq/">FAQ</a></li>
+        <li><a href="contributing/">Contributing</a></li>
+        <li><a href="conduct/">Conduct</a></li>
+        <li><a href="donate/">Donate</a></li>
+        <li><a href="secureblue/">Their docs</a></li>
+        <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="content">
+    <h1>Factory</h1>
+    <p>This is the map of the whole project: four lanes that must stay in sync, what already fixes itself, and the few things that stay manual <strong>on purpose</strong>. Auto-heal never means “make it green by loosening a lock.”</p>
+    <p class="factory-stamp" data-factory-stamp>Checking last green bake…</p>
+    <div class="alert">
+      <p><strong>Security boundary.</strong> The factory will not auto-merge a canary hit, a new <code>keys/secureblue.pub</code>, a new vendor hostname, <code>gpgcheck=0</code>, unverified Flathub, or a titanoboa pin bump. Those need a human because they are trust changes, not URL typos.</p>
+    </div>
+
+    <h2 id="lanes"><a href="#lanes">Four lanes</a></h2>
+    <div class="cards">
+      <div class="card">
+        <p class="eyebrow">Overlay</p>
+        <h3>Images</h3>
+        <p>Twice-daily bake of twelve GHCR images on signed stock. Canary → pin digest → BlueBuild → inspect → try Public. One <code>factory-alarm</code> issue if this lane is red.</p>
+      </div>
+      <div class="card">
+        <p class="eyebrow">USB</p>
+        <h3>ISO baker</h3>
+        <p>Weekly (Sunday) wrap of the four Trivalent desktops. Dispatch any of twelve. Own <code>iso-alarm</code> so a wrap flake cannot hide behind a green overlay.</p>
+      </div>
+      <div class="card">
+        <p class="eyebrow">Site</p>
+        <h3>Pages</h3>
+        <p>Every <code>main</code> push: changelog, tutorials hub from the vendor list, last-green stamp, docs mirror. Own <code>pages-alarm</code>.</p>
+      </div>
+      <div class="card">
+        <p class="eyebrow">Apps</p>
+        <h3>Vendor list</h3>
+        <p><code>vendor-installers.json</code> is the only list. Check + allowlisted heal twice a day. Setup, search launchers, <code>ujust install-vendor</code>, tutorials, and inspect all iterate the same keys.</p>
+      </div>
+    </div>
+
+    <h2 id="auto"><a href="#auto">What already fixes itself</a></h2>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr><th>If this breaks</th><th>What the factory does</th><th>Still will not do</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Stock <code>:latest</code> moves during a bake</td>
+            <td>Cosign verify + pin the digest before BlueBuild</td>
+            <td>Skip verify to finish faster</td>
+          </tr>
+          <tr>
+            <td>Stock base names this overlay in the clear</td>
+            <td>Canary fails; no overlay; <code>factory-alarm</code> opens</td>
+            <td>Auto-merge the hit or ignore the needle</td>
+          </tr>
+          <tr>
+            <td>Stock <code>harden_flatpak.py</code> / <code>flatpak.just</code> change</td>
+            <td>Targeting scan; if clean, commit snapshots. Overlay still runs Unwoke scripts</td>
+            <td>Copy a file that names Unwoke (poison)</td>
+          </tr>
+          <tr>
+            <td>Published flavor missing setup, trampoline, or the wrong browser</td>
+            <td>Inspect fails; no provenance attest; alarm</td>
+            <td>Publish anyway</td>
+          </tr>
+          <tr>
+            <td>First GHCR push is private</td>
+            <td><code>public-packages.sh</code> tries to set Public (overlay <em>and</em> ISO). Warn-only</td>
+            <td>Fail the bake. You may still need one Packages click if the token cannot flip visibility</td>
+          </tr>
+          <tr>
+            <td>Proton/IVPN/Mullvad URL moves on an allowlisted HTTPS host</td>
+            <td>Heal rewrites JSON, regenerates the tutorials hub, overlay bake picks it up</td>
+            <td>Add a new hostname, HTTP, Flathub, or <code>gpgcheck=0</code></td>
+          </tr>
+          <tr>
+            <td>Vendor <code>version.json</code> field rename / sidecar checksum / www vs apex</td>
+            <td>Heal tries those. Live SHA512/SHA256 still required</td>
+            <td>Ship an RPM with no checksum</td>
+          </tr>
+          <tr>
+            <td>429 / 5xx / timeout on a vendor URL</td>
+            <td>Retry. Do not rewrite the list</td>
+            <td>Treat a outage as a new URL</td>
+          </tr>
+          <tr>
+            <td>You add a stanza to <code>vendors{}</code></td>
+            <td>Watch, Setup, search launcher, <code>ujust install-vendor</code>, inspect, tutorials hub, offline help stub</td>
+            <td>Need a new Python watch path</td>
+          </tr>
+          <tr>
+            <td>New <code>/usr/libexec/unwoke/*</code> script</td>
+            <td>Compose <code>chmod a+x</code> every file there. No name list</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>ISO wrap or Pages deploy fails</td>
+            <td>Own GitHub issue; closed when that lane is green again</td>
+            <td>Auto-bump titanoboa. Auto-weaken the site</td>
+          </tr>
+          <tr>
+            <td>Last-green stamp stale on the site</td>
+            <td>Pages writes <code>status.json</code> from successful overlay / inspect / ISO / vendor-watch runs</td>
+            <td>Invent a green bake that did not happen</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="human"><a href="#human">What stays a human, and why</a></h2>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr><th>Event</th><th>Why it is not automatic</th><th>What you do</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Canary hit (base names this repo / GHCR / <code>/usr/share/unwoke</code>)</td>
+            <td>Could be stock talking about us, or a hostile swap. Auto-merge would bake on a lie</td>
+            <td>Read the canary log. Decide. Do not “fix” by deleting the needle</td>
+          </tr>
+          <tr>
+            <td>New <code>keys/secureblue.pub</code></td>
+            <td>Key rotation is a trust change. Auto-accept is how you follow an attacker’s key</td>
+            <td>Compare to their published key. Replace our copy only if it is really them</td>
+          </tr>
+          <tr>
+            <td>Vendor needs a new hostname</td>
+            <td>Allowlist is the heal boundary. Auto-adding hosts is how a redirect steals the installer</td>
+            <td>Add the host in <code>vendor.py</code> <code>HOSTS</code> only if you intend to trust it</td>
+          </tr>
+          <tr>
+            <td>Vendor switches to Flathub / Snap / <code>gpgcheck=0</code></td>
+            <td>That is a weaker contract. Heal must not “make it work”</td>
+            <td>Keep WireGuard / official repo, or drop the app. Open issue stays</td>
+          </tr>
+          <tr>
+            <td>Titanoboa pin dies</td>
+            <td>The wrap tool is in the ISO trust path. Auto-bump is a supply-chain skip</td>
+            <td>Read the new commit. Pin a hash. Re-dispatch ISO</td>
+          </tr>
+          <tr>
+            <td>First GHCR package still private after the job</td>
+            <td>GitHub often refuses visibility changes from <code>GITHUB_TOKEN</code></td>
+            <td>One click: Packages → the image → Public. After that the job is a no-op</td>
+          </tr>
+          <tr>
+            <td>Dependabot GitHub Actions PRs</td>
+            <td>Action SHA bumps are still code in CI</td>
+            <td>Review and merge. Do not auto-merge</td>
+          </tr>
+          <tr>
+            <td>Enroll Secure Boot</td>
+            <td>The kernel is still theirs. Their key, not ours</td>
+            <td>Stock post-install. We do not enroll a second key for you</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="alarms"><a href="#alarms">Alarms (one issue per lane)</a></h2>
+    <p>You should not have to refresh Actions to learn something is red. Each lane reuses a single issue (comment on repeat, close when green):</p>
+    <ul>
+      <li><code>factory-alarm</code> — canary, snapshot watch, overlay bake, or post-publish inspect</li>
+      <li><code>iso-alarm</code> — USB wrap. Overlay can be green while this is red</li>
+      <li><code>pages-alarm</code> — site generate/deploy</li>
+      <li><code>vendor-installers</code> — a vendor contract still broken after allowlisted heal</li>
+    </ul>
+    <p>A 429 is not a contract break. Heal does not rewrite on transients. Inspect on a schedule does not close <code>factory-alarm</code> by itself (that would hide a failed canary behind a still-signed old image).</p>
+
+    <h2 id="add-app"><a href="#add-app">Add an app (one stanza)</a></h2>
+    <p>Put a key in <code>files/system/usr/share/unwoke/vendor-installers.json</code>. The rest is generated:</p>
+    <ul>
+      <li>Twice-daily check + heal (allowlisted HTTPS + checksum / <code>gpgcheck=1</code>)</li>
+      <li>Setup → Strict apps and <code>ujust install-vendor NAME</code></li>
+      <li>Search launcher at image bake</li>
+      <li>Tutorials hub card + vendor block at Pages deploy (and vendor-watch)</li>
+      <li>Offline help stub at compose if that tutorial slug has no page yet</li>
+      <li>Inspect fails the bake if the desktop or help page is missing</li>
+    </ul>
+    <p>If the official site is a new hostname, that is the human step: add it to <code>HOSTS</code> in <code>vendor.py</code>. Do not add Flathub. Prefer a <code>wireguard-import</code> or <code>https-ok</code> (Trivalent) key marked <code>strictest</code> before any RPM.</p>
+
+    <h2 id="clock"><a href="#clock">Clock</a></h2>
+    <ul>
+      <li>08:00 and 20:00 UTC — overlay bake</li>
+      <li>09:15 and 21:15 UTC — vendor check/heal</li>
+      <li>09:30 UTC — Pages docs mirror (Pages also on every <code>main</code> push)</li>
+      <li>09:30 and 21:30 UTC — inspect all twelve published images</li>
+      <li>Sunday 10:00 UTC — four Trivalent USB ISOs</li>
+    </ul>
+    <p>Docs-only and ISO workflow edits do not start an overlay bake (<code>build.yml</code> paths-ignore). Changing the vendor JSON or overlay scripts does.</p>
+
+    <h2 id="not"><a href="#not">What this page is not</a></h2>
+    <p>Not a store. Not a promise that canary catches a generic backdoor. Not affiliated with secureblue. Kernel, SELinux, <code>hardened_malloc</code>, USBGuard, firewall remain theirs. We overlay. We do not fork.</p>
+    <p>Vs stock in easy words: <a href="compared/">Compared</a>. How to install: <a href="install/">Install</a>. Everyday tasks: <a href="tutorials/">Tutorials</a>.</p>
+  </main>
+
+  <footer>
+    <a class="brand" href="./"><img src="assets/logo.svg?v=4" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="compared/">Compared</a></li>
+      <li><a href="install/">Install</a></li>
+      <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue/actions">Actions</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+  <script src="js/factory-status.js?v=2" defer></script>
+</body>
+</html>

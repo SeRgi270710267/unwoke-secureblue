@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import ssl
 import sys
@@ -17,6 +18,9 @@ HOSTS = frozenset(
     {
         "proton.me",
         "www.proton.me",
+        "mail.proton.me",
+        "pass.proton.me",
+        "account.proton.me",
         "account.protonvpn.com",
         "protonvpn.com",
         "www.protonvpn.com",
@@ -28,6 +32,9 @@ HOSTS = frozenset(
         "repository.mullvad.net",
     }
 )
+KINDS = frozenset(
+    {"https-ok", "wireguard-import", "proton-version-json", "yum-repo"}
+)
 TRANSIENT_HTTP = frozenset({429, 500, 502, 503, 504})
 
 
@@ -36,6 +43,9 @@ class Transient(Exception):
 
 
 def _repo_manifest() -> Path:
+    env = os.environ.get("UNWOKE_VENDOR_JSON")
+    if env:
+        return Path(env)
     usr = Path(__file__).resolve().parents[2]
     return usr / "share" / "unwoke" / "vendor-installers.json"
 
@@ -214,7 +224,61 @@ def check_yum_repo(text: str, require_gpg: bool) -> None:
             raise RuntimeError(f"gpgkey left allowlist: {k}")
 
 
+def check_schema(name: str, spec: dict) -> None:
+    kind = spec.get("kind")
+    if kind not in KINDS:
+        raise RuntimeError(f"unknown kind {kind!r}")
+    if not (spec.get("title") or "").strip():
+        raise RuntimeError("missing title")
+    if kind in ("https-ok", "wireguard-import", "yum-repo"):
+        url = spec.get("url") or ""
+        if not url:
+            raise RuntimeError("missing url")
+        if not allowed(url):
+            raise RuntimeError(f"url not allowlisted: {url}")
+    if kind == "proton-version-json":
+        urls = spec.get("json_urls") or []
+        if not urls:
+            raise RuntimeError("missing json_urls")
+        for u in urls:
+            if not allowed(u):
+                raise RuntimeError(f"json url not allowlisted: {u}")
+    if kind == "yum-repo" and spec.get("require_gpgcheck") is not True:
+        raise RuntimeError("yum-repo must set require_gpgcheck: true")
+    docs = spec.get("docs") or spec.get("heal_docs") or ""
+    if docs and not allowed(docs):
+        raise RuntimeError(f"docs url not allowlisted: {docs}")
+    for u in spec.get("heal_urls") or []:
+        if not allowed(u):
+            raise RuntimeError(f"heal url not allowlisted: {u}")
+
+
+def cmd_schema() -> int:
+    vendors = load().get("vendors") or {}
+    if not vendors:
+        print("FAIL: vendors{} empty", file=sys.stderr)
+        return 1
+    failed = 0
+    for name, spec in vendors.items():
+        try:
+            check_schema(name, spec)
+            print(f"ok  schema  {name}")
+        except Exception as exc:
+            print(f"FAIL schema {name}: {exc}", file=sys.stderr)
+            failed += 1
+    if failed:
+        print(
+            f"{failed} vendor schema error(s). Add an allowlisted host in vendor.py HOSTS "
+            "only if you intend to trust it. Do not add Flathub.",
+            file=sys.stderr,
+        )
+        return 1
+    print(f"schema ok ({len(vendors)} vendors)")
+    return 0
+
+
 def check_one(name: str, spec: dict, probe_rpm: bool) -> str:
+    check_schema(name, spec)
     kind = spec.get("kind")
     if kind in ("https-ok", "wireguard-import"):
         url = spec["url"]
@@ -336,7 +400,7 @@ def try_heal(name: str, spec: dict, probe_rpm: bool) -> tuple[dict | None, str]:
         return None, ""
     if kind == "yum-repo":
         cands = [spec.get("url") or ""] + alt_hosts(spec.get("url") or "")
-        cands.extend(u for u in discovered if u.endswith(".repo") or "ivpn.repo" in u)
+        cands.extend(u for u in discovered if u.endswith(".repo") or ".repo?" in u)
         for u in cands:
             if not allowed(u):
                 continue
@@ -478,12 +542,14 @@ def cmd_check(probe_rpm: bool) -> int:
 def main(argv: list[str]) -> int:
     if len(argv) < 2 or argv[1] in ("-h", "--help"):
         print(
-            "usage: vendor.py check|heal [--probe-rpm] | list | spec NAME | pick NAME | url NAME",
+            "usage: vendor.py schema|check|heal [--probe-rpm] | list | spec NAME | pick NAME | url NAME",
             file=sys.stderr,
         )
         return 2
     cmd = argv[1]
     probe = "--probe-rpm" in argv
+    if cmd == "schema":
+        return cmd_schema()
     if cmd == "check":
         return cmd_check(probe)
     if cmd == "heal":
@@ -497,7 +563,7 @@ def main(argv: list[str]) -> int:
     if cmd == "url" and len(argv) >= 3:
         return cmd_url(argv[2])
     print(
-        "usage: vendor.py check|heal [--probe-rpm] | list | spec NAME | pick NAME | url NAME",
+        "usage: vendor.py schema|check|heal [--probe-rpm] | list | spec NAME | pick NAME | url NAME",
         file=sys.stderr,
     )
     return 2

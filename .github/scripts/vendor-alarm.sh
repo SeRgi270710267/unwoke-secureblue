@@ -4,16 +4,16 @@
 set -euo pipefail
 
 cmd="${1:-open}"
-TITLE="Vendor installers: Proton/IVPN contract failed"
+TITLE="Vendor installers: contract failed"
 LABEL="vendor-installers"
 RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
-BODY="A Proton/IVPN (or other vendor) install URL, version.json schema, or repo file changed or went dark.
+BODY="A vendor install URL, version.json schema, or repo file changed or went dark.
 
 - Workflow: \`${GITHUB_WORKFLOW}\`
 - SHA: \`${GITHUB_SHA}\`
 - Run: ${RUN_URL}
 
-Fix: update \`files/system/usr/share/unwoke/vendor-installers.json\` and/or \`vendor.py\`, then the overlay bake. Do **not** auto-merge. Do not switch to unverified Flathub to “make it work.”"
+Fix: update \`files/system/usr/share/unwoke/vendor-installers.json\` and/or \`vendor.py\`, then the overlay bake. Do **not** auto-merge a new host. Do not switch to unverified Flathub or gpgcheck=0 to “make it work.”"
 
 command -v gh >/dev/null || { echo "gh missing" >&2; exit 1; }
 

@@ -159,24 +159,51 @@ if [[ ! -f "${work}/usr/libexec/unwoke/install-mullvad.sh" ]]; then
   echo "FAIL: missing install-mullvad.sh" >&2
   fail=1
 fi
-if ! python3 - "${work}/usr/share/unwoke/vendor-installers.json" <<'PY'
+if ! python3 - "${work}" <<'PY'
 import json, sys
 from pathlib import Path
-p = Path(sys.argv[1])
+root = Path(sys.argv[1])
+p = root / "usr/share/unwoke/vendor-installers.json"
 d = json.loads(p.read_text(encoding="utf-8"))
 v = d.get("vendors") or {}
 if not v:
     print("FAIL: vendors{} empty", file=sys.stderr)
     raise SystemExit(1)
+kinds = {"https-ok", "wireguard-import", "proton-version-json", "yum-repo"}
+slugs = set()
+rc = 0
 for name, spec in v.items():
-    if not spec.get("kind"):
-        print(f"FAIL: vendor {name} missing kind", file=sys.stderr)
-        raise SystemExit(1)
+    kind = spec.get("kind")
+    if kind not in kinds:
+        print(f"FAIL: vendor {name} unknown kind {kind!r}", file=sys.stderr)
+        rc = 1
+        continue
+    desk = root / f"usr/share/applications/unwoke-vendor-{name}.desktop"
+    if not desk.is_file():
+        print(f"FAIL: missing desktop for vendor {name}", file=sys.stderr)
+        rc = 1
+    slug = spec.get("tutorial") or spec.get("group")
+    if slug:
+        slugs.add(slug)
+        helpf = root / f"usr/share/unwoke/help/{slug}/index.html"
+        if not helpf.is_file():
+            print(f"FAIL: missing offline help for vendor slug {slug}", file=sys.stderr)
+            rc = 1
 print("vendors", len(v), *sorted(v))
+raise SystemExit(rc)
 PY
 then
-  echo "FAIL: vendor-installers.json invalid" >&2
+  echo "FAIL: vendor list / desktops / offline help out of sync" >&2
   fail=1
+fi
+# Schema uses the repo copy of vendor.py (new kinds/HOSTS) against the
+# JSON that actually shipped. Do not exec schema on an older image binary.
+if [[ -f "${ROOT}/files/system/usr/libexec/unwoke/vendor.py" ]]; then
+  if ! UNWOKE_VENDOR_JSON="${work}/usr/share/unwoke/vendor-installers.json" \
+      python3 "${ROOT}/files/system/usr/libexec/unwoke/vendor.py" schema; then
+    echo "FAIL: vendor schema against published JSON" >&2
+    fail=1
+  fi
 fi
 
 selinux_mentions_origin() {

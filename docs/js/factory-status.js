@@ -45,6 +45,9 @@
     if (s && s.iso && s.iso.ok && s.iso.updated_at) {
       addLink("USB ISO last green: ", s.iso);
     }
+    if (s && s.vendor && s.vendor.ok && s.vendor.updated_at) {
+      addLink("Vendor list last green: ", s.vendor);
+    }
   }
 
   function fromApi() {
@@ -54,6 +57,7 @@
       fetch(q + "build.yml/runs?status=success&per_page=1"),
       fetch(q + "verify.yml/runs?status=success&per_page=1"),
       fetch(q + "iso.yml/runs?status=success&per_page=1"),
+      fetch(q + "vendor-watch.yml/runs?status=success&per_page=1"),
     ]).then(async (resps) => {
       async function first(r) {
         if (!r.ok) return null;
@@ -67,6 +71,7 @@
         overlay: await first(resps[0]),
         inspect: await first(resps[1]),
         iso: await first(resps[2]),
+        vendor: await first(resps[3]),
       };
     });
   }

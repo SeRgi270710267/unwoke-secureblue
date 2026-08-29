@@ -27,7 +27,10 @@ jobs:
         with:
           persist-credentials: true
 
-      - name: Check Proton / IVPN contracts
+      - name: Schema
+        run: python3 files/system/usr/libexec/unwoke/vendor.py schema
+
+      - name: Check vendor contracts
         id: probe
         continue-on-error: true
         run: python3 files/system/usr/libexec/unwoke/vendor.py check --probe-rpm
@@ -46,16 +49,17 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add files/system/usr/share/unwoke/vendor-installers.json
+          python3 docs/_tools/generate-tutorials.py
+          git add files/system/usr/share/unwoke/vendor-installers.json docs/tutorials
           if git diff --cached --quiet; then
-            echo "no JSON change"
+            echo "no JSON or tutorial change"
             exit 0
           fi
           git commit -m "$(cat <<'EOF'
-          Refresh vendor installer URLs from official Proton/IVPN pages.
+          Refresh vendor installer URLs from official allowlisted pages.
 
           Allowlisted HTTPS hosts only. Still require SHA512 / gpgcheck.
-          No Flathub. No auto-weakening.
+          No Flathub. No auto-weakening. Tutorial hub regenerated from the same list.
           EOF
           )"
           git push origin HEAD
@@ -65,6 +69,28 @@ jobs:
         if: always() && !cancelled()
         continue-on-error: true
         run: python3 files/system/usr/libexec/unwoke/vendor.py check --probe-rpm
+
+      - name: Keep tutorial hub in sync
+        if: always() && !cancelled()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 docs/_tools/generate-tutorials.py
+          git add docs/tutorials
+          if git diff --cached --quiet; then
+            echo "tutorial hub already matches vendor list"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "$(cat <<'EOF'
+          Sync tutorials hub with vendor-installers.json.
+
+          Generated pages only. Does not unlock Flathub or add hosts.
+          EOF
+          )"
+          git push origin HEAD
 
       - name: Alarm
         if: steps.recheck.outcome == 'failure'

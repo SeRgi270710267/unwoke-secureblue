@@ -15,6 +15,7 @@ on:
       - ".github/workflows/pages.yml"
       - ".github/workflows/vendor-watch.yml"
       - ".github/scripts/vendor-alarm.sh"
+      - ".github/scripts/issue-alarm.sh"
       - "docs/_tools/generate-tutorials.py"
       - "docs/_tools/tutorials-core.json"
       - ".github/scripts/install-just.sh"

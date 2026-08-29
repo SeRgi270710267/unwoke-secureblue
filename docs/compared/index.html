@@ -19,6 +19,7 @@
         <li><a href="./"><img src="assets/logo.svg?v=4" alt="">Unwoke SecureBlue</a></li>
         <li><a href="features/">Features</a></li>
         <li aria-current="page"><a href="compared/">Compared</a></li>
+        <li><a href="factory/">Factory</a></li>
         <li><a href="brand/">Brand</a></li>
         <li><a href="changelog/">Changelog</a></li>
         <li><a href="images/">Images</a></li>
@@ -69,7 +70,7 @@
       <div class="card">
         <p class="eyebrow">Factory</p>
         <h3>We watch the oven</h3>
-        <p>Canary on their signed base, pin digest, inspect every flavor, twice-daily rebuild, one factory-alarm issue. They cannot push to our GHCR. Canary hits still need a human.</p>
+        <p>Canary on their signed base, pin digest, inspect every flavor, twice-daily rebuild. ISO and Pages have their own alarms. Canary hits and new keys still need a human. Full map: <a href="factory/">Factory</a>.</p>
       </div>
       <div class="card">
         <p class="eyebrow">Browser</p>
@@ -255,14 +256,14 @@
     </div>
 
     <h2 id="factory"><a href="#factory">Factory (you never see this, you still benefit)</a></h2>
-    <p>Stock ships images. We rebuild <em>on top of</em> those images twice a day and refuse to bake if their signed base looks tampered <em>in the clear</em>.</p>
+    <p>The living map of auto-heal vs human gates is <a href="factory/">Factory</a>. Short version:</p>
     <ul>
       <li>Download their public key, check it still matches our copy, <code>cosign verify</code> the base, pin the digest so <code>:latest</code> cannot swap mid-build.</li>
       <li>Canary: crane-export the signed base (do not run it, do not docker-pull it). If it names this repo, our GHCR, or <code>/usr/share/unwoke</code>, the overlay does not bake.</li>
-      <li>Inspect every published flavor: our signature, right browser binary, no leftover Trivalent on Origin/browserless, store launchers hidden, setup files present.</li>
-      <li>One GitHub issue if the factory is red. Closed only when canary + watch + bake are green.</li>
-    <li>Vendor-watch: live checksums. Allowlisted HTTPS URL moves are committed automatically. Weaker methods (Flathub, no gpg) still open an issue.</li>
-      <li>Canary hits and a new <code>keys/secureblue.pub</code> are <strong>not</strong> auto-merged. That is the security boundary.</li>
+      <li>Inspect every published flavor: our signature, right browser binary, no leftover Trivalent on Origin/browserless, store launchers hidden, setup files present. Every <code>vendors{}</code> key must have a search launcher and offline help.</li>
+      <li>Four alarm issues: overlay, ISO wrap, Pages, vendor contracts. Closed only when <em>that</em> lane is green. Overlay green does not close an ISO fail.</li>
+      <li>Vendor-watch: live checksums. Allowlisted HTTPS URL moves are committed automatically. New host / Flathub / <code>gpgcheck=0</code> still open an issue.</li>
+      <li>Canary hits, a new <code>keys/secureblue.pub</code>, and titanoboa pin bumps are <strong>not</strong> auto-merged. That is the security boundary.</li>
     </ul>
     <p>Stock cannot push to <code>ghcr.io/sergi270710267</code>. After the signed reboot, your PC follows our key, not theirs.</p>
 
@@ -283,6 +284,12 @@
           <tr><th>When</th><th>What landed</th><th>Vs stock</th><th>Where</th></tr>
         </thead>
         <tbody>
+          <tr>
+            <td>2026-08-29</td>
+            <td>Whole-factory auto-heal map: ISO and Pages alarms, public-packages after ISO, compose-time vendor help stubs, inspect every JSON key, vendor schema/allowlist, tutorials hub sync on vendor-watch. Canary/keys/new hosts/titanoboa still human.</td>
+            <td>You get an issue when a lane is red instead of discovering it later. Sync does not mean weaker locks.</td>
+            <td>Pages <a href="factory/">Factory</a> now; overlay bake for inspect/help stubs</td>
+          </tr>
           <tr>
             <td>2026-08-29</td>
             <td>Vendor-watch, Setup Strict apps, and <code>ujust install-vendor</code> iterate every <code>vendors{}</code> key. New app = JSON stanza. Heal still HTTPS+checksum only.</td>
@@ -376,6 +383,6 @@
     </ul>
     <p>Not affiliated with secureblue.</p>
   </footer>
-  <script src="js/factory-status.js?v=1" defer></script>
+  <script src="js/factory-status.js?v=2" defer></script>
 </body>
 </html>
