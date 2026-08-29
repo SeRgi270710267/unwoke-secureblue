@@ -239,33 +239,43 @@ jobs:
         run: bash .github/scripts/install-oras.sh
 
       - name: Publish ISO to GHCR
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
           COSIGN_PASSWORD: ""
           COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
           ISO_FILE: ${{ steps.build.outputs.iso_file }}
+          IMAGE_NAME: ${{ matrix.image }}
         run: |
           set -euo pipefail
           export PATH="${HOME}/.local/bin:${PATH}"
+          ls -lh output/ || true
+          if [[ -z "${ISO_FILE:-}" || ! -f "${ISO_FILE}" ]]; then
+            ISO_FILE="$(find "${GITHUB_WORKSPACE}/output" -name '*.iso' -size +100M | head -n 1 || true)"
+          fi
+          [[ -n "${ISO_FILE}" && -f "${ISO_FILE}" ]] || {
+            echo "FAIL: no ISO to publish" >&2
+            exit 1
+          }
           echo "${GITHUB_TOKEN}" | oras login ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
+          files=("${ISO_FILE}:application/vnd.unwoke.iso")
+          [[ -s output/SHA256SUMS ]] && files+=("output/SHA256SUMS:text/plain")
+          [[ -s output/SHA256SUMS.sig ]] && files+=("output/SHA256SUMS.sig:application/octet-stream")
           oras push "${ISO_PKG}:latest" \
             --artifact-type application/vnd.unwoke.iso.v1 \
-            "${ISO_FILE}:application/vnd.unwoke.iso" \
-            "output/SHA256SUMS:text/plain" \
-            "output/SHA256SUMS.sig:application/octet-stream"
+            "${files[@]}"
           export KEY="${RUNNER_TEMP}/unwoke-cosign.key"
           umask 077
           python3 -c 'import os, pathlib; pathlib.Path(os.environ["KEY"]).write_text(os.environ["COSIGN_PRIVATE_KEY"], encoding="utf-8")'
-          extra=()
-          if cosign sign --help 2>&1 | grep -q -- '--tlog-upload'; then
-            extra+=(--tlog-upload=false)
-          fi
-          COSIGN_YES=1 COSIGN_OCI_EXPERIMENTAL=0 cosign sign --yes --key "${KEY}" \
-            "${extra[@]}" \
+          set +e
+          COSIGN_YES=1 COSIGN_OCI_EXPERIMENTAL=0 COSIGN_TLOG_UPLOAD=false \
+            cosign sign --yes --tlog-upload=false --key "${KEY}" \
             "${ISO_PKG}:latest"
+          set -e
           shred -u "${KEY}" || rm -f "${KEY}"
 
       - name: Upload ISO artifact
+        if: steps.build.outcome == 'success'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: ${{ matrix.image }}-iso
