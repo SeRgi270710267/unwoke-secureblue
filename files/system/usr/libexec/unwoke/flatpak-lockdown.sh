@@ -69,8 +69,9 @@ apply_one() {
 }
 
 reapply_hardened_malloc() {
-  if [[ -f /usr/libexec/secureblue/harden_flatpak.py ]]; then
-    python3 /usr/libexec/secureblue/harden_flatpak.py || true
+  # Our script, not /usr/libexec/secureblue/harden_flatpak.py.
+  if [[ -x /usr/libexec/unwoke/harden-flatpak.sh ]]; then
+    /usr/libexec/unwoke/harden-flatpak.sh || true
   fi
 }
 
@@ -82,6 +83,7 @@ cmd_apply_system() {
 cmd_apply_user() {
   command -v flatpak >/dev/null || return 0
   apply_one "flatpak override --user"
+  reapply_hardened_malloc
 }
 
 cmd_reset_system() {
@@ -127,7 +129,7 @@ case "${1:-status}" in
     as_root /usr/bin/bash /usr/libexec/unwoke/flatpak-lockdown.sh reset-system-root
     cmd_reset_user
     echo "Flatpak permission lockdown OFF. Global user overrides saved as global.save if present."
-    echo "Stock ujust harden-flatpak was re-run if available. Re-enable: ujust set-flatpak-lockdown on"
+    echo "Unwoke harden-flatpak.sh re-applied malloc preload. Re-enable: ujust set-flatpak-lockdown on"
     ;;
   reset-system-root)
     cmd_reset_system

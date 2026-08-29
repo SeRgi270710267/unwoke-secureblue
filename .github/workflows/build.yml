@@ -52,10 +52,30 @@ jobs:
       - name: Scan signed stock base (do not run it)
         run: bash .github/scripts/scan-base-canary.sh "${{ matrix.base }}"
 
+  upstream-watch:
+    name: Watch stock harden_flatpak.py
+    if: github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Fail if stock script changed
+        run: bash .github/scripts/check-upstream-watch.sh
+
   bluebuild:
     name: Build ${{ matrix.recipe }}
     if: github.actor != 'dependabot[bot]'
-    needs: canary
+    needs: [canary, upstream-watch]
     runs-on: ubuntu-latest
     permissions:
       contents: read
