@@ -127,7 +127,11 @@ def match_fixes(issue: dict, cfg: dict) -> list[str]:
         elif bodied:
             in_body.append(rid)
     if in_title:
-        return list(dict.fromkeys(in_title))
+        ids = list(dict.fromkeys(in_title))
+        # Specific Trivalent packs beat the generic diagnostic.
+        if "trivalent" in ids and any(x in ids for x in ("jit", "webgl", "devices")):
+            ids = [x for x in ids if x != "trivalent"]
+        return ids
     if "[bug]" in title:
         return list(dict.fromkeys(in_body))
     return []

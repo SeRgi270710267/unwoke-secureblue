@@ -84,6 +84,11 @@
       "code": "ujust set-stock-nags on",
       "revert": "ujust set-stock-nags off",
       "note": "We mask some stock user units. This turns those nags back on. Our signed-reboot nag is separate."
+    },
+    "trivalent": {
+      "code": "ujust set-brave-jitless off\nujust set-brave-isolation off\nujust set-brave-devices off\n# one line at a time, then restart Trivalent",
+      "revert": "ujust set-brave-jitless on\nujust set-brave-isolation on\nujust set-brave-devices on",
+      "note": "Our extra policies on *-trivalent (same packs as Origin). Try the one that matches the symptom: JIT for broken JS, isolation for WebGL/WebGPU, devices for site camera/mic. If none of that is the bug, it is stock Trivalent — wait for their signed image. We do not patch Chromium. Do not Bubblejail Trivalent."
     }
   },
   "rules": [
@@ -102,6 +107,7 @@
     {"id": "usb", "any": ["usbguard", "mtp"]},
     {"id": "vm", "any": ["spice", "libvirt", "virt-manager", "vsock", "kvm"]},
     {"id": "nvidia", "any": ["nvidia", "nvenc", "cuda"], "title_only": true, "need_bug": true},
-    {"id": "nags", "any": ["notification every", "too many notification", "update notification"], "title_only": true}
+    {"id": "nags", "any": ["notification every", "too many notification", "update notification"], "title_only": true},
+    {"id": "trivalent", "any": ["trivalent"], "title_only": true}
   ]
 }
