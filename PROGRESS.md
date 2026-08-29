@@ -172,7 +172,7 @@ Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only
 
 - Pickup phrase: continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.
 - `install-oras.sh` and `.github/workflows/isos/**` are in `build.yml` paths-ignore. Do not cancel a bake that is already running.
-- USB ISO: Run 19 [33253287664](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33253287664) **Build ISO green**. Publish died in 0s (`oras` required a missing `.sig` after Cosign skipped Rekor). Upload artifact was skipped. Fix: optional `.sig`, upload `output/` whenever wrap succeeded. Drive `ublue-os/titanoboa@840217d`.
+- USB ISO **green:** [run 20](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33254135512) wrap + GHCR publish + artifact `unwoke-silverblue-trivalent-iso` (~4 GB, 14 days). Make the GHCR `-iso` package Public. Weekly four Trivalent desktops. Not Ventoy. Their Secure Boot key.
 - Do not add `on: push` to `iso.yml` or `verify.yml`.
 - Confirm on a real rebase: app grid **Unwoke setup** / `ujust setup` / `ujust install-proton` / `ujust why` / `ujust unwoke-status`. Setup window + Proton wizard + signed nag ship on the **next overlay bake**. Pages has Tutorials/Compared/Install immediately.
 - Hard-refresh Pages if Install / Changelog look cached.
