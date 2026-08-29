@@ -155,7 +155,9 @@ jobs:
           just --version
           HOOK_POST="$(realpath .github/workflows/isos/prep_rootfs.generated.sh)"
           HOOK_PRE="$(realpath .github/workflows/isos/prep_initramfs.sh)"
-          DEST="${GITHUB_WORKSPACE}/${IMAGE_NAME}.iso"
+          DEST_DIR="${GITHUB_WORKSPACE}/output"
+          mkdir -p "${DEST_DIR}"
+          DEST="${DEST_DIR}/${IMAGE_NAME}.iso"
           cd titanoboa
           # justfile uses podman -it; allocate a PTY so CI is not "not a TTY".
           sudo --preserve-env=PATH,CI \
@@ -165,22 +167,22 @@ jobs:
             HOOK_pre_initramfs="${HOOK_PRE}" \
             TITANOBOA_BUILDER_DISTRO=fedora \
             script -q -e -c "just build '${IMAGE_REF}' 1 none squashfs NONE '${IMAGE_REF}' 1" /dev/null
-          echo "ISO files after just build:"
-          sudo find "${GITHUB_WORKSPACE}" -name '*.iso' -printf '%s %p\n' | sort -n || true
+          echo "ISO files after just build (maxdepth 3):"
+          sudo find "${GITHUB_WORKSPACE}/titanoboa" -maxdepth 3 -name '*.iso' -printf '%s %p\n' | sort -n || true
           SRC=""
-          if [[ -f output.iso ]]; then
-            SRC="output.iso"
+          if [[ -f "${PWD}/output.iso" ]]; then
+            SRC="${PWD}/output.iso"
           elif [[ -f "${GITHUB_WORKSPACE}/titanoboa/output.iso" ]]; then
             SRC="${GITHUB_WORKSPACE}/titanoboa/output.iso"
           else
-            SRC="$(sudo find "${GITHUB_WORKSPACE}" -name '*.iso' -size +100M -printf '%p\n' | tail -n 1 || true)"
+            SRC="$(sudo find "${GITHUB_WORKSPACE}/titanoboa" -maxdepth 3 -name '*.iso' -size +100M -printf '%p\n' | tail -n 1 || true)"
           fi
+          SRC="$(readlink -f "${SRC}" 2>/dev/null || true)"
           [[ -n "${SRC}" && -f "${SRC}" ]] || {
             echo "FAIL: no ISO after titanoboa" >&2
             exit 1
           }
           sudo chown "$(id -u):$(id -g)" "${SRC}"
-          mkdir -p "$(dirname "${DEST}")"
           mv -f "${SRC}" "${DEST}"
           ls -lh "${DEST}"
           bytes="$(stat -c '%s' "${DEST}")"
@@ -189,29 +191,32 @@ jobs:
             echo "FAIL: ISO too small (${bytes} bytes)" >&2
             exit 1
           }
+          # Hash here so the next step cannot lose the path.
+          DATE_SUFFIX="$(date -u +%Y%m%d)"
+          NAMED="${DEST_DIR}/${IMAGE_NAME}-${DATE_SUFFIX}.iso"
+          mv -f "${DEST}" "${NAMED}"
+          (cd "${DEST_DIR}" && sha256sum "$(basename "${NAMED}")" | tee SHA256SUMS)
+          echo "ISO_FILE=${NAMED}" >> "${GITHUB_ENV}"
+          echo "iso_file=${NAMED}" >> "${GITHUB_OUTPUT}"
 
-      - name: Checksum and sign sums
+      - name: Sign checksums
         env:
           COSIGN_PASSWORD: ""
           COSIGN_YES: "1"
           COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
-          IMAGE_NAME: ${{ matrix.image }}
         run: |
           set -euo pipefail
-          ISO_SRC="${GITHUB_WORKSPACE}/${IMAGE_NAME}.iso"
-          echo "Looking for ${ISO_SRC}"
-          ls -lh "${ISO_SRC}"
-          bytes="$(stat -c '%s' "${ISO_SRC}")"
-          echo "ISO bytes=${bytes}"
-          [[ "${bytes}" -gt 104857600 ]] || {
-            echo "FAIL: ISO too small (${bytes} bytes)" >&2
+          [[ -n "${ISO_FILE:-}" && -f "${ISO_FILE}" ]] || {
+            echo "FAIL: ISO_FILE missing (${ISO_FILE:-unset})" >&2
+            ls -lh "${GITHUB_WORKSPACE}/output" || true
             exit 1
           }
-          DATE_SUFFIX="$(date -u +%Y%m%d)"
-          mkdir -p output
-          ISO="output/${IMAGE_NAME}-${DATE_SUFFIX}.iso"
-          mv -f "${ISO_SRC}" "${ISO}"
-          (cd output && sha256sum "$(basename "${ISO}")" | tee SHA256SUMS)
+          [[ -s "${GITHUB_WORKSPACE}/output/SHA256SUMS" ]] || {
+            echo "FAIL: SHA256SUMS missing" >&2
+            exit 1
+          }
+          echo "Signing sums for ${ISO_FILE}"
+          ls -lh "${ISO_FILE}"
           export KEY="${RUNNER_TEMP}/unwoke-cosign.key"
           umask 077
           python3 -c 'import os, pathlib; p=pathlib.Path(os.environ["KEY"]); p.write_text(os.environ["COSIGN_PRIVATE_KEY"], encoding="utf-8")'
@@ -232,7 +237,6 @@ jobs:
             --signature output/SHA256SUMS.sig \
             output/SHA256SUMS
           shred -u "${KEY}" || rm -f "${KEY}"
-          echo "ISO_FILE=${ISO}" >> "${GITHUB_ENV}"
 
       - name: Install oras
         run: bash .github/scripts/install-oras.sh

@@ -163,7 +163,7 @@ Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only
 
 - Pickup phrase: continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.
 - `install-oras.sh` and `.github/workflows/isos/**` are in `build.yml` paths-ignore. Do not cancel a bake that is already running.
-- USB ISO: wrap itself is green (~14 min, `output.iso` then `chown`). Run [33249371957](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33249371957) still died in **Checksum** (~5 s) because `cosign sign-blob --key` uploaded to public Rekor/Fulcio. Fix: `--tlog-upload=false`, write PEM via Python (not `printf`), verify-blob with `--insecure-ignore-tlog`. Drive `ublue-os/titanoboa@840217d`. If green, download the artifact (14 days). Make the GHCR `*-iso` package Public.
+- USB ISO: wrap is green (~12–14 min). Run 16 [33250324844](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33250324844) still died in checksum in ~3 s (`ls` of a path the wrap step did not export). Hash in the wrap step; sign `SHA256SUMS` only; `--tlog-upload=false`. Drive `ublue-os/titanoboa@840217d`. If green, download the artifact (14 days). Make the GHCR `*-iso` package Public.
 - Do not add `on: push` to `iso.yml` or `verify.yml`.
 - Confirm on a real rebase: app grid **Unwoke setup** / `ujust setup` / `ujust why` / `ujust unwoke-status` / `ujust audit-unwoke`. Setup window + signed nag + daily-user dialog ship on the **next overlay bake**. Pages has the Install picker/copy/USB CTA immediately.
 - Hard-refresh Pages if Install / Changelog look cached.
