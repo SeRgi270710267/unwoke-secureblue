@@ -28,9 +28,37 @@ concurrency:
   group: verify-${{ github.event_name }}-${{ github.run_id }}
   cancel-in-progress: false
 jobs:
+  # Do not use `matrix` in a job-level if. workflow_dispatch parse rejects it.
+  pick:
+    name: Pick images
+    if: github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      images: ${{ steps.set.outputs.images }}
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
+        with:
+          egress-policy: audit
+
+      - id: set
+        name: Select matrix
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          DISPATCH_IMAGE: ${{ github.event.inputs.image }}
+        run: |
+          set -euo pipefail
+          if [[ "${EVENT_NAME}" == "workflow_dispatch" ]]; then
+            python3 -c 'import json,os; print("images="+json.dumps([os.environ["DISPATCH_IMAGE"]]))' >> "${GITHUB_OUTPUT}"
+          else
+            python3 -c 'import json; print("images="+json.dumps(["unwoke-silverblue","unwoke-silverblue-nvidia-open","unwoke-kinoite","unwoke-kinoite-nvidia-open","unwoke-silverblue-browserless","unwoke-silverblue-nvidia-open-browserless","unwoke-kinoite-browserless","unwoke-kinoite-nvidia-open-browserless","unwoke-silverblue-trivalent","unwoke-silverblue-nvidia-open-trivalent","unwoke-kinoite-trivalent","unwoke-kinoite-nvidia-open-trivalent"]))' >> "${GITHUB_OUTPUT}"
+          fi
+
   inspect:
     name: Inspect ${{ matrix.image }}
-    if: github.actor != 'dependabot[bot]' && (github.event_name != 'workflow_dispatch' || matrix.image == github.event.inputs.image)
+    needs: pick
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -38,19 +66,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image:
-          - unwoke-silverblue
-          - unwoke-silverblue-nvidia-open
-          - unwoke-kinoite
-          - unwoke-kinoite-nvidia-open
-          - unwoke-silverblue-browserless
-          - unwoke-silverblue-nvidia-open-browserless
-          - unwoke-kinoite-browserless
-          - unwoke-kinoite-nvidia-open-browserless
-          - unwoke-silverblue-trivalent
-          - unwoke-silverblue-nvidia-open-trivalent
-          - unwoke-kinoite-trivalent
-          - unwoke-kinoite-nvidia-open-trivalent
+        image: ${{ fromJson(needs.pick.outputs.images) }}
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0

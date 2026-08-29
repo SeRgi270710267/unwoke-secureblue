@@ -28,14 +28,38 @@ concurrency:
   group: iso-${{ github.event_name }}-${{ github.event.inputs.image || 'weekly' }}
   cancel-in-progress: false
 jobs:
+  # Do not use `matrix` in a job-level if. workflow_dispatch parse rejects it
+  # ("Unrecognized named-value: 'matrix'"), which blocked Run workflow.
+  pick:
+    name: Pick images
+    if: github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      images: ${{ steps.set.outputs.images }}
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
+        with:
+          egress-policy: audit
+
+      - id: set
+        name: Select matrix
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          DISPATCH_IMAGE: ${{ github.event.inputs.image }}
+        run: |
+          set -euo pipefail
+          if [[ "${EVENT_NAME}" == "workflow_dispatch" ]]; then
+            python3 -c 'import json,os; print("images="+json.dumps([os.environ["DISPATCH_IMAGE"]]))' >> "${GITHUB_OUTPUT}"
+          else
+            python3 -c 'import json; print("images="+json.dumps(["unwoke-silverblue","unwoke-silverblue-trivalent","unwoke-kinoite","unwoke-kinoite-trivalent"]))' >> "${GITHUB_OUTPUT}"
+          fi
+
   iso:
     name: ISO ${{ matrix.image }}
-    if: >
-      github.actor != 'dependabot[bot]' &&
-      (
-        (github.event_name == 'workflow_dispatch' && matrix.image == github.event.inputs.image) ||
-        (github.event_name == 'schedule' && !contains(matrix.image, 'nvidia') && !contains(matrix.image, 'browserless'))
-      )
+    needs: pick
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -45,19 +69,7 @@ jobs:
       fail-fast: false
       max-parallel: 2
       matrix:
-        image:
-          - unwoke-silverblue
-          - unwoke-silverblue-trivalent
-          - unwoke-kinoite
-          - unwoke-kinoite-trivalent
-          - unwoke-silverblue-nvidia-open
-          - unwoke-silverblue-nvidia-open-trivalent
-          - unwoke-kinoite-nvidia-open
-          - unwoke-kinoite-nvidia-open-trivalent
-          - unwoke-silverblue-browserless
-          - unwoke-silverblue-nvidia-open-browserless
-          - unwoke-kinoite-browserless
-          - unwoke-kinoite-nvidia-open-browserless
+        image: ${{ fromJson(needs.pick.outputs.images) }}
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
@@ -108,12 +120,13 @@ jobs:
           COSIGN_PASSWORD: ""
           COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
           IMAGE_NAME: ${{ matrix.image }}
+          ISO_SRC: ${{ steps.build.outputs.iso-dest }}
         run: |
           set -euo pipefail
           DATE_SUFFIX="$(date -u +%Y%m%d)"
           mkdir -p output
-          ISO="output/unwoke-${IMAGE_NAME}-${DATE_SUFFIX}.iso"
-          mv "${IMAGE_NAME}.iso" "${ISO}"
+          ISO="output/${IMAGE_NAME}-${DATE_SUFFIX}.iso"
+          mv "${ISO_SRC}" "${ISO}"
           (cd output && sha256sum "$(basename "${ISO}")" | tee SHA256SUMS)
           COSIGN_OCI_EXPERIMENTAL=0 cosign sign-blob --yes --key env://COSIGN_PRIVATE_KEY \
             output/SHA256SUMS --output-signature output/SHA256SUMS.sig

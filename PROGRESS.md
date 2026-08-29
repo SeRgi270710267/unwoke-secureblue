@@ -8,7 +8,7 @@
 - Site: https://sergi270710267.github.io/unwoke-secureblue/
 - Brand: https://sergi270710267.github.io/unwoke-secureblue/brand/
 - Changelog: https://sergi270710267.github.io/unwoke-secureblue/changelog/ (generated at Pages deploy; gitignored)
-- Last overlay images that passed canary + inspect: commit `505a88b` / Actions [33244950389](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33244950389) (all 12 green). Later `af7de25` is ISO workflow + docs only (`build.yml` paths-ignore `iso.yml` and `docs/**`).
+- Last overlay images that passed canary + inspect: commit `505a88b` / Actions [33244950389](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33244950389) (all 12 green). `af7de25` added ISO + `install-oras.sh`; that script was **not** in `build.yml` paths-ignore, so it started overlay bake [33246110776](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33246110776) (let it finish; do not cancel). `29be70c` is the previous-PC handoff.
 
 **How to resume:** clone the repo (or open it), say you are continuing Unwoke SecureBlue from `PROGRESS.md`. Do not rebuild images for docs-only work. Do not docker-pull Atomic images (layer depth). Do not auto-accept a new `cosign.pub` or auto-exec live `/usr/libexec/secureblue/*.py`.
 
@@ -28,13 +28,13 @@ Display: **Unwoke SecureBlue** (`Unwoke` = modifier; `SecureBlue` = one word, S+
 - Base canary: `.github/scripts/scan-base-canary.sh` runs on the four official bases *before* the 12-image matrix. `cosign verify` + `crane export` (never docker/podman pull — Atomic images exceed Docker layer depth; never run the image) for needles in `.github/scripts/base-canary-needles.txt`. Hit = no overlay. Does not catch a generic backdoor or obfuscation. Stock still cannot push to this GitHub/GHCR; user machines follow Unwoke GHCR after signed rebase. Canary matrix `fail-fast: false` so all four bases still report if one is red.
 - Automatic snapshot refresh: `.github/scripts/auto-refresh-snapshots.sh` on main. If stock `harden_flatpak.py` / `flatpak.just` change and pass a targeting scan, CI commits snapshots and regenerates `flatpak-lockdown-lists.sh`. Overlay is not blocked. Runtime still uses Unwoke scripts. Poison (file names Unwoke) is not auto-copied.
 - Stock `ujust harden-flatpak` hits `/usr/libexec/secureblue/harden_flatpak.py`, which is an Unwoke trampoline (`os.execv` to `/usr/libexec/unwoke/harden-flatpak.sh`). Compose fails if that trampoline is missing. Inspect also checks it.
-- Post-publish inspect: after each non-PR BlueBuild, **before** `attest-build-provenance`. `.github/scripts/inspect-flavor.sh` crane-exports GHCR `:latest`. Cosign must use classic `.sig` tags (`COSIGN_OCI_EXPERIMENTAL=0`, `--new-bundle-format=false` if the flag exists) — GitHub certificate attestations otherwise fail with `expected key signature, not certificate`. Flavor ELF checks use tar member types (file/symlink/hardlink), not leftover empty dirs. Origin ELF is often a hardlink. Twice-daily `verify.yml` is schedule + dispatch only. GitHub may show a 0-second red `verify.yml` run on **push** (workflow-file quirk, no jobs). That is not a failed inspect. Does not auto-accept a new `cosign.pub`.
+- Post-publish inspect: after each non-PR BlueBuild, **before** `attest-build-provenance`. `.github/scripts/inspect-flavor.sh` crane-exports GHCR `:latest`. Cosign must use classic `.sig` tags (`COSIGN_OCI_EXPERIMENTAL=0`, `--new-bundle-format=false` if the flag exists) — GitHub certificate attestations otherwise fail with `expected key signature, not certificate`. Flavor ELF checks use tar member types (file/symlink/hardlink), not leftover empty dirs. Origin ELF is often a hardlink. Twice-daily `verify.yml` is schedule + dispatch only (`pick` job builds the matrix — same `matrix`-in-`if` rule as `iso.yml`). Do not add `on: push`. Does not auto-accept a new `cosign.pub`.
 - Extract helper: `.github/scripts/extract-prefixes.py` (stream tar; `extractfile()` only on regular files; copy hardlinks if the target is already extracted). Crane for canary/inspect is checksum-pinned `v0.20.3` in `install-crane.sh`.
 - Factory alarm: one GitHub issue, label `factory-alarm`, reused. Opened/commented when canary/watch/build/inspect fails (not on PRs). Closed only when canary + watch + bluebuild are all green. Issue #4 was closed on the green run above. A canary hit or key rotation is not auto-merged.
 - `remove-trivalent.sh` (Origin + browserless): `dnf remove` then `rm` leftover `/usr/bin/trivalent` and `/usr/lib64/trivalent`. Inspect fails if those remain.
 - Stock MOTD replaced (`usr/libexec/secureblue-motd`). User nags masked by default: deprecation notice, update-verification, flatpak-setup (`ujust set-stock-nags on` to restore). Key-enrollment check stays. Docs mirror sanitizes script-like HTML.
 - Daily image rebuilds 08:00 and 20:00 UTC. Docs mirror of secureblue.dev at 09:30 UTC into generated `docs/secureblue/` (gitignored).
-- Empty-disk ISO: `.github/workflows/iso.yml` wraps a published Unwoke GHCR image (Titanoboa). Dispatch any of the twelve. Weekly (Sunday 10:00 UTC) the four default desktops (Silverblue/Kinoite × Origin/Trivalent) go to `ghcr.io/…/<name>-iso:latest` plus a 14-day artifact. Checksums are cosign-signed. Does not block the overlay factory. GitHub will not host a 3 GB release asset.
+- Empty-disk ISO: `.github/workflows/iso.yml` wraps a published Unwoke GHCR image (Titanoboa). A `pick` job builds the matrix (dispatch = one image; weekly = four defaults). **Do not put `matrix` in a job-level `if`** — GitHub’s workflow_dispatch parser rejects it (`Unrecognized named-value: 'matrix'`), which blocked Run workflow. Weekly (Sunday 10:00 UTC) the four default desktops (Silverblue/Kinoite × Origin/Trivalent) go to `ghcr.io/…/<name>-iso:latest` plus a 14-day artifact. Checksums are cosign-signed. Does not block the overlay factory. GitHub will not host a 3 GB release asset.
 
 ## What the overlay does
 
@@ -147,16 +147,17 @@ Stock `ujust` still works.
 9. **Trivalent flavor** (`*-trivalent`): keep stock Trivalent + SELinux; extra reversible Chromium policies + conf.d flags. Origin and browserless still strip Trivalent. 12 GHCR images.
 10. Hostile-upstream canary (crane, not docker) + snapshot auto-refresh + harden-flatpak trampoline + MOTD/nags mask.
 11. Factory autos that do not drop security: post-publish inspect, twice-daily verify.yml, one `factory-alarm` issue. Key rotation / canary hits stay manual.
-12. **Direct USB ISO** (`iso.yml`): Titanoboa wrap of published Unwoke image. Dispatch any of 12. Weekly Sunday 10:00 UTC the four default desktops → `ghcr.io/sergi270710267/<name>-iso:latest` (oras + cosign). Artifacts 14 days. Does not block overlay. First ISO has **not** been built yet — run the `iso` workflow (or wait for Sunday). First GHCR `*-iso` package may be created private; make it public like the OS images.
+12. **Direct USB ISO** (`iso.yml`): Titanoboa wrap of published Unwoke image. Dispatch any of 12. Weekly Sunday 10:00 UTC the four default desktops → `ghcr.io/sergi270710267/<name>-iso:latest` (oras + cosign). Artifacts 14 days. Does not block overlay.
+13. **This PC pickup (2026-08-29):** cloned/pulled `29be70c`. Dispatch of `iso` failed on `matrix` in job `if`. Fixed `iso.yml` + `verify.yml` with a `pick` job. First ISO (`unwoke-silverblue-trivalent`) is triggered after that push. After the GHCR `*-iso` package exists, set it **Public** if GitHub created it private.
 
 Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only / `iso.yml` pushes should not rebuild images (`build.yml` paths-ignore).
 
 ## Tomorrow / next chat
 
 - Pickup phrase: continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.
-- Overlay factory is green as of `505a88b` / run 33244950389. Rebase onto `ghcr.io/sergi270710267/<name>:latest` from that run (or later scheduled rebuilds).
-- USB ISO: trigger Actions → **iso** if the owner wants a USB now (recommend `unwoke-silverblue-trivalent` or `unwoke-kinoite-trivalent`). After first GHCR push, set the `*-iso` package visibility to public if GitHub created it private.
-- `verify.yml` 0-second red on **push** is a GitHub dispatch-workflow quirk. Do not “fix” it by adding `on: push` (that would inspect on every docs commit). Optional: `required: false` on the dispatch input if the noise bothers them.
+- Overlay bake [33246110776](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33246110776) was accidental (`install-oras.sh` not ignored). Let it finish. Then add `.github/scripts/install-oras.sh` to `build.yml` paths-ignore **after** that run is green (touching `build.yml` cancels in-progress bakes).
+- USB ISO: first wrap is `unwoke-silverblue-trivalent` (~20–40 min). If green, download the artifact (14 days) and/or `oras pull ghcr.io/sergi270710267/unwoke-silverblue-trivalent-iso:latest`. Make the GHCR `*-iso` package Public. Kinoite / NVIDIA / Origin / browserless ISOs stay on-demand.
+- Do not add `on: push` to `iso.yml` or `verify.yml`.
 - Confirm on a real rebase: `ujust unwoke-status` / `ujust audit-unwoke` (wallpaper, policies, trampoline, leftover Trivalent gone on Origin/browserless).
 - Hard-refresh Pages if Install / Changelog look cached.
 - Do not start a tight `brave_t` jail unless the owner asks again and accepts breakage.
