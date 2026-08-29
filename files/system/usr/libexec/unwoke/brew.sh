@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 # Homebrew off by default (stock secureblue ships it). ujust set-brew on|off|status
 set -euo pipefail
 

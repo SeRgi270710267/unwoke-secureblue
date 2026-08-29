@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 # Compile and load the Brave SELinux domain, then put it on secureblue's
 # userns allow-list. harden_userns stays enabled.
 set -oue pipefail

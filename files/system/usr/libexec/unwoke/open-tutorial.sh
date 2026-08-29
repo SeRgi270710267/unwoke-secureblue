@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 # Open a tutorial: local copy first (offline), then the site.
 set -euo pipefail
 slug="${1:-}"

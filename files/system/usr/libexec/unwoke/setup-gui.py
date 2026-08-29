@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 """Graphical Unwoke setup. Same stamps as setup.sh. Does not auto-unlock."""
 from __future__ import annotations
 

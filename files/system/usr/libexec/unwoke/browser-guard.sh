@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 # Seatbelt, not a prison. Blocks the easy host-browser installs on browserless
 # until /etc/unwoke/allow-browsers exists. Toolbox, brew, AppImage, and
 # rpm-ostree --disableexcludes still work; those are intentional bypasses.

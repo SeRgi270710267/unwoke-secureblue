@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 # Graphical login helper: reboot nag + setup window.
 # Does not change locks by itself.
 set -euo pipefail

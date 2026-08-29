@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 """At compose: write /usr/share/unwoke/ca-blocklist/*.pem for Fedora CAs not in Mozilla website set."""
 from __future__ import annotations
 

@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 # Phone-home extras stock still does. Default: countme/connectivity/DHCP hostname off,
 # thumbnails off. Revert with ujust. apply-boot every boot so a stock update cannot
 # unmask countme. Does not touch SELinux, USBGuard, fwupd, or Safe Browsing.

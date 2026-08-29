@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 # Stock user timers that can fight Unwoke (Flathub-off) or tell people to
 # rebase back to ghcr.io/secureblue. Default masked. Secure Boot key
 # enrollment check stays (you still need their ISO key).

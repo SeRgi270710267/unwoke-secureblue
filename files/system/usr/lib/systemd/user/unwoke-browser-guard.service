@@ -1,3 +1,6 @@
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 [Unit]
 Description=Unwoke SecureBlue: remask user Flatpak browsers unless allow-browsers is on
 After=default.target

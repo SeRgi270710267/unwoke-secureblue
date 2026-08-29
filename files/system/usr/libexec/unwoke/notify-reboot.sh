@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 # Signed-image nag with a Reboot button when libnotify supports --action.
 set -euo pipefail
 [[ -f /etc/unwoke/signed-staged ]] || exit 0

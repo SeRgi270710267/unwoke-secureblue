@@ -189,6 +189,32 @@ if ! grep -q 'UNWOKE-SHIPPED-FIRST' "${work}/usr/share/unwoke/SHIPPED-FIRST.txt"
   echo "FAIL: SHIPPED-FIRST.txt missing prior-art token" >&2
   fail=1
 fi
+if [[ ! -f "${work}/usr/share/unwoke/LICENSE" ]]; then
+  echo "FAIL: missing /usr/share/unwoke/LICENSE" >&2
+  fail=1
+fi
+if ! python3 - "${work}" <<'PY'
+from pathlib import Path
+import sys
+root = Path(sys.argv[1]) / "usr/libexec/unwoke"
+missing = []
+if not root.is_dir():
+    print("FAIL: no libexec/unwoke", file=sys.stderr)
+    raise SystemExit(1)
+for p in root.iterdir():
+    if not p.is_file() or p.suffix == ".pyc":
+        continue
+    if "UNWOKE-SHIPPED-FIRST" not in p.read_text(encoding="utf-8", errors="replace"):
+        missing.append(p.name)
+if missing:
+    print("FAIL: unmarked:", *sorted(missing), file=sys.stderr)
+    raise SystemExit(1)
+print("unwoke mark ok", sum(1 for _ in root.iterdir()))
+PY
+then
+  echo "FAIL: overlay scripts missing UNWOKE-SHIPPED-FIRST" >&2
+  fail=1
+fi
 for f in usr/share/unwoke/nm-privacy-connectivity.conf \
          usr/share/unwoke/nm-privacy-dhcp.conf \
          usr/share/unwoke/dconf-thumbnails-off \

@@ -1,4 +1,5 @@
-# Mozilla included roots with Websites trust. Stock #1606.
+# Unwoke SecureBlue. Not affiliated. UNWOKE-SHIPPED-FIRST. Stock #1606.
+# Mozilla included roots with Websites trust.
 018e13f0772532cf809bd1b17281867283fc48c6e13be9c69812854a490c1b05
 0552e6f83fdf65e8fa9670e666df28a4e21340b510cbe52566f97c4fb94b2bd1
 06c08d7dafd876971eb1124fe67f847ec0c7a158d3ea53cbe940e2ea9791f4c3

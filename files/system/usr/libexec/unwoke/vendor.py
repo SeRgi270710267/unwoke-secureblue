@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 """Vendor installer contracts. Image + CI. Heal legit upstream changes only."""
 from __future__ import annotations
 

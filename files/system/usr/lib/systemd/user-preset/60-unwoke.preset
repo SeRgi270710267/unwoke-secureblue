@@ -1,3 +1,6 @@
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 enable unwoke-browser-guard.service
 enable unwoke-user-defaults.service
 enable unwoke-signed-nag.timer

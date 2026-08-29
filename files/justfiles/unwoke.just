@@ -1,3 +1,6 @@
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 # Overlay extras. All stock secureblue ujust commands still exist.
 # Browser policy commands apply on Origin and -trivalent, not -browserless.
 # Every overlay hardening switch has on/off/status (or an equivalent revert).

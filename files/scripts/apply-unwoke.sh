@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 # Shared build-time overlay: hide leftover Bazaar/store/full-Brave launchers.
 # Flavor scripts hide or keep trivalent.desktop. Does not touch harden_userns.
 set -oue pipefail
@@ -64,6 +67,23 @@ find /usr/libexec/unwoke -maxdepth 1 -type f -exec chmod a+x {} + 2>/dev/null ||
 if [[ -x /usr/libexec/unwoke/ca-trim-build.py ]] || [[ -f /usr/libexec/unwoke/ca-trim-build.py ]]; then
   python3 /usr/libexec/unwoke/ca-trim-build.py || echo "ca-trim-build: skipped"
 fi
+
+# New overlay scripts must carry the public mark. MIT still allows copy *with* notice.
+python3 - <<'PY'
+from pathlib import Path
+root = Path("/usr/libexec/unwoke")
+missing = []
+if root.is_dir():
+    for p in root.iterdir():
+        if not p.is_file() or p.suffix == ".pyc":
+            continue
+        text = p.read_text(encoding="utf-8", errors="replace")
+        if "UNWOKE-SHIPPED-FIRST" not in text:
+            missing.append(p.name)
+if missing:
+    raise SystemExit("FAIL: unmarked unwoke scripts: " + " ".join(sorted(missing)))
+print("unwoke mark: ok", "scripts")
+PY
 
 # One .desktop per vendors{} key + missing offline help stubs from the same JSON.
 # Fail compose if the list is empty or invalid so the image cannot ship half-synced.

@@ -1,3 +1,6 @@
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 # Unwoke: V4L cameras and ALSA *capture* nodes (pcmC*D*c) mode 000.
 # Playback pcmC*D*p is not matched. Revert: ujust set-camera-mic on
 SUBSYSTEM=="video4linux", MODE="0000", OPTIONS+="nowatch"

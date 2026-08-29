@@ -1,4 +1,7 @@
 #!/bin/bash
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 # Replaces /usr/bin/toolbox and distrobox*. Allow: /etc/unwoke/allow-toolbox
 set -euo pipefail
 name="$(basename "$0")"

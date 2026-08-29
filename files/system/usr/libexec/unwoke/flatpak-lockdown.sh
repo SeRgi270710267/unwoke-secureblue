@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 # Same permission cuts as stock `ujust flatpak-permissions-lockdown`, plus
 # --system so it is the image default. Toggle: /etc/unwoke/flatpak-lockdown.off
 set -euo pipefail

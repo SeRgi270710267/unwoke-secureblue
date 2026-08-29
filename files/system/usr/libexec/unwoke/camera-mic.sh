@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 # Webcam modules + V4L/ALSA capture nodes locked until ujust set-camera-mic on.
 # Playback (speakers, USB headsets) is not blacklisted.
 set -euo pipefail

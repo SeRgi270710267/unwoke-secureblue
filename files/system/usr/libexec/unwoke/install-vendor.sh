@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 # Generic strict installer for EVERY vendors{} key. New app = JSON stanza.
 # Proton/IVPN menus still exist; they are not the watch list.
 set -euo pipefail

@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 # System Flathub remote: verified (stock), full, or off. Stamp: /etc/unwoke/flathub
 set -euo pipefail
 
