@@ -167,21 +167,27 @@ jobs:
             script -q -e -c "just build '${IMAGE_REF}' 1 none squashfs NONE '${IMAGE_REF}' 1" /dev/null
           sudo chown "$(id -u):$(id -g)" output.iso
           mkdir -p "$(dirname "${DEST}")"
-          mv output.iso "${DEST}"
-          echo "iso-dest=${DEST}" >> "${GITHUB_OUTPUT}"
+          mv -f output.iso "${DEST}"
+          ls -lh "${DEST}"
+          echo "ISO_PATH=${DEST}" >> "${GITHUB_ENV}"
 
       - name: Checksum and sign sums
         env:
           COSIGN_PASSWORD: ""
           COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
           IMAGE_NAME: ${{ matrix.image }}
-          ISO_SRC: ${{ steps.build.outputs.iso-dest }}
         run: |
           set -euo pipefail
+          ISO_SRC="${ISO_PATH:-${GITHUB_WORKSPACE}/${IMAGE_NAME}.iso}"
+          [[ -s "${ISO_SRC}" ]] || {
+            echo "ISO missing or empty: ${ISO_SRC}" >&2
+            ls -lh "${GITHUB_WORKSPACE}"/*.iso titanoboa/*.iso 2>/dev/null || true
+            exit 1
+          }
           DATE_SUFFIX="$(date -u +%Y%m%d)"
           mkdir -p output
           ISO="output/${IMAGE_NAME}-${DATE_SUFFIX}.iso"
-          mv "${ISO_SRC}" "${ISO}"
+          mv -f "${ISO_SRC}" "${ISO}"
           (cd output && sha256sum "$(basename "${ISO}")" | tee SHA256SUMS)
           COSIGN_OCI_EXPERIMENTAL=0 cosign sign-blob --yes --key env://COSIGN_PRIVATE_KEY \
             output/SHA256SUMS --output-signature output/SHA256SUMS.sig
