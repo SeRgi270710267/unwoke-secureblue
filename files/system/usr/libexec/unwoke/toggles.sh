@@ -121,6 +121,9 @@ for d in j.get("deployments") or []:
   if [[ -x /usr/libexec/unwoke/toolbox.sh ]]; then
     info "toolbox/distrobox: $(/usr/libexec/unwoke/toolbox.sh status)"
   fi
+  if [[ -x /usr/libexec/unwoke/extra-daemons.sh ]]; then
+    info "extra-daemons: $(/usr/libexec/unwoke/extra-daemons.sh status)"
+  fi
 
   if is_browserless; then
     ok "flavor: browserless (no image browser)"
@@ -216,6 +219,7 @@ for d in j.get("deployments") or []:
   echo "  ujust set-admin-split on|off|add NAME"
   echo "  ujust set-bluetooth on|off"
   echo "  ujust set-toolbox on|off"
+  echo "  ujust set-extra-daemons on|off"
   if is_browserless; then
     echo "  ujust set-allow-browsers on ALLOW|off"
   else
@@ -407,6 +411,9 @@ cmd_apply_boot() {
   if [[ -x /usr/libexec/unwoke/toolbox.sh ]]; then
     /usr/libexec/unwoke/toolbox.sh apply-boot || true
   fi
+  if [[ -x /usr/libexec/unwoke/extra-daemons.sh ]]; then
+    /usr/libexec/unwoke/extra-daemons.sh apply-boot || true
+  fi
 }
 
 cmd_apply_user() {
@@ -452,6 +459,7 @@ case "${main}" in
   admin-split) exec /usr/libexec/unwoke/admin-split.sh "${1:-status}" "${2:-}" ;;
   bluetooth) exec /usr/libexec/unwoke/bluetooth.sh "${1:-status}" ;;
   toolbox) exec /usr/libexec/unwoke/toolbox.sh "${1:-status}" ;;
+  extra-daemons) exec /usr/libexec/unwoke/extra-daemons.sh "${1:-status}" ;;
   apply-boot) cmd_apply_boot ;;
   apply-user) cmd_apply_user ;;
   *) usage ;;

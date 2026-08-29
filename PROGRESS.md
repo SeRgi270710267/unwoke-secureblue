@@ -55,7 +55,11 @@ Display: **Unwoke SecureBlue** (`Unwoke` = modifier; `SecureBlue` = one word, S+
 
 **Camera/mic:** uvcvideo + V4L/ALSA capture locked. Speakers stay. `ujust set-camera-mic on`.
 
-**Admin split:** wheel blocked from GDM/SDDM once a non-wheel user exists (will not brick a single-wheel ISO). `ujust set-admin-split off` or `add NAME`.
+**Admin split:** tty1 prompt before greeter creates a daily user, then wheel GUI lock. Empty name / 5 min skip. `ujust set-admin-split off` or `add NAME`.
+
+**toolbox:** `/usr/bin/toolbox` and distrobox* replaced with wrappers at compose. Real bins in `/usr/libexec/unwoke/real-bin/`. `ujust set-toolbox on`.
+
+**Extra daemons:** Avahi + ModemManager masked. `ujust set-extra-daemons on`. cups/geoclue already stock.
 
 **Origin isolation pack:** Disable3DAPIs (WebGL), WebGPU CLI flag, SitePerProcess, OriginKeyedProcessesEnabled. `ujust set-brave-isolation off`.
 
@@ -81,6 +85,7 @@ ujust set-camera-mic on|off
 ujust set-admin-split on|off|add NAME
 ujust set-bluetooth on|off
 ujust set-toolbox on|off
+ujust set-extra-daemons on|off
 ujust set-unwoke-theme apply
 ujust set-allow-browsers on ALLOW   # browserless
 ```

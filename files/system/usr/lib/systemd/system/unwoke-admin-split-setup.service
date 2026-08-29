@@ -1,0 +1,21 @@
+[Unit]
+Description=Unwoke: create a non-wheel daily user before the greeter
+DefaultDependencies=no
+After=local-fs.target systemd-user-sessions.service
+Before=display-manager.service gdm.service sddm.service
+ConditionPathExists=/usr/libexec/unwoke/admin-split.sh
+ConditionPathExists=!/etc/unwoke/admin-split.off
+ConditionPathExists=!/etc/unwoke/admin-split.done
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash /usr/libexec/unwoke/admin-split.sh setup-prompt
+TimeoutStartSec=300
+StandardInput=tty-force
+StandardOutput=tty
+StandardError=tty
+TTYPath=/dev/tty1
+RemainAfterExit=yes
+
+[Install]
+WantedBy=graphical.target

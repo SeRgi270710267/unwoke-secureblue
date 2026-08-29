@@ -1,0 +1,14 @@
+#!/bin/bash
+# Replaces /usr/bin/toolbox and distrobox*. Allow: /etc/unwoke/allow-toolbox
+set -euo pipefail
+name="$(basename "$0")"
+real="/usr/libexec/unwoke/real-bin/${name}"
+if [[ -f /etc/unwoke/allow-toolbox ]]; then
+  if [[ -x "${real}" ]]; then
+    exec "${real}" "$@"
+  fi
+  echo "${name}: allowed but real binary missing" >&2
+  exit 127
+fi
+echo "${name} is off on Unwoke SecureBlue. Enable: ujust set-toolbox on" >&2
+exit 127

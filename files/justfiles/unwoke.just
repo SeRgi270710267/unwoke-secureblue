@@ -84,11 +84,17 @@ set-bluetooth *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh bluetooth "$@"
 
-# toolbox + distrobox. Default off. podman stays. New shell after change.
+# toolbox + distrobox. Default off. /usr/bin/toolbox is a wrapper. podman stays.
 [positional-arguments]
 set-toolbox *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh toolbox "$@"
+
+# Avahi (.local) + ModemManager. Default off. cups/geoclue are stock.
+[positional-arguments]
+set-extra-daemons *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh extra-daemons "$@"
 
 # Re-apply Unwoke wallpaper + accent (GNOME schema / KDE wallpaper). Settings still override.
 [positional-arguments]

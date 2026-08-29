@@ -25,11 +25,35 @@ if [[ -f "${BLOCK}/deny-toolbox.sh" ]]; then
   done
 fi
 
+WRAP=/usr/libexec/unwoke/bin-wrap
+REALDIR=/usr/libexec/unwoke/real-bin
+mkdir -p "${REALDIR}"
+if [[ -f "${WRAP}" ]]; then
+  chmod a+x "${WRAP}"
+  for n in toolbox distrobox distrobox-create distrobox-enter distrobox-list \
+           distrobox-rm distrobox-stop distrobox-upgrade distrobox-ephemeral \
+           distrobox-generate-entry distrobox-assemble distrobox-host-exec \
+           distrobox-export distrobox-init distrobox-clone; do
+    src=""
+    [[ -e "/usr/bin/${n}" ]] && src="/usr/bin/${n}"
+    [[ -z "${src}" && -e "/usr/sbin/${n}" ]] && src="/usr/sbin/${n}"
+    [[ -n "${src}" ]] || continue
+    if [[ -L "${src}" ]]; then
+      case "$(readlink -f "${src}" 2>/dev/null || true)" in
+        *unwoke/bin-wrap*) continue ;;
+      esac
+    fi
+    mv "${src}" "${REALDIR}/${n}"
+    ln -sf "${WRAP}" "${src}"
+  done
+fi
+
 if command -v systemctl >/dev/null; then
   systemctl enable unwoke-first-boot.service || true
   systemctl enable unwoke-browser-guard.service || true
   systemctl --global enable unwoke-browser-guard.service || true
   systemctl --global enable unwoke-user-defaults.service || true
+  systemctl enable unwoke-admin-split-setup.service || true
 fi
 
 if command -v glib-compile-schemas >/dev/null && [[ -d /usr/share/glib-2.0/schemas ]]; then

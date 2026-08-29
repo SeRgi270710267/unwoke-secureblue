@@ -100,7 +100,7 @@
           <tr>
             <td>Wheel on the greeter</td>
             <td>Typical daily user is wheel</td>
-            <td colspan="2">GUI lock for wheel once a non-wheel user exists. <code>ujust set-admin-split off</code> or <code>add NAME</code></td>
+            <td colspan="2">tty1 prompt before greeter to create a daily user, then wheel is blocked from GDM/SDDM. <code>ujust set-admin-split off</code></td>
           </tr>
           <tr>
             <td>Bluetooth</td>
@@ -110,7 +110,12 @@
           <tr>
             <td>toolbox / distrobox</td>
             <td>Available</td>
-            <td colspan="2">Off until <code>ujust set-toolbox on</code>. podman stays.</td>
+            <td colspan="2">Off. <code>/usr/bin/toolbox</code> is a wrapper. <code>ujust set-toolbox on</code>. podman stays.</td>
+          </tr>
+          <tr>
+            <td>Avahi / ModemManager</td>
+            <td>Typically on</td>
+            <td colspan="2">Masked until <code>ujust set-extra-daemons on</code>. cups/geoclue already stock-masked.</td>
           </tr>
           <tr>
             <td>Look</td>
@@ -226,8 +231,8 @@
           <tr>
             <td><code>ujust set-admin-split</code></td>
             <td>wanted</td>
-            <td>Wheel cannot use GDM/SDDM once a non-wheel user exists. Does not brick a single wheel ISO.</td>
-            <td><code>off</code> / <code>add NAME</code></td>
+            <td>tty1 prompt before greeter creates a daily user, then wheel GUI lock. Empty name skips (5 min timeout).</td>
+            <td><code>off</code></td>
           </tr>
           <tr>
             <td><code>ujust set-bluetooth</code></td>
@@ -238,7 +243,13 @@
           <tr>
             <td><code>ujust set-toolbox</code></td>
             <td><code>off</code></td>
-            <td>Shadow toolbox + distrobox on PATH. Full path still a bypass.</td>
+            <td><code>/usr/bin/toolbox</code> and distrobox* are wrappers. podman stays.</td>
+            <td><code>on</code></td>
+          </tr>
+          <tr>
+            <td><code>ujust set-extra-daemons</code></td>
+            <td><code>off</code></td>
+            <td>Mask Avahi and ModemManager.</td>
             <td><code>on</code></td>
           </tr>
           <tr>
@@ -271,6 +282,7 @@ ujust set-camera-mic on|off
 ujust set-admin-split on|off|add NAME
 ujust set-bluetooth on|off
 ujust set-toolbox on|off
+ujust set-extra-daemons on|off
 ujust set-unwoke-theme apply
 ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
 

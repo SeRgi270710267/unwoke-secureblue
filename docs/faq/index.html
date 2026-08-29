@@ -72,6 +72,7 @@ ujust set-camera-mic on|off
 ujust set-admin-split on|off|add NAME
 ujust set-bluetooth on|off
 ujust set-toolbox on|off
+ujust set-extra-daemons on|off
 ujust set-unwoke-theme apply
 ujust set-allow-browsers on ALLOW</code></pre>
 
@@ -88,7 +89,10 @@ ujust set-allow-browsers on ALLOW</code></pre>
     <p>Off by default (service masked + <code>rfkill block bluetooth</code>). Wi-Fi is not touched. <code>ujust set-bluetooth on</code>.</p>
 
     <h2 id="toolbox"><a href="#toolbox">toolbox / distrobox: command not allowed</a></h2>
-    <p>Off by default on PATH (tighter than stock). <code>podman</code> stays so Flatpak is not wrecked. <code>ujust set-toolbox on</code> then a new shell. Typing <code>/usr/bin/toolbox</code> still works — seatbelt, not a prison.</p>
+    <p>Off by default. <code>/usr/bin/toolbox</code> and <code>distrobox*</code> are wrappers until <code>ujust set-toolbox on</code>. <code>podman</code> stays so Flatpak is not wrecked.</p>
+
+    <h2 id="daemons"><a href="#daemons">.local names / mobile broadband gone</a></h2>
+    <p>Avahi and ModemManager are masked (stock still leaves those on; they already mask cups/geoclue). <code>ujust set-extra-daemons on</code>.</p>
 
     <h2 id="brew"><a href="#brew">Where is brew?</a></h2>
     <p>Off by default — stock secureblue ships Homebrew. Enable: <code>ujust set-brew on</code> then a new shell.</p>
@@ -97,7 +101,7 @@ ujust set-allow-browsers on ALLOW</code></pre>
     <p>Default lock: <code>uvcvideo</code> (and a few Intel IPU modules) blacklisted, V4L nodes and ALSA <em>capture</em> devices mode 000. Speakers and USB headsets (playback) stay. <code>ujust set-camera-mic on</code> then replug or <code>run0 modprobe uvcvideo</code>.</p>
 
     <h2 id="admin"><a href="#admin">Can wheel log into GNOME/KDE?</a></h2>
-    <p>Once you have a non-wheel daily user, wheel is blocked from GDM/SDDM. TTY and <code>run0</code> still work. A single-user ISO is <em>not</em> locked out (that would brick the greeter). Create the daily user with <code>ujust set-admin-split add NAME</code>, or keep wheel on the greeter: <code>ujust set-admin-split off</code>.</p>
+    <p>On first boot a tty1 prompt asks for a daily (non-wheel) username and password before GDM/SDDM. After that, wheel is blocked from the greeter. TTY and <code>run0</code> still work. Empty name or 5-minute timeout skips (lock stays pending). Skip forever: <code>ujust set-admin-split off</code>. Later: <code>ujust set-admin-split add NAME</code>.</p>
 
     <h2 id="theme"><a href="#theme">Wallpaper, lock screen, accent</a></h2>
     <p>Default Unwoke navy wallpaper, a darker lock image, dark style, GNOME named accent <code>blue</code>, GTK/KDE <code>#3b6cff</code>. Gallery: <a href="brand/">Brand</a>. GNOME has no classic screensaver; the lock screen is that image. Re-apply: <code>ujust set-unwoke-theme apply</code>.</p>
