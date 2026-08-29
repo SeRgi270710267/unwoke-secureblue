@@ -60,6 +60,11 @@ jobs:
       - name: Stock issues that hit Unwoke
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          UNWOKE_AI_KEY: ${{ secrets.UNWOKE_AI_KEY }}
+          UNWOKE_AI_BASE: ${{ secrets.UNWOKE_AI_BASE }}
+          UNWOKE_AI_MODEL: ${{ secrets.UNWOKE_AI_MODEL }}
         run: python3 docs/_tools/generate-stock-issues.py
 
       - name: Last-green factory stamp

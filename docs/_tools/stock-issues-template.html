@@ -38,7 +38,7 @@
   </header>
   <main id="content">
     <h1>Workarounds</h1>
-    <p>Open issues from <a href="https://github.com/secureblue/secureblue/issues">secureblue/secureblue</a> that look like they can hit <strong>this overlay</strong> (Silverblue/Kinoite, Trivalent/Origin, Flatpak, BT, camera, …). Each card is a <strong>possible revertable ujust</strong> from our allowlist. Nothing here is baked into GHCR. PRs, Dependabot, CI, Sway/COSMIC/IoT, and issues with no overlay mapping are omitted.</p>
+    <p>Open issues from <a href="https://github.com/secureblue/secureblue/issues">secureblue/secureblue</a> that look like they can hit <strong>this overlay</strong> (Silverblue/Kinoite, Trivalent/Origin, Flatpak, BT, camera, …). Each card is a <strong>possible revertable ujust</strong> from our allowlist. Keyword map always runs. If a repo secret <code>GROQ_API_KEY</code> or <code>XAI_API_KEY</code> is set, a small optional model may pick extra IDs from that same list only (never new shell). Nothing here is baked into GHCR. PRs, Dependabot, CI, Sway/COSMIC/IoT, and issues with no overlay mapping are omitted.</p>
     <div class="alert caution">
       <p>These are not patches. <code>setenforce 0</code>, unsigned rebase, <code>gpgcheck=0</code>, and “disable the firewall” are never suggested. If the stock issue is in their kernel, wait for their signed image — we overlay, we do not fork.</p>
     </div>

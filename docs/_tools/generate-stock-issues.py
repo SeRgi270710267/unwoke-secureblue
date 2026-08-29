@@ -28,6 +28,11 @@ FORBIDDEN = re.compile(
     r"(?i)(setenforce\s*0|gpgcheck\s*=\s*0|selinux.*permissive|ostree-unverified|"
     r"disable (the )?firewall|unsigned rebase)"
 )
+SENSITIVE = re.compile(
+    r"(?i)(\b(password|secret|credential|token|private[ _-]?key|api[ _-]?key)\b"
+    r"|gh[pousr]_[A-Za-z0-9_]{20,}|BEGIN [A-Z ]*PRIVATE KEY)"
+)
+MAX_AI = 8
 
 
 def fetch(url: str) -> list:
@@ -146,6 +151,104 @@ def excerpt(body: str) -> str:
     return t
 
 
+def ai_conf() -> tuple[str, str, str]:
+    key = (
+        os.environ.get("UNWOKE_AI_KEY")
+        or os.environ.get("GROQ_API_KEY")
+        or os.environ.get("XAI_API_KEY")
+        or ""
+    ).strip()
+    if not key:
+        return "", "", ""
+    if os.environ.get("UNWOKE_AI_BASE"):
+        base = os.environ["UNWOKE_AI_BASE"].rstrip("/")
+        model = os.environ.get("UNWOKE_AI_MODEL") or "llama-3.3-70b-versatile"
+        return key, base, model
+    if os.environ.get("XAI_API_KEY") and not os.environ.get("GROQ_API_KEY"):
+        return key, "https://api.x.ai/v1", os.environ.get("UNWOKE_AI_MODEL") or "grok-4-fast-non-reasoning"
+    return key, "https://api.groq.com/openai/v1", os.environ.get("UNWOKE_AI_MODEL") or "llama-3.3-70b-versatile"
+
+
+def ai_candidate(issue: dict, hits: list[str]) -> bool:
+    if hits:
+        return False
+    t = (issue.get("title") or "").lower()
+    if "[bug]" in t:
+        return True
+    return any(
+        w in t
+        for w in (
+            "trivalent",
+            "bluetooth",
+            "flatpak",
+            "webcam",
+            "vpn",
+            "toolbox",
+            "distrobox",
+            "nvidia",
+            "xwayland",
+        )
+    )
+
+
+def ai_pick(title: str, body: str, allowed: list[str], key: str, base: str, model: str) -> list[str]:
+    blob = f"{title}\n{body}"
+    if SENSITIVE.search(blob):
+        return []
+    sys_msg = (
+        "You map a secureblue GitHub issue to Unwoke overlay workarounds. "
+        "Return JSON only: {\"ids\":[\"jit\"]}. ids must be a subset of the allowed list. "
+        "Empty ids if this is stock kernel/browser/CI with no overlay toggle. "
+        "Never suggest setenforce 0, unsigned rebase, gpgcheck=0, or new shell."
+    )
+    user_msg = (
+        f"Allowed ids: {', '.join(allowed)}\n\n"
+        f"Title: {title[:300]}\n\n{(body or '')[:1200]}"
+    )
+    payload = json.dumps(
+        {
+            "model": model,
+            "temperature": 0,
+            "max_tokens": 120,
+            "messages": [
+                {"role": "system", "content": sys_msg},
+                {"role": "user", "content": user_msg},
+            ],
+        }
+    ).encode("utf-8")
+    req = urllib.request.Request(
+        f"{base}/chat/completions",
+        data=payload,
+        method="POST",
+        headers={
+            "Authorization": f"Bearer {key}",
+            "Content-Type": "application/json",
+            "User-Agent": "unwoke-stock-issues",
+        },
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=20, context=CTX) as resp:
+            data = json.load(resp)
+        text = (((data.get("choices") or [{}])[0].get("message") or {}).get("content")) or ""
+    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, KeyError, IndexError) as exc:
+        print(f"stock-issues: AI skip ({exc})", file=sys.stderr)
+        return []
+    m = re.search(r"\{.*\}", text, re.S)
+    if not m:
+        return []
+    try:
+        parsed = json.loads(m.group(0))
+    except json.JSONDecodeError:
+        return []
+    allow = set(allowed)
+    ids = []
+    for x in parsed.get("ids") or []:
+        s = str(x)
+        if s in allow and s not in ids:
+            ids.append(s)
+    return ids
+
+
 def render_fix(fid: str, spec: dict) -> str:
     code = html.escape(spec.get("code") or "")
     revert = html.escape(spec.get("revert") or "")
@@ -181,11 +284,29 @@ def main() -> int:
     rows: list[str] = []
     kept = 0
     scanned = 0
+    ai_used = 0
+    key, base, model = ai_conf()
+    allowed = list(fixes.keys())
+    if key:
+        print(f"stock-issues: optional AI {model} @ {base}")
+    else:
+        print("stock-issues: keyword map only (no UNWOKE_AI_KEY / GROQ_API_KEY / XAI_API_KEY)")
     for issue in load_issues():
         scanned += 1
         if skip(issue, cfg):
             continue
         hits = match_fixes(issue, cfg)
+        if not hits and key and ai_used < MAX_AI and ai_candidate(issue, hits):
+            extra = ai_pick(
+                issue.get("title") or "",
+                issue.get("body") or "",
+                allowed,
+                key,
+                base,
+                model,
+            )
+            ai_used += 1
+            hits = extra
         if not hits:
             continue
         if FORBIDDEN.search((issue.get("title") or "") + (issue.get("body") or "")):
@@ -207,7 +328,7 @@ def main() -> int:
     )
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(html_out, encoding="utf-8")
-    print(f"stock-issues: {kept} shown / {scanned} scanned -> {OUT}")
+    print(f"stock-issues: {kept} shown / {scanned} scanned / {ai_used} AI calls -> {OUT}")
     return 0
 
 
