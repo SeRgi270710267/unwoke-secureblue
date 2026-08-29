@@ -56,7 +56,7 @@
       <div class="card">
         <p class="eyebrow">USB</p>
         <h3>ISO baker</h3>
-        <p>Weekly (Sunday) wrap of the four Trivalent desktops. Dispatch any of twelve. Own <code>iso-alarm</code> so a wrap flake cannot hide behind a green overlay.</p>
+        <p>Weekly (Sunday) wrap of the four Trivalent desktops. Dispatch any of twelve. <code>oras push</code> retries once on a flake (same titanoboa pin). Own <code>iso-alarm</code> so a wrap flake cannot hide behind a green overlay. Tiny checksums go on the <code>receipt</code> tag; never the 4 GB ISO.</p>
       </div>
       <div class="card">
         <p class="eyebrow">Site</p>
@@ -242,6 +242,7 @@
       <li><code>ghcr-private</code> — a package is still private; one Public click, then it closes</li>
       <li><code>stock-key</code> — their published key changed; do not auto-accept</li>
       <li><code>titanoboa-pin</code> — the USB wrap commit is gone; do not auto-bump</li>
+      <li><code>receipt-alarm</code> — the moving GitHub Release <code>receipt</code> could not be rewritten; last good files stay. Next green full verify or bake heals it. Never attach the ISO</li>
     </ul>
     <p>A 429 is not a contract break. Heal does not rewrite on transients. Inspect on a schedule does not close <code>factory-alarm</code> by itself (that would hide a failed canary behind a still-signed old image).</p>
 
@@ -259,11 +260,11 @@
 
     <h2 id="clock"><a href="#clock">Clock</a></h2>
     <ul>
-      <li>08:00 and 20:00 UTC — overlay bake</li>
+      <li>08:00 and 20:00 UTC — overlay bake, then rewrite <code>receipt</code></li>
       <li>09:15 and 21:15 UTC — vendor check/heal</li>
       <li>09:30 UTC — Pages docs mirror (Pages also on every <code>main</code> push)</li>
-      <li>09:30 and 21:30 UTC — inspect all twelve published images</li>
-      <li>Sunday 10:00 UTC — four Trivalent USB ISOs</li>
+      <li>09:30 and 21:30 UTC — inspect all twelve published images, then rewrite <code>receipt</code></li>
+      <li>Sunday 10:00 UTC — four Trivalent USB ISOs (oras retries once; tiny sums on <code>receipt</code>)</li>
     </ul>
     <p>Docs-only and ISO workflow edits do not start an overlay bake (<code>build.yml</code> paths-ignore). Changing the vendor JSON or overlay scripts does.</p>
 
