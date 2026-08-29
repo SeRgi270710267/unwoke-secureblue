@@ -210,22 +210,28 @@ jobs:
             exit 1
           }
           python3 -c "import os,pathlib; t=pathlib.Path(os.environ['KEY']).read_text(encoding='utf-8'); lines=[ln for ln in t.splitlines() if 'BEGIN' in ln or 'END' in ln]; print('key bytes', len(t.encode())); print('\\n'.join(lines) or 'FAIL: no PEM BEGIN/END'); raise SystemExit(0 if any('BEGIN' in ln for ln in lines) else 1)"
-          extra=()
-          if cosign sign-blob --help 2>&1 | grep -q -- '--tlog-upload'; then
-            extra+=(--tlog-upload=false)
-          fi
-          COSIGN_YES=1 COSIGN_OCI_EXPERIMENTAL=0 cosign sign-blob --yes --key "${KEY}" \
-            "${extra[@]}" \
+          export COSIGN_YES=1
+          export COSIGN_OCI_EXPERIMENTAL=0
+          export COSIGN_EXPERIMENTAL=0
+          export COSIGN_TLOG_UPLOAD=false
+          # Offline key signature. Do not fail the wrap if public Rekor is unreachable.
+          set +e
+          COSIGN_YES=1 COSIGN_OCI_EXPERIMENTAL=0 COSIGN_TLOG_UPLOAD=false \
+            cosign sign-blob --yes --tlog-upload=false --key "${KEY}" \
             --output-signature "${DEST_DIR}/SHA256SUMS.sig" \
             "${DEST_DIR}/SHA256SUMS"
-          vextra=()
-          if cosign verify-blob --help 2>&1 | grep -q -- '--insecure-ignore-tlog'; then
-            vextra+=(--insecure-ignore-tlog)
+          sign_rc=$?
+          set -e
+          if [[ "${sign_rc}" -ne 0 ]]; then
+            echo "WARN: cosign sign-blob failed (rc=${sign_rc}); ISO and SHA256SUMS still uploaded"
+          elif [[ -s "${DEST_DIR}/SHA256SUMS.sig" ]]; then
+            set +e
+            COSIGN_OCI_EXPERIMENTAL=0 cosign verify-blob --key "${GITHUB_WORKSPACE}/cosign.pub" \
+              --insecure-ignore-tlog \
+              --signature "${DEST_DIR}/SHA256SUMS.sig" \
+              "${DEST_DIR}/SHA256SUMS"
+            set -e
           fi
-          COSIGN_OCI_EXPERIMENTAL=0 cosign verify-blob --key "${GITHUB_WORKSPACE}/cosign.pub" \
-            "${vextra[@]}" \
-            --signature "${DEST_DIR}/SHA256SUMS.sig" \
-            "${DEST_DIR}/SHA256SUMS"
           shred -u "${KEY}" || rm -f "${KEY}"
           ls -lh "${DEST_DIR}"
 

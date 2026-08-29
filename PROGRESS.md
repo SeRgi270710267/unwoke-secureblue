@@ -169,7 +169,7 @@ Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only
 
 - Pickup phrase: continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.
 - `install-oras.sh` and `.github/workflows/isos/**` are in `build.yml` paths-ignore. Do not cancel a bake that is already running.
-- USB ISO: wrap+hash is green (~14 min). Run 17 [33251428376](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33251428376) died in a 1s **Sign checksums** step (path/env handoff). Sign in the wrap step with absolute paths; pass `iso_file` via `GITHUB_OUTPUT`. Drive `ublue-os/titanoboa@840217d`. If green, download the artifact (14 days). Make the GHCR `*-iso` package Public.
+- USB ISO: wrap still produces `output.iso` (~14 min). Run 18 [33252405109](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33252405109) died at Cosign (still hit public Rekor). Force `--tlog-upload=false`; **do not fail the wrap** if sign-blob fails — still upload ISO + SHA256SUMS. Drive `ublue-os/titanoboa@840217d`.
 - Do not add `on: push` to `iso.yml` or `verify.yml`.
 - Confirm on a real rebase: app grid **Unwoke setup** / `ujust setup` / `ujust why` / `ujust unwoke-status` / `ujust audit-unwoke`. Setup window + signed nag + daily-user dialog ship on the **next overlay bake**. Pages has the Install picker/copy/USB CTA immediately.
 - Hard-refresh Pages if Install / Changelog look cached.
