@@ -148,6 +148,9 @@ jobs:
         env:
           IMAGE_REF: ${{ env.IMAGE_REF }}
           IMAGE_NAME: ${{ matrix.image }}
+          COSIGN_PASSWORD: ""
+          COSIGN_YES: "1"
+          COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
         run: |
           set -euo pipefail
           export PATH="${HOME}/.local/bin:${PATH}"
@@ -198,25 +201,7 @@ jobs:
           (cd "${DEST_DIR}" && sha256sum "$(basename "${NAMED}")" | tee SHA256SUMS)
           echo "ISO_FILE=${NAMED}" >> "${GITHUB_ENV}"
           echo "iso_file=${NAMED}" >> "${GITHUB_OUTPUT}"
-
-      - name: Sign checksums
-        env:
-          COSIGN_PASSWORD: ""
-          COSIGN_YES: "1"
-          COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
-        run: |
-          set -euo pipefail
-          [[ -n "${ISO_FILE:-}" && -f "${ISO_FILE}" ]] || {
-            echo "FAIL: ISO_FILE missing (${ISO_FILE:-unset})" >&2
-            ls -lh "${GITHUB_WORKSPACE}/output" || true
-            exit 1
-          }
-          [[ -s "${GITHUB_WORKSPACE}/output/SHA256SUMS" ]] || {
-            echo "FAIL: SHA256SUMS missing" >&2
-            exit 1
-          }
-          echo "Signing sums for ${ISO_FILE}"
-          ls -lh "${ISO_FILE}"
+          ls -lh "${NAMED}" "${DEST_DIR}/SHA256SUMS"
           export KEY="${RUNNER_TEMP}/unwoke-cosign.key"
           umask 077
           python3 -c 'import os, pathlib; p=pathlib.Path(os.environ["KEY"]); p.write_text(os.environ["COSIGN_PRIVATE_KEY"], encoding="utf-8")'
@@ -225,18 +210,24 @@ jobs:
             exit 1
           }
           python3 -c "import os,pathlib; t=pathlib.Path(os.environ['KEY']).read_text(encoding='utf-8'); lines=[ln for ln in t.splitlines() if 'BEGIN' in ln or 'END' in ln]; print('key bytes', len(t.encode())); print('\\n'.join(lines) or 'FAIL: no PEM BEGIN/END'); raise SystemExit(0 if any('BEGIN' in ln for ln in lines) else 1)"
-          export COSIGN_PASSWORD="${COSIGN_PASSWORD}"
-          export COSIGN_YES=1
-          export COSIGN_OCI_EXPERIMENTAL=0
-          # Key signatures only. Do not talk to public Rekor/Fulcio (that 5s death).
-          COSIGN_OCI_EXPERIMENTAL=0 cosign sign-blob --yes --tlog-upload=false --key "${KEY}" \
-            --output-signature output/SHA256SUMS.sig \
-            output/SHA256SUMS
-          COSIGN_OCI_EXPERIMENTAL=0 cosign verify-blob --key cosign.pub \
-            --insecure-ignore-tlog \
-            --signature output/SHA256SUMS.sig \
-            output/SHA256SUMS
+          extra=()
+          if cosign sign-blob --help 2>&1 | grep -q -- '--tlog-upload'; then
+            extra+=(--tlog-upload=false)
+          fi
+          COSIGN_YES=1 COSIGN_OCI_EXPERIMENTAL=0 cosign sign-blob --yes --key "${KEY}" \
+            "${extra[@]}" \
+            --output-signature "${DEST_DIR}/SHA256SUMS.sig" \
+            "${DEST_DIR}/SHA256SUMS"
+          vextra=()
+          if cosign verify-blob --help 2>&1 | grep -q -- '--insecure-ignore-tlog'; then
+            vextra+=(--insecure-ignore-tlog)
+          fi
+          COSIGN_OCI_EXPERIMENTAL=0 cosign verify-blob --key "${GITHUB_WORKSPACE}/cosign.pub" \
+            "${vextra[@]}" \
+            --signature "${DEST_DIR}/SHA256SUMS.sig" \
+            "${DEST_DIR}/SHA256SUMS"
           shred -u "${KEY}" || rm -f "${KEY}"
+          ls -lh "${DEST_DIR}"
 
       - name: Install oras
         run: bash .github/scripts/install-oras.sh
@@ -246,6 +237,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           COSIGN_PASSWORD: ""
           COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
+          ISO_FILE: ${{ steps.build.outputs.iso_file }}
         run: |
           set -euo pipefail
           export PATH="${HOME}/.local/bin:${PATH}"
