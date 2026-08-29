@@ -176,6 +176,7 @@ Stock `ujust` still works.
 32. **Mirrored stock snippets that differ here get an Unwoke box:** JSON map in `docs/_tools/stock-unwoke-cmds.json`. New stock `set-foo-modules` / `set-foo-unfiltered` auto-pairs to overlay `set-foo` if that recipe exists. Unknown risky names get `ujust why` plus `mirror-cmds` issue. Known-same (enroll key, kargs, USBGuard) left alone. Does not auto-unlock.
 33. **Workarounds page:** Pages scans open secureblue issues, keeps only those that can hit this overlay and map to an allowlisted revertable `ujust`. Never baked into GHCR. Never suggests setenforce 0. PRs/CI/other flavors omitted.
 34. **Privacy vs stock (no security cut):** default-off Fedora countme, NM connectivity-check, DHCP hostname/DUID (RFC 7844-ish + IPv6 stable-privacy), GNOME/Dolphin thumbnails. Hyperlink ping off in hardening pack (prefetch already off). Boot `privacy.sh apply-boot` remasks. Inspect checks files. Revert: `ujust set-countme|set-connectivity-check|set-dhcp-hostname|set-thumbnails on`. Not fwupd, not Safe Browsing.
+35. **Fingerprinting vs locks:** security-first defaults stay. Tutorial + FAQ + Setup (`i` / GUI button) explain which packs make you rarer than stock Trivalent vs phone-home that sites never see. Blend is opt-in, one pack, not a silent default.
 
 Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only / `iso.yml` pushes should not rebuild images (`build.yml` paths-ignore). `issue-alarm.sh` is paths-ignored. Overlay scripts (`apply-unwoke.sh`, `vendor.py`, `inspect-flavor.sh`) **do** bake.
 

@@ -134,6 +134,9 @@ ujust set-allow-browsers on ALLOW</code></pre>
     <h2 id="daemons"><a href="#daemons">.local names / mobile broadband gone</a></h2>
     <p>Avahi and ModemManager are masked (stock still leaves those on; they already mask cups/geoclue). <code>ujust set-extra-daemons on</code>.</p>
 
+    <h2 id="fingerprint"><a href="#fingerprint">Does Unwoke make me easier to fingerprint?</a></h2>
+    <p>Two different things. <strong>Phone-home off</strong> (countme, connectivity-check, DHCP hostname, thumbnails) does not fingerprint websites — leave those off. <strong>Extra browser packs</strong> (JIT-less, WebGL off, no extensions, devices blocked) make you rarer than stock Trivalent. We still ship those packs: security first. Best crowd on Unwoke is <code>*-trivalent</code>. If you choose to look closer to stock Trivalent, turn <em>one</em> pack off, then restart the browser. Full text: <a href="tutorials/fingerprint/">Fingerprinting vs locks</a>. Setup has a read-only button; nothing auto-unlocks.</p>
+
     <h2 id="privacy"><a href="#privacy">Countme, hotel Wi-Fi, hostname, no previews</a></h2>
     <p>We phone home less than stock. Fedora <code>countme</code> is masked, NetworkManager connectivity-check is off, DHCP does not send your hostname (IPv6 stable-privacy), GNOME/Dolphin thumbnails are off. Hyperlink <code>ping</code> is off in the hardening pack. None of that touches SELinux or USBGuard.</p>
 <pre><code>ujust set-countme on

@@ -28,6 +28,7 @@
       "label": "Browser and network",
       "cards": [
         {"href": "tutorials/sites-broken/", "eyebrow": "Web", "h3": "A site looks broken", "p": "Usually JIT-less or WebGL. That is a lock. Do not flatten every policy for one page."},
+        {"href": "tutorials/fingerprint/", "eyebrow": "Web", "h3": "Fingerprinting vs locks", "p": "Security first. Extra browser packs make you rarer than stock Trivalent. Phone-home off does not. Blend only if you choose."},
         {"href": "tutorials/vpn-dns/", "eyebrow": "Network", "h3": "VPN without DNS leaks", "p": "Keep system DNS on the VPN’s resolver. Skip Trivalent DoH if you tunnel."}
       ]
     },

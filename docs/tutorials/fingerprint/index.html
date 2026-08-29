@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>Fingerprinting vs locks | Tutorials | Unwoke SecureBlue</title>
+  <meta name="description" content="We ship maximum security first. Extra browser packs make you rarer than stock Trivalent. Phone-home off does not. How to blend if you choose.">
+  <base href="/unwoke-secureblue/">
+  <link rel="icon" href="assets/logo.svg?v=5" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css?v=15">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="./"><img src="assets/logo.svg?v=5" alt="">Unwoke SecureBlue</a></li>
+        <li><a href="features/">Features</a></li>
+        <li><a href="compared/">Compared</a></li>
+        <li><a href="factory/">Factory</a></li>
+        <li><a href="brand/">Brand</a></li>
+        <li><a href="changelog/">Changelog</a></li>
+        <li><a href="images/">Images</a></li>
+        <li><a href="install/">Install</a></li>
+        <li><a href="post-install/">Post-install</a></li>
+        <li aria-current="page"><a href="tutorials/">Tutorials</a></li>
+        <li><a href="faq/">FAQ</a></li>
+        <li><a href="stock-issues/">Workarounds</a></li>
+        <li><a href="contributing/">Contributing</a></li>
+        <li><a href="conduct/">Conduct</a></li>
+        <li><a href="donate/">Donate</a></li>
+        <li><a href="secureblue/">Their docs</a></li>
+        <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main id="content">
+    <p class="eyebrow">Web</p>
+    <h1>Fingerprinting vs locks</h1>
+    <p><span class="chip">Keep locked</span> We ship the <strong>most security first</strong>. Extra browser packs make this desktop <em>rarer</em> than stock Trivalent. That is a real trade, not a bug. Nothing below auto-unlocks.</p>
+    <div class="alert tip">
+      <p><strong>Best crowd on Unwoke:</strong> rebase <code>*-trivalent</code> (same browser and <code>trivalent_t</code> as stock). Origin is a smaller crowd and a fatter SELinux domain. There is no overlay that is both “stricter than stock Trivalent” and “as anonymous as Chrome.”</p>
+    </div>
+    <ol class="steps">
+      <li>
+        <h3>Phone-home off does not fingerprint websites</h3>
+        <p>Fedora countme, connectivity-check, DHCP hostname, and thumbnails are local / Fedora-infra. Sites never see them. <strong>Leave those off.</strong> They are how we beat stock without looking weirder on the web.</p>
+      </li>
+      <li>
+        <h3>These packs make a site able to tell you from stock Trivalent</h3>
+        <p>JIT-less, WebGL/WebGPU off, extension installs blocked, site camera/mic/USB blocked by policy. Cover-Your-Tracks style tests will score that as more unique. They are also the attack-surface cuts. Default: keep them.</p>
+      </li>
+      <li>
+        <h3>If you choose to look closer to stock Trivalent</h3>
+        <p>One pack at a time, then restart the house browser. Do not flatten everything for one site.</p>
+<pre><code># closer to stock Trivalent (security down for that pack):
+ujust set-brave-jitless off
+ujust set-brave-isolation off
+ujust set-brave-devices off
+# put one back:
+ujust set-brave-jitless on</code></pre>
+        <p>Leave HTTPS-only / no metrics / no <code>ping</code> (hardening pack) if you can — those leak less and are a smaller uniqueness hit than JIT+WebGL. Leave extensions blocked.</p>
+      </li>
+      <li>
+        <h3>Do not</h3>
+        <p>Do not install a random “anti-detect” browser. Do not turn off Safe Browsing to hide from Google (phishing lists go with it). Do not add extra Cloudflare DoH on top of <code>ujust dns-selector</code>. Do not Bubblejail Trivalent.</p>
+      </li>
+    </ol>
+    <div class="alert">
+      <p>Site broken, not anonymity: <a href="tutorials/sites-broken/">A site looks broken</a>. Fast path on the box: <code>ujust why</code> then this page (Setup also has a Fingerprinting button).</p>
+    </div>
+    <nav class="tutorial-nav" aria-label="Adjacent tutorials">
+      <a href="tutorials/sites-broken/">Previous: A site looks broken</a>
+      <a href="tutorials/">All tutorials</a>
+      <a href="tutorials/vpn-dns/">Next: VPN without DNS leaks</a>
+    </nav>
+  </main>
+  <footer>
+    <a class="brand" href="./"><img src="assets/logo.svg?v=5" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="tutorials/">Tutorials</a></li>
+      <li><a href="faq/#fingerprint">FAQ</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

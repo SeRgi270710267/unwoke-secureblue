@@ -98,6 +98,7 @@ menu() {
   8) IVPN (WireGuard first; official repo only if you insist)
   9) All strict apps (every vendor in the watched list)
   0) Mullvad VPN (WireGuard first)
+  i) Fingerprinting vs locks (read only — nothing unlocks)
   s) Show status
   r) Reboot now
   n) Do not show this on login again
@@ -418,6 +419,11 @@ loop() {
       8) bash /usr/libexec/unwoke/install-ivpn.sh ;;
       9) bash /usr/libexec/unwoke/install-vendor.sh ;;
       0) bash /usr/libexec/unwoke/install-mullvad.sh ;;
+      i|I)
+        echo "Security first. Extra browser packs make you rarer than stock Trivalent."
+        echo "Phone-home off (countme, hostname) does not fingerprint websites. Leave those off."
+        open_tutorial fingerprint
+        ;;
       s|S) run_toggle status ;;
       r|R)
         echo "Rebooting."
