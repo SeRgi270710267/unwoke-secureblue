@@ -126,6 +126,7 @@ notes="${work}/NOTES.md"
   echo
   echo "- Images listed: **${ok}/${#NAMES[@]}** (cosign-verified)."
   echo "- Enroll **their** Secure Boot key. Not Ventoy. Not affiliated with secureblue."
+  echo "- \`SHIPPED-FIRST.txt\` is the dated ledger of official tickets Unwoke shipped while they were still requests. Token \`UNWOKE-SHIPPED-FIRST\`."
   echo "- Updated: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
   echo "- Run: ${RUN_URL}"
   if [[ "${#missing[@]}" -gt 0 ]]; then
@@ -154,7 +155,18 @@ else
     || finish_fail "could not edit release ${TAG}"
 fi
 
+ledger="${ROOT}/files/system/usr/share/unwoke/SHIPPED-FIRST.txt"
+if [[ ! -f "${ledger}" ]]; then
+  ledger="${ROOT}/docs/ahead/SHIPPED-FIRST.txt"
+fi
+if [[ -f "${ledger}" ]]; then
+  cp -f "${ledger}" "${work}/SHIPPED-FIRST.txt"
+fi
+
 uploads=("${work}/cosign.pub" "${digests}")
+if [[ -f "${work}/SHIPPED-FIRST.txt" ]]; then
+  uploads+=("${work}/SHIPPED-FIRST.txt")
+fi
 shopt -s nullglob
 for f in "${work}"/*.SHA256SUMS "${work}"/*.SHA256SUMS.sig; do
   uploads+=("${f}")

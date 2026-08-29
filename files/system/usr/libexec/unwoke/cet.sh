@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Intel CET: SHSTK + IBT via glibc tunables (stock #1295). Default on. x86_64.
+# Unwoke SecureBlue. Not affiliated. UNWOKE-SHIPPED-FIRST. Stock #1295 was a request.
+# Intel CET: SHSTK + IBT via glibc tunables. Default on. x86_64.
 # Revert: ujust set-cet off
 set -euo pipefail
 

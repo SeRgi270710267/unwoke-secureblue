@@ -209,6 +209,7 @@ pbkdf = argon2id
 pbkdf-memory = 2097152
 EOF
 
+# Unwoke SecureBlue. Not affiliated. UNWOKE-SHIPPED-FIRST. Stock #1185 was a request.
 # Stock #1185: installer NTP is fedora pool in the clear. Use NTS. Clock may be
 # wrong at first contact so chrony is allowed to skip cert time once.
 sed -i -E 's/^(pool|server)[[:space:]]/# \1 /' /etc/chrony.conf 2>/dev/null || true

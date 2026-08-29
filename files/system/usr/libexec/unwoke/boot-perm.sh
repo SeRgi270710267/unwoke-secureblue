@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# chmod 700 /boot (stock #391). ostree /usr is image-owned; we do not chmod /usr.
+# Unwoke SecureBlue. Not affiliated. UNWOKE-SHIPPED-FIRST. Stock #391 was a request.
+# chmod 700 /boot. ostree /usr is image-owned; we do not chmod /usr.
 # Revert: ujust set-boot-perm off
 set -euo pipefail
 

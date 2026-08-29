@@ -165,6 +165,7 @@ for f in usr/libexec/unwoke/ramdisk.sh \
          usr/libexec/unwoke/ca-trim.sh \
          usr/libexec/unwoke/ca-trim-build.py \
          usr/share/unwoke/mozilla-ca-sha256.txt \
+         usr/share/unwoke/SHIPPED-FIRST.txt \
          usr/share/unwoke/cet-system.conf \
          usr/share/unwoke/cet-profile.sh; do
   if [[ ! -f "${work}/${f}" ]]; then
@@ -182,6 +183,10 @@ if ! grep -q 'dhcp-iaid' "${work}/usr/share/unwoke/nm-privacy-dhcp.conf" 2>/dev/
 fi
 if ! grep -q 'session-bus' "${work}/usr/libexec/unwoke/toggles.sh" 2>/dev/null; then
   echo "FAIL: audit-unwoke missing Flatpak session-bus check" >&2
+  fail=1
+fi
+if ! grep -q 'UNWOKE-SHIPPED-FIRST' "${work}/usr/share/unwoke/SHIPPED-FIRST.txt" 2>/dev/null; then
+  echo "FAIL: SHIPPED-FIRST.txt missing prior-art token" >&2
   fail=1
 fi
 for f in usr/share/unwoke/nm-privacy-connectivity.conf \

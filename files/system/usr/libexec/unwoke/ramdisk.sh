@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# noexec,nosuid,nodev on /dev/shm and /tmp (stock #697). Default on.
+# Unwoke SecureBlue. Not affiliated. UNWOKE-SHIPPED-FIRST. Stock #697 was a request.
+# noexec,nosuid,nodev on /dev/shm and /tmp. Default on.
 # Electron/old JIT that mmap(PROT_EXEC) from shm: ujust set-ramdisk-exec on
 set -euo pipefail
 

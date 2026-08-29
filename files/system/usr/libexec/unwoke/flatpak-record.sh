@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Unwoke SecureBlue. Not affiliated. UNWOKE-SHIPPED-FIRST. Stock #2156 was a request.
 # Block Flatpak Pulse/PipeWire *record* (mic + what other apps play).
 # Default on. Independent of set-flatpak-lockdown so loosening FS does not
 # re-open the microphone to Flatpaks. Revert: ujust set-flatpak-record off

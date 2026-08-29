@@ -23,6 +23,9 @@ SRC = Path(__file__).with_name("stock-feats.json")
 TEMPLATE = Path(__file__).with_name("stock-feats-template.html")
 OUT = ROOT / "docs" / "ahead" / "index.html"
 CATCH = ROOT / "docs" / "ahead" / "catch-up.txt"
+LEDGER_DOCS = ROOT / "docs" / "ahead" / "SHIPPED-FIRST.txt"
+LEDGER_IMG = ROOT / "files" / "system" / "usr" / "share" / "unwoke" / "SHIPPED-FIRST.txt"
+TOKEN = "UNWOKE-SHIPPED-FIRST"
 START = "<!-- feats-generated:start -->"
 END = "<!-- feats-generated:end -->"
 CTX = ssl.create_default_context()
@@ -279,6 +282,35 @@ def section(title: str, anchor: str, intro: str, items: list[dict], empty: str) 
     return "".join(parts)
 
 
+def write_ledger(items: list[dict]) -> None:
+    """Public, grep-able prior-art file. Lives on the site, in the OS, and on the receipt."""
+    lines = [
+        TOKEN,
+        "Unwoke SecureBlue — not affiliated with secureblue.",
+        "MIT License. Copyright (c) 2026 SeRgi270710267.",
+        "This file is the public prior-art ledger. Dates are when Unwoke shipped",
+        "a reversible default while the official ticket was still a request.",
+        "If a later tree copies /usr/share/unwoke or this token, that copy came from here.",
+        f"Site: https://sergi270710267.github.io/unwoke-secureblue/ahead/",
+        f"Repo: {OURS}",
+        f"Written: {dt.datetime.now(dt.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}",
+        "",
+        "issue  shipped     state   title",
+    ]
+    for it in sorted(items, key=lambda x: int(x["issue"])):
+        n = int(it["issue"])
+        title = (it.get("title") or "").replace("\t", " ")[:80]
+        lines.append(
+            f"#{n:<6} {it.get('shipped') or '—':<10} {(it.get('state') or 'open'):<7} {title}"
+        )
+        lines.append(f"         {it.get('url') or f'https://github.com/secureblue/secureblue/issues/{n}'}")
+    text = "\n".join(lines) + "\n"
+    for path in (LEDGER_DOCS, LEDGER_IMG):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding="utf-8", newline="\n")
+        print(f"wrote {path.relative_to(ROOT)}")
+
+
 def catch_up_text(items: list[dict]) -> str:
     pending = [it for it in items if needs_review(it)]
     if not pending:
@@ -374,6 +406,7 @@ def main() -> int:
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(page, encoding="utf-8", newline="\n")
 
+    write_ledger(items)
     extra = catch_up_text(items)
     if extra:
         CATCH.write_text(extra, encoding="utf-8", newline="\n")

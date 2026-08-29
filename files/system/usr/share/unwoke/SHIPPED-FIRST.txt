@@ -1,0 +1,37 @@
+UNWOKE-SHIPPED-FIRST
+Unwoke SecureBlue — not affiliated with secureblue.
+MIT License. Copyright (c) 2026 SeRgi270710267.
+This file is the public prior-art ledger. Dates are when Unwoke shipped
+a reversible default while the official ticket was still a request.
+If a later tree copies /usr/share/unwoke or this token, that copy came from here.
+Site: https://sergi270710267.github.io/unwoke-secureblue/ahead/
+Repo: https://github.com/SeRgi270710267/unwoke-secureblue
+Written: 2026-08-29T19:19:23Z
+
+issue  shipped     state   title
+#391    2026-08-29 open    [FEAT] chmod 700 .boot /usr/src /lib/modules /usr/lib/modules
+         https://github.com/secureblue/secureblue/issues/391
+#697    2026-08-29 open    RAM disk protection?
+         https://github.com/secureblue/secureblue/issues/697
+#887    2026-08-29 open    [FEAT] audit-secureblue should check flatpak session bus policy
+         https://github.com/secureblue/secureblue/issues/887
+#1185   2026-08-29 open    [BUG] ISO installer uses unencrypted NTP
+         https://github.com/secureblue/secureblue/issues/1185
+#1295   2026-08-29 open    [FEAT] toggle ujust SHSTK/IBT
+         https://github.com/secureblue/secureblue/issues/1295
+#1569   2026-08-29 open    [FEAT] DHCP Anonymization profile
+         https://github.com/secureblue/secureblue/issues/1569
+#1606   2026-08-29 open    [FEAT] Reduce the amount of trusted CAs
+         https://github.com/secureblue/secureblue/issues/1606
+#1885   2026-08-29 open    [FEAT] Add more filesystem permissions to Harden Flatpak command
+         https://github.com/secureblue/secureblue/issues/1885
+#2156   2026-08-29 open    [FEAT] Allow blocking flatpaks from creating record streams
+         https://github.com/secureblue/secureblue/issues/2156
+#2354   2026-08-29 open    [FEAT] add network fs toggle
+         https://github.com/secureblue/secureblue/issues/2354
+#2432   2026-08-29 open    [FEAT] Make disk encryption opt-out instead of opt-in in anaconda
+         https://github.com/secureblue/secureblue/issues/2432
+#2508   2026-08-29 open    [FEAT] Report installed Flatpak browsers in `ujust audit-secureblue`
+         https://github.com/secureblue/secureblue/issues/2508
+#2526   2026-08-29 open    Set higher default memory parameter for LUKS in ISOs
+         https://github.com/secureblue/secureblue/issues/2526

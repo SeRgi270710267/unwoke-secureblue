@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Distrust Fedora CAs that are not Mozilla website-trusted (stock #1606).
+# Unwoke SecureBlue. Not affiliated. UNWOKE-SHIPPED-FIRST. Stock #1606 was a request.
+# Distrust Fedora CAs that are not Mozilla website-trusted.
 # Default on. Some TLS (gov/old Symantec) will fail. Revert: ujust set-extra-cas on
 set -euo pipefail
 

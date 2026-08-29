@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Unwoke SecureBlue. Not affiliated. UNWOKE-SHIPPED-FIRST. Stock #2354 was a request.
 # Network filesystem *clients* (NFS/CIFS) off until ujust set-network-fs on.
 # Stock already masks nfs-server; they still allow mounting shares. We do not.
 set -euo pipefail
