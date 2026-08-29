@@ -1,0 +1,5 @@
+[org/gnome/nautilus/preferences]
+show-image-thumbnails='never'
+
+[org/gnome/desktop/thumbnailers]
+disable-all=true

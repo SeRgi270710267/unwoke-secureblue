@@ -119,9 +119,9 @@
             <td>n/a</td>
           </tr>
           <tr>
-            <td>HTTPS-only / no passwords / no metrics</td>
+            <td>HTTPS-only / no passwords / no metrics / no ping</td>
             <td>Compile-time defaults; not our JSON pack</td>
-            <td>Managed pack on. <code>ujust set-brave-hardening off</code></td>
+            <td>Managed pack on (includes <code>HyperlinkAuditingEnabled: false</code>). <code>ujust set-brave-hardening off</code></td>
             <td>Same managed pack on (additive if Trivalent already compiled some of this in)</td>
             <td>n/a</td>
           </tr>
@@ -229,6 +229,34 @@
             <td>Masked until <code>ujust set-extra-daemons on</code></td>
             <td>Masked. Same</td>
             <td>Masked. Same</td>
+          </tr>
+          <tr>
+            <td>Fedora countme</td>
+            <td>On</td>
+            <td>Masked. <code>ujust set-countme on</code></td>
+            <td>Masked. Same</td>
+            <td>Masked. Same</td>
+          </tr>
+          <tr>
+            <td>Connectivity check</td>
+            <td>On</td>
+            <td>Off. <code>ujust set-connectivity-check on</code> for hotel portals</td>
+            <td>Off. Same</td>
+            <td>Off. Same</td>
+          </tr>
+          <tr>
+            <td>DHCP hostname / DUID</td>
+            <td>Sent</td>
+            <td>Not sent. <code>ujust set-dhcp-hostname on</code></td>
+            <td>Not sent. Same</td>
+            <td>Not sent. Same</td>
+          </tr>
+          <tr>
+            <td>Thumbnails</td>
+            <td>On</td>
+            <td>Off. <code>ujust set-thumbnails on</code></td>
+            <td>Off. Same</td>
+            <td>Off. Same</td>
           </tr>
           <tr>
             <td>Look</td>
@@ -398,6 +426,30 @@
             <td><code>on</code></td>
           </tr>
           <tr>
+            <td><code>ujust set-countme</code></td>
+            <td><code>off</code></td>
+            <td>Mask Fedora rpm-ostree countme timer.</td>
+            <td><code>on</code></td>
+          </tr>
+          <tr>
+            <td><code>ujust set-connectivity-check</code></td>
+            <td><code>off</code></td>
+            <td>No NetworkManager HTTP “am I online”. Hotel portals may need <code>on</code>.</td>
+            <td><code>on</code></td>
+          </tr>
+          <tr>
+            <td><code>ujust set-dhcp-hostname</code></td>
+            <td><code>off</code></td>
+            <td>Do not send hostname; IPv6 stable-privacy; MAC-based DHCP ids.</td>
+            <td><code>on</code></td>
+          </tr>
+          <tr>
+            <td><code>ujust set-thumbnails</code></td>
+            <td><code>off</code></td>
+            <td>GNOME Files + Dolphin previews off.</td>
+            <td><code>on</code></td>
+          </tr>
+          <tr>
             <td><code>ujust set-stock-nags</code></td>
             <td><code>off</code></td>
             <td>Mask stock deprecation / update-verify / flatpak-setup user units (can fight Flathub-off or tell you to rebase to them). Their Secure Boot key check stays.</td>
@@ -438,6 +490,10 @@ ujust set-admin-split on|off|add NAME
 ujust set-bluetooth on|off
 ujust set-toolbox on|off
 ujust set-extra-daemons on|off
+ujust set-countme on|off
+ujust set-connectivity-check on|off
+ujust set-dhcp-hostname on|off
+ujust set-thumbnails on|off
 ujust set-stock-nags on|off
 ujust set-unwoke-theme apply
 ujust set-allow-browsers on ALLOW   # browserless only</code></pre>

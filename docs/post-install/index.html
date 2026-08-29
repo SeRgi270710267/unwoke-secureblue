@@ -53,7 +53,7 @@ ujust unwoke-status
 ujust audit-unwoke
 ujust audit-secureblue</code></pre>
     <p>Full toggle table: <a href="features/#toggles">Features</a>. Restart the house browser after policy changes. If something “broke,” it is usually a default lock — the setup menu maps the usual ones and does <strong>not</strong> auto-unlock.</p>
-    <p><strong>Default off</strong> (stock has these on): Flathub, Homebrew, Bluetooth, toolbox/distrobox, camera/mic hardware. <strong>Default on</strong> (loosen with <code>off</code>): Flatpak lockdown, Origin/Trivalent policy packs, Origin Bubblejail, isolation, extra sandbox, Trivalent Network Service Sandbox + referrer flags. <strong>Browserless only:</strong> host browsers stay blocked until <code>ujust set-allow-browsers on ALLOW</code>.</p>
+    <p><strong>Default off</strong> (stock has these on): Flathub, Homebrew, Bluetooth, toolbox/distrobox, camera/mic hardware, Fedora countme, connectivity-check, DHCP hostname, file thumbnails. <strong>Default on</strong> (loosen with <code>off</code>): Flatpak lockdown, Origin/Trivalent policy packs (including no hyperlink <code>ping</code>), Origin Bubblejail, isolation, extra sandbox, Trivalent Network Service Sandbox + referrer flags. <strong>Browserless only:</strong> host browsers stay blocked until <code>ujust set-allow-browsers on ALLOW</code>.</p>
     <div class="table-container">
       <table>
         <thead>
@@ -69,6 +69,10 @@ ujust audit-secureblue</code></pre>
           <tr><td>Need Bluetooth</td><td><code>ujust set-bluetooth on</code></td></tr>
           <tr><td>Need toolbox / distrobox</td><td><code>ujust set-toolbox on</code></td></tr>
           <tr><td>Need Avahi (.local) or a modem</td><td><code>ujust set-extra-daemons on</code></td></tr>
+          <tr><td>Hotel Wi-Fi login page never appears</td><td><code>ujust set-connectivity-check on</code></td></tr>
+          <tr><td>LAN needs this PC’s hostname</td><td><code>ujust set-dhcp-hostname on</code></td></tr>
+          <tr><td>Files has no previews</td><td><code>ujust set-thumbnails on</code></td></tr>
+          <tr><td>Want Fedora countme</td><td><code>ujust set-countme on</code></td></tr>
           <tr><td>Want stock deprecation / Flathub-setup notices</td><td><code>ujust set-stock-nags on</code></td></tr>
           <tr><td>Flatpaks are broken</td><td><code>ujust set-flatpak-lockdown off</code></td></tr>
           <tr><td>Want wallpaper / accent back</td><td><code>ujust set-unwoke-theme apply</code></td></tr>

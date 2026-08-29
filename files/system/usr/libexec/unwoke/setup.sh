@@ -115,9 +115,13 @@ hardware_menu() {
   4) Toolbox / distrobox on
   5) Homebrew on
   6) Avahi (.local) / ModemManager on
+  7) Fedora countme on (machine census)
+  8) Connectivity check on (captive-portal pop)
+  9) Send hostname on DHCP
+  10) File thumbnails on
 EOF
   if [[ "${FLAVOR}" == "browserless" ]]; then
-    echo "  7) Allow host browsers (you still type ALLOW)"
+    echo "  11) Allow host browsers (you still type ALLOW)"
   fi
   echo "  b) Back"
 }
@@ -147,6 +151,8 @@ EOF
       ;;
   esac
   echo "  0) No software store (by design; Flathub is off)"
+  echo "  c) Hotel Wi-Fi login page never appears (connectivity check)"
+  echo "  t) Files has no previews (thumbnails)"
   echo "  b) Back"
 }
 
@@ -176,7 +182,11 @@ hardware_loop() {
       4) run_toggle toolbox on; open_tutorial toolbox ;;
       5) run_toggle brew on; open_tutorial install-apps ;;
       6) run_toggle extra-daemons on ;;
-      7)
+      7) run_toggle countme on ;;
+      8) run_toggle connectivity-check on ;;
+      9) run_toggle dhcp-hostname on ;;
+      10) run_toggle thumbnails on ;;
+      11)
         if [[ "${FLAVOR}" == "browserless" ]]; then
           echo "Next prompt: type ALLOW to unlock easy host browsers."
           run_toggle allow-browsers on
@@ -261,6 +271,14 @@ broken_loop() {
         echo "Flathub is off until you turn it on. Menu 2 → Flathub: verified apps."
         echo "That is not a crash."
         ;;
+      c|C)
+        run_toggle connectivity-check on
+        echo "Captive-portal detection is on. Hotel login pages can pop."
+        ;;
+      t|T)
+        run_toggle thumbnails on
+        echo "GNOME Files / Dolphin previews are on."
+        ;;
       b|B|q|Q|"") return 0 ;;
       *) echo "Unknown choice." ;;
     esac
@@ -327,6 +345,10 @@ loosened_loop() {
   [[ -f /etc/unwoke/allow-toolbox ]] && add_item "Toolbox" "toolbox off" "toolbox"
   [[ -f /etc/unwoke/allow-camera-mic ]] && add_item "Camera / mic" "camera-mic off" "camera-mic"
   [[ -f /etc/unwoke/allow-extra-daemons ]] && add_item "Avahi / ModemManager" "extra-daemons off" "first-hour"
+  [[ -f /etc/unwoke/allow-countme ]] && add_item "Fedora countme" "countme off" "first-hour"
+  [[ -f /etc/unwoke/allow-connectivity ]] && add_item "Connectivity check" "connectivity-check off" "first-hour"
+  [[ -f /etc/unwoke/allow-dhcp-hostname ]] && add_item "DHCP hostname" "dhcp-hostname off" "first-hour"
+  [[ -f /etc/unwoke/allow-thumbnails ]] && add_item "Thumbnails" "thumbnails off" "first-hour"
   [[ -f /etc/unwoke/flatpak-lockdown.off ]] && add_item "Flatpak lockdown off" "lockdown on" "install-apps"
   [[ -f /etc/unwoke/brave-jitless.off ]] && add_item "JavaScript JIT allowed" "jitless on" "sites-broken"
   [[ -f /etc/unwoke/brave-devices.off ]] && add_item "Browser devices allowed" "devices on" "camera-mic"

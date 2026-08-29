@@ -115,6 +115,23 @@ if [[ ! -f "${work}/usr/libexec/unwoke/setup-gui.py" ]]; then
   echo "FAIL: missing /usr/libexec/unwoke/setup-gui.py" >&2
   fail=1
 fi
+if [[ ! -f "${work}/usr/libexec/unwoke/privacy.sh" ]]; then
+  echo "FAIL: missing /usr/libexec/unwoke/privacy.sh" >&2
+  fail=1
+fi
+for f in usr/share/unwoke/nm-privacy-connectivity.conf \
+         usr/share/unwoke/nm-privacy-dhcp.conf \
+         usr/share/unwoke/dconf-thumbnails-off \
+         usr/share/unwoke/dolphin-thumbnails-off; do
+  if [[ ! -f "${work}/${f}" ]]; then
+    echo "FAIL: missing /${f}" >&2
+    fail=1
+  fi
+done
+if ! grep -q '"HyperlinkAuditingEnabled": false' "${work}/usr/share/unwoke/brave-hardening.json" 2>/dev/null; then
+  echo "FAIL: hardening pack missing HyperlinkAuditingEnabled false" >&2
+  fail=1
+fi
 if [[ ! -f "${work}/usr/share/applications/unwoke-setup.desktop" ]]; then
   echo "FAIL: missing Unwoke setup launcher" >&2
   fail=1

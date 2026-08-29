@@ -201,6 +201,30 @@ set-extra-daemons *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh extra-daemons "$@"
 
+# Fedora rpm-ostree countme (machine census). Default off.
+[positional-arguments]
+set-countme *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh countme "$@"
+
+# GNOME/NetworkManager "am I online" HTTP check. Default off. Captive portals may need on.
+[positional-arguments]
+set-connectivity-check *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh connectivity-check "$@"
+
+# Send hostname + stable DHCPv6 DUID. Default off (RFC 7844-ish).
+[positional-arguments]
+set-dhcp-hostname *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh dhcp-hostname "$@"
+
+# GNOME Files + Dolphin thumbnails. Default off.
+[positional-arguments]
+set-thumbnails *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh thumbnails "$@"
+
 # Stock deprecation / update-verify / flatpak-setup user units. Default off (masked).
 [positional-arguments]
 set-stock-nags *args:

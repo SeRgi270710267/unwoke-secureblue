@@ -10,6 +10,7 @@
   "DefaultNotificationsSetting": 2,
   "DefaultPopupsSetting": 2,
   "HttpsOnlyMode": "force_enabled",
+  "HyperlinkAuditingEnabled": false,
   "MetricsReportingEnabled": false,
   "NetworkPredictionOptions": 2,
   "PasswordManagerEnabled": false,

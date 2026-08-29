@@ -1,0 +1,7 @@
+# unwoke-thumbnails
+[General]
+ShowPreview=false
+
+[PreviewSettings]
+Plugins=
+MaximumRemoteSize=0

@@ -134,6 +134,13 @@ ujust set-allow-browsers on ALLOW</code></pre>
     <h2 id="daemons"><a href="#daemons">.local names / mobile broadband gone</a></h2>
     <p>Avahi and ModemManager are masked (stock still leaves those on; they already mask cups/geoclue). <code>ujust set-extra-daemons on</code>.</p>
 
+    <h2 id="privacy"><a href="#privacy">Countme, hotel Wi-Fi, hostname, no previews</a></h2>
+    <p>We phone home less than stock. Fedora <code>countme</code> is masked, NetworkManager connectivity-check is off, DHCP does not send your hostname (IPv6 stable-privacy), GNOME/Dolphin thumbnails are off. Hyperlink <code>ping</code> is off in the hardening pack. None of that touches SELinux or USBGuard.</p>
+<pre><code>ujust set-countme on
+ujust set-connectivity-check on
+ujust set-dhcp-hostname on
+ujust set-thumbnails on</code></pre>
+
     <h2 id="brew"><a href="#brew">Where is brew?</a></h2>
     <p>Off by default — stock secureblue ships Homebrew. Enable: <code>ujust set-brew on</code> then a new shell.</p>
 
