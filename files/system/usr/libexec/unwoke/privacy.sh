@@ -72,6 +72,12 @@ apply_connections() {
       nmcli connection modify "${uuid}" \
         ipv4.dhcp-send-hostname no \
         ipv6.dhcp-send-hostname no \
+        ipv4.dhcp-client-id mac \
+        ipv4.dhcp-iaid mac \
+        ipv4.dhcp-send-release yes \
+        ipv6.dhcp-duid ll \
+        ipv6.dhcp-iaid mac \
+        ipv6.dhcp-send-release yes \
         ipv6.addr-gen-mode stable-privacy \
         ipv6.ip6-privacy 2 \
         connection.llmnr no \

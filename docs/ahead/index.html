@@ -48,15 +48,78 @@
     <div class="factory-stamp" data-factory-stamp>Checking last green…</div>
 
     <div class="score-row">
-      <div><strong>6</strong><span>still ahead of stock</span></div>
+      <div><strong>13</strong><span>still ahead of stock</span></div>
       <div><strong>0</strong><span>they shipped after us</span></div>
-      <div><strong>7 months</strong><span>longest wait still open</span></div>
+      <div><strong>24 months</strong><span>longest wait still open</span></div>
     </div>
 
 <!-- feats-generated:start -->
     <h2 id="ahead"><a href="#ahead">Still ahead of stock</a></h2>
     <p>Open [FEAT] tickets on their GitHub. That means requested, not shipped. Defaults here until they close the ticket.</p>
     <div class="feat-grid">
+      <article class="feat-card feat-open">
+        <p class="feat-status">Not shipped on stock</p>
+        <p class="tag">Disk</p>
+        <h3>chmod 700 .boot /usr/src /lib/modules /usr/lib/modules</h3>
+        <p class="feat-race">Opened 2024-08-23 as a request. We shipped 2026-08-29. They had been asking for 24 months. Still open there, so they have not shipped it. This card stays until they do.</p>
+        <p>/boot is mode 700. ostree /usr is not chmod&#x27;d at runtime.</p>
+        <p class="feat-revert"><span>Revert</span> <code>ujust set-boot-perm off</code></p>
+        <p class="feat-links"><a href="https://github.com/secureblue/secureblue/issues/391">Stock #391</a> · <a href="features/#toggles">On Unwoke</a></p>
+      </article>
+      <article class="feat-card feat-open">
+        <p class="feat-status">Not shipped on stock</p>
+        <p class="tag">Memory</p>
+        <h3>RAM disk protection?</h3>
+        <p class="feat-race">Opened 2024-12-19 as a request. We shipped 2026-08-29. They had been asking for 20 months. Still open there, so they have not shipped it. This card stays until they do.</p>
+        <p>noexec,nosuid,nodev on /dev/shm and /tmp. Payloads in RAM cannot exec.</p>
+        <p class="feat-revert"><span>Revert</span> <code>ujust set-ramdisk-exec on</code></p>
+        <p class="feat-links"><a href="https://github.com/secureblue/secureblue/issues/697">Stock #697</a> · <a href="features/#toggles">On Unwoke</a></p>
+      </article>
+      <article class="feat-card feat-open">
+        <p class="feat-status">Not shipped on stock</p>
+        <p class="tag">Trust</p>
+        <h3>audit-secureblue should check flatpak session bus policy</h3>
+        <p class="feat-race">Opened 2025-02-28 as a request. We shipped 2026-08-29. They had been asking for 18 months. Still open there, so they have not shipped it. This card stays until they do.</p>
+        <p>ujust audit-unwoke warns if Flatpak session-bus, system-bus, or org.freedesktop.Flatpak is allowed.</p>
+        <p class="feat-revert"><span>Revert</span> Hygiene, not a lock.</p>
+        <p class="feat-links"><a href="https://github.com/secureblue/secureblue/issues/887">Stock #887</a> · <a href="tutorials/check-health/">On Unwoke</a></p>
+      </article>
+      <article class="feat-card feat-open">
+        <p class="feat-status">Not shipped on stock</p>
+        <p class="tag">USB install</p>
+        <h3>[BUG] ISO installer uses unencrypted NTP</h3>
+        <p class="feat-race">Opened 2025-07-16 as a request. We shipped 2026-08-29. They had been asking for 13 months. Still open there, so they have not shipped it. This card stays until they do.</p>
+        <p>Live ISO chrony uses NTS (time.cloudflare.com, nts.ntp.se), not fedora NTP pool in the clear.</p>
+        <p class="feat-revert"><span>Revert</span> Anaconda Time &amp; Date still lets you pick servers</p>
+        <p class="feat-links"><a href="https://github.com/secureblue/secureblue/issues/1185">Stock #1185</a> · <a href="install/">On Unwoke</a></p>
+      </article>
+      <article class="feat-card feat-open">
+        <p class="feat-status">Not shipped on stock</p>
+        <p class="tag">CPU</p>
+        <h3>toggle ujust SHSTK/IBT</h3>
+        <p class="feat-race">Opened 2025-08-29 as a request. We shipped 2026-08-29. They had been asking for 12 months. Still open there, so they have not shipped it. This card stays until they do.</p>
+        <p>glibc SHSTK and IBT tunables default on (x86_64). Stock still asks for a toggle.</p>
+        <p class="feat-revert"><span>Revert</span> <code>ujust set-cet off</code></p>
+        <p class="feat-links"><a href="https://github.com/secureblue/secureblue/issues/1295">Stock #1295</a> · <a href="features/#toggles">On Unwoke</a></p>
+      </article>
+      <article class="feat-card feat-open">
+        <p class="feat-status">Not shipped on stock</p>
+        <p class="tag">Network</p>
+        <h3>DHCP Anonymization profile</h3>
+        <p class="feat-race">Opened 2025-11-03 as a request. We shipped 2026-08-29. They had been asking for 10 months. Still open there, so they have not shipped it. This card stays until they do.</p>
+        <p>RFC 7844 leftovers: dhcp-send-release and dhcp-iaid=mac, plus hostname off we already shipped.</p>
+        <p class="feat-revert"><span>Revert</span> <code>ujust set-dhcp-hostname on</code></p>
+        <p class="feat-links"><a href="https://github.com/secureblue/secureblue/issues/1569">Stock #1569</a> · <a href="privacy/">On Unwoke</a></p>
+      </article>
+      <article class="feat-card feat-open">
+        <p class="feat-status">Not shipped on stock</p>
+        <p class="tag">TLS</p>
+        <h3>Reduce the amount of trusted CAs</h3>
+        <p class="feat-race">Opened 2025-11-14 as a request. We shipped 2026-08-29. They had been asking for 9 months. Still open there, so they have not shipped it. This card stays until they do.</p>
+        <p>Blocklist Fedora roots that are not Mozilla website-trusted. Some gov/old CAs fail.</p>
+        <p class="feat-revert"><span>Revert</span> <code>ujust set-extra-cas on</code></p>
+        <p class="feat-links"><a href="https://github.com/secureblue/secureblue/issues/1606">Stock #1606</a> · <a href="privacy/">On Unwoke</a></p>
+      </article>
       <article class="feat-card feat-open">
         <p class="feat-status">Not shipped on stock</p>
         <p class="tag">Apps</p>

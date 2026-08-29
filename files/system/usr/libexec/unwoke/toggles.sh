@@ -266,6 +266,18 @@ for d in j.get("deployments") or []:
   if [[ -x /usr/libexec/unwoke/privacy.sh ]]; then
     /usr/libexec/unwoke/privacy.sh status
   fi
+  if [[ -x /usr/libexec/unwoke/ramdisk.sh ]]; then
+    info "ramdisk-exec: $(/usr/libexec/unwoke/ramdisk.sh status)"
+  fi
+  if [[ -x /usr/libexec/unwoke/cet.sh ]]; then
+    info "cet: $(/usr/libexec/unwoke/cet.sh status)"
+  fi
+  if [[ -x /usr/libexec/unwoke/boot-perm.sh ]]; then
+    info "boot-perm: $(/usr/libexec/unwoke/boot-perm.sh status)"
+  fi
+  if [[ -x /usr/libexec/unwoke/ca-trim.sh ]]; then
+    info "extra-cas: $(/usr/libexec/unwoke/ca-trim.sh status)"
+  fi
   if [[ -x /usr/libexec/unwoke/stock-nags.sh ]]; then
     info "stock-nags: $(/usr/libexec/unwoke/stock-nags.sh status)"
   fi
@@ -381,6 +393,10 @@ for d in j.get("deployments") or []:
   echo "  ujust set-flatpak-lockdown on|off"
   echo "  ujust set-flatpak-record on|off"
   echo "  ujust set-network-fs on|off"
+  echo "  ujust set-ramdisk-exec on|off"
+  echo "  ujust set-cet on|off"
+  echo "  ujust set-boot-perm on|off"
+  echo "  ujust set-extra-cas on|off"
   echo "  ujust set-brew on|off"
   echo "  ujust set-camera-mic on|off"
   echo "  ujust set-admin-split on|off|add NAME"
@@ -478,6 +494,22 @@ cmd_audit() {
   fi
   if [[ -e /opt/brave.com ]] && find /opt/brave.com -xdev -perm -4000 -type f 2>/dev/null | grep -q .; then
     fail=1
+  fi
+  # Stock #887: warn if Flatpak session/system bus is allowed (not merely negated).
+  if command -v flatpak >/dev/null; then
+    local ov tok
+    ov="$(flatpak override --show 2>/dev/null || true)"
+    ov="${ov}"$'\n'"$(flatpak override --user --show 2>/dev/null || true)"
+    tok="$(printf '%s\n' "${ov}" | tr ';,' '\n' | sed 's/.*=//')"
+    if grep -qx 'session-bus' <<<"${tok}"; then
+      info "Flatpak session-bus is allowed (stock audit does not warn yet)"
+    fi
+    if grep -qx 'system-bus' <<<"${tok}"; then
+      info "Flatpak system-bus is allowed (stock audit does not warn yet)"
+    fi
+    if grep -q 'org.freedesktop.Flatpak' <<<"${ov}" && ! grep -q '!org.freedesktop.Flatpak' <<<"${ov}"; then
+      info "Flatpak talk-name org.freedesktop.Flatpak is present (dangerous bus)"
+    fi
   fi
   # Stock #2508: warn (or fail on browserless) if a Flatpak web browser is installed.
   if command -v flatpak >/dev/null; then
@@ -744,6 +776,18 @@ cmd_apply_boot() {
   if [[ -x /usr/libexec/unwoke/privacy.sh ]]; then
     /usr/libexec/unwoke/privacy.sh apply-boot || true
   fi
+  if [[ -x /usr/libexec/unwoke/ramdisk.sh ]]; then
+    /usr/libexec/unwoke/ramdisk.sh apply-boot || true
+  fi
+  if [[ -x /usr/libexec/unwoke/cet.sh ]]; then
+    /usr/libexec/unwoke/cet.sh apply-boot || true
+  fi
+  if [[ -x /usr/libexec/unwoke/boot-perm.sh ]]; then
+    /usr/libexec/unwoke/boot-perm.sh apply-boot || true
+  fi
+  if [[ -x /usr/libexec/unwoke/ca-trim.sh ]]; then
+    /usr/libexec/unwoke/ca-trim.sh apply-boot || true
+  fi
 }
 
 cmd_apply_user() {
@@ -811,6 +855,10 @@ case "${main}" in
   bluetooth) exec /usr/libexec/unwoke/bluetooth.sh "${1:-status}" ;;
   toolbox) exec /usr/libexec/unwoke/toolbox.sh "${1:-status}" ;;
   extra-daemons) exec /usr/libexec/unwoke/extra-daemons.sh "${1:-status}" ;;
+  ramdisk-exec) exec /usr/libexec/unwoke/ramdisk.sh "${1:-status}" ;;
+  cet) exec /usr/libexec/unwoke/cet.sh "${1:-status}" ;;
+  boot-perm) exec /usr/libexec/unwoke/boot-perm.sh "${1:-status}" ;;
+  extra-cas) exec /usr/libexec/unwoke/ca-trim.sh "${1:-status}" ;;
   countme) exec /usr/libexec/unwoke/privacy.sh countme "${1:-status}" ;;
   connectivity|connectivity-check) exec /usr/libexec/unwoke/privacy.sh connectivity "${1:-status}" ;;
   dhcp-hostname) exec /usr/libexec/unwoke/privacy.sh dhcp-hostname "${1:-status}" ;;

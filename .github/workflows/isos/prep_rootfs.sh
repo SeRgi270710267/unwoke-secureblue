@@ -209,6 +209,23 @@ pbkdf = argon2id
 pbkdf-memory = 2097152
 EOF
 
+# Stock #1185: installer NTP is fedora pool in the clear. Use NTS. Clock may be
+# wrong at first contact so chrony is allowed to skip cert time once.
+sed -i -E 's/^(pool|server)[[:space:]]/# \1 /' /etc/chrony.conf 2>/dev/null || true
+mkdir -p /etc/chrony.d
+cat > /etc/chrony.d/50-unwoke-nts.conf <<'EOF'
+# Live ISO only. Installed image keeps stock chrony.
+server time.cloudflare.com iburst nts
+server nts.ntp.se iburst nts
+nocerttimecheck 1
+EOF
+if grep -qE '^[[:space:]]*timesource' /usr/share/anaconda/interactive-defaults.ks 2>/dev/null; then
+  sed -i -E 's/^[[:space:]]*timesource.*/timesource --ntp-server=time.cloudflare.com/' \
+    /usr/share/anaconda/interactive-defaults.ks
+else
+  echo 'timesource --ntp-server=time.cloudflare.com' >> /usr/share/anaconda/interactive-defaults.ks
+fi
+
 tee /usr/share/anaconda/post-scripts/install-configure-upgrade.ks <<EOF
 %post --erroronfail
 bootc switch --mutate-in-place --enforce-container-sigpolicy --transport registry ${IMAGE_REF}:${IMAGE_TAG}

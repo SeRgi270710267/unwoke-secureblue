@@ -366,6 +366,30 @@
             <td><code>on</code></td>
           </tr>
           <tr>
+            <td><code>ujust set-ramdisk-exec</code></td>
+            <td><code>off</code> (noexec)</td>
+            <td>noexec,nosuid,nodev on <code>/dev/shm</code> and <code>/tmp</code>.</td>
+            <td><code>on</code></td>
+          </tr>
+          <tr>
+            <td><code>ujust set-cet</code></td>
+            <td><code>on</code></td>
+            <td>glibc SHSTK + IBT tunables (x86_64).</td>
+            <td><code>off</code></td>
+          </tr>
+          <tr>
+            <td><code>ujust set-boot-perm</code></td>
+            <td><code>on</code> (/boot 700)</td>
+            <td>Kernel dir not world-readable. Does not chmod ostree <code>/usr</code>.</td>
+            <td><code>off</code></td>
+          </tr>
+          <tr>
+            <td><code>ujust set-extra-cas</code></td>
+            <td><code>off</code> (trimmed)</td>
+            <td>Distrust Fedora CAs that are not Mozilla website-trusted. Some TLS fails.</td>
+            <td><code>on</code></td>
+          </tr>
+          <tr>
             <td><code>ujust set-brave-hardening</code> / <code>set-trivalent-hardening</code></td>
             <td><code>on</code> (Origin + Trivalent)</td>
             <td>HTTPS-only, no WebRTC IP leak, no metrics/sync/autofill/passwords/translate.</td>
@@ -512,6 +536,10 @@ ujust set-flathub verified|full|off
 ujust set-flatpak-lockdown on|off
 ujust set-flatpak-record on|off
 ujust set-network-fs on|off
+ujust set-ramdisk-exec on|off
+ujust set-cet on|off
+ujust set-boot-perm on|off
+ujust set-extra-cas on|off
 ujust set-brave-hardening on|off
 ujust set-brave-devices on|off
 ujust set-brave-jitless on|off

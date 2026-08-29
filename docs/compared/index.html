@@ -75,7 +75,7 @@
     </div>
 
     <div class="score-row">
-      <div><strong>6</strong><span>stock FEATs shipped here</span></div>
+      <div><strong>13</strong><span>stock FEATs shipped here</span></div>
       <div><strong>0</strong><span>security cuts to ship them</span></div>
       <div><strong>12</strong><span>signed desktop images</span></div>
     </div>
@@ -112,6 +112,41 @@
         <p class="tag">Trust</p>
         <h3>Audit names Flatpak browsers</h3>
         <p><code>ujust audit-unwoke</code> warns (fails on browserless). Stock’s audit does not list them yet.</p>
+      </article>
+      <article class="win-card">
+        <p class="tag">Trust</p>
+        <h3>Audit Flatpak buses</h3>
+        <p>Warns if session-bus / system-bus / the Flatpak portal name is open. Stock audit does not.</p>
+      </article>
+      <article class="win-card">
+        <p class="tag">USB install</p>
+        <h3>NTS time on the stick</h3>
+        <p>Live Anaconda uses authenticated NTS, not fedora NTP in the clear.</p>
+      </article>
+      <article class="win-card">
+        <p class="tag">Network</p>
+        <h3>Fuller DHCP anonymity</h3>
+        <p>Release + IAID=mac on top of hostname off. <code>ujust set-dhcp-hostname on</code></p>
+      </article>
+      <article class="win-card">
+        <p class="tag">TLS</p>
+        <h3>Mozilla CA set</h3>
+        <p>Fedora extra roots blocklisted. Some gov/old CAs fail. <code>ujust set-extra-cas on</code></p>
+      </article>
+      <article class="win-card">
+        <p class="tag">Memory</p>
+        <h3>noexec RAM disk</h3>
+        <p><code>/dev/shm</code> and <code>/tmp</code> cannot run payloads. <code>ujust set-ramdisk-exec on</code></p>
+      </article>
+      <article class="win-card">
+        <p class="tag">CPU</p>
+        <h3>SHSTK + IBT on</h3>
+        <p>Intel CET glibc tunables default on. <code>ujust set-cet off</code></p>
+      </article>
+      <article class="win-card">
+        <p class="tag">Disk</p>
+        <h3>/boot is 700</h3>
+        <p>Kernel image dir not world-readable. <code>ujust set-boot-perm off</code></p>
       </article>
     </div>
 

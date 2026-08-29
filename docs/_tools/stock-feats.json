@@ -73,6 +73,83 @@
       "we": "Argon2id memory cost 2 GiB (RFC 9106) on the live ISO and /usr/etc/cryptsetup.conf.",
       "revert": "Weaker if you format LUKS yourself without that conf",
       "where": "install/"
+    },
+    {
+      "issue": 887,
+      "title": "[FEAT] audit-secureblue should check flatpak session bus policy",
+      "created": "2025-02-28",
+      "url": "https://github.com/secureblue/secureblue/issues/887",
+      "shipped": "2026-08-29",
+      "tag": "Trust",
+      "we": "ujust audit-unwoke warns if Flatpak session-bus, system-bus, or org.freedesktop.Flatpak is allowed.",
+      "revert": "Hygiene, not a lock.",
+      "where": "tutorials/check-health/"
+    },
+    {
+      "issue": 1185,
+      "title": "[BUG] ISO installer uses unencrypted NTP",
+      "created": "2025-07-16",
+      "url": "https://github.com/secureblue/secureblue/issues/1185",
+      "shipped": "2026-08-29",
+      "tag": "USB install",
+      "we": "Live ISO chrony uses NTS (time.cloudflare.com, nts.ntp.se), not fedora NTP pool in the clear.",
+      "revert": "Anaconda Time & Date still lets you pick servers",
+      "where": "install/"
+    },
+    {
+      "issue": 1569,
+      "title": "[FEAT] DHCP Anonymization profile",
+      "created": "2025-11-03",
+      "url": "https://github.com/secureblue/secureblue/issues/1569",
+      "shipped": "2026-08-29",
+      "tag": "Network",
+      "we": "RFC 7844 leftovers: dhcp-send-release and dhcp-iaid=mac, plus hostname off we already shipped.",
+      "revert": "ujust set-dhcp-hostname on",
+      "where": "privacy/"
+    },
+    {
+      "issue": 1606,
+      "title": "[FEAT] Reduce the amount of trusted CAs",
+      "created": "2025-11-14",
+      "url": "https://github.com/secureblue/secureblue/issues/1606",
+      "shipped": "2026-08-29",
+      "tag": "TLS",
+      "we": "Blocklist Fedora roots that are not Mozilla website-trusted. Some gov/old CAs fail.",
+      "revert": "ujust set-extra-cas on",
+      "where": "privacy/"
+    },
+    {
+      "issue": 697,
+      "title": "RAM disk protection?",
+      "created": "2024-12-19",
+      "url": "https://github.com/secureblue/secureblue/issues/697",
+      "shipped": "2026-08-29",
+      "tag": "Memory",
+      "we": "noexec,nosuid,nodev on /dev/shm and /tmp. Payloads in RAM cannot exec.",
+      "revert": "ujust set-ramdisk-exec on",
+      "where": "features/#toggles"
+    },
+    {
+      "issue": 1295,
+      "title": "[FEAT] toggle ujust SHSTK/IBT",
+      "created": "2025-08-29",
+      "url": "https://github.com/secureblue/secureblue/issues/1295",
+      "shipped": "2026-08-29",
+      "tag": "CPU",
+      "we": "glibc SHSTK and IBT tunables default on (x86_64). Stock still asks for a toggle.",
+      "revert": "ujust set-cet off",
+      "where": "features/#toggles"
+    },
+    {
+      "issue": 391,
+      "title": "[FEAT] chmod 700 .boot /usr/src /lib/modules /usr/lib/modules",
+      "created": "2024-08-23",
+      "url": "https://github.com/secureblue/secureblue/issues/391",
+      "shipped": "2026-08-29",
+      "tag": "Disk",
+      "we": "/boot is mode 700. ostree /usr is not chmod'd at runtime.",
+      "revert": "ujust set-boot-perm off",
+      "where": "features/#toggles"
     }
   ]
 }

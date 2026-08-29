@@ -159,6 +159,31 @@ if [[ ! -f "${work}/usr/etc/cryptsetup.conf" ]] || ! grep -q 'pbkdf-memory = 209
   echo "FAIL: missing /usr/etc/cryptsetup.conf Argon2 2 GiB default" >&2
   fail=1
 fi
+for f in usr/libexec/unwoke/ramdisk.sh \
+         usr/libexec/unwoke/cet.sh \
+         usr/libexec/unwoke/boot-perm.sh \
+         usr/libexec/unwoke/ca-trim.sh \
+         usr/libexec/unwoke/ca-trim-build.py \
+         usr/share/unwoke/mozilla-ca-sha256.txt \
+         usr/share/unwoke/cet-system.conf \
+         usr/share/unwoke/cet-profile.sh; do
+  if [[ ! -f "${work}/${f}" ]]; then
+    echo "FAIL: missing /${f}" >&2
+    fail=1
+  fi
+done
+if ! grep -q 'dhcp-send-release' "${work}/usr/share/unwoke/nm-privacy-dhcp.conf" 2>/dev/null; then
+  echo "FAIL: dhcp privacy conf missing dhcp-send-release" >&2
+  fail=1
+fi
+if ! grep -q 'dhcp-iaid' "${work}/usr/share/unwoke/nm-privacy-dhcp.conf" 2>/dev/null; then
+  echo "FAIL: dhcp privacy conf missing dhcp-iaid" >&2
+  fail=1
+fi
+if ! grep -q 'session-bus' "${work}/usr/libexec/unwoke/toggles.sh" 2>/dev/null; then
+  echo "FAIL: audit-unwoke missing Flatpak session-bus check" >&2
+  fail=1
+fi
 for f in usr/share/unwoke/nm-privacy-connectivity.conf \
          usr/share/unwoke/nm-privacy-dhcp.conf \
          usr/share/unwoke/dconf-thumbnails-off \

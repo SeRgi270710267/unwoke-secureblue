@@ -60,6 +60,11 @@ fi
 # Every new libexec file is executable. Do not keep a name list.
 find /usr/libexec/unwoke -maxdepth 1 -type f -exec chmod a+x {} + 2>/dev/null || true
 
+# Stock #1606: PEM blocklist of Fedora CAs not in the Mozilla website set.
+if [[ -x /usr/libexec/unwoke/ca-trim-build.py ]] || [[ -f /usr/libexec/unwoke/ca-trim-build.py ]]; then
+  python3 /usr/libexec/unwoke/ca-trim-build.py || echo "ca-trim-build: skipped"
+fi
+
 # One .desktop per vendors{} key + missing offline help stubs from the same JSON.
 # Fail compose if the list is empty or invalid so the image cannot ship half-synced.
 python3 - <<'PY'

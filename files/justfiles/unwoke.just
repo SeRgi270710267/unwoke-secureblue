@@ -81,6 +81,30 @@ set-network-fs *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh network-fs "$@"
 
+# noexec /dev/shm and /tmp. Default locked. Some Electron/old JIT need: on
+[positional-arguments]
+set-ramdisk-exec *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh ramdisk-exec "$@"
+
+# Intel CET (SHSTK + IBT) glibc tunables. Default on.
+[positional-arguments]
+set-cet *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh cet "$@"
+
+# chmod 700 /boot. Default on.
+[positional-arguments]
+set-boot-perm *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh boot-perm "$@"
+
+# Fedora extra CAs vs Mozilla website set. Default trimmed (off).
+[positional-arguments]
+set-extra-cas *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh extra-cas "$@"
+
 # Origin or Trivalent: HTTPS / metrics / autofill / passwords / translate. Restart the browser after.
 [positional-arguments]
 set-brave-hardening *args:
