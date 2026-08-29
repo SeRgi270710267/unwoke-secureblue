@@ -177,6 +177,7 @@ Stock `ujust` still works.
 33. **Workarounds page:** Pages scans open secureblue issues, keeps only those that can hit this overlay and map to an allowlisted revertable `ujust`. Never baked into GHCR. Never suggests setenforce 0. PRs/CI/other flavors omitted.
 34. **Privacy vs stock (no security cut):** default-off Fedora countme, NM connectivity-check, DHCP hostname/DUID (RFC 7844-ish + IPv6 stable-privacy), GNOME/Dolphin thumbnails. Hyperlink ping off in hardening pack (prefetch already off). Boot `privacy.sh apply-boot` remasks. Inspect checks files. Revert: `ujust set-countme|set-connectivity-check|set-dhcp-hostname|set-thumbnails on`. Not fwupd, not Safe Browsing.
 35. **Fingerprinting vs locks:** security-first defaults stay. Tutorial + FAQ + Setup (`i` / GUI button) explain which packs make you rarer than stock Trivalent vs phone-home that sites never see. Blend is opt-in, one pack, not a silent default.
+36. **More privacy defaults that are still locks:** Privacy Sandbox / Cast / Chrome time-query off (Safe Browsing stays), LLMNR+mDNS registration off, systemd-resolved LLMNR=no (mDNS back if Avahi allowed), GNOME remember-app-usage off, IPv6 ip6-privacy=2. Hardening-off and JIT/WebGL/devices-off print a WARN. Not Safe Browsing off, not fwupd off.
 
 Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only / `iso.yml` pushes should not rebuild images (`build.yml` paths-ignore). `issue-alarm.sh` is paths-ignored. Overlay scripts (`apply-unwoke.sh`, `vendor.py`, `inspect-flavor.sh`) **do** bake.
 

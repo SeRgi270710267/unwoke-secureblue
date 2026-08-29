@@ -138,7 +138,7 @@ ujust set-allow-browsers on ALLOW</code></pre>
     <p>Two different things. <strong>Phone-home off</strong> (countme, connectivity-check, DHCP hostname, thumbnails) does not fingerprint websites — leave those off. <strong>Extra browser packs</strong> (JIT-less, WebGL off, no extensions, devices blocked) make you rarer than stock Trivalent. We still ship those packs: security first. Best crowd on Unwoke is <code>*-trivalent</code>. If you choose to look closer to stock Trivalent, turn <em>one</em> pack off, then restart the browser. Full text: <a href="tutorials/fingerprint/">Fingerprinting vs locks</a>. Setup has a read-only button; nothing auto-unlocks.</p>
 
     <h2 id="privacy"><a href="#privacy">Countme, hotel Wi-Fi, hostname, no previews</a></h2>
-    <p>We phone home less than stock. Fedora <code>countme</code> is masked, NetworkManager connectivity-check is off, DHCP does not send your hostname (IPv6 stable-privacy), GNOME/Dolphin thumbnails are off. Hyperlink <code>ping</code> is off in the hardening pack. None of that touches SELinux or USBGuard.</p>
+    <p>We phone home less than stock. Fedora <code>countme</code> is masked, NetworkManager connectivity-check is off, DHCP does not send your hostname (IPv6 stable-privacy, no LLMNR/mDNS registration), GNOME/Dolphin thumbnails are off, Chromium Privacy Sandbox / Cast / Google time-query are off. Hyperlink <code>ping</code> is off in the hardening pack. Safe Browsing stays on. None of that turns off SELinux or USBGuard. Chromecast: <code>ujust set-brave-hardening off</code> (warned loosen). Hotel portal: <code>ujust set-connectivity-check on</code>.</p>
 <pre><code>ujust set-countme on
 ujust set-connectivity-check on
 ujust set-dhcp-hostname on

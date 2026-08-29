@@ -17,6 +17,10 @@ DCONF_SNIP="/etc/dconf/db/local.d/00-unwoke-thumbnails"
 SRC_DCONF="/usr/share/unwoke/dconf-thumbnails-off"
 DOLPHIN_ETC="/etc/xdg/dolphinrc"
 SRC_DOLPHIN="/usr/share/unwoke/dolphin-thumbnails-off"
+SRC_GNOME="/usr/share/unwoke/dconf-gnome-privacy"
+DCONF_GNOME="/etc/dconf/db/local.d/01-unwoke-gnome-privacy"
+SRC_RESOLVED="/usr/share/unwoke/resolved-privacy.conf"
+RESOLVED_DST="/etc/systemd/resolved.conf.d/90-unwoke-privacy.conf"
 COUNTME_UNITS=(rpm-ostree-countme.timer rpm-ostree-countme.service)
 
 as_root() {
@@ -69,6 +73,9 @@ apply_connections() {
         ipv4.dhcp-send-hostname no \
         ipv6.dhcp-send-hostname no \
         ipv6.addr-gen-mode stable-privacy \
+        ipv6.ip6-privacy 2 \
+        connection.llmnr no \
+        connection.mdns no \
         >/dev/null 2>&1 || true
     else
       nmcli connection modify "${uuid}" \
@@ -94,6 +101,27 @@ apply_thumbnails() {
   command -v dconf >/dev/null && dconf update >/dev/null 2>&1 || true
 }
 
+apply_gnome_privacy() {
+  mkdir -p /etc/dconf/db/local.d
+  if [[ -f "${SRC_GNOME}" ]]; then
+    cp -a "${SRC_GNOME}" "${DCONF_GNOME}"
+  fi
+  command -v dconf >/dev/null && dconf update >/dev/null 2>&1 || true
+}
+
+apply_resolved() {
+  mkdir -p /etc/systemd/resolved.conf.d
+  if [[ -f "${SRC_RESOLVED}" ]]; then
+    cp -a "${SRC_RESOLVED}" "${RESOLVED_DST}"
+    if [[ -f /etc/unwoke/allow-extra-daemons ]]; then
+      printf '[Resolve]\nLLMNR=no\nMulticastDNS=yes\n' > "${RESOLVED_DST}"
+    fi
+  else
+    rm -f "${RESOLVED_DST}"
+  fi
+  systemctl try-reload-or-restart systemd-resolved >/dev/null 2>&1 || true
+}
+
 cmd_apply_boot() {
   [[ "$(id -u)" -eq 0 ]] || exit 1
   mkdir -p /etc/unwoke
@@ -102,6 +130,8 @@ cmd_apply_boot() {
   apply_nm_file "${SRC_DHCP}" "${NM_DHCP}" "$(dhcp_off && echo 1 || echo 0)"
   apply_connections
   apply_thumbnails
+  apply_gnome_privacy
+  apply_resolved
 }
 
 set_flag() {

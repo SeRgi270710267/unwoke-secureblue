@@ -493,6 +493,12 @@ cmd_pack() {
         sync_isolation_conf
       fi
       echo "${name} OFF. Restart $(browser_name)."
+      if [[ "${file}" == "${HARDEN_FILE}" ]]; then
+        echo "WARN: that pack is HTTPS-only, no metrics, no ping, no Privacy Sandbox, no Cast. This is a security/privacy loosen. Put it back: ujust set-brave-hardening on"
+      fi
+      if [[ "${file}" == "${JITLESS_FILE}" || "${file}" == "${ISO_FILE}" || "${file}" == "${DEVICES_FILE}" ]]; then
+        echo "WARN: that pack is a security default. Turning it off also makes this browser look closer to stock Trivalent (smaller uniqueness). Tutorial: fingerprint"
+      fi
       ;;
     status)
       policy_status "${file}" "${off}"

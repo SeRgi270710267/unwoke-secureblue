@@ -132,6 +132,18 @@ if ! grep -q '"HyperlinkAuditingEnabled": false' "${work}/usr/share/unwoke/brave
   echo "FAIL: hardening pack missing HyperlinkAuditingEnabled false" >&2
   fail=1
 fi
+if ! grep -q '"PrivacySandboxAdTopicsEnabled": false' "${work}/usr/share/unwoke/brave-hardening.json" 2>/dev/null; then
+  echo "FAIL: hardening pack missing Privacy Sandbox off" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/share/unwoke/resolved-privacy.conf" ]]; then
+  echo "FAIL: missing resolved-privacy.conf" >&2
+  fail=1
+fi
+if ! grep -q '^llmnr=no' "${work}/usr/share/unwoke/nm-privacy-dhcp.conf" 2>/dev/null; then
+  echo "FAIL: dhcp privacy conf missing llmnr=no" >&2
+  fail=1
+fi
 if [[ ! -f "${work}/usr/share/applications/unwoke-setup.desktop" ]]; then
   echo "FAIL: missing Unwoke setup launcher" >&2
   fail=1
