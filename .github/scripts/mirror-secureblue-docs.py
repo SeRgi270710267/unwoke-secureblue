@@ -91,8 +91,9 @@ INCLUDE_RE = re.compile(
     re.I | re.S,
 )
 FORM_RE = re.compile(r"<form\b.*?</form>", re.I | re.S)
-KRAMDOWN_RE = re.compile(r"\{:\s*[^}]+\}")
+KRAMDOWN_ATTR = re.compile(r"\{:\s*([^}]+)\}")
 FRONT_RE = re.compile(r"^---\n(.*?)\n---\n", re.S)
+STOCK_HOST = "https://secureblue.dev"
 
 
 def fetch(url: str) -> bytes:
@@ -155,6 +156,18 @@ def wrap_tables(fragment: str) -> str:
     return fragment
 
 
+def keep_heading_ids(text: str) -> str:
+    """Keep {: #id} / {: .class} for Python-Markdown attr_list. Drop other kramdown."""
+
+    def repl(m: re.Match[str]) -> str:
+        inner = m.group(1).strip()
+        if re.fullmatch(r"[#.][\w-]+(?:\s+[#.][\w-]+)*", inner):
+            return m.group(0)
+        return ""
+
+    return KRAMDOWN_ATTR.sub(repl, text)
+
+
 _UNSAFE_HTML = re.compile(
     r"<(script|iframe|object|embed|form|link|meta|base)\b[^>]*>.*?</\1\s*>"
     r"|<(script|iframe|object|embed|form|link|meta|base)\b[^>]*/?>"
@@ -175,29 +188,52 @@ def sanitize_html(fragment: str) -> str:
     return out
 
 
-def rewrite_html(html: str, permalinks: dict[str, str]) -> str:
-    html = html.replace('src="/assets/', 'src="https://secureblue.dev/assets/')
-    html = html.replace("src='/assets/", "src='https://secureblue.dev/assets/")
+def local_for(permalinks: dict[str, str], path: str, frag: str) -> str | None:
+    p = path.rstrip("/") or "/"
+    if not p.startswith("/"):
+        p = "/" + p
+    if p not in permalinks:
+        return None
+    url = permalinks[p]
+    return f"{url}#{frag}" if frag else url
 
-    def href(m: re.Match[str]) -> str:
+
+def rewrite_html(html: str, permalinks: dict[str, str], here: str) -> str:
+    html = html.replace('src="/assets/', f'src="{STOCK_HOST}/assets/')
+    html = html.replace("src='/assets/", f"src='{STOCK_HOST}/assets/")
+
+    def slash_href(m: re.Match[str]) -> str:
         q, path = m.group(1), m.group(2)
         if path.startswith("//") or path.startswith("http"):
             return m.group(0)
         p, _, frag = path.partition("#")
-        p = p.rstrip("/") or "/"
         if p.startswith("/assets/"):
-            url = "https://secureblue.dev" + path
-        elif p in permalinks:
-            url = permalinks[p]
-            if frag:
-                url = f"{url}#{frag}"
-        elif p == "/":
-            url = "https://secureblue.dev/" + (f"#{frag}" if frag else "")
-        else:
-            url = "https://secureblue.dev" + path
-        return f"href={q}{url}{q}"
+            return f"href={q}{STOCK_HOST}{path}{q}"
+        mapped = local_for(permalinks, p, frag)
+        if mapped:
+            return f"href={q}{mapped}{q}"
+        if (p.rstrip("/") or "/") == "/":
+            return f"href={q}{STOCK_HOST}/{('#' + frag) if frag else ''}{q}"
+        return f"href={q}{STOCK_HOST}{path}{q}"
 
-    return re.sub(r'href=(["\'])(/[^"\']*)\1', href, html)
+    html = re.sub(r'href=(["\'])(/[^"\']*)\1', slash_href, html)
+
+    def frag_href(m: re.Match[str]) -> str:
+        q, frag = m.group(1), m.group(2)
+        return f"href={q}{here}#{frag}{q}"
+
+    html = re.sub(r'href=(["\'])#([^"\']*)\1', frag_href, html)
+
+    def abs_href(m: re.Match[str]) -> str:
+        q, rest = m.group(1), m.group(2)
+        path, _, frag = rest.partition("#")
+        mapped = local_for(permalinks, path or "/", frag)
+        if mapped:
+            return f"href={q}{mapped}{q}"
+        return m.group(0)
+
+    html = re.sub(r'href=(["\'])https://secureblue\.dev([^"\']*)\1', abs_href, html)
+    return html
 
 
 def slug_from_name(name: str, folder: str) -> str:
@@ -212,8 +248,17 @@ def out_dir_for(permalink: str) -> Path:
     return OUT / rel
 
 
-def render_page(title: str, description: str, canonical: str, body: str, sha: str, fetched: str) -> str:
+def render_page(
+    title: str,
+    description: str,
+    canonical: str,
+    body: str,
+    sha: str,
+    fetched: str,
+    here: str,
+) -> str:
     html = TEMPLATE
+    html = html.replace("__HERE__", here)
     html = html.replace("__TITLE__", title)
     html = html.replace("__DESCRIPTION__", description)
     html = html.replace("__CANONICAL__", canonical)
@@ -261,12 +306,13 @@ def main() -> int:
     index_links = []
     for permalink, title, description, body_md in pages:
         body_md = alerts_to_html(body_md)
-        body_md = KRAMDOWN_RE.sub("", body_md)
+        body_md = keep_heading_ids(body_md)
         body_html = md_lib.markdown(
             body_md,
             extensions=["extra", "sane_lists", "toc"],
         )
-        body_html = rewrite_html(body_html, permalinks)
+        here = permalinks[permalink.rstrip("/") or "/"]
+        body_html = rewrite_html(body_html, permalinks, here)
         body_html = replace_stock_forms(body_html)
         body_html = wrap_tables(body_html)
         body_html = sanitize_html(body_html)
@@ -278,7 +324,7 @@ def main() -> int:
         dest.mkdir(parents=True, exist_ok=True)
         page_title = f"{title} (mirrored)"
         (dest / "index.html").write_text(
-            render_page(page_title, description, canonical, body_html, sha, fetched),
+            render_page(page_title, description, canonical, body_html, sha, fetched, here),
             encoding="utf-8",
         )
         index_links.append((permalinks[permalink.rstrip("/") or "/"], title))
@@ -333,6 +379,7 @@ def main() -> int:
             index_body,
             sha,
             fetched,
+            "secureblue/",
         ),
         encoding="utf-8",
     )
