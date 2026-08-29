@@ -7,9 +7,23 @@ import ssl
 import sys
 import urllib.error
 import urllib.request
+import re
 from pathlib import Path
+from urllib.parse import urljoin, urlparse
 
 CTX = ssl.create_default_context()
+HOSTS = frozenset(
+    {
+        "proton.me",
+        "www.proton.me",
+        "account.protonvpn.com",
+        "protonvpn.com",
+        "www.protonvpn.com",
+        "repo.ivpn.net",
+        "ivpn.net",
+        "www.ivpn.net",
+    }
+)
 
 
 def _repo_manifest() -> Path:
@@ -139,6 +153,138 @@ def cmd_url(name: str) -> int:
     return 0 if u else 1
 
 
+def allowed(url: str) -> bool:
+    p = urlparse(url)
+    return p.scheme == "https" and (p.hostname or "") in HOSTS
+
+
+def extract_urls(html: str, base: str) -> list[str]:
+    found: list[str] = []
+    for m in re.finditer(r"https://[^\s\"'<>]+", html):
+        u = m.group(0).rstrip(".,);")
+        if allowed(u):
+            found.append(u)
+    for m in re.finditer(r"""href=["']([^"']+)["']""", html, re.I):
+        u = urljoin(base, m.group(1))
+        if allowed(u):
+            found.append(u)
+    out: list[str] = []
+    seen: set[str] = set()
+    for u in found:
+        if u not in seen:
+            seen.add(u)
+            out.append(u)
+    return out
+
+
+def docs_urls(spec: dict) -> list[str]:
+    docs = spec.get("docs") or spec.get("heal_docs") or ""
+    extra = list(spec.get("heal_urls") or [])
+    urls = ([docs] if docs else []) + extra
+    scraped: list[str] = []
+    for d in urls:
+        if not allowed(d):
+            continue
+        try:
+            html = fetch(d).decode("utf-8", errors="replace")
+            scraped.extend(extract_urls(html, d))
+        except Exception:
+            continue
+    return scraped
+
+
+def try_heal(name: str, spec: dict, probe_rpm: bool) -> tuple[dict | None, str]:
+    kind = spec.get("kind")
+    discovered = docs_urls(spec)
+    if kind == "proton-version-json":
+        cands = list(spec.get("json_urls") or []) + [
+            u for u in discovered if "version.json" in u or u.endswith(".json")
+        ]
+        seen: set[str] = set()
+        ordered: list[str] = []
+        for u in cands:
+            if allowed(u) and u not in seen:
+                seen.add(u)
+                ordered.append(u)
+        for u in ordered:
+            try:
+                blob = fetch(u)
+                ver, rpm, sha = pick_rpm_from_json(blob)
+                if len(sha) < 64:
+                    continue
+                if probe_rpm:
+                    head_or_probe(rpm)
+                new = dict(spec)
+                rest = [x for x in ordered if x != u]
+                new["json_urls"] = [u] + rest
+                return new, f"{ver} via {u}"
+            except Exception:
+                continue
+        return None, ""
+    if kind == "yum-repo":
+        cands = [spec.get("url") or ""] + [
+            u for u in discovered if u.endswith(".repo")
+        ]
+        for u in cands:
+            if not allowed(u):
+                continue
+            try:
+                body = fetch(u).decode("utf-8", errors="replace")
+                check_yum_repo(body, bool(spec.get("require_gpgcheck")))
+                new = dict(spec)
+                new["url"] = u
+                return new, u
+            except Exception:
+                continue
+        return None, ""
+    if kind == "https-ok":
+        cands = [spec.get("url") or ""] + discovered
+        for u in cands:
+            if not allowed(u):
+                continue
+            try:
+                head_or_probe(u)
+                new = dict(spec)
+                new["url"] = u
+                return new, u
+            except Exception:
+                continue
+        return None, ""
+    return None, ""
+
+
+def cmd_heal(probe_rpm: bool) -> int:
+    path = _repo_manifest()
+    data = load()
+    dirty = False
+    still = 0
+    for name, spec in list(data.get("vendors", {}).items()):
+        try:
+            print(check_one(name, spec, probe_rpm))
+            continue
+        except Exception as exc:
+            print(f"heal {name}: broken ({exc})", file=sys.stderr)
+        new_spec, msg = try_heal(name, spec, probe_rpm)
+        if new_spec:
+            data["vendors"][name] = new_spec
+            dirty = True
+            print(f"healed {name}: {msg}")
+        else:
+            still += 1
+            print(f"FAIL {name}: no allowlisted HTTPS replacement", file=sys.stderr)
+    if dirty:
+        path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+        print(f"wrote {path}")
+    if still:
+        print(
+            f"{still} vendor(s) still broken. Policy change (Flathub, gpgcheck=0, new schema) needs a human.",
+            file=sys.stderr,
+        )
+        return 1
+    print("all vendor contracts ok")
+    return 0
+
+
 def cmd_check(probe_rpm: bool) -> int:
     vendors = load()["vendors"]
     failed = 0
@@ -150,8 +296,8 @@ def cmd_check(probe_rpm: bool) -> int:
             failed += 1
     if failed:
         print(
-            f"{failed} vendor contract(s) broken. Do not auto-merge. "
-            "Update vendor-installers.json / vendor.py after checking the vendor's site.",
+            f"{failed} vendor contract(s) broken. Run: vendor.py heal --probe-rpm "
+            "(CI does this; only HTTPS allowlisted hosts, still need SHA512/gpgcheck).",
             file=sys.stderr,
         )
         return 1
@@ -161,16 +307,25 @@ def cmd_check(probe_rpm: bool) -> int:
 
 def main(argv: list[str]) -> int:
     if len(argv) < 2 or argv[1] in ("-h", "--help"):
-        print("usage: vendor.py check [--probe-rpm] | pick NAME | url NAME", file=sys.stderr)
+        print(
+            "usage: vendor.py check [--probe-rpm] | heal [--probe-rpm] | pick NAME | url NAME",
+            file=sys.stderr,
+        )
         return 2
     cmd = argv[1]
+    probe = "--probe-rpm" in argv
     if cmd == "check":
-        return cmd_check("--probe-rpm" in argv)
+        return cmd_check(probe)
+    if cmd == "heal":
+        return cmd_heal(probe)
     if cmd == "pick" and len(argv) >= 3:
         return cmd_pick(argv[2])
     if cmd == "url" and len(argv) >= 3:
         return cmd_url(argv[2])
-    print("usage: vendor.py check [--probe-rpm] | pick NAME | url NAME", file=sys.stderr)
+    print(
+        "usage: vendor.py check [--probe-rpm] | heal [--probe-rpm] | pick NAME | url NAME",
+        file=sys.stderr,
+    )
     return 2
 
 

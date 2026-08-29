@@ -261,7 +261,7 @@
       <li>Canary: crane-export the signed base (do not run it, do not docker-pull it). If it names this repo, our GHCR, or <code>/usr/share/unwoke</code>, the overlay does not bake.</li>
       <li>Inspect every published flavor: our signature, right browser binary, no leftover Trivalent on Origin/browserless, store launchers hidden, setup files present.</li>
       <li>One GitHub issue if the factory is red. Closed only when canary + watch + bake are green.</li>
-    <li>Vendor-watch (separate from overlay bake): Proton/IVPN install URLs and checksums. One <code>vendor-installers</code> issue if they change. Does not auto-edit the wizards.</li>
+    <li>Vendor-watch: live checksums. Allowlisted HTTPS URL moves are committed automatically. Weaker methods (Flathub, no gpg) still open an issue.</li>
       <li>Canary hits and a new <code>keys/secureblue.pub</code> are <strong>not</strong> auto-merged. That is the security boundary.</li>
     </ul>
     <p>Stock cannot push to <code>ghcr.io/sergi270710267</code>. After the signed reboot, your PC follows our key, not theirs.</p>
@@ -285,8 +285,8 @@
         <tbody>
           <tr>
             <td>2026-08-29</td>
-            <td>Vendor-watch: twice-daily probe of Proton version.json and IVPN repo. One GitHub issue if they move URLs or drop SHA512. Wizards read the same JSON list. No auto-merge.</td>
-            <td>Install wizards do not rot silently when a vendor ships a new layout.</td>
+            <td>Vendor-watch: live SHA512; if Proton/IVPN move an HTTPS URL and it still checks out, CI updates the JSON. Flathub / no checksum still needs a human.</td>
+            <td>Legit vendor URL moves do not wait on a manual edit. Weaker methods stay blocked.</td>
             <td>Actions + overlay (manifest on disk)</td>
           </tr>
           <tr>

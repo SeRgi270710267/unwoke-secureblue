@@ -14,7 +14,7 @@ jobs:
     if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       issues: write
     steps:
       - name: Harden runner
@@ -25,25 +25,59 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
-          persist-credentials: false
+          persist-credentials: true
 
       - name: Check Proton / IVPN contracts
         id: probe
         continue-on-error: true
         run: python3 files/system/usr/libexec/unwoke/vendor.py check --probe-rpm
 
-      - name: Alarm
+      - name: Heal allowlisted URL moves
         if: steps.probe.outcome == 'failure'
+        id: heal
+        continue-on-error: true
+        run: python3 files/system/usr/libexec/unwoke/vendor.py heal --probe-rpm
+
+      - name: Commit healed vendor list
+        if: steps.heal.outcome == 'success' && steps.probe.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add files/system/usr/share/unwoke/vendor-installers.json
+          if git diff --cached --quiet; then
+            echo "no JSON change"
+            exit 0
+          fi
+          git commit -m "$(cat <<'EOF'
+          Refresh vendor installer URLs from official Proton/IVPN pages.
+
+          Allowlisted HTTPS hosts only. Still require SHA512 / gpgcheck.
+          No Flathub. No auto-weakening.
+          EOF
+          )"
+          git push origin HEAD
+
+      - name: Recheck
+        id: recheck
+        if: always() && !cancelled()
+        continue-on-error: true
+        run: python3 files/system/usr/libexec/unwoke/vendor.py check --probe-rpm
+
+      - name: Alarm
+        if: steps.recheck.outcome == 'failure'
         env:
           GH_TOKEN: ${{ github.token }}
         run: bash .github/scripts/vendor-alarm.sh open
 
       - name: Clear alarm
-        if: steps.probe.outcome == 'success'
+        if: steps.recheck.outcome == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
         run: bash .github/scripts/vendor-alarm.sh close
 
-      - name: Fail job if contracts broke
-        if: steps.probe.outcome == 'failure'
+      - name: Fail job if still broken
+        if: steps.recheck.outcome == 'failure'
         run: exit 1

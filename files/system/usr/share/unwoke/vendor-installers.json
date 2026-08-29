@@ -1,5 +1,5 @@
 {
-  "comment": "Single list for ujust install-proton / install-ivpn and vendor-watch CI. Add a stanza when we add a vendor. CI does not auto-merge URL changes.",
+  "comment": "Single list for wizards and vendor-watch. Version/SHA512 are fetched live. If a URL moves, CI heal() updates this file from official docs on allowlisted HTTPS hosts. Still no Flathub, no gpgcheck=0, no auto schema guess.",
   "vendors": {
     "proton_mail": {
       "kind": "proton-version-json",
