@@ -327,6 +327,26 @@ main img {
   font-size: 0.85rem;
 }
 
+main.mirror img {
+  max-width: 100%;
+  height: auto;
+}
+
+main.mirror pre {
+  overflow-x: auto;
+}
+
+main.mirror .docs-index {
+  display: grid;
+  gap: 1.25rem;
+}
+
+@media (min-width: 720px) {
+  main.mirror .docs-index {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 .table-container {
   overflow-x: auto;
   margin: 1.5rem 0;

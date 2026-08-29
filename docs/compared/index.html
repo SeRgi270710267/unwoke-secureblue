@@ -261,7 +261,7 @@
       <li>Download their public key, check it still matches our copy, <code>cosign verify</code> the base, pin the digest so <code>:latest</code> cannot swap mid-build.</li>
       <li>Canary: crane-export the signed base (do not run it, do not docker-pull it). If it names this repo, our GHCR, or <code>/usr/share/unwoke</code>, the overlay does not bake.</li>
       <li>Inspect every published flavor: our signature, right browser binary, no leftover Trivalent on Origin/browserless, store launchers hidden, setup files present. Every <code>vendors{}</code> key must have a search launcher and offline help.</li>
-      <li>Four alarm issues: overlay, ISO wrap, Pages, vendor contracts. Closed only when <em>that</em> lane is green. Overlay green does not close an ISO fail.</li>
+      <li>One GitHub issue per lane (overlay, ISO, Pages, vendors), plus nags for still-private GHCR, a rotated stock key, or a missing titanoboa pin. Overlay green does not close an ISO fail.</li>
       <li>Vendor-watch: live checksums. Allowlisted HTTPS URL moves are committed automatically. New host / Flathub / <code>gpgcheck=0</code> still open an issue.</li>
       <li>Canary hits, a new <code>keys/secureblue.pub</code>, and titanoboa pin bumps are <strong>not</strong> auto-merged. That is the security boundary.</li>
     </ul>
@@ -271,7 +271,7 @@
     <ul>
       <li><strong>If you pick Origin anyway.</strong> Unsuffixed names are still Brave Origin (no Vanadium, fat <code>brave_t</code>). The recommended default is <code>*-trivalent</code>. Origin remains for people who want that browser on purpose.</li>
       <li><strong>No extra userns domain on stock.</strong> Origin adds <code>brave_t</code> to the userns allow-list. Trivalent and browserless flavors do not.</li>
-      <li><strong>First Unwoke USB ISO is published.</strong> GNOME Trivalent artifact on <a href="https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33254135512">Actions run 20</a> (GitHub login, 14 days). Make the GHCR <code>-iso</code> package Public if the factory job has not. Stock’s ISO remains a valid fallback. Enroll <em>their</em> Secure Boot key. Not Ventoy.</li>
+      <li><strong>Their ISO download site is still nicer.</strong> <a href="https://secureblue.dev/install">isos.secureblue.dev</a> is a picker with torrents. Ours is GHCR <code>-iso</code> + a 14-day Actions artifact (~4 GB). Stock’s ISO remains a valid fallback, then rebase. Enroll <em>their</em> Secure Boot key. Not Ventoy.</li>
       <li><strong>Their docs and community.</strong> We mirror their pages daily. Canonical is still <a href="https://secureblue.dev">secureblue.dev</a>.</li>
       <li><strong>We are one person’s overlay.</strong> Their project is bigger. That is not a security feature for us; it is honesty.</li>
     </ul>

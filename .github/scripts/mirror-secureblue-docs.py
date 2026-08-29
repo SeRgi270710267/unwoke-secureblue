@@ -28,9 +28,7 @@ API = "https://api.github.com/repos/secureblue/secureblue.dev/contents"
 RAW = "https://raw.githubusercontent.com/secureblue/secureblue.dev/live"
 SKIP = {
     "INDEX.md",
-    "IMAGES.md",
     "CODE_OF_CONDUCT.md",
-    "REPORTING.md",
     "404.md",
 }
 
@@ -39,17 +37,60 @@ DONATE_NOTICE = """
 """
 
 POSTINSTALL_NOTICE = """
-<p class="alert note"><strong>Stock secureblue post-install.</strong> After you rebase onto Unwoke SecureBlue you still do most of this (their Secure Boot key, kargs, <code>ujust audit-secureblue</code>, USBGuard). Overlay extras are on our <a href="install/">Install</a> page. Canonical: <a href="https://secureblue.dev/post-install">secureblue.dev/post-install</a>.</p>
+<p class="alert note"><strong>Stock secureblue post-install.</strong> After Unwoke USB or rebase you still do most of this (their Secure Boot key, kargs, <code>ujust audit-secureblue</code>, USBGuard). Overlay extras: <a href="post-install/">our Post-install</a>. Canonical: <a href="https://secureblue.dev/post-install">secureblue.dev/post-install</a>.</p>
 """
 
 CONTRIBUTING_NOTICE = """
 <p class="alert caution"><strong>This is how you contribute to <em>secureblue</em>, not Unwoke SecureBlue.</strong> PRs against their repo, their AI ban, their Discord, their Covenant — all them. Overlay bugs and patches go to <a href="https://github.com/SeRgi270710267/unwoke-secureblue">our GitHub</a>. We do not use their CoC; see <a href="conduct/">Conduct</a>.</p>
 """
 
-INCLUDE_RE = re.compile(
-    r"\{%\s*include\s+alert\.html\s+type='([^']+)'\s+content='((?:\\'|[^'])*)'\s*%\}",
-    re.I,
+INSTALL_NOTICE = """
+<p class="alert caution"><strong>This is how you install stock secureblue.</strong> Unwoke is a different GHCR image. Empty disk: <a href="install/">our USB ISO or rebase</a>. Their interactive ISO picker (GNOME/KDE/Sway × NVIDIA, torrents) stays on <a href="https://secureblue.dev/install">secureblue.dev/install</a> — we do not run their download form here.</p>
+"""
+
+FAQ_NOTICE = """
+<p class="alert note"><strong>Stock FAQ.</strong> They still have Bazaar, verified Flathub, Homebrew, and <code>ujust install-vpn</code> / <code>install-steam</code>. Overlay deltas (no store, extra locks, Proton/IVPN/Mullvad wizards): <a href="faq/">our FAQ</a> and <a href="compared/">Compared</a>.</p>
+"""
+
+FEATURES_NOTICE = """
+<p class="alert note"><strong>Stock feature list.</strong> Kernel, SELinux, Trivalent, USBGuard — inherited. What this overlay adds or changes: <a href="features/">our Features</a>.</p>
+"""
+
+IMAGES_NOTICE = """
+<p class="alert caution"><strong>Stock image catalog.</strong> Sway, COSMIC, CoreOS, IoT, closed NVIDIA — they ship those. Unwoke only overlays Silverblue/Kinoite × nvidia-open × Origin/Trivalent/browserless. Our names: <a href="images/">Images</a>.</p>
+"""
+
+VERIFICATION_NOTICE = """
+<p class="alert note"><strong>Stock ISO verification.</strong> For an Unwoke USB, verify our <code>cosign.pub</code> and <code>SHA256SUMS</code> as on <a href="install/">Install</a>. This page is how you check <em>their</em> installer media.</p>
+"""
+
+REPORTING_NOTICE = """
+<p class="alert note"><strong>Stock security reporting.</strong> Overlay bugs and patches: <a href="https://github.com/SeRgi270710267/unwoke-secureblue">our GitHub</a>. Vulnerabilities in their kernel/Trivalent go to them.</p>
+"""
+
+PAGE_NOTICES = {
+    "/donate": DONATE_NOTICE,
+    "/post-install": POSTINSTALL_NOTICE,
+    "/contributing": CONTRIBUTING_NOTICE,
+    "/install": INSTALL_NOTICE,
+    "/faq": FAQ_NOTICE,
+    "/features": FEATURES_NOTICE,
+    "/images": IMAGES_NOTICE,
+    "/verification": VERIFICATION_NOTICE,
+    "/reporting": REPORTING_NOTICE,
+}
+
+HUB_GROUPS = (
+    ("Install and after", ("/install", "/post-install", "/verification")),
+    ("What they ship", ("/features", "/faq", "/images")),
+    ("Project", ("/contributing", "/donate", "/reporting")),
 )
+
+INCLUDE_RE = re.compile(
+    r"\{%\s*include\s+alert\.html\s+type=(['\"])([^'\"]+)\1\s+content=(['\"])((?:\\.|.)*?)\3\s*%\}",
+    re.I | re.S,
+)
+FORM_RE = re.compile(r"<form\b.*?</form>", re.I | re.S)
 KRAMDOWN_RE = re.compile(r"\{:\s*[^}]+\}")
 FRONT_RE = re.compile(r"^---\n(.*?)\n---\n", re.S)
 
@@ -89,12 +130,29 @@ def parse_front(text: str) -> tuple[dict, str]:
 
 def alerts_to_html(text: str) -> str:
     def repl(m: re.Match[str]) -> str:
-        kind = html.escape(m.group(1).lower(), quote=True)
-        body = m.group(2).replace("\\'", "'").replace("<br>", "\n")
-        body = html.escape(body, quote=False).replace("\n", "<br>\n")
+        kind = html.escape(m.group(2).lower(), quote=True)
+        raw = m.group(4).replace("\\'", "'").replace('\\"', '"').replace("<br>", "\n")
+        body = html.escape(raw, quote=False).replace("\n", "<br>\n")
         return f"\n\n<div class=\"alert {kind}\"><p>{body}</p></div>\n\n"
 
     return INCLUDE_RE.sub(repl, text)
+
+
+def replace_stock_forms(fragment: str) -> str:
+    """Do not execute their ISO picker. Point at their site and ours."""
+    box = (
+        '<div class="alert note"><p><strong>Stock ISO downloader</strong> is an interactive '
+        "form on <a href=\"https://secureblue.dev/install\">secureblue.dev/install</a> "
+        "(GNOME/KDE/Sway × NVIDIA, torrents, checksums). We do not run their form here. "
+        "Unwoke USB or rebase: <a href=\"install/\">our Install</a>.</p></div>"
+    )
+    return FORM_RE.sub(box, fragment)
+
+
+def wrap_tables(fragment: str) -> str:
+    fragment = re.sub(r"<table\b", '<div class="table-container"><table', fragment, flags=re.I)
+    fragment = re.sub(r"</table>", "</table></div>", fragment, flags=re.I)
+    return fragment
 
 
 _UNSAFE_HTML = re.compile(
@@ -209,12 +267,10 @@ def main() -> int:
             extensions=["extra", "sane_lists", "toc"],
         )
         body_html = rewrite_html(body_html, permalinks)
+        body_html = replace_stock_forms(body_html)
+        body_html = wrap_tables(body_html)
         body_html = sanitize_html(body_html)
-        extra = {
-            "/donate": DONATE_NOTICE,
-            "/post-install": POSTINSTALL_NOTICE,
-            "/contributing": CONTRIBUTING_NOTICE,
-        }.get(permalink.rstrip("/"), "")
+        extra = PAGE_NOTICES.get(permalink.rstrip("/"), "")
         if extra:
             body_html = extra + body_html
         canonical = "https://secureblue.dev" + permalink
@@ -230,14 +286,44 @@ def main() -> int:
     license_txt = fetch(f"{RAW}/LICENSE.txt").decode("utf-8")
     (OUT / "LICENSE-secureblue.dev.txt").write_text(license_txt, encoding="utf-8")
 
-    items = "\n".join(
-        f'<li><a href="{href}">{title}</a></li>' for href, title in sorted(index_links, key=lambda x: x[1].lower())
-    )
+    by_path = {href: title for href, title in index_links}
+    sections = []
+    used: set[str] = set()
+    for label, keys in HUB_GROUPS:
+        lis = []
+        for key in keys:
+            href = "secureblue" + key + "/"
+            if href in by_path:
+                lis.append(f'<li><a href="{href}">{html.escape(by_path[href])}</a></li>')
+                used.add(href)
+        if lis:
+            sections.append(
+                f'<div class="card"><p class="eyebrow">{html.escape(label)}</p><ul>{"".join(lis)}</ul></div>'
+            )
+    articles = []
+    leftover = []
+    for href, title in sorted(index_links, key=lambda x: x[1].lower()):
+        if href in used:
+            continue
+        item = f'<li><a href="{href}">{html.escape(title)}</a></li>'
+        if "/articles/" in href:
+            articles.append(item)
+        else:
+            leftover.append(item)
+    if articles:
+        sections.append(
+            '<div class="card"><p class="eyebrow">Articles</p><ul>' + "".join(articles) + "</ul></div>"
+        )
+    if leftover:
+        sections.append(
+            '<div class="card"><p class="eyebrow">More</p><ul>' + "".join(leftover) + "</ul></div>"
+        )
     index_body = f"""
     <h1>Stock secureblue docs</h1>
-    <p>These pages are pulled daily from <a href="https://secureblue.dev">secureblue.dev</a> and wrapped in our chrome. Unwoke SecureBlue’s own FAQ, Features, Images, and Install are the main nav — this tree cannot overwrite them.</p>
-    <ul>{items}</ul>
-    <p>Not mirrored on purpose: their homepage, image catalog, and code of conduct. Donate and contributing are mirrored with banners so you cannot confuse their wallets or their PR process with ours. Use <a href="https://secureblue.dev">secureblue.dev</a> for the rest.</p>
+    <p>Pulled daily from <a href="https://secureblue.dev">secureblue.dev</a> and wrapped in our chrome. Unwoke FAQ, Features, Images, and Install stay on the main nav — this tree cannot overwrite them.</p>
+    <div class="alert note"><p><strong>These pages describe stock.</strong> They still mention Bazaar, verified Flathub, Homebrew, and their ISO picker. Overlay rules: <a href="compared/">Compared</a>. How to install Unwoke: <a href="install/">Install</a>.</p></div>
+    <div class="docs-index">{"".join(sections)}</div>
+    <p>Not mirrored on purpose: their homepage and Contributor Covenant. Canonical for everything here is still <a href="https://secureblue.dev">secureblue.dev</a>.</p>
     """
     (OUT / "index.html").write_text(
         render_page(
