@@ -2,6 +2,15 @@
 # Browser policy commands apply on Origin and -trivalent, not -browserless.
 # Every overlay hardening switch has on/off/status (or an equivalent revert).
 
+# First-session menu. Defaults stay locked unless you turn one off.
+setup:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/setup.sh
+
+unwoke-setup:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/setup.sh
+
 # Show this overlay's flavor / remotes / policy / store status
 unwoke-status:
     #!/usr/bin/bash

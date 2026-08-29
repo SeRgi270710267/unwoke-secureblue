@@ -9,7 +9,7 @@
   <meta name="description" content="After rebasing: signed deployment, overlay ujust, then stock secureblue post-install (mirrored).">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
-  <link rel="stylesheet" href="css/main.css?v=4">
+  <link rel="stylesheet" href="css/main.css?v=5">
 </head>
 <body>
   <a class="skip" href="#content">Skip to content</a>
@@ -39,13 +39,15 @@
 
     <h2 id="overlay"><a href="#overlay">Unwoke SecureBlue</a></h2>
     <ol>
-      <li>After the first rebase reboot, wait until first-boot stages the <em>signed</em> image (<code>rpm-ostree status</code>). Reboot once more.</li>
+      <li>After the first rebase reboot, a notification (and MOTD) says when the signed image is staged. Reboot once more. Same menu: <code>ujust setup</code> → Reboot now.</li>
+      <li>A first-login window lists the locks. Nothing turns off unless you pick it. Hide it with option <code>n</code>, or run <code>ujust setup</code> later.</li>
       <li>Confirm the overlay:</li>
     </ol>
-<pre><code>ujust unwoke-status
+<pre><code>ujust setup
+ujust unwoke-status
 ujust audit-unwoke
 ujust audit-secureblue</code></pre>
-    <p>Full toggle table: <a href="features/#toggles">Features</a>. Restart the house browser after policy changes. If something “broke,” it is usually a default lock — run the matching <code>on</code> (or <code>off</code> for browser packs).</p>
+    <p>Full toggle table: <a href="features/#toggles">Features</a>. Restart the house browser after policy changes. If something “broke,” it is usually a default lock — the setup menu maps the usual ones.</p>
     <p><strong>Default off</strong> (stock has these on): Flathub, Homebrew, Bluetooth, toolbox/distrobox, camera/mic hardware. <strong>Default on</strong> (loosen with <code>off</code>): Flatpak lockdown, Origin/Trivalent policy packs, Origin Bubblejail, isolation, extra sandbox, Trivalent Network Service Sandbox + referrer flags. <strong>Browserless only:</strong> host browsers stay blocked until <code>ujust set-allow-browsers on ALLOW</code>.</p>
     <div class="table-container">
       <table>

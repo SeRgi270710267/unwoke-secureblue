@@ -9,7 +9,7 @@
   <meta name="description" content="Install Unwoke SecureBlue from a USB ISO (no stock first) or rebase from Fedora Atomic, then reboot into the signed deployment.">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
-  <link rel="stylesheet" href="css/main.css?v=4">
+  <link rel="stylesheet" href="css/main.css?v=5">
 </head>
 <body>
   <a class="skip" href="#content">Skip to content</a>
@@ -38,22 +38,45 @@
     <p>Two ways in: a <strong>USB ISO of Unwoke</strong> (empty disk, no stock secureblue first), or a <strong>rebase</strong> if you already run Fedora Atomic / secureblue. After either path, their <a href="secureblue/post-install/">post-install</a> still applies.</p>
 
     <h2 id="pick"><a href="#pick">Pick an image</a></h2>
-    <div class="select-group">
-      <select id="image-select" aria-label="Image">
-        <option value="unwoke-silverblue">Silverblue · GNOME · Origin</option>
-        <option value="unwoke-silverblue-nvidia-open">Silverblue · GNOME · NVIDIA · Origin</option>
-        <option value="unwoke-kinoite">Kinoite · KDE · Origin</option>
-        <option value="unwoke-kinoite-nvidia-open">Kinoite · KDE · NVIDIA · Origin</option>
-        <option value="unwoke-silverblue-trivalent">Silverblue · GNOME · Trivalent</option>
-        <option value="unwoke-silverblue-nvidia-open-trivalent">Silverblue · GNOME · NVIDIA · Trivalent</option>
-        <option value="unwoke-kinoite-trivalent">Kinoite · KDE · Trivalent</option>
-        <option value="unwoke-kinoite-nvidia-open-trivalent">Kinoite · KDE · NVIDIA · Trivalent</option>
-        <option value="unwoke-silverblue-browserless">Silverblue · GNOME · browserless</option>
-        <option value="unwoke-silverblue-nvidia-open-browserless">Silverblue · GNOME · NVIDIA · browserless</option>
-        <option value="unwoke-kinoite-browserless">Kinoite · KDE · browserless</option>
-        <option value="unwoke-kinoite-nvidia-open-browserless">Kinoite · KDE · NVIDIA · browserless</option>
-      </select>
+    <p>Three questions. Same twelve images as before — you do not have to name them.</p>
+    <div class="pick-grid">
+      <fieldset>
+        <legend>Desktop</legend>
+        <label><input type="radio" name="desk" value="silverblue" checked> GNOME</label>
+        <label><input type="radio" name="desk" value="kinoite"> KDE</label>
+      </fieldset>
+      <fieldset>
+        <legend>GPU</legend>
+        <label><input type="radio" name="gpu" value="" checked> Intel / AMD / no NVIDIA</label>
+        <label><input type="radio" name="gpu" value="-nvidia-open"> NVIDIA (open kernel module)</label>
+      </fieldset>
+      <fieldset>
+        <legend>House browser</legend>
+        <label><input type="radio" name="browser" value="" checked> Brave Origin (default)</label>
+        <label><input type="radio" name="browser" value="-trivalent"> Trivalent (stricter jail)</label>
+        <label><input type="radio" name="browser" value="-browserless"> None (browserless)</label>
+      </fieldset>
     </div>
+    <p>Image: <code id="picked-name">unwoke-silverblue</code></p>
+    <details class="pick-more">
+      <summary>All twelve names</summary>
+      <div class="select-group">
+        <select id="image-select" aria-label="Image">
+          <option value="unwoke-silverblue">Silverblue · GNOME · Origin</option>
+          <option value="unwoke-silverblue-nvidia-open">Silverblue · GNOME · NVIDIA · Origin</option>
+          <option value="unwoke-kinoite">Kinoite · KDE · Origin</option>
+          <option value="unwoke-kinoite-nvidia-open">Kinoite · KDE · NVIDIA · Origin</option>
+          <option value="unwoke-silverblue-trivalent">Silverblue · GNOME · Trivalent</option>
+          <option value="unwoke-silverblue-nvidia-open-trivalent">Silverblue · GNOME · NVIDIA · Trivalent</option>
+          <option value="unwoke-kinoite-trivalent">Kinoite · KDE · Trivalent</option>
+          <option value="unwoke-kinoite-nvidia-open-trivalent">Kinoite · KDE · NVIDIA · Trivalent</option>
+          <option value="unwoke-silverblue-browserless">Silverblue · GNOME · browserless</option>
+          <option value="unwoke-silverblue-nvidia-open-browserless">Silverblue · GNOME · NVIDIA · browserless</option>
+          <option value="unwoke-kinoite-browserless">Kinoite · KDE · browserless</option>
+          <option value="unwoke-kinoite-nvidia-open-browserless">Kinoite · KDE · NVIDIA · browserless</option>
+        </select>
+      </div>
+    </details>
 
     <h2 id="usb"><a href="#usb">Empty disk: Unwoke USB ISO</a></h2>
     <p>This wraps the GHCR image you picked. You do <em>not</em> install stock secureblue first. GitHub will not host a 3 GB file as a normal release, so the ISO lives as a GHCR artifact plus a 14-day Actions download.</p>
@@ -95,8 +118,9 @@ systemctl reboot</code></pre>
 
     <h2 id="after"><a href="#after">After install</a></h2>
     <p>Stock secureblue post-install still applies. Full overlay + their steps: <a href="post-install/">Post-install</a>. Their page only (mirrored daily): <a href="secureblue/post-install/">secureblue/post-install</a>.</p>
-    <p>Then <code>ujust unwoke-status</code>. If Bluetooth, Flathub, brew, webcam, WebGL, or the greeter is “broken,” it is probably a default lock — turn that one thing back on. Full table: <a href="post-install/">Post-install</a>.</p>
-<pre><code>ujust unwoke-status
+    <p>After the first graphical login, a setup window explains the locks (nothing turns off unless you pick it). Same menu later: <code>ujust setup</code>. If Bluetooth, Flathub, brew, webcam, WebGL, or the greeter is “broken,” it is a default lock. Full table: <a href="post-install/">Post-install</a>.</p>
+<pre><code>ujust setup
+ujust unwoke-status
 ujust audit-unwoke
 ujust set-flathub verified      # Flatpak remote (off by default)
 ujust set-bluetooth on          # Wi-Fi is not touched
@@ -122,12 +146,20 @@ ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
   </footer>
   <script>
     const select = document.getElementById("image-select");
+    const picked = document.getElementById("picked-name");
     const unverified = document.getElementById("cmd-unverified");
     const signed = document.getElementById("cmd-signed");
     const verify = document.getElementById("cmd-verify");
     const iso = document.getElementById("cmd-iso");
-    function render() {
-      const name = select.value;
+    function fromRadios() {
+      const desk = document.querySelector('input[name="desk"]:checked').value;
+      const gpu = document.querySelector('input[name="gpu"]:checked').value;
+      const browser = document.querySelector('input[name="browser"]:checked').value;
+      return "unwoke-" + desk + gpu + browser;
+    }
+    function render(name) {
+      select.value = name;
+      picked.textContent = name;
       unverified.textContent =
         "rpm-ostree rebase ostree-unverified-registry:ghcr.io/sergi270710267/" + name + ":latest\nsystemctl reboot";
       signed.textContent =
@@ -140,8 +172,11 @@ ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
         "cosign verify-blob --key cosign.pub --signature SHA256SUMS.sig SHA256SUMS\n" +
         "sha256sum -c SHA256SUMS";
     }
-    select.addEventListener("change", render);
-    render();
+    document.querySelectorAll('input[name="desk"], input[name="gpu"], input[name="browser"]').forEach((el) => {
+      el.addEventListener("change", () => render(fromRadios()));
+    });
+    select.addEventListener("change", () => render(select.value));
+    render(fromRadios());
   </script>
 </body>
 </html>

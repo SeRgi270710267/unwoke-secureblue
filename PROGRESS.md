@@ -149,6 +149,7 @@ Stock `ujust` still works.
 11. Factory autos that do not drop security: post-publish inspect, twice-daily verify.yml, one `factory-alarm` issue. Key rotation / canary hits stay manual.
 12. **Direct USB ISO** (`iso.yml`): Titanoboa wrap of published Unwoke image. Dispatch any of 12. Weekly Sunday 10:00 UTC the four default desktops → `ghcr.io/sergi270710267/<name>-iso:latest` (oras + cosign). Artifacts 14 days. Does not block overlay.
 13. **This PC pickup (2026-08-29):** cloned/pulled `29be70c`. Dispatch of `iso` failed on `matrix` in job `if`, then the wrap failed because old titanoboa wanted `iso.yaml`. Switched to RoyalOughtness/titanoboa + Anaconda live hooks.
+14. **First-session setup (no lock loosened):** `ujust setup` / autostart window. Reboot nag when `/etc/unwoke/signed-staged` exists. Install page is three questions, not twelve names. Overlay bake required for the window; Pages for the picker.
 
 Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only / `iso.yml` pushes should not rebuild images (`build.yml` paths-ignore).
 
@@ -158,7 +159,7 @@ Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only
 - `install-oras.sh` and `.github/workflows/isos/**` are in `build.yml` paths-ignore. Do not cancel a bake that is already running.
 - USB ISO: old `ublue-os/titanoboa@main` failed (no `iso.yaml`, [33246595295](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33246595295)). `RoyalOughtness/titanoboa` died in 2s on `setup-just` and hard-codes their pubkeys ([33247362623](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33247362623)). Drive `ublue-os/titanoboa@840217d` Justfile with checksum-pinned `just`. If green, download the artifact (14 days). Make the GHCR `*-iso` package Public.
 - Do not add `on: push` to `iso.yml` or `verify.yml`.
-- Confirm on a real rebase: `ujust unwoke-status` / `ujust audit-unwoke` (wallpaper, policies, trampoline, leftover Trivalent gone on Origin/browserless).
+- Confirm on a real rebase: `ujust setup` / `ujust unwoke-status` / `ujust audit-unwoke` (wallpaper, policies, trampoline, leftover Trivalent gone on Origin/browserless). First-session window ships on the next overlay bake.
 - Hard-refresh Pages if Install / Changelog look cached.
 - Do not start a tight `brave_t` jail unless the owner asks again and accepts breakage.
 - Origin/browserless still strip Trivalent. The dedicated `*-trivalent` flavor keeps it. Do not add a GUI store. Do not add xscreensaver. Do not Bubblejail Trivalent.

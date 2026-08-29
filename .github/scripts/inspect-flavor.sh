@@ -99,6 +99,10 @@ if [[ ! -f "${work}/usr/libexec/unwoke/harden-flatpak.sh" ]]; then
   echo "FAIL: missing /usr/libexec/unwoke/harden-flatpak.sh" >&2
   fail=1
 fi
+if [[ ! -f "${work}/usr/libexec/unwoke/setup.sh" ]]; then
+  echo "FAIL: missing /usr/libexec/unwoke/setup.sh" >&2
+  fail=1
+fi
 
 selinux_mentions_origin() {
   grep -R -q '/opt/brave.com/brave-origin' \

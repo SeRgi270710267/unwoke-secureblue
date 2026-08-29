@@ -55,9 +55,12 @@ for d in j.get("deployments") or []:
         return 0
       }
       echo "unwoke: signed image staged. Reboot once more to lock updates."
+      mkdir -p /etc/unwoke
+      printf '%s\n' "${img}" > /etc/unwoke/signed-staged
       ;;
     ostree-image-signed:*|ostree-remote-image:*)
       echo "unwoke: already on a signed origin"
+      rm -f /etc/unwoke/signed-staged
       ;;
     *)
       echo "unwoke: origin=${origin:-unknown}; not promoting"

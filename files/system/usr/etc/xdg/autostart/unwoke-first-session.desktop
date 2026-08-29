@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Unwoke setup
+Comment=Explain overlay locks; do not change them unless you choose
+Exec=/usr/libexec/unwoke/first-session.sh
+X-GNOME-Autostart-enabled=true
+X-GNOME-Autostart-Delay=8
+X-KDE-autostart-after=panel
+OnlyShowIn=GNOME;KDE;LXQt;
+NoDisplay=false

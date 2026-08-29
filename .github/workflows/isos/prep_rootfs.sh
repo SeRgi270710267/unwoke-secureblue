@@ -25,8 +25,10 @@ dnf install -y anaconda-live firefox libblockdev-btrfs libblockdev-lvm libblockd
 
 systemctl disable --global secureblue-flatpak-setup.service secureblue-flatpak-setup.timer podman-auto-update.timer flatpak-user-update.timer 2>/dev/null || true
 systemctl disable rpm-ostreed-automatic.timer rpm-ostree-countme.service bootloader-update.service 2>/dev/null || true
-# Do not run overlay first-boot / admin-split on the live USB.
+# Do not run overlay first-boot / admin-split / setup window on the live USB.
 systemctl disable unwoke-first-boot.service unwoke-admin-split-setup.service 2>/dev/null || true
+rm -f /etc/xdg/autostart/unwoke-first-session.desktop \
+  /usr/etc/xdg/autostart/unwoke-first-session.desktop || true
 
 rm -f /usr/share/applications/org.mozilla.Firefox.desktop \
   /usr/share/applications/org.mozilla.firefox.desktop \
