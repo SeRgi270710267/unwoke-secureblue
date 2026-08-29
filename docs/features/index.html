@@ -242,7 +242,7 @@
     <h2 id="overlay-list"><a href="#overlay-list">Everything we add on top</a></h2>
     <ul>
       <li>Strip Bazaar, GNOME Software, Plasma Discover. Hide leftover store launchers. Origin and browserless also strip Trivalent.</li>
-      <li><strong>Origin flavor:</strong> standalone <code>brave-origin</code> RPM (not <code>brave-browser</code>). Binary <code>/opt/brave.com/brave-origin/brave</code>. Default browser. Leo/Rewards/Wallet/VPN/Tor compiled out by Brave.</li>
+      <li><strong>Origin flavor (unsuffixed names):</strong> standalone <code>brave-origin</code> RPM (not <code>brave-browser</code>). Binary <code>/opt/brave.com/brave-origin/brave</code>. House browser for that flavor only — not the recommended default. Leo/Rewards/Wallet/VPN/Tor compiled out by Brave.</li>
       <li><strong>Trivalent flavor:</strong> keep stock Trivalent + <code>trivalent-selinux</code>. No <code>brave_t</code>. Extra managed policies in <code>/etc/trivalent/policies/managed/</code> plus launcher flags in <code>/etc/trivalent/trivalent.conf.d/</code>.</li>
       <li><strong>SELinux (Origin only):</strong> fat <code>brave_t</code> (<code>unconfined_domain</code>) plus CIL allow-list so Chromium’s userns sandbox can start while <code>harden_userns</code> stays on. SUID stripped under <code>/opt/brave.com/brave-origin</code>.</li>
       <li><strong>Browserless flavor:</strong> nothing put back. systemd units remask Flatpak browsers and rpm-ostree-exclude them until the allow toggle.</li>

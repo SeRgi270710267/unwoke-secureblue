@@ -47,7 +47,7 @@
       <li><strong>No curator store.</strong> Bazaar / GNOME Software / Discover are gone. Flathub is off until you turn verified apps on. That is a security choice, not a missing package.</li>
       <li><strong>More things start off.</strong> Bluetooth, brew, toolbox, camera/mic, extra daemons. You turn on only what you need.</li>
       <li><strong>The first hour talks to you.</strong> Stock dumps you into a hardened desktop and a wiki. We open <strong>Unwoke setup</strong>, nag until the signed update is actually booted, and map “this is broken” to “this is a lock.”</li>
-      <li><strong>Three browsers, not one.</strong> Keep their Trivalent (plus extra policies), use Brave Origin, or ship no image browser. Stock only ships Trivalent.</li>
+      <li><strong>Recommended default is Trivalent.</strong> Same jail as stock, plus extra policies. Origin and browserless stay as named choices. Stock only ships Trivalent.</li>
     </ul>
     <div class="alert">
       <p><strong>The one sentence people get wrong.</strong> Default Origin images are <em>not</em> a tighter browser than stock + Trivalent. No Vanadium patches, fat <code>brave_t</code>. For the same house browser as stock, plus extra locks: rebase to <code>*-trivalent</code>.</p>
@@ -72,8 +72,8 @@
       </div>
       <div class="card">
         <p class="eyebrow">Browser</p>
-        <h3>Stock still wins Origin</h3>
-        <p>Trivalent + Vanadium + <code>trivalent_t</code> is the tighter house browser. Our <code>*-trivalent</code> flavor <em>is</em> that, plus extra reversible policies. Origin is a different product decision.</p>
+        <h3>Recommended = Trivalent</h3>
+        <p>Stock’s jail plus extra reversible policies. Origin is still an unsuffixed GHCR name if you want Brave Origin on purpose. Browserless is for no image browser.</p>
       </div>
     </div>
 
@@ -262,7 +262,7 @@
 
     <h2 id="stock-wins"><a href="#stock-wins">Where stock still wins</a></h2>
     <ul>
-      <li><strong>House browser on default images.</strong> Trivalent (Vanadium patches, tight <code>trivalent_t</code>) is stricter than Brave Origin (policies + fat <code>brave_t</code>). Use <code>*-trivalent</code> if that is what you wanted.</li>
+      <li><strong>If you pick Origin anyway.</strong> Unsuffixed names are still Brave Origin (no Vanadium, fat <code>brave_t</code>). The recommended default is <code>*-trivalent</code>. Origin remains for people who want that browser on purpose.</li>
       <li><strong>No extra userns domain on stock.</strong> Origin adds <code>brave_t</code> to the userns allow-list. Trivalent and browserless flavors do not.</li>
       <li><strong>Their ISO is a known-good empty-disk path today.</strong> Our USB wrap is a baker on GitHub. Until a run is green with a downloadable artifact, flash theirs then rebase. We do not pretend otherwise.</li>
       <li><strong>Their docs and community.</strong> We mirror their pages daily. Canonical is still <a href="https://secureblue.dev">secureblue.dev</a>.</li>
@@ -277,6 +277,12 @@
           <tr><th>When</th><th>What landed</th><th>Vs stock</th><th>Where</th></tr>
         </thead>
         <tbody>
+          <tr>
+            <td>2026-08-29</td>
+            <td>Recommended default is <code>*-trivalent</code> (tightest house browser we ship). Origin is an explicit picker choice, not the first radio.</td>
+            <td>People who wanted max browser lock no longer land on Origin by accident. GHCR unsuffixed names unchanged.</td>
+            <td>Pages + weekly ISO list</td>
+          </tr>
           <tr>
             <td>2026-08-29</td>
             <td>GTK Unwoke setup, app-grid launcher, tutorial buttons, repeating signed-reboot nag, installer-style daily-user dialog (greeter still waits)</td>

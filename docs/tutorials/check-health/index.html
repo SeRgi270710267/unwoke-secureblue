@@ -54,8 +54,8 @@ ujust audit-unwoke</code></pre>
       <li>
         <h3>Signature on the image you pull</h3>
         <p>On another machine (or this one if <code>cosign</code> is available), with our repo’s <code>cosign.pub</code>:</p>
-        <pre><code>cosign verify --key cosign.pub ghcr.io/sergi270710267/unwoke-silverblue</code></pre>
-        <p>Use the image name you actually rebased to. First rebase is unverified by design; after the signed reboot, the origin must stay signed.</p>
+        <pre><code>cosign verify --key cosign.pub ghcr.io/sergi270710267/unwoke-silverblue-trivalent</code></pre>
+        <p>Use the image name you actually rebased to (recommended default is <code>*-trivalent</code>). First rebase is unverified by design; after the signed reboot, the origin must stay signed.</p>
       </li>
     </ol>
     <div class="alert">

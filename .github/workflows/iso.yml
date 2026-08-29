@@ -1,7 +1,7 @@
 name: iso
 on:
   schedule:
-    # Weekly, after Sunday morning overlay rebuilds. NVIDIA/browserless: dispatch.
+    # Weekly, after Sunday morning overlay rebuilds. Origin/browserless: dispatch.
     - cron: "00 10 * * 0"
   workflow_dispatch:
     inputs:
@@ -11,6 +11,10 @@ on:
         type: choice
         default: unwoke-silverblue-trivalent
         options:
+          - unwoke-silverblue-trivalent
+          - unwoke-kinoite-trivalent
+          - unwoke-silverblue-nvidia-open-trivalent
+          - unwoke-kinoite-nvidia-open-trivalent
           - unwoke-silverblue
           - unwoke-silverblue-nvidia-open
           - unwoke-kinoite
@@ -19,10 +23,6 @@ on:
           - unwoke-silverblue-nvidia-open-browserless
           - unwoke-kinoite-browserless
           - unwoke-kinoite-nvidia-open-browserless
-          - unwoke-silverblue-trivalent
-          - unwoke-silverblue-nvidia-open-trivalent
-          - unwoke-kinoite-trivalent
-          - unwoke-kinoite-nvidia-open-trivalent
 permissions: {}
 concurrency:
   group: iso-${{ github.event_name }}-${{ github.event.inputs.image || 'weekly' }}
@@ -54,7 +54,7 @@ jobs:
           if [[ "${EVENT_NAME}" == "workflow_dispatch" ]]; then
             python3 -c 'import json,os; print("images="+json.dumps([os.environ["DISPATCH_IMAGE"]]))' >> "${GITHUB_OUTPUT}"
           else
-            python3 -c 'import json; print("images="+json.dumps(["unwoke-silverblue","unwoke-silverblue-trivalent","unwoke-kinoite","unwoke-kinoite-trivalent"]))' >> "${GITHUB_OUTPUT}"
+            python3 -c 'import json; print("images="+json.dumps(["unwoke-silverblue-trivalent","unwoke-kinoite-trivalent","unwoke-silverblue-nvidia-open-trivalent","unwoke-kinoite-nvidia-open-trivalent"]))' >> "${GITHUB_OUTPUT}"
           fi
 
   iso:

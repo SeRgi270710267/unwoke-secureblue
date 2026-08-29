@@ -49,7 +49,7 @@
     <p>Rebase to <code>unwoke-silverblue-trivalent</code> (or kinoite / nvidia-open). We keep stock Trivalent and <code>trivalent-selinux</code>. We do not load <code>brave_t</code>. Extra Chromium managed policies (JIT-less, no WebGL, extension block, device guards, extra sandbox) and two flag packs (Network Service Sandbox, punycode/referrers) default on and revert with <code>ujust set-trivalent-*</code> (same packs as <code>set-brave-*</code>). This does not add Vanadium compiler patches on top of what Trivalent already ships. Do not Bubblejail it.</p>
 
     <h2 id="browserless"><a href="#browserless">What is the browserless flavor?</a></h2>
-    <p>Same overlay: Trivalent, Bazaar, and GUI stores are gone. Unlike the default images, we do <em>not</em> install Brave Origin, do not load <code>brave_t</code>, and do not add Flathub. Rebase to <code>unwoke-silverblue-browserless</code> (or kinoite / nvidia-open variants).</p>
+    <p>Same overlay: Trivalent, Bazaar, and GUI stores are gone. Unlike Origin (unsuffixed) images, we do <em>not</em> install Brave Origin, do not load <code>brave_t</code>, and do not add Flathub. Rebase to <code>unwoke-silverblue-browserless</code> (or kinoite / nvidia-open variants). The recommended default with a house browser is still <code>*-trivalent</code>.</p>
     <p>Easy host browser installs are blocked until you opt in:</p>
 <pre><code>ujust set-allow-browsers on ALLOW</code></pre>
     <p>That unmasks common Flatpak browsers and drops the rpm-ostree exclude list. Flathub stays off until <code>ujust set-flathub verified</code>. A random Firefox is usually worse than stock Trivalent. AppImage and <code>rpm-ostree --disableexcludes</code> are not blocked. toolbox/distrobox stay off until <code>ujust set-toolbox on</code>.</p>
@@ -151,7 +151,7 @@ ujust set-allow-browsers on ALLOW</code></pre>
     <p>This overlay: <a href="https://github.com/SeRgi270710267/unwoke-secureblue">our GitHub</a> and <a href="conduct/">our conduct</a>. Stock secureblue (Trivalent, their image recipes, their CoC): their <a href="secureblue/contributing/">mirrored contributing page</a>. Do not send Unwoke patches to their repo or the other way around.</p>
 
     <h2 id="iso"><a href="#iso">Can I install without stock secureblue first?</a></h2>
-    <p>Yes. Actions → <strong>iso</strong> wraps the Unwoke GHCR image in a live/installer USB (Titanoboa). You flash that, not their ISO. GitHub will not host a 3 GB file as a normal release, so the ISO is an Actions artifact (14 days) and, for the four default desktops, a weekly <code>ghcr.io/sergi270710267/&lt;name&gt;-iso:latest</code> package you pull with <code>oras</code>. Verify the package with <code>cosign.pub</code>, then the <code>SHA256SUMS</code> blob, then the file hash. Not Ventoy. Enroll <em>their</em> Secure Boot key — the kernel is still stock. Stock-ISO-then-rebase remains valid.</p>
+    <p>Yes. Actions → <strong>iso</strong> wraps the Unwoke GHCR image in a live/installer USB (Titanoboa). You flash that, not their ISO. GitHub will not host a 3 GB file as a normal release, so the ISO is an Actions artifact (14 days) and, for the four Trivalent desktops, a weekly <code>ghcr.io/sergi270710267/&lt;name&gt;-iso:latest</code> package you pull with <code>oras</code>. Verify the package with <code>cosign.pub</code>, then the <code>SHA256SUMS</code> blob, then the file hash. Not Ventoy. Enroll <em>their</em> Secure Boot key — the kernel is still stock. Stock-ISO-then-rebase remains valid.</p>
   </main>
 
   <footer>

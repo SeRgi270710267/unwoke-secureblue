@@ -35,13 +35,15 @@ Display: **Unwoke SecureBlue** (`Unwoke` = modifier; `SecureBlue` = one word, S+
 - `remove-trivalent.sh` (Origin + browserless): `dnf remove` then `rm` leftover `/usr/bin/trivalent` and `/usr/lib64/trivalent`. Inspect fails if those remain.
 - Stock MOTD replaced (`usr/libexec/secureblue-motd`). User nags masked by default: deprecation notice, update-verification, flatpak-setup (`ujust set-stock-nags on` to restore). Key-enrollment check stays. Docs mirror sanitizes script-like HTML.
 - Daily image rebuilds 08:00 and 20:00 UTC. Docs mirror of secureblue.dev at 09:30 UTC into generated `docs/secureblue/` (gitignored).
-- Empty-disk ISO: `.github/workflows/iso.yml` wraps a published Unwoke GHCR image. **Do not use `ublue-os/titanoboa@main`** — that old LiveCD requires `/usr/lib/bootc-image-builder/iso.yaml` in the OS image; neither stock nor Unwoke ship it (first wrap failed after squashfs, run 33246595295). Use `RoyalOughtness/titanoboa@3d19fdfa` (same pin as secureblue) plus `.github/workflows/isos/prep_{rootfs,initramfs}.sh`. Live USB is Anaconda; installed OS is the GHCR image. Enroll **their** Secure Boot key (kernel is still theirs). A `pick` job builds the matrix (dispatch = one image; weekly = four defaults). **Do not put `matrix` in a job-level `if`**. Weekly (Sunday 10:00 UTC) the four default desktops go to `ghcr.io/…/<name>-iso:latest` plus a 14-day artifact. Checksums are cosign-signed. Does not block the overlay factory. GitHub will not host a 3 GB release asset.
+- Empty-disk ISO: `.github/workflows/iso.yml` wraps a published Unwoke GHCR image. **Do not use `ublue-os/titanoboa@main`** — that old LiveCD requires `/usr/lib/bootc-image-builder/iso.yaml` in the OS image; neither stock nor Unwoke ship it (first wrap failed after squashfs, run 33246595295). Use `RoyalOughtness/titanoboa@3d19fdfa` (same pin as secureblue) plus `.github/workflows/isos/prep_{rootfs,initramfs}.sh`. Live USB is Anaconda; installed OS is the GHCR image. Enroll **their** Secure Boot key (kernel is still theirs). A `pick` job builds the matrix (dispatch = one image; weekly = four Trivalent desktops). **Do not put `matrix` in a job-level `if`**. Weekly (Sunday 10:00 UTC) Silverblue/Kinoite × NVIDIA/not Trivalent go to `ghcr.io/…/<name>-iso:latest` plus a 14-day artifact. Checksums are cosign-signed. Does not block the overlay factory. GitHub will not host a 3 GB release asset.
 
 ## What the overlay does
 
 **Strip (all flavors):** Bazaar, GNOME Software, Plasma Discover, leftover store launchers.
 
-**Origin flavor:** also strips Trivalent. `brave-origin` RPM (`/opt/brave.com/brave-origin/brave`), not `brave-browser`. Fat SELinux `brave_t` (`unconfined_domain`) + CIL userns allow-list. `harden_userns` stays on. SUID stripped on Origin. Default browser.
+**Origin flavor (unsuffixed GHCR names):** also strips Trivalent. `brave-origin` RPM (`/opt/brave.com/brave-origin/brave`), not `brave-browser`. Fat SELinux `brave_t` (`unconfined_domain`) + CIL userns allow-list. `harden_userns` stays on. SUID stripped on Origin. Not the recommended default.
+
+**Recommended default:** `*-trivalent` (stock Trivalent jail + extra reversible policies). Install picker, README rebase, weekly ISO. Origin remains a named choice.
 
 **Trivalent flavor (`*-trivalent`):** keep stock Trivalent + `trivalent-selinux`. No `brave_t`. Extra Chromium managed policies in `/etc/trivalent/policies/managed/` plus `trivalent.conf.d` flags. Same house locks as Origin.
 
@@ -150,13 +152,14 @@ Stock `ujust` still works.
 9. **Trivalent flavor** (`*-trivalent`): keep stock Trivalent + SELinux; extra reversible Chromium policies + conf.d flags. Origin and browserless still strip Trivalent. 12 GHCR images.
 10. Hostile-upstream canary (crane, not docker) + snapshot auto-refresh + harden-flatpak trampoline + MOTD/nags mask.
 11. Factory autos that do not drop security: post-publish inspect, twice-daily verify.yml, one `factory-alarm` issue. Key rotation / canary hits stay manual.
-12. **Direct USB ISO** (`iso.yml`): Titanoboa wrap of published Unwoke image. Dispatch any of 12. Weekly Sunday 10:00 UTC the four default desktops → `ghcr.io/sergi270710267/<name>-iso:latest` (oras + cosign). Artifacts 14 days. Does not block overlay.
+12. **Direct USB ISO** (`iso.yml`): Titanoboa wrap of published Unwoke image. Dispatch any of 12. Weekly Sunday 10:00 UTC the four Trivalent desktops → `ghcr.io/sergi270710267/<name>-iso:latest` (oras + cosign). Artifacts 14 days. Does not block overlay.
 13. **This PC pickup (2026-08-29):** cloned/pulled `29be70c`. Dispatch of `iso` failed on `matrix` in job `if`, then the wrap failed because old titanoboa wanted `iso.yaml`. Switched to RoyalOughtness/titanoboa + Anaconda live hooks.
 14. **First-session setup (no lock loosened):** `ujust setup` / autostart window. Reboot nag when `/etc/unwoke/signed-staged` exists. Install page is three questions, not twelve names. Overlay bake required for the window; Pages for the picker.
 15. **Guided recovery + factory public packages (ISO still separate):** `ujust why` / setup option 3 maps “broken” to the matching lock (does not auto-unlock). Option 4 runs leftover stock `ujust` (Secure Boot key, kargs, USBGuard) on confirm. After a green overlay bake, `public-packages.sh` tries to set GHCR packages Public (warn-only; does not fail the bake). Install page queries GitHub for a last-green USB ISO and says so if none exists.
 16. **Tutorials tab (Pages):** everyday tasks with the secure path first (first hour, apps without a store, Bluetooth, camera, USBGuard, updates/rollback, daily user, VPN DNS, toolbox, health check). Does not auto-unlock. Docs-only — no overlay bake.
 17. **Desktop UX without loosening locks:** GTK **Unwoke setup** window (app grid + autostart; TUI fallback). Same stamps as `ujust`. Tutorial buttons. Repeating signed-reboot nag (login + 15 min timer) until `/etc/unwoke/signed-staged` is gone. Daily-user still **before the greeter** (dialog installer screen, not wheel-on-GDM-first). Install page: Windows/Linux/macOS order, copy buttons, USB download CTA when a green bake exists.
 18. **Compared tab (Pages):** living list vs stock — easy words, stricter table, easier table, factory, where stock still wins, dated ledger. Update this page when we ship a lock or a UX win. Does not auto-unlock. Docs-only.
+19. **Recommended default is Trivalent:** install picker, README, weekly ISO four `*-trivalent` desktops. Unsuffixed GHCR names stay Origin. Origin radio shows a warning. No lock loosened.
 
 Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only / `iso.yml` pushes should not rebuild images (`build.yml` paths-ignore).
 

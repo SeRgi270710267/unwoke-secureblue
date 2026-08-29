@@ -54,12 +54,13 @@
       </fieldset>
       <fieldset>
         <legend>House browser</legend>
-        <label><input type="radio" name="browser" value="" checked> Brave Origin (default)</label>
-        <label><input type="radio" name="browser" value="-trivalent"> Trivalent (stricter jail)</label>
+        <label><input type="radio" name="browser" value="-trivalent" checked> Trivalent (recommended — same jail as stock, plus extra locks)</label>
+        <label><input type="radio" name="browser" value=""> Brave Origin (looser SELinux; not the tightest)</label>
         <label><input type="radio" name="browser" value="-browserless"> None (browserless)</label>
       </fieldset>
     </div>
-    <p>Image: <code id="picked-name">unwoke-silverblue</code></p>
+    <p>Image: <code id="picked-name">unwoke-silverblue-trivalent</code></p>
+    <p id="origin-warn" class="alert" hidden><strong>Origin is not the tightest house browser.</strong> Trivalent keeps stock Vanadium patches and <code>trivalent_t</code>. Pick Origin only if you want Brave Origin on purpose.</p>
     <div class="pick-grid">
       <fieldset>
         <legend>You are installing from</legend>
@@ -72,14 +73,14 @@
       <summary>All twelve names</summary>
       <div class="select-group">
         <select id="image-select" aria-label="Image">
+          <option value="unwoke-silverblue-trivalent" selected>Silverblue · GNOME · Trivalent (recommended)</option>
+          <option value="unwoke-silverblue-nvidia-open-trivalent">Silverblue · GNOME · NVIDIA · Trivalent</option>
+          <option value="unwoke-kinoite-trivalent">Kinoite · KDE · Trivalent</option>
+          <option value="unwoke-kinoite-nvidia-open-trivalent">Kinoite · KDE · NVIDIA · Trivalent</option>
           <option value="unwoke-silverblue">Silverblue · GNOME · Origin</option>
           <option value="unwoke-silverblue-nvidia-open">Silverblue · GNOME · NVIDIA · Origin</option>
           <option value="unwoke-kinoite">Kinoite · KDE · Origin</option>
           <option value="unwoke-kinoite-nvidia-open">Kinoite · KDE · NVIDIA · Origin</option>
-          <option value="unwoke-silverblue-trivalent">Silverblue · GNOME · Trivalent</option>
-          <option value="unwoke-silverblue-nvidia-open-trivalent">Silverblue · GNOME · NVIDIA · Trivalent</option>
-          <option value="unwoke-kinoite-trivalent">Kinoite · KDE · Trivalent</option>
-          <option value="unwoke-kinoite-nvidia-open-trivalent">Kinoite · KDE · NVIDIA · Trivalent</option>
           <option value="unwoke-silverblue-browserless">Silverblue · GNOME · browserless</option>
           <option value="unwoke-silverblue-nvidia-open-browserless">Silverblue · GNOME · NVIDIA · browserless</option>
           <option value="unwoke-kinoite-browserless">Kinoite · KDE · browserless</option>
@@ -101,13 +102,13 @@
         <ul>
           <li><strong>When a bake is green:</strong> pull <code>ghcr.io/sergi270710267/&lt;name&gt;-iso:latest</code> (box above) or download the Actions artifact (GitHub login).</li>
           <li><strong>Any flavor, on demand:</strong> GitHub → Actions → <strong>iso</strong> → Run workflow → pick the same image as above.</li>
-          <li><strong>Four defaults, weekly</strong> (Sunday 10:00 UTC) once the baker is green: Silverblue/Kinoite × Origin/Trivalent.</li>
+          <li><strong>Four Trivalent desktops, weekly</strong> (Sunday 10:00 UTC) once the baker is green: Silverblue/Kinoite × NVIDIA/not. Origin and browserless: Run workflow.</li>
         </ul>
       </li>
       <li>Pull with <a href="https://oras.land/docs/installation">oras</a> (Linux/macOS) when the package exists:</li>
     </ol>
-<pre><code id="cmd-iso">oras pull ghcr.io/sergi270710267/unwoke-silverblue-iso:latest
-cosign verify --key cosign.pub --insecure-ignore-tlog ghcr.io/sergi270710267/unwoke-silverblue-iso:latest
+<pre><code id="cmd-iso">oras pull ghcr.io/sergi270710267/unwoke-silverblue-trivalent-iso:latest
+cosign verify --key cosign.pub --insecure-ignore-tlog ghcr.io/sergi270710267/unwoke-silverblue-trivalent-iso:latest
 cosign verify-blob --key cosign.pub --insecure-ignore-tlog --signature SHA256SUMS.sig SHA256SUMS
 sha256sum -c SHA256SUMS</code></pre>
     <ol start="3">
@@ -123,13 +124,13 @@ sha256sum -c SHA256SUMS</code></pre>
     <div id="path-rebase" class="install-path">
     <h2 id="rebase"><a href="#rebase">Already on Atomic: rebase</a></h2>
     <p>This switch cannot check our stamp yet (your PC does not have our key):</p>
-<pre><code id="cmd-unverified">rpm-ostree rebase ostree-unverified-registry:ghcr.io/sergi270710267/unwoke-silverblue:latest
+<pre><code id="cmd-unverified">rpm-ostree rebase ostree-unverified-registry:ghcr.io/sergi270710267/unwoke-silverblue-trivalent:latest
 systemctl reboot</code></pre>
 
     <h2 id="signed"><a href="#signed">Signed deployment</a></h2>
     <p>After that reboot, a first-boot service queues the <em>signed</em> image. Reboot one more time when <code>rpm-ostree status</code> shows a staged signed deployment (or after a few minutes on the network). From then on, updates must match our <code>cosign.pub</code>.</p>
     <p>If it did not auto-stage (no network on first boot):</p>
-<pre><code id="cmd-signed">rpm-ostree rebase ostree-image-signed:docker://ghcr.io/sergi270710267/unwoke-silverblue:latest
+<pre><code id="cmd-signed">rpm-ostree rebase ostree-image-signed:docker://ghcr.io/sergi270710267/unwoke-silverblue-trivalent:latest
 systemctl reboot</code></pre>
     </div>
 
@@ -154,7 +155,7 @@ ujust set-trivalent-network-sandbox off  # if Trivalent clears cookies
 ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
 
     <h2 id="verify"><a href="#verify">Verify an image</a></h2>
-<pre><code id="cmd-verify">cosign verify --key cosign.pub ghcr.io/sergi270710267/unwoke-silverblue</code></pre>
+<pre><code id="cmd-verify">cosign verify --key cosign.pub ghcr.io/sergi270710267/unwoke-silverblue-trivalent</code></pre>
   </main>
 
   <footer>
@@ -174,6 +175,7 @@ ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
     const signed = document.getElementById("cmd-signed");
     const verify = document.getElementById("cmd-verify");
     const iso = document.getElementById("cmd-iso");
+    const originWarn = document.getElementById("origin-warn");
     const isoStatus = document.getElementById("iso-status");
     const isoActions = document.getElementById("iso-actions");
     const isoDownload = document.getElementById("iso-download");
@@ -205,6 +207,9 @@ ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
         "sha256sum -c SHA256SUMS";
       checkIso(name);
       applyOs();
+      if (originWarn) {
+        originWarn.hidden = document.querySelector('input[name="browser"]:checked').value !== "";
+      }
     }
     function applyOs() {
       const os = document.querySelector('input[name="os"]:checked').value;

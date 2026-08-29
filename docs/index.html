@@ -55,7 +55,7 @@
 
     <h2 id="about"><a href="#about">About</a></h2>
     <p><strong>Unwoke SecureBlue</strong> is a daily <a href="https://blue-build.org/">BlueBuild</a> overlay on official <a href="https://secureblue.dev">secureblue</a> Fedora Atomic images. Kernel hardening, SELinux, <code>hardened_malloc</code>, closed firewall, and their <code>ujust</code> commands stay. We only change two product decisions: the house browser and the house app store.</p>
-    <p>Default images ship the standalone <strong>Brave Origin</strong> RPM (<code>brave-origin</code>), not full <code>brave-browser</code>. <strong>Trivalent</strong> images (<code>*-trivalent</code>) keep stock <a href="https://github.com/secureblue/Trivalent">Trivalent</a> — Vanadium patches and their SELinux jail — and add extra reversible Chromium policies stock does not force. <strong>Browserless</strong> images (<code>*-browserless</code>) strip Trivalent and install nothing: no Origin, no <code>brave_t</code>, stock <code>harden_userns</code>. There is no GUI software store and no Flathub remote until <code>ujust set-flathub verified</code>. Every extra lock has a <code>ujust</code> to turn it off.</p>
+    <p><strong>Recommended default:</strong> <code>*-trivalent</code> — stock <a href="https://github.com/secureblue/Trivalent">Trivalent</a> (Vanadium patches and their SELinux jail) plus extra reversible Chromium policies stock does not force. Unsuffixed names ship standalone <strong>Brave Origin</strong> (<code>brave-origin</code>, not full <code>brave-browser</code>) — looser SELinux, pick it on purpose. <strong>Browserless</strong> (<code>*-browserless</code>) strips Trivalent and installs nothing: no Origin, no <code>brave_t</code>, stock <code>harden_userns</code>. There is no GUI software store and no Flathub remote until <code>ujust set-flathub verified</code>. Every extra lock has a <code>ujust</code> to turn it off.</p>
     <p>It is shipped as OCI bootable container images. Rebase onto one of them from secureblue or any Fedora Atomic desktop. After login, <strong>Unwoke setup</strong> (app grid + autostart; also <code>ujust setup</code>) explains the locks without turning them off. If something looks broken: <code>ujust why</code> — same locks, no auto-unlock. Everyday tasks the secure way: <a href="tutorials/">Tutorials</a>. For details, see the <a href="features/">features list</a>.</p>
 
     <div class="cards">
@@ -65,7 +65,7 @@
       </div>
       <div class="card">
         <h3>Three browser flavors</h3>
-        <p>Default: Brave Origin. <code>-trivalent</code>: stock Trivalent plus extra reversible policies. <code>-browserless</code>: no image browser at all.</p>
+        <p>Recommended: <code>-trivalent</code> (stock jail plus extra locks). Unsuffixed: Brave Origin. <code>-browserless</code>: no image browser at all.</p>
       </div>
       <div class="card">
         <h3>No curator store</h3>
@@ -87,7 +87,7 @@
 
     <h2 id="who"><a href="#who">Who this is for</a></h2>
     <p>People who already want Linux, already want secureblue’s hardening, and do not want a curated app catalog. Pick Origin, keep Trivalent, or run with no image browser.</p>
-    <p>Origin images are <em>not</em> as locked down as stock + Trivalent (no Vanadium patches, fat <code>brave_t</code>). <code>-trivalent</code> images <em>are</em> that house browser, plus extra reversible policies stock does not force. Browserless is tighter than Origin until you install a browser; that install is blocked until <code>ujust set-allow-browsers on ALLOW</code>.</p>
+    <p>The recommended image is <code>*-trivalent</code>: same house browser as stock, plus extra reversible policies. Origin images (unsuffixed) are <em>not</em> as locked down (no Vanadium patches, fat <code>brave_t</code>). Browserless is tighter than Origin until you install a browser; that install is blocked until <code>ujust set-allow-browsers on ALLOW</code>.</p>
 
     <h2 id="honest-limits"><a href="#honest-limits">Honest limits</a></h2>
     <ul>
