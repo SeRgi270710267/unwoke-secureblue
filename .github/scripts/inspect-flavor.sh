@@ -140,6 +140,10 @@ case "${NAME}" in
     ;;
   *)
     [[ "${flavor}" == "brave-origin" ]] || { echo "FAIL: flavor != brave-origin (${flavor})" >&2; fail=1; }
+    if listed usr/bin/trivalent || listed usr/lib64/trivalent/trivalent; then
+      echo "FAIL: Trivalent present on Origin image" >&2
+      fail=1
+    fi
     if ! listed opt/brave.com/brave-origin/brave && ! listed usr/bin/brave-origin; then
       echo "FAIL: Origin ELF missing" >&2
       fail=1
@@ -162,6 +166,9 @@ esac
 
 if [[ "${fail}" -ne 0 ]]; then
   echo "inspect FAILED for ${IMG}" >&2
+  echo "matching members:" >&2
+  awk -F '\t' '$2 ~ /(trivalent|brave-origin|brave\/brave)/ { print; n++; if (n>=40) exit }' \
+    "${work}/members.txt" >&2 || true
   exit 1
 fi
 echo "inspect OK: ${IMG}"
