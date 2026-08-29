@@ -138,7 +138,7 @@ image-version: latest
 **Trust chain**
 
 1. secureblue builds and **cosign-signs** `ghcr.io/secureblue/…-hardened`.
-2. Our CI downloads [their public key](https://github.com/secureblue/secureblue/blob/live/cosign.pub), checks it still matches `keys/secureblue.pub` in this repo, **`cosign verify`s the base**, then **pins that digest** so `:latest` cannot swap mid-build.
+2. Our CI downloads [their public key](https://github.com/secureblue/secureblue/blob/live/cosign.pub), checks it still matches `keys/secureblue.pub` in this repo, **`cosign verify`s the base**, then **pins that digest** so `:latest` cannot swap mid-build. A canary job inspects that signed base (does not run it) and **fails the overlay** if the stock image names this repo, our GHCR, or `/usr/share/unwoke`. Cosign does not protect against a hostile signer; the canary only catches an in-the-clear targeted payload. After rebase, your PC follows **our** GHCR, not theirs.
 3. We drop Bazaar+GUI stores+full `brave-browser`. Origin images also drop Trivalent, then layer **Brave Origin** (`brave-origin`) and a `brave_t` SELinux domain. `-trivalent` images keep stock Trivalent and add extra policies. Browserless images drop Trivalent and skip Origin. Then we **cosign-sign our image** with `cosign.pub` in this repo.
 4. Your PC pulls `ghcr.io/sergi270710267/unwoke-…` and, after the signed rebase, verifies **our** signature.
 

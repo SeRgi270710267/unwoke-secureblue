@@ -24,6 +24,7 @@ Display: **Unwoke SecureBlue** (`Unwoke` = modifier; `SecureBlue` = one word, S+
 - `ghcr.io/sergi270710267/<name>:latest`. Cosign with a GitHub Actions secret (not a hardware key).
 - First rebase is `ostree-unverified-registry`; first-boot promotes `ostree-image-signed`.
 - Image CI: `.github/workflows/build.yml` (paths-ignore docs). Pages: `.github/workflows/pages.yml` from `docs/`.
+- Base canary: `.github/scripts/scan-base-canary.sh` runs on the four official bases *before* the 12-image matrix. Inspects (docker create/copy, never run) for needles in `.github/scripts/base-canary-needles.txt`. Hit = no overlay. Does not catch a generic backdoor or obfuscation. Stock still cannot push to this GitHub/GHCR; user machines follow Unwoke GHCR after signed rebase.
 - Daily image rebuilds 08:00 and 20:00 UTC. Docs mirror of secureblue.dev at 09:30 UTC into generated `docs/secureblue/` (gitignored).
 
 ## What the overlay does

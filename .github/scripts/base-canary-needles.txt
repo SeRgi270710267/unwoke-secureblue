@@ -1,0 +1,10 @@
+sergi270710267
+unwoke-secureblue
+unwoke-silverblue
+unwoke-kinoite
+/usr/share/unwoke
+/usr/libexec/unwoke
+ghcr.io/sergi270710267
+unwoke-first-boot
+unwoke-browser-guard
+Unwoke SecureBlue
