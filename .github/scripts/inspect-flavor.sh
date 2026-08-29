@@ -9,8 +9,10 @@ OWNER="${OWNER,,}"
 IMG="ghcr.io/${OWNER}/${NAME}:latest"
 ROOT="${GITHUB_WORKSPACE:-.}"
 PUB="${ROOT}/cosign.pub"
+extract="${ROOT}/.github/scripts/extract-prefixes.py"
 
 [[ -f "${PUB}" ]] || { echo "missing ${PUB}" >&2; exit 1; }
+[[ -f "${extract}" ]] || { echo "missing ${extract}" >&2; exit 1; }
 command -v cosign >/dev/null || { echo "cosign required" >&2; exit 1; }
 
 bash "${ROOT}/.github/scripts/install-crane.sh"
@@ -33,14 +35,12 @@ cosign verify --key "${PUB}" "${IMG}" >/dev/null
 work="$(mktemp -d)"
 trap 'rm -rf "${work}"' EXIT
 echo "inspect: export ${IMG}"
-set +o pipefail
-crane export "${IMG}" - | tar --ignore-failed-read -x -C "${work}" \
+crane export "${IMG}" - | python3 "${extract}" "${work}" "${work}/members.txt" \
   usr/share/unwoke usr/bin usr/lib64 usr/libexec opt usr/share/applications \
-  etc/selinux usr/etc 2>/dev/null
-crane_rc="${PIPESTATUS[0]}"
-set -o pipefail
-if [[ "${crane_rc}" -ne 0 ]]; then
-  echo "FAIL: crane export exited ${crane_rc} for ${IMG}" >&2
+  etc/selinux usr/etc
+
+if [[ ! -s "${work}/members.txt" ]]; then
+  echo "FAIL: export produced no file list from ${IMG}" >&2
   exit 1
 fi
 

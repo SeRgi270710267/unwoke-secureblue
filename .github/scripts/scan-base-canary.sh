@@ -7,13 +7,14 @@ set -euo pipefail
 base="${1:?usage: scan-base-canary.sh ghcr.io/secureblue/<image>}"
 key="${GITHUB_WORKSPACE:-.}/keys/secureblue.pub"
 needles="${GITHUB_WORKSPACE:-.}/.github/scripts/base-canary-needles.txt"
+extract="${GITHUB_WORKSPACE:-.}/.github/scripts/extract-prefixes.py"
 live_key_url="https://raw.githubusercontent.com/secureblue/secureblue/live/cosign.pub"
 
 [[ -f "$key" ]] || { echo "missing vendored key: $key" >&2; exit 1; }
 [[ -f "$needles" ]] || { echo "missing needles: $needles" >&2; exit 1; }
+[[ -f "$extract" ]] || { echo "missing $extract" >&2; exit 1; }
 
 bash "${GITHUB_WORKSPACE:-.}/.github/scripts/install-crane.sh"
-# install-crane.sh appends ~/.local/bin to GITHUB_PATH (next step only)
 export PATH="${HOME}/.local/bin:${PATH}"
 
 curl -fsSL --retry 5 "$live_key_url" -o /tmp/secureblue-live.pub
@@ -35,20 +36,18 @@ echo "canary: exporting ${img} (crane, no run, no docker pull)"
 work="$(mktemp -d)"
 trap 'rm -rf "${work}"' EXIT
 
-set +o pipefail
-crane export "${img}" - | tar --ignore-failed-read -x -C "${work}" \
+crane export "${img}" - | python3 "${extract}" "${work}" "${work}/members.txt" \
   usr/libexec usr/lib/systemd usr/etc etc usr/share/ublue-os usr/share/just \
-  usr/share/unwoke usr/bin usr/sbin 2>/dev/null
-crane_rc="${PIPESTATUS[0]}"
-set -o pipefail
-if [[ "${crane_rc}" -ne 0 ]]; then
-  echo "FAIL: crane export exited ${crane_rc} for ${img}" >&2
+  usr/share/unwoke usr/bin usr/sbin
+
+if [[ ! -s "${work}/members.txt" ]]; then
+  echo "FAIL: export produced no file list from ${img}" >&2
   exit 1
 fi
 
 if [[ -d "${work}/usr/share/unwoke" ]]; then
   echo "FAIL: stock base contains /usr/share/unwoke" >&2
-  find "${work}/usr/share/unwoke" | head >&2 || true
+  ls -la "${work}/usr/share/unwoke" >&2 || true
   exit 1
 fi
 if [[ -d "${work}/usr/libexec/unwoke" ]]; then
@@ -56,21 +55,16 @@ if [[ -d "${work}/usr/libexec/unwoke" ]]; then
   exit 1
 fi
 
-if [[ ! -d "${work}/usr" ]]; then
-  echo "FAIL: export produced no /usr from ${img}" >&2
-  exit 1
-fi
-
 mapfile -t pats < <(sed -e 's/#.*//' -e '/^[[:space:]]*$/d' "${needles}")
 [[ "${#pats[@]}" -gt 0 ]] || { echo "empty needle list" >&2; exit 1; }
 
 regex="$(printf '%s\n' "${pats[@]}" | sed 's/[.[\*^$()+?{|]/\\&/g' | paste -sd '|')"
-echo "canary: searching exported trees for: ${regex}"
+echo "canary: searching names + extracted trees for: ${regex}"
 
-hits="$(grep -RInI -E "${regex}" "${work}" || true)"
+hits="$(grep -RInI -E "${regex}" "${work}/members.txt" "${work}" --exclude=members.txt || true)"
 if [[ -n "${hits}" ]]; then
   echo "FAIL: official base names this overlay (possible targeted payload in a public image)" >&2
-  echo "${hits}" | head -n 80 >&2
+  echo "${hits}" | sed -n '1,80p' >&2
   echo "Refusing to overlay ${img}" >&2
   exit 1
 fi
