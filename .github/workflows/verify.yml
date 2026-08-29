@@ -86,6 +86,31 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: bash .github/scripts/inspect-flavor.sh "${{ matrix.image }}"
 
+  trust-watch:
+    name: Trust / pin / GHCR public
+    if: github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      packages: write
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Watch stock key, titanoboa pin, GHCR visibility
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: bash docs/_tools/watch-trust.sh
+
   factory-alarm:
     name: Factory alarm
     if: always() && !cancelled() && github.actor != 'dependabot[bot]' && needs.inspect.result == 'failure'

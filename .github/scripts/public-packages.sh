@@ -61,6 +61,8 @@ if [[ -n "${listed}" ]]; then
   done <<<"${listed}"
 fi
 
+still_private=0
+
 set_public() {
   local name="$1"
   local vis
@@ -91,6 +93,7 @@ set_public() {
   fi
   echo "WARN: still private: https://github.com/users/${OWNER}/packages/container/${name}/settings"
   echo "      GitHub → Packages → ${name} → Change visibility → Public (one click, then this job is a no-op)"
+  still_private=$((still_private + 1))
   return 0
 }
 
@@ -98,5 +101,17 @@ echo "public-packages: owner=${OWNER}"
 for n in "${queue[@]}"; do
   set_public "${n}"
 done
-echo "public-packages: done (warnings are not a failed bake)"
+echo "public-packages: still_private=${still_private} (warnings are not a failed bake)"
+if [[ -n "${GITHUB_OUTPUT:-}" ]]; then
+  echo "still_private=${still_private}" >> "${GITHUB_OUTPUT}"
+fi
+
+ROOT="${GITHUB_WORKSPACE:-.}"
+if [[ "${ALARM:-}" == "1" && -f "${ROOT}/.github/scripts/issue-alarm.sh" ]]; then
+  if [[ "${still_private}" -gt 0 ]]; then
+    bash "${ROOT}/.github/scripts/issue-alarm.sh" packages open || true
+  else
+    bash "${ROOT}/.github/scripts/issue-alarm.sh" packages close || true
+  fi
+fi
 exit 0

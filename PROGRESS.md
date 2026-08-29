@@ -170,6 +170,7 @@ Stock `ujust` still works.
 26. **Mullvad VPN** on that list: WireGuard first; official `mullvad.repo` + `mullvad-vpn` asked. Hosts allowlisted for heal. Not Mullvad Browser. Tutorial + `ujust install-mullvad`.
 27. **Tutorials hub generated at Pages deploy** from `tutorials-core.json` + every `vendors{}` `tutorial` slug. Vendor command lists injected. Missing slugs get a stub page. Does not auto-unlock.
 28. **Whole-factory self-heal (no weaker locks):** ISO + Pages alarm issues; public-packages after ISO; compose chmod-all + vendor help stubs; inspect every JSON key; vendor schema/allowlist including `mail.proton.me` / `pass.proton.me`; vendor-watch regenerates tutorials hub; site [Factory](https://sergi270710267.github.io/unwoke-secureblue/factory/) map of auto vs human. Canary, signing key, new vendor host, Flathub, titanoboa pin stay human.
+29. **Sit-back nags without auto-trust:** twice-daily `watch-trust.sh` (on `verify.yml`, does not bake) opens `stock-key` / `titanoboa-pin` / `ghcr-private` instead of a silent log line. Tries Public again. Relocates 404 stock snapshot URLs only inside `secureblue/live` + unique filename. Does **not** replace `keys/secureblue.pub` or bump titanoboa.
 
 Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only / `iso.yml` pushes should not rebuild images (`build.yml` paths-ignore). `issue-alarm.sh` is paths-ignored. Overlay scripts (`apply-unwoke.sh`, `vendor.py`, `inspect-flavor.sh`) **do** bake.
 

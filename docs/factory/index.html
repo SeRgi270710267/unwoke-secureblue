@@ -97,8 +97,23 @@
           </tr>
           <tr>
             <td>First GHCR push is private</td>
-            <td><code>public-packages.sh</code> tries to set Public (overlay <em>and</em> ISO). Warn-only</td>
-            <td>Fail the bake. You may still need one Packages click if the token cannot flip visibility</td>
+            <td>Tries Public after overlay, ISO, and twice-daily trust-watch. Opens <code>ghcr-private</code> with the click URL if GitHub still refuses the token. Closes after the click</td>
+            <td>Fail the bake. Auto-guess a different registry</td>
+          </tr>
+          <tr>
+            <td>Stock <code>harden_flatpak.py</code> path 404s (same repo, same filename)</td>
+            <td>Vendor-watch relocates the raw URL inside <code>secureblue/live</code> only</td>
+            <td>Fetch from some other GitHub org. Exec their live Python</td>
+          </tr>
+          <tr>
+            <td>Their <code>cosign.pub</code> differs from our copy</td>
+            <td>Bake already refuses. Also opens <code>stock-key</code> so you do not have to read a generic factory fail</td>
+            <td>Auto-replace <code>keys/secureblue.pub</code></td>
+          </tr>
+          <tr>
+            <td>Titanoboa pin commit disappears</td>
+            <td>Opens <code>titanoboa-pin</code> before Sunday wrap mystery-fails</td>
+            <td>Auto-bump to <code>@main</code></td>
           </tr>
           <tr>
             <td>Proton/IVPN/Mullvad URL moves on an allowlisted HTTPS host</td>
@@ -197,6 +212,9 @@
       <li><code>iso-alarm</code> — USB wrap. Overlay can be green while this is red</li>
       <li><code>pages-alarm</code> — site generate/deploy</li>
       <li><code>vendor-installers</code> — a vendor contract still broken after allowlisted heal</li>
+      <li><code>ghcr-private</code> — a package is still private; one Public click, then it closes</li>
+      <li><code>stock-key</code> — their published key changed; do not auto-accept</li>
+      <li><code>titanoboa-pin</code> — the USB wrap commit is gone; do not auto-bump</li>
     </ul>
     <p>A 429 is not a contract break. Heal does not rewrite on transients. Inspect on a schedule does not close <code>factory-alarm</code> by itself (that would hide a failed canary behind a still-signed old image).</p>
 

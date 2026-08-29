@@ -3,7 +3,7 @@
 # Usage: issue-alarm.sh <iso|pages|factory|vendor> open|close
 set -euo pipefail
 
-preset="${1:?usage: issue-alarm.sh iso|pages|factory|vendor open|close}"
+preset="${1:?usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages open|close}"
 cmd="${2:-open}"
 RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
@@ -69,8 +69,52 @@ Do not weaken locks to make the site build."
 Fix: update \`files/system/usr/share/unwoke/vendor-installers.json\` and/or \`vendor.py\`, then the overlay bake. Do **not** auto-merge a new host, Flathub, or gpgcheck=0."
     CLOSE="Vendor contracts green: ${RUN_URL}"
     ;;
+  key)
+    TITLE="Stock signing key changed (do not auto-accept)"
+    LABEL="stock-key"
+    COLOR="B60205"
+    DESC="secureblue live cosign.pub differs from keys/secureblue.pub"
+    BODY="Their published \`cosign.pub\` no longer matches \`keys/secureblue.pub\`.
+
+- Workflow: \`${GITHUB_WORKFLOW}\`
+- SHA: \`${GITHUB_SHA}\`
+- Run: ${RUN_URL}
+
+The overlay must not bake on a new key until you check it is really them.
+Do **not** auto-replace the file. Compare https://github.com/secureblue/secureblue/blob/live/cosign.pub to \`keys/secureblue.pub\`, then replace only if it is their rotation."
+    CLOSE="Stock key matches live again: ${RUN_URL}"
+    ;;
+  pin)
+    TITLE="ISO titanoboa pin is gone (do not auto-bump)"
+    LABEL="titanoboa-pin"
+    COLOR="D93F0B"
+    DESC="Pinned ublue-os/titanoboa commit is missing on GitHub"
+    BODY="The USB baker pin in \`.github/workflows/iso.yml\` is not on GitHub anymore (force-push or repo move).
+
+- Workflow: \`${GITHUB_WORKFLOW}\`
+- SHA: \`${GITHUB_SHA}\`
+- Run: ${RUN_URL}
+
+Do **not** auto-bump to \`@main\`. Read the new commit, pin a hash, re-dispatch ISO."
+    CLOSE="Titanoboa pin is fetchable again: ${RUN_URL}"
+    ;;
+  packages)
+    TITLE="GHCR package still private — one Public click"
+    LABEL="ghcr-private"
+    COLOR="0E8A16"
+    DESC="An Unwoke GHCR package is still private after the factory tried to publish it"
+    BODY="The factory tried to set Unwoke GHCR packages Public and GitHub still left at least one private. Anonymous rebase/USB fetch needs Public.
+
+- Workflow: \`${GITHUB_WORKFLOW}\`
+- SHA: \`${GITHUB_SHA}\`
+- Run: ${RUN_URL}
+
+Open the Packages settings URL printed in that run (or GitHub → Packages → the \`unwoke-*\` package → Change visibility → Public). One click. After that this job is a no-op and this issue closes.
+Do not make the bake fail over this. Do not switch the registry."
+    CLOSE="GHCR Unwoke packages are Public: ${RUN_URL}"
+    ;;
   *)
-    echo "usage: issue-alarm.sh iso|pages|factory|vendor open|close" >&2
+    echo "usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages open|close" >&2
     exit 1
     ;;
 esac
