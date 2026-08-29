@@ -31,6 +31,7 @@ Display: **Unwoke SecureBlue** (`Unwoke` = modifier; `SecureBlue` = one word, S+
 - Factory alarm: one GitHub issue, label `factory-alarm`, reused. Opened/commented when canary/watch/build/inspect fails (not on PRs). Closed only when canary + watch + bluebuild are all green. A canary hit or key rotation is not auto-merged.
 - Stock MOTD replaced (`usr/libexec/secureblue-motd`). User nags masked by default: deprecation notice, update-verification, flatpak-setup (`ujust set-stock-nags on` to restore). Key-enrollment check stays. Docs mirror sanitizes script-like HTML.
 - Daily image rebuilds 08:00 and 20:00 UTC. Docs mirror of secureblue.dev at 09:30 UTC into generated `docs/secureblue/` (gitignored).
+- Empty-disk ISO: `.github/workflows/iso.yml` wraps a published Unwoke GHCR image (Titanoboa). Dispatch any of the twelve. Weekly (Sunday 10:00 UTC) the four default desktops (Silverblue/Kinoite × Origin/Trivalent) go to `ghcr.io/…/<name>-iso:latest` plus a 14-day artifact. Checksums are cosign-signed. Does not block the overlay factory. GitHub will not host a 3 GB release asset.
 
 ## What the overlay does
 

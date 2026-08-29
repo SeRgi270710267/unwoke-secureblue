@@ -119,11 +119,15 @@ cosign verify --key cosign.pub ghcr.io/sergi270710267/unwoke-silverblue
 
 ---
 
-## USB ISO
+## USB ISO (empty disk, no stock first)
 
-The OS **is** the GHCR image. A flashable ISO is optional.
+The OS **is** the GHCR image. A flashable ISO wraps that image so you do not install stock secureblue first.
 
-Actions → **iso** → Run workflow → pick the image → download the artifact (kept 14 days). GitHub will not host a 3 GB ISO as a normal release.
+- On demand: Actions → **iso** → Run workflow → pick the image → artifact (14 days).
+- Weekly (Sunday 10:00 UTC): Silverblue/Kinoite × Origin/Trivalent pushed to `ghcr.io/sergi270710267/<name>-iso:latest`. Pull with `oras`, verify with `cosign.pub`.
+- GitHub will not host a 3 GB ISO as a normal release. Not Ventoy. Enroll the **secureblue** Secure Boot key (kernel is theirs).
+
+Stock-ISO-then-rebase still works.
 
 ---
 

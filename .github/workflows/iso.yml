@@ -1,12 +1,15 @@
 name: iso
 on:
+  schedule:
+    # Weekly, after Sunday morning overlay rebuilds. NVIDIA/browserless: dispatch.
+    - cron: "00 10 * * 0"
   workflow_dispatch:
     inputs:
       image:
         description: Image to wrap in a live/installer ISO
         required: true
         type: choice
-        default: unwoke-silverblue
+        default: unwoke-silverblue-trivalent
         options:
           - unwoke-silverblue
           - unwoke-silverblue-nvidia-open
@@ -21,13 +24,40 @@ on:
           - unwoke-kinoite-trivalent
           - unwoke-kinoite-nvidia-open-trivalent
 permissions: {}
+concurrency:
+  group: iso-${{ github.event_name }}-${{ github.event.inputs.image || 'weekly' }}
+  cancel-in-progress: false
 jobs:
   iso:
-    name: ISO ${{ inputs.image }}
+    name: ISO ${{ matrix.image }}
+    if: >
+      github.actor != 'dependabot[bot]' &&
+      (
+        (github.event_name == 'workflow_dispatch' && matrix.image == github.event.inputs.image) ||
+        (github.event_name == 'schedule' && !contains(matrix.image, 'nvidia') && !contains(matrix.image, 'browserless'))
+      )
     runs-on: ubuntu-24.04
     permissions:
       contents: read
-      packages: read
+      packages: write
+      id-token: write
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        image:
+          - unwoke-silverblue
+          - unwoke-silverblue-trivalent
+          - unwoke-kinoite
+          - unwoke-kinoite-trivalent
+          - unwoke-silverblue-nvidia-open
+          - unwoke-silverblue-nvidia-open-trivalent
+          - unwoke-kinoite-nvidia-open
+          - unwoke-kinoite-nvidia-open-trivalent
+          - unwoke-silverblue-browserless
+          - unwoke-silverblue-nvidia-open-browserless
+          - unwoke-kinoite-browserless
+          - unwoke-kinoite-nvidia-open-browserless
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
@@ -42,13 +72,28 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Lowercase registry
-        run: echo "IMAGE_REF=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/${{ inputs.image }}:latest" >> "$GITHUB_ENV"
+      - name: Install cosign
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+
+      - name: Verify published Unwoke image
+        env:
+          IMAGE_NAME: ${{ matrix.image }}
+        run: |
+          set -euo pipefail
+          OWNER="${GITHUB_REPOSITORY_OWNER,,}"
+          REF="ghcr.io/${OWNER}/${IMAGE_NAME}:latest"
+          extra=()
+          if cosign verify --help 2>&1 | grep -q -- '--new-bundle-format'; then
+            extra+=(--new-bundle-format=false)
+          fi
+          COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key cosign.pub "${extra[@]}" "${REF}" >/dev/null
+          echo "IMAGE_REF=${REF}" >> "${GITHUB_ENV}"
+          echo "ISO_PKG=ghcr.io/${OWNER}/${IMAGE_NAME}-iso" >> "${GITHUB_ENV}"
 
       - name: Log in to GHCR (root)
         run: echo "${{ github.token }}" | sudo podman login ghcr.io -u "${{ github.actor }}" --password-stdin
 
-      - name: Pull image (root)
+      - name: Pull image (root, podman)
         run: sudo podman pull "${{ env.IMAGE_REF }}"
 
       - name: Build ISO
@@ -56,21 +101,52 @@ jobs:
         uses: ublue-os/titanoboa@5c457c3d0518bd17e754be0fd98a60d29d26abb4 # pin main
         with:
           image-ref: ${{ env.IMAGE_REF }}
-          iso-dest: ${{ github.workspace }}/${{ inputs.image }}.iso
+          iso-dest: ${{ github.workspace }}/${{ matrix.image }}.iso
 
-      - name: Checksum
+      - name: Checksum and sign sums
+        env:
+          COSIGN_PASSWORD: ""
+          COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
+          IMAGE_NAME: ${{ matrix.image }}
         run: |
           set -euo pipefail
-          IMAGE_NAME="${{ inputs.image }}"
           DATE_SUFFIX="$(date -u +%Y%m%d)"
           mkdir -p output
-          mv "${IMAGE_NAME}.iso" "output/unwoke-${IMAGE_NAME}-${DATE_SUFFIX}.iso"
-          (cd output && sha256sum *.iso | tee SHA256SUMS)
+          ISO="output/unwoke-${IMAGE_NAME}-${DATE_SUFFIX}.iso"
+          mv "${IMAGE_NAME}.iso" "${ISO}"
+          (cd output && sha256sum "$(basename "${ISO}")" | tee SHA256SUMS)
+          COSIGN_OCI_EXPERIMENTAL=0 cosign sign-blob --yes --key env://COSIGN_PRIVATE_KEY \
+            output/SHA256SUMS --output-signature output/SHA256SUMS.sig
+          echo "ISO_FILE=${ISO}" >> "${GITHUB_ENV}"
 
-      - name: Upload ISO
+      - name: Install oras
+        run: bash .github/scripts/install-oras.sh
+
+      - name: Publish ISO to GHCR
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          COSIGN_PASSWORD: ""
+          COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
+        run: |
+          set -euo pipefail
+          export PATH="${HOME}/.local/bin:${PATH}"
+          echo "${GITHUB_TOKEN}" | oras login ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
+          oras push "${ISO_PKG}:latest" \
+            --artifact-type application/vnd.unwoke.iso.v1 \
+            "${ISO_FILE}:application/vnd.unwoke.iso" \
+            "output/SHA256SUMS:text/plain" \
+            "output/SHA256SUMS.sig:application/octet-stream"
+          extra=()
+          if cosign verify --help 2>&1 | grep -q -- '--new-bundle-format'; then
+            extra+=(--new-bundle-format=false)
+          fi
+          COSIGN_OCI_EXPERIMENTAL=0 cosign sign --yes --key env://COSIGN_PRIVATE_KEY \
+            "${ISO_PKG}:latest"
+
+      - name: Upload ISO artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: ${{ inputs.image }}-iso
+          name: ${{ matrix.image }}-iso
           path: output/
           if-no-files-found: error
           retention-days: 14

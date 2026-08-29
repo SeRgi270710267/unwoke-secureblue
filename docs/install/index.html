@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#050a16">
   <meta name="color-scheme" content="dark">
   <title>Install | Unwoke SecureBlue</title>
-  <meta name="description" content="Rebase from secureblue or Fedora Atomic onto an Unwoke SecureBlue image, then reboot into the signed deployment.">
+  <meta name="description" content="Install Unwoke SecureBlue from a USB ISO (no stock first) or rebase from Fedora Atomic, then reboot into the signed deployment.">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css?v=4">
@@ -35,7 +35,7 @@
 
   <main id="content">
     <h1>Install</h1>
-    <p>Already on secureblue (or any Fedora Atomic): rebase, reboot, then reboot once more into the signed image. Empty-disk ISO steps are still <a href="secureblue/install/">their install docs</a> (mirrored daily). After rebase, their <a href="secureblue/post-install/">post-install</a> still applies.</p>
+    <p>Two ways in: a <strong>USB ISO of Unwoke</strong> (empty disk, no stock secureblue first), or a <strong>rebase</strong> if you already run Fedora Atomic / secureblue. After either path, their <a href="secureblue/post-install/">post-install</a> still applies.</p>
 
     <h2 id="pick"><a href="#pick">Pick an image</a></h2>
     <div class="select-group">
@@ -55,23 +55,43 @@
       </select>
     </div>
 
-    <h2 id="rebase"><a href="#rebase">1. First rebase</a></h2>
+    <h2 id="usb"><a href="#usb">Empty disk: Unwoke USB ISO</a></h2>
+    <p>This wraps the GHCR image you picked. You do <em>not</em> install stock secureblue first. GitHub will not host a 3 GB file as a normal release, so the ISO lives as a GHCR artifact plus a 14-day Actions download.</p>
+    <ol>
+      <li>Get an ISO:
+        <ul>
+          <li><strong>Any flavor, on demand:</strong> GitHub → Actions → <strong>iso</strong> → Run workflow → pick the same image as above → download the artifact.</li>
+          <li><strong>Four defaults, weekly:</strong> Silverblue/Kinoite × Origin/Trivalent are published to <code>ghcr.io/sergi270710267/&lt;name&gt;-iso:latest</code> each Sunday.</li>
+        </ul>
+      </li>
+      <li>Pull a weekly ISO (Linux/macOS, <a href="https://oras.land/docs/installation">oras</a> installed):</li>
+    </ol>
+<pre><code id="cmd-iso">oras pull ghcr.io/sergi270710267/unwoke-silverblue-iso:latest
+cosign verify --key cosign.pub ghcr.io/sergi270710267/unwoke-silverblue-iso:latest
+cosign verify-blob --key cosign.pub --signature SHA256SUMS.sig SHA256SUMS
+sha256sum -c SHA256SUMS</code></pre>
+    <ol start="3">
+      <li>Flash with Fedora Media Writer, <code>dd</code>, or Rufus. <strong>Not Ventoy.</strong></li>
+      <li>Boot, install, encrypt the disk, join <code>wheel</code>. Enroll the <strong>secureblue</strong> Secure Boot key when prompted — the kernel is still theirs.</li>
+      <li>After the first boot, wait for the signed deployment (<code>rpm-ostree status</code>) and reboot once more. Same as the rebase path.</li>
+    </ol>
+    <div class="alert">
+      <p>Enable Secure Boot, update the BIOS, and set a BIOS password if you care about that threat model — same advice as <a href="https://secureblue.dev/install">their install page</a>. The live USB session is for install; the installed system is the signed Unwoke image.</p>
+    </div>
+
+    <h2 id="rebase"><a href="#rebase">Already on Atomic: rebase</a></h2>
     <p>This switch cannot check our stamp yet (your PC does not have our key):</p>
 <pre><code id="cmd-unverified">rpm-ostree rebase ostree-unverified-registry:ghcr.io/sergi270710267/unwoke-silverblue:latest
 systemctl reboot</code></pre>
 
-    <h2 id="signed"><a href="#signed">2. Signed deployment</a></h2>
+    <h2 id="signed"><a href="#signed">Signed deployment</a></h2>
     <p>After that reboot, a first-boot service queues the <em>signed</em> image. Reboot one more time when <code>rpm-ostree status</code> shows a staged signed deployment (or after a few minutes on the network). From then on, updates must match our <code>cosign.pub</code>.</p>
     <p>If it did not auto-stage (no network on first boot):</p>
 <pre><code id="cmd-signed">rpm-ostree rebase ostree-image-signed:docker://ghcr.io/sergi270710267/unwoke-silverblue:latest
 systemctl reboot</code></pre>
 
-    <h2 id="empty"><a href="#empty">Empty disk</a></h2>
-    <p>Flash a <a href="https://secureblue.dev/install">secureblue ISO</a> first. Encrypt the drive, join <code>wheel</code>, enroll their Secure Boot key when prompted, then run the rebase commands above. We do not ship a daily ISO as a GitHub release (they are ~3 GB). Optional ISO artifacts can be built from the repo’s <code>iso</code> workflow.</p>
-
-    <div class="alert">
-      <p>Do not use Ventoy for the secureblue installer ISO. Enable Secure Boot, update the BIOS, and set a BIOS password if you care about that threat model — same advice as <a href="https://secureblue.dev/install">their install page</a>.</p>
-    </div>
+    <h2 id="stock-iso"><a href="#stock-iso">Empty disk via stock ISO</a></h2>
+    <p>Still valid: flash a <a href="https://secureblue.dev/install">secureblue ISO</a>, encrypt, enroll their key, then rebase. Use this if you want their installer and do not want to wait for an Unwoke ISO build.</p>
 
     <h2 id="after"><a href="#after">After install</a></h2>
     <p>Stock secureblue post-install still applies. Full overlay + their steps: <a href="post-install/">Post-install</a>. Their page only (mirrored daily): <a href="secureblue/post-install/">secureblue/post-install</a>.</p>
@@ -105,6 +125,7 @@ ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
     const unverified = document.getElementById("cmd-unverified");
     const signed = document.getElementById("cmd-signed");
     const verify = document.getElementById("cmd-verify");
+    const iso = document.getElementById("cmd-iso");
     function render() {
       const name = select.value;
       unverified.textContent =
@@ -113,8 +134,14 @@ ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
         "rpm-ostree rebase ostree-image-signed:docker://ghcr.io/sergi270710267/" + name + ":latest\nsystemctl reboot";
       verify.textContent =
         "cosign verify --key cosign.pub ghcr.io/sergi270710267/" + name;
+      iso.textContent =
+        "oras pull ghcr.io/sergi270710267/" + name + "-iso:latest\n" +
+        "cosign verify --key cosign.pub ghcr.io/sergi270710267/" + name + "-iso:latest\n" +
+        "cosign verify-blob --key cosign.pub --signature SHA256SUMS.sig SHA256SUMS\n" +
+        "sha256sum -c SHA256SUMS";
     }
     select.addEventListener("change", render);
+    render();
   </script>
 </body>
 </html>
