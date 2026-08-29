@@ -302,9 +302,11 @@ def render_fix(fid: str, spec: dict) -> str:
     revert = html.escape(spec.get("revert") or "")
     note = html.escape(spec.get("note") or "")
     return (
-        f'<div class="alert note unwoke-cmd"><p><strong>Possible Unwoke revert</strong> '
-        f"(not applied to the image). Off again: <code>{revert}</code></p>"
-        f"<pre><code>{code}</code></pre><p>{note}</p></div>"
+        f'<div class="cmd-box">'
+        f'<p class="cmd-label">Type this <span>(revertable · not baked)</span></p>'
+        f"<pre><code>{code}</code></pre>"
+        f'<p class="cmd-off">Turn it back off: <code>{revert}</code></p>'
+        f"<p>{note}</p></div>"
     )
 
 
@@ -315,20 +317,33 @@ def render_item(issue: dict, fix_ids: list[str], fixes: dict, answer: str = "") 
     when = html.escape((issue.get("updated_at") or "")[:10])
     blurb = html.escape(excerpt(issue.get("body") or ""))
     boxes = "\n".join(render_fix(fid, fixes[fid]) for fid in fix_ids if fid in fixes)
-    ai_html = ""
     if answer:
+        kind = "has-ai"
+        badge = '<span class="badge badge-ai">AI note</span>'
         ai_html = (
-            f'<p class="ai-answer"><strong>Automated Unwoke note.</strong> '
-            f"{html.escape(answer)} Not applied to the image.</p>"
+            f'<div class="ai-panel" id="ai-{html.escape(str(num))}">'
+            f'<p class="ai-kicker">AI note · Unwoke only</p>'
+            f"<p>{html.escape(answer)}</p>"
+            f"<p class=\"ai-foot\">Guess from the issue title. Not a patch. Commands below are the allowlist.</p>"
+            f"</div>"
+        )
+    else:
+        kind = "no-ai"
+        badge = '<span class="badge badge-map">Keyword only</span>'
+        ai_html = (
+            f'<div class="ai-panel missing" id="ai-{html.escape(str(num))}">'
+            f'<p class="ai-kicker">No AI note this deploy</p>'
+            f"<p>The free model skipped or rate-limited. The box below is still the overlay command we map to this issue.</p>"
+            f"</div>"
         )
     return (
-        f'<article class="card issue-card">'
-        f'<p class="eyebrow">#{html.escape(str(num))} · {when}</p>'
+        f'<article class="card issue-card {kind}">'
+        f'<p class="eyebrow">#{html.escape(str(num))} · {when} {badge}</p>'
         f'<h2><a href="{url}">{title}</a></h2>'
-        f"{f'<p>{blurb}</p>' if blurb else ''}"
         f"{ai_html}"
         f"{boxes}"
-        f'<p class="mirror-meta">Stock issue. Canonical: <a href="{url}">{url}</a></p>'
+        f"{f'<p class="stock-blurb">{blurb}</p>' if blurb else ''}"
+        f'<p class="mirror-meta"><a href="{url}">Stock issue #{html.escape(str(num))}</a></p>'
         f"</article>"
     )
 
@@ -339,6 +354,7 @@ def main() -> int:
     rows: list[str] = []
     kept = 0
     scanned = 0
+    ai_n = 0
     key, base, model = ai_conf()
     allowed = list(fixes.keys())
     print(f"stock-issues: AI {model} @ {base}" + (" (keyed)" if key else " (public Pollinations, one batch)"))
@@ -366,6 +382,8 @@ def main() -> int:
             continue
         rows.append(render_item(rec, hits, fixes, answer))
         kept += 1
+        if answer:
+            ai_n += 1
     inner = "\n".join(rows) if rows else (
         "<p>No open stock issues currently map to an Unwoke-only revertable workaround. "
         "CI, Dependabot, Sway/COSMIC/IoT, and PRs are omitted on purpose.</p>"
@@ -377,6 +395,7 @@ def main() -> int:
         .replace("__FETCHED__", fetched)
         .replace("__KEPT__", str(kept))
         .replace("__SCANNED__", str(scanned))
+        .replace("__AI_N__", str(ai_n))
     )
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(html_out, encoding="utf-8")

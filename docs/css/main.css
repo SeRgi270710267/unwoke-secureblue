@@ -476,22 +476,133 @@ main.mirror img {
   margin: 1rem 0 1.25rem;
 }
 
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.85rem;
+  margin: 0 0 1.25rem;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  vertical-align: middle;
+}
+
+.badge-ai {
+  background: #3b6cff;
+  color: #fff;
+}
+
+.badge-map {
+  background: var(--bg-card);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
 .issue-card {
-  margin: 1.15rem 0 1.5rem;
+  margin: 1.35rem 0 1.75rem;
+  padding: 1.15rem 1.2rem 1rem;
+  border-left: 4px solid var(--border);
+}
+
+.issue-card.has-ai {
+  border-left-color: #3b6cff;
+}
+
+.issue-card.no-ai {
+  border-left-color: var(--text-muted);
 }
 
 .issue-card h2 {
-  margin: 0.15rem 0 0.55rem;
-  font-size: 1.15rem;
+  margin: 0.2rem 0 0.85rem;
+  font-size: 1.2rem;
   border-top: 0;
   padding-top: 0;
 }
 
-.ai-answer {
-  color: var(--text);
-  background: var(--accent-soft);
-  border-radius: 10px;
-  padding: 0.75rem 0.9rem;
+.ai-panel {
+  background: #3b6cff;
+  color: #fff;
+  border-radius: 12px;
+  padding: 0.95rem 1.05rem;
+  margin: 0 0 1rem;
+}
+
+.ai-panel p {
+  margin: 0.35rem 0 0;
+  color: #fff;
+}
+
+.ai-kicker {
+  margin: 0 !important;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.ai-foot {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+.ai-panel.missing {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px dashed var(--border);
+}
+
+.ai-panel.missing p,
+.ai-panel.missing .ai-kicker {
+  color: var(--text-muted);
+}
+
+.cmd-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.85rem 1rem 0.7rem;
+  margin: 0 0 0.85rem;
+}
+
+.cmd-label {
+  margin: 0 0 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.cmd-label span {
+  letter-spacing: 0;
+  text-transform: none;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.cmd-box pre {
+  margin: 0.2rem 0 0.55rem;
+}
+
+.cmd-off {
+  margin: 0 0 0.45rem;
+  font-size: 0.9rem;
+}
+
+.stock-blurb {
+  color: var(--text-muted);
+  font-size: 0.9rem;
 }
 
 ul.whats-new {
