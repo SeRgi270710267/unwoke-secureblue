@@ -36,19 +36,22 @@ def main() -> int:
             if name not in keep_exact and not name.startswith(keep_slash):
                 continue
             out_path = os.path.join(dest, name)
+            parent = os.path.dirname(out_path)
+            if parent:
+                os.makedirs(parent, exist_ok=True)
             if member.isdir():
                 os.makedirs(out_path, exist_ok=True)
                 n_extracted += 1
                 continue
-            parent = os.path.dirname(out_path)
-            if parent:
-                os.makedirs(parent, exist_ok=True)
             if member.issym():
                 try:
                     os.symlink(member.linkname, out_path)
                     n_extracted += 1
                 except OSError:
                     pass
+                continue
+            # Hard links / devices / fifos: extractfile() raises on a stream.
+            if not member.isreg():
                 continue
             src = tf.extractfile(member)
             if src is None:
