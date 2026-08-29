@@ -1,5 +1,8 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 # Browserless flavor: no Trivalent, no Brave Origin, no brave_t, no default browser.
 # harden_userns stays stock (Flatpak only). Do not add full Flathub.
 modules:

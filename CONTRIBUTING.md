@@ -34,6 +34,10 @@ Do not edit `docs/secureblue/` by hand.
 
 Every overlay lock must stay **revertable** with `ujust`. Security-first defaults. If a change weakens a lock, it is opt-in and must warn.
 
+## Public mark
+
+Every overlay file under `files/` and `recipes/` must carry `UNWOKE-SHIPPED-FIRST` and the MIT copyright line (`Copyright (c) 2026 SeRgi270710267`). Compose, inspect, and this PR gate fail if a new file is unmarked. Do not obfuscate. Do not change the license. Ideas on stock’s tracker stay public; copies of *this tree* must keep the notice.
+
 ## People-facing git
 
 Optional trailers on the commit body (Pages puts them on Home / Compared):

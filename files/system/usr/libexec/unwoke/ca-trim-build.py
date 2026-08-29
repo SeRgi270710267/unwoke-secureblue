@@ -76,7 +76,11 @@ def main() -> int:
         if fp in moz:
             continue
         n += 1
-        (OUT / f"{fp[:16]}.pem").write_bytes(pem + b"\n")
+        header = (
+            b"# Unwoke SecureBlue. Not affiliated. UNWOKE-SHIPPED-FIRST. "
+            b"MIT Copyright (c) 2026 SeRgi270710267. Stock #1606 was a request.\n"
+        )
+        (OUT / f"{fp[:16]}.pem").write_bytes(header + pem + b"\n")
     print(f"ca-trim-build: blocked {n} extra CAs")
     return 0
 

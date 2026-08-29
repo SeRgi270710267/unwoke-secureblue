@@ -1,5 +1,8 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 # Shared overlay: strip Bazaar and GUI stores. No browser here —
 # recipes add Brave Origin (brave.yml), keep Trivalent (trivalent.yml),
 # or ship nothing (browserless.yml).

@@ -1,4 +1,5 @@
 {
+  "UnwokeShippedFirst": "UNWOKE-SHIPPED-FIRST. MIT License. Copyright (c) 2026 SeRgi270710267. Not affiliated with secureblue.",
   "comment": "THE list. vendor.py check/heal, Setup, ujust install-vendor, and search launchers all iterate every vendors{} key. Add a stanza for a new strict app — do not special-case Proton/IVPN in CI. Live SHA512; heal allowlisted HTTPS only.",
   "vendors": {
     "proton_mail_web": {
@@ -81,7 +82,9 @@
       "keywords": "mullvad;vpn;rpm",
       "url": "https://repository.mullvad.net/rpm/stable/mullvad.repo",
       "require_gpgcheck": true,
-      "packages": ["mullvad-vpn"],
+      "packages": [
+        "mullvad-vpn"
+      ],
       "docs": "https://mullvad.net/en/download/vpn/linux",
       "strictest": false
     },
@@ -93,8 +96,12 @@
       "keywords": "ivpn;rpm;antitracker",
       "url": "https://repo.ivpn.net/stable/fedora/generic/ivpn.repo",
       "require_gpgcheck": true,
-      "packages": ["ivpn"],
-      "packages_optional": ["ivpn-ui"],
+      "packages": [
+        "ivpn"
+      ],
+      "packages_optional": [
+        "ivpn-ui"
+      ],
       "docs": "https://www.ivpn.net/knowledgebase/linux/fedora-silverblue/",
       "strictest": false
     }

@@ -514,6 +514,16 @@ cmd_audit() {
       info "Flatpak talk-name org.freedesktop.Flatpak is present (dangerous bus)"
     fi
   fi
+  if [[ ! -f /usr/share/unwoke/SHIPPED-FIRST.txt ]] || ! grep -q 'UNWOKE-SHIPPED-FIRST' /usr/share/unwoke/SHIPPED-FIRST.txt; then
+    bad "public mark /usr/share/unwoke/SHIPPED-FIRST.txt"
+    fail=1
+  else
+    ok "public mark UNWOKE-SHIPPED-FIRST"
+  fi
+  if [[ ! -f /usr/share/unwoke/NOTICE ]] || [[ ! -f /usr/share/unwoke/LICENSE ]]; then
+    bad "missing /usr/share/unwoke/NOTICE or LICENSE"
+    fail=1
+  fi
   # Stock #2508: warn (or fail on browserless) if a Flatpak web browser is installed.
   if command -v flatpak >/dev/null; then
     local apps br

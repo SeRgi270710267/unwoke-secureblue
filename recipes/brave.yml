@@ -1,5 +1,8 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 # Brave Origin flavor: standalone brave-origin RPM + fat brave_t userns exception.
 modules:
   - type: gschema-overrides

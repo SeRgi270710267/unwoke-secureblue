@@ -68,22 +68,11 @@ if [[ -x /usr/libexec/unwoke/ca-trim-build.py ]] || [[ -f /usr/libexec/unwoke/ca
   python3 /usr/libexec/unwoke/ca-trim-build.py || echo "ca-trim-build: skipped"
 fi
 
-# New overlay scripts must carry the public mark. MIT still allows copy *with* notice.
-python3 - <<'PY'
-from pathlib import Path
-root = Path("/usr/libexec/unwoke")
-missing = []
-if root.is_dir():
-    for p in root.iterdir():
-        if not p.is_file() or p.suffix == ".pyc":
-            continue
-        text = p.read_text(encoding="utf-8", errors="replace")
-        if "UNWOKE-SHIPPED-FIRST" not in text:
-            missing.append(p.name)
-if missing:
-    raise SystemExit("FAIL: unmarked unwoke scripts: " + " ".join(sorted(missing)))
-print("unwoke mark: ok", "scripts")
-PY
+# mark-check.py runs after vendor desktops/help stubs so those are marked too.
+if [[ ! -f /usr/libexec/unwoke/mark-check.py ]]; then
+  echo "FAIL: missing /usr/libexec/unwoke/mark-check.py" >&2
+  exit 1
+fi
 
 # One .desktop per vendors{} key + missing offline help stubs from the same JSON.
 # Fail compose if the list is empty or invalid so the image cannot ship half-synced.
@@ -107,7 +96,10 @@ for name, spec in vendors.items():
         raise SystemExit(f"FAIL: vendor {name} missing kind")
     title = spec.get("title") or name
     kw = spec.get("keywords") or name.replace("_", ";")
-    body = f"""[Desktop Entry]
+    body = f"""# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
+[Desktop Entry]
 Type=Application
 Name={title} (Unwoke)
 Comment=Strict installer from vendor-installers.json. Nothing auto-unlocks.
@@ -135,6 +127,7 @@ for slug, items in slugs.items():
         lis.append(f"<li><strong>{t}</strong> — <code>ujust install-vendor {html.escape(n)}</code></li>")
     dest.write_text(
         f"""<!DOCTYPE html>
+<!-- Unwoke SecureBlue. Not affiliated with secureblue. MIT License. Copyright (c) 2026 SeRgi270710267. UNWOKE-SHIPPED-FIRST. -->
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -178,3 +171,8 @@ fi
   echo "FAIL: missing /usr/libexec/unwoke/harden-flatpak.sh" >&2
   exit 1
 }
+[[ -f /usr/share/unwoke/NOTICE && -f /usr/share/unwoke/LICENSE ]] || {
+  echo "FAIL: missing /usr/share/unwoke/NOTICE or LICENSE" >&2
+  exit 1
+}
+python3 /usr/libexec/unwoke/mark-check.py /

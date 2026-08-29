@@ -1,3 +1,6 @@
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 # GNOME dash: no house browser. Terminal + files + Flatseal.
 [org.gnome.shell]
 favorite-apps = ['org.gnome.Nautilus.desktop', 'org.gnome.Ptyxis.desktop', 'com.github.tchx84.Flatseal.desktop']

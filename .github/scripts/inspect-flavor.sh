@@ -56,7 +56,9 @@ trap 'rm -rf "${work}"' EXIT
 echo "inspect: export ${IMG}"
 crane export "${IMG}" - | python3 "${extract}" "${work}" "${work}/members.txt" \
   usr/share/unwoke usr/bin usr/lib64 usr/libexec opt usr/share/applications \
-  usr/lib/systemd etc/selinux usr/etc
+  usr/lib/systemd etc/selinux usr/etc usr/share/glib-2.0/schemas \
+  usr/share/fish usr/share/gnome-background-properties \
+  usr/share/wallpapers/UnwokeSecureBlue
 
 if [[ ! -s "${work}/members.txt" ]]; then
   echo "FAIL: export produced no file list from ${IMG}" >&2
@@ -193,26 +195,15 @@ if [[ ! -f "${work}/usr/share/unwoke/LICENSE" ]]; then
   echo "FAIL: missing /usr/share/unwoke/LICENSE" >&2
   fail=1
 fi
-if ! python3 - "${work}" <<'PY'
-from pathlib import Path
-import sys
-root = Path(sys.argv[1]) / "usr/libexec/unwoke"
-missing = []
-if not root.is_dir():
-    print("FAIL: no libexec/unwoke", file=sys.stderr)
-    raise SystemExit(1)
-for p in root.iterdir():
-    if not p.is_file() or p.suffix == ".pyc":
-        continue
-    if "UNWOKE-SHIPPED-FIRST" not in p.read_text(encoding="utf-8", errors="replace"):
-        missing.append(p.name)
-if missing:
-    print("FAIL: unmarked:", *sorted(missing), file=sys.stderr)
-    raise SystemExit(1)
-print("unwoke mark ok", sum(1 for _ in root.iterdir()))
-PY
-then
-  echo "FAIL: overlay scripts missing UNWOKE-SHIPPED-FIRST" >&2
+if [[ ! -f "${work}/usr/share/unwoke/NOTICE" ]]; then
+  echo "FAIL: missing /usr/share/unwoke/NOTICE" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/libexec/unwoke/mark-check.py" ]]; then
+  echo "FAIL: missing /usr/libexec/unwoke/mark-check.py" >&2
+  fail=1
+elif ! python3 "${work}/usr/libexec/unwoke/mark-check.py" "${work}"; then
+  echo "FAIL: overlay files missing UNWOKE-SHIPPED-FIRST" >&2
   fail=1
 fi
 for f in usr/share/unwoke/nm-privacy-connectivity.conf \

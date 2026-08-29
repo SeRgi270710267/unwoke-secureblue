@@ -1,5 +1,8 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 name: unwoke-kinoite-nvidia-open-trivalent
 description: "Unwoke SecureBlue — KDE, NVIDIA open, stock Trivalent plus extra reversible policies, no Bazaar"
 

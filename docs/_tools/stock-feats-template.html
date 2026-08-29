@@ -57,12 +57,13 @@
 <!-- feats-generated:end -->
 
     <h2 id="record"><a href="#record">The public mark</a></h2>
-    <p>You cannot copyright “please default LUKS on.” Those sentences were already on their tracker. You <em>can</em> make a silent copy obvious.</p>
+    <p>You cannot copyright “please default LUKS on.” Those sentences were already on their tracker. You <em>can</em> make a silent copy obvious. This mark is default-on, like the other overlay locks: bake fails if it is missing.</p>
     <ul>
       <li><strong>Dates.</strong> Git on <code>main</code> and this page. If they ship later, the card says after us.</li>
-      <li><strong>A file in the OS.</strong> <code>/usr/share/unwoke/SHIPPED-FIRST.txt</code> starts with the token <code>UNWOKE-SHIPPED-FIRST</code>. Copy the overlay tree into another image and that string comes along. Reimplement from scratch and it does not — then the dates still stand.</li>
+      <li><strong>Every overlay file.</strong> Scripts, units, drop-ins, desktop files, and Chromium JSON carry <code>UNWOKE-SHIPPED-FIRST</code> plus the MIT copyright line. Generated ramdisk and CA files write the same token into <code>/etc</code>. Compose, inspect, and the PR gate fail if a new overlay file is unmarked.</li>
+      <li><strong>A file in the OS.</strong> <code>/usr/share/unwoke/SHIPPED-FIRST.txt</code> is the dated ledger. <code>/usr/share/unwoke/NOTICE</code> is the MIT reminder. Copy the overlay tree and those strings come along. Reimplement from scratch and they do not — then the dates still stand.</li>
       <li><strong>A signed receipt.</strong> GitHub Release tag <a href="https://github.com/SeRgi270710267/unwoke-secureblue/releases/tag/receipt"><code>receipt</code></a> attaches the same ledger next to <code>cosign.pub</code>. Not the OS. Not the USB.</li>
-      <li><strong>License.</strong> MIT, Copyright 2026 SeRgi270710267. Code copies must keep that notice. Ideas on their issue tracker were already public.</li>
+      <li><strong>License.</strong> MIT, Copyright 2026 SeRgi270710267. Code copies must keep that notice. Ideas on their issue tracker were already public. We do not obfuscate and we do not change the license.</li>
     </ul>
     <p>Plain text: <a href="ahead/SHIPPED-FIRST.txt"><code>SHIPPED-FIRST.txt</code></a>.</p>
 

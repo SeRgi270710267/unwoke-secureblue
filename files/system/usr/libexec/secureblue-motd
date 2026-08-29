@@ -1,4 +1,7 @@
 #!/bin/sh
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 # Replaces stock secureblue-motd (donate/Discord/deprecated-rebase tips).
 # Stock profile.d still calls this path; we own the file.
 echo "Unwoke SecureBlue — overlay, not affiliated with secureblue."

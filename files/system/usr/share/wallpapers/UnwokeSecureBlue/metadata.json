@@ -1,10 +1,15 @@
 {
-    "KPackageStructure": "Plasma/Wallpaper",
-    "KPlugin": {
-        "Authors": [{"Name": "Unwoke SecureBlue"}],
-        "Description": "Navy field, electric blue shield",
-        "Id": "UnwokeSecureBlue",
-        "License": "MIT",
+  "UnwokeShippedFirst": "UNWOKE-SHIPPED-FIRST. MIT License. Copyright (c) 2026 SeRgi270710267. Not affiliated with secureblue.",
+  "KPackageStructure": "Plasma/Wallpaper",
+  "KPlugin": {
+    "Authors": [
+      {
         "Name": "Unwoke SecureBlue"
-    }
+      }
+    ],
+    "Description": "Navy field, electric blue shield",
+    "Id": "UnwokeSecureBlue",
+    "License": "MIT",
+    "Name": "Unwoke SecureBlue"
+  }
 }

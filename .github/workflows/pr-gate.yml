@@ -64,7 +64,13 @@ jobs:
         run: |
           python3 -m py_compile files/system/usr/libexec/unwoke/vendor.py
           python3 -m py_compile files/system/usr/libexec/unwoke/setup-gui.py
+          python3 -m py_compile files/system/usr/libexec/unwoke/mark-check.py
+          python3 -m py_compile files/system/usr/libexec/unwoke/ca-trim-build.py
           python3 -m py_compile docs/_tools/generate-progress.py
           python3 -m py_compile docs/_tools/generate-stock-issues.py
           python3 -m py_compile docs/_tools/generate-stock-feats.py
+          python3 -m py_compile docs/_tools/stamp-unwoke-mark.py
           python3 -m py_compile .github/scripts/mirror-secureblue-docs.py
+
+      - name: Public mark on overlay sources
+        run: python3 files/system/usr/libexec/unwoke/mark-check.py --tree .

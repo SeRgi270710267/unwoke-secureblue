@@ -1,5 +1,8 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
 # Trivalent flavor: keep stock Trivalent + trivalent-selinux. No Origin, no brave_t.
 # Extra Chromium managed policies + conf.d flags are applied at first boot / ujust.
 modules:
