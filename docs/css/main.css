@@ -487,6 +487,13 @@ main.mirror img {
   padding-top: 0;
 }
 
+.ai-answer {
+  color: var(--text);
+  background: var(--accent-soft);
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+}
+
 ul.whats-new {
   list-style: none;
   padding: 0;

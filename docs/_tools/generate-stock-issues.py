@@ -32,7 +32,7 @@ SENSITIVE = re.compile(
     r"(?i)(\b(password|secret|credential|token|private[ _-]?key|api[ _-]?key)\b"
     r"|gh[pousr]_[A-Za-z0-9_]{20,}|BEGIN [A-Z ]*PRIVATE KEY)"
 )
-MAX_AI = 8
+MAX_AI = 10
 
 
 def fetch(url: str) -> list:
@@ -152,26 +152,26 @@ def excerpt(body: str) -> str:
 
 
 def ai_conf() -> tuple[str, str, str]:
+    """Prefer a paid/free key you own. Else Pollinations text API (no key, public)."""
     key = (
         os.environ.get("UNWOKE_AI_KEY")
         or os.environ.get("GROQ_API_KEY")
         or os.environ.get("XAI_API_KEY")
         or ""
     ).strip()
-    if not key:
-        return "", "", ""
     if os.environ.get("UNWOKE_AI_BASE"):
         base = os.environ["UNWOKE_AI_BASE"].rstrip("/")
-        model = os.environ.get("UNWOKE_AI_MODEL") or "llama-3.3-70b-versatile"
+        model = os.environ.get("UNWOKE_AI_MODEL") or "openai"
         return key, base, model
     if os.environ.get("XAI_API_KEY") and not os.environ.get("GROQ_API_KEY"):
         return key, "https://api.x.ai/v1", os.environ.get("UNWOKE_AI_MODEL") or "grok-4-fast-non-reasoning"
-    return key, "https://api.groq.com/openai/v1", os.environ.get("UNWOKE_AI_MODEL") or "llama-3.3-70b-versatile"
+    if os.environ.get("GROQ_API_KEY") or os.environ.get("UNWOKE_AI_KEY"):
+        return key, "https://api.groq.com/openai/v1", os.environ.get("UNWOKE_AI_MODEL") or "llama-3.3-70b-versatile"
+    # Default: no secret. Public Pollinations chat (model id "openai").
+    return "", "https://text.pollinations.ai", os.environ.get("UNWOKE_AI_MODEL") or "openai"
 
 
 def ai_candidate(issue: dict, hits: list[str]) -> bool:
-    if hits:
-        return False
     t = (issue.get("title") or "").lower()
     if "[bug]" in t:
         return True
@@ -191,62 +191,108 @@ def ai_candidate(issue: dict, hits: list[str]) -> bool:
     )
 
 
-def ai_pick(title: str, body: str, allowed: list[str], key: str, base: str, model: str) -> list[str]:
-    blob = f"{title}\n{body}"
-    if SENSITIVE.search(blob):
-        return []
+def ai_batch(
+    items: list[dict],
+    allowed: list[str],
+    key: str,
+    base: str,
+    model: str,
+) -> dict[int, tuple[list[str], str]]:
+    """One request per Pages deploy. ids must stay inside the allowlist."""
+    payload_issues = []
+    for it in items[:MAX_AI]:
+        blob = f"{it.get('title') or ''}\n{it.get('body') or ''}"
+        if SENSITIVE.search(blob):
+            continue
+        payload_issues.append(
+            {
+                "n": it["number"],
+                "title": (it.get("title") or "")[:180],
+                "body": excerpt(it.get("body") or "")[:360],
+                "hint": it.get("hint") or [],
+            }
+        )
+    if not payload_issues:
+        return {}
     sys_msg = (
-        "You map a secureblue GitHub issue to Unwoke overlay workarounds. "
-        "Return JSON only: {\"ids\":[\"jit\"]}. ids must be a subset of the allowed list. "
-        "Empty ids if this is stock kernel/browser/CI with no overlay toggle. "
-        "Never suggest setenforce 0, unsigned rebase, gpgcheck=0, or new shell."
+        "You help Unwoke SecureBlue (overlay on secureblue Silverblue/Kinoite). "
+        "Return JSON only: {\"out\":[{\"n\":1,\"ids\":[\"jit\"],\"answer\":\"two sentences\"}]}. "
+        "ids subset of allowed. answer = what to try on Unwoke, revertable ujust only. "
+        "If stock kernel/browser with no overlay knob, ids [] and answer says wait for their signed image. "
+        "Never setenforce 0, unsigned rebase, gpgcheck=0, new shell, Bubblejail Trivalent."
     )
-    user_msg = (
-        f"Allowed ids: {', '.join(allowed)}\n\n"
-        f"Title: {title[:300]}\n\n{(body or '')[:1200]}"
-    )
-    payload = json.dumps(
+    user_msg = json.dumps({"allowed": allowed, "issues": payload_issues})
+    raw = json.dumps(
         {
             "model": model,
             "temperature": 0,
-            "max_tokens": 120,
+            "max_tokens": 900,
             "messages": [
                 {"role": "system", "content": sys_msg},
                 {"role": "user", "content": user_msg},
             ],
         }
     ).encode("utf-8")
-    req = urllib.request.Request(
-        f"{base}/chat/completions",
-        data=payload,
-        method="POST",
-        headers={
-            "Authorization": f"Bearer {key}",
-            "Content-Type": "application/json",
-            "User-Agent": "unwoke-stock-issues",
-        },
-    )
+    headers = {
+        "Content-Type": "application/json",
+        "User-Agent": "unwoke-stock-issues",
+    }
+    if key:
+        headers["Authorization"] = f"Bearer {key}"
+    chat = f"{base}/chat/completions" if base.endswith("/v1") else f"{base}/openai"
+    text = ""
     try:
-        with urllib.request.urlopen(req, timeout=20, context=CTX) as resp:
+        req = urllib.request.Request(chat, data=raw, method="POST", headers=headers)
+        with urllib.request.urlopen(req, timeout=45, context=CTX) as resp:
             data = json.load(resp)
-        text = (((data.get("choices") or [{}])[0].get("message") or {}).get("content")) or ""
+        if isinstance(data, dict):
+            text = (((data.get("choices") or [{}])[0].get("message") or {}).get("content")) or ""
+        else:
+            text = str(data)
     except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, KeyError, IndexError) as exc:
-        print(f"stock-issues: AI skip ({exc})", file=sys.stderr)
-        return []
+        print(f"stock-issues: AI POST skip ({exc})", file=sys.stderr)
+        if key:
+            return {}
+        # Public GET is what still works without pollen/credits.
+        short = (
+            "JSON only {\"out\":[{\"n\":0,\"ids\":[],\"answer\":\"\"}]}. "
+            "Unwoke overlay. ids subset of: " + ",".join(allowed) + ". Issues: "
+            + " | ".join(f"#{x['n']} {x['title']}" for x in payload_issues)
+        )
+        get_url = "https://text.pollinations.ai/" + urllib.request.quote(short[:1500])
+        try:
+            greq = urllib.request.Request(get_url, headers={"User-Agent": "unwoke-stock-issues"})
+            with urllib.request.urlopen(greq, timeout=40, context=CTX) as resp:
+                text = resp.read().decode("utf-8", errors="replace")
+        except (urllib.error.URLError, TimeoutError) as exc2:
+            print(f"stock-issues: AI GET skip ({exc2})", file=sys.stderr)
+            return {}
     m = re.search(r"\{.*\}", text, re.S)
     if not m:
-        return []
+        return {}
     try:
         parsed = json.loads(m.group(0))
     except json.JSONDecodeError:
-        return []
+        return {}
     allow = set(allowed)
-    ids = []
-    for x in parsed.get("ids") or []:
-        s = str(x)
-        if s in allow and s not in ids:
-            ids.append(s)
-    return ids
+    out: dict[int, tuple[list[str], str]] = {}
+    for row in parsed.get("out") or []:
+        try:
+            n = int(row.get("n"))
+        except (TypeError, ValueError):
+            continue
+        ids = []
+        for x in row.get("ids") or []:
+            s = str(x)
+            if s in allow and s not in ids:
+                ids.append(s)
+        answer = re.sub(r"\s+", " ", str(row.get("answer") or "")).strip()
+        if FORBIDDEN.search(answer):
+            answer = ""
+        if len(answer) > 400:
+            answer = answer[:397] + "…"
+        out[n] = (ids, answer)
+    return out
 
 
 def render_fix(fid: str, spec: dict) -> str:
@@ -260,18 +306,25 @@ def render_fix(fid: str, spec: dict) -> str:
     )
 
 
-def render_item(issue: dict, fix_ids: list[str], fixes: dict) -> str:
+def render_item(issue: dict, fix_ids: list[str], fixes: dict, answer: str = "") -> str:
     num = issue.get("number")
     title = html.escape(issue.get("title") or f"#{num}")
     url = html.escape(issue.get("html_url") or "", quote=True)
     when = html.escape((issue.get("updated_at") or "")[:10])
     blurb = html.escape(excerpt(issue.get("body") or ""))
     boxes = "\n".join(render_fix(fid, fixes[fid]) for fid in fix_ids if fid in fixes)
+    ai_html = ""
+    if answer:
+        ai_html = (
+            f'<p class="ai-answer"><strong>Automated Unwoke note.</strong> '
+            f"{html.escape(answer)} Not applied to the image.</p>"
+        )
     return (
         f'<article class="card issue-card">'
         f'<p class="eyebrow">#{html.escape(str(num))} · {when}</p>'
         f'<h2><a href="{url}">{title}</a></h2>'
         f"{f'<p>{blurb}</p>' if blurb else ''}"
+        f"{ai_html}"
         f"{boxes}"
         f'<p class="mirror-meta">Stock issue. Canonical: <a href="{url}">{url}</a></p>'
         f"</article>"
@@ -284,35 +337,32 @@ def main() -> int:
     rows: list[str] = []
     kept = 0
     scanned = 0
-    ai_used = 0
     key, base, model = ai_conf()
     allowed = list(fixes.keys())
-    if key:
-        print(f"stock-issues: optional AI {model} @ {base}")
-    else:
-        print("stock-issues: keyword map only (no UNWOKE_AI_KEY / GROQ_API_KEY / XAI_API_KEY)")
+    print(f"stock-issues: AI {model} @ {base}" + (" (keyed)" if key else " (public Pollinations, one batch)"))
+    pending: list[dict] = []
     for issue in load_issues():
         scanned += 1
         if skip(issue, cfg):
             continue
         hits = match_fixes(issue, cfg)
-        if not hits and key and ai_used < MAX_AI and ai_candidate(issue, hits):
-            extra = ai_pick(
-                issue.get("title") or "",
-                issue.get("body") or "",
-                allowed,
-                key,
-                base,
-                model,
-            )
-            ai_used += 1
-            hits = extra
+        if hits or ai_candidate(issue, hits):
+            rec = dict(issue)
+            rec["hint"] = hits
+            rec["_hits"] = hits
+            pending.append(rec)
+    ai_map: dict[int, tuple[list[str], str]] = {}
+    if base and pending:
+        ai_map = ai_batch(pending, allowed, key, base, model)
+        print(f"stock-issues: AI returned {len(ai_map)} notes")
+    for rec in pending:
+        hits = list(rec.get("_hits") or [])
+        extra, answer = ai_map.get(int(rec.get("number") or 0), ([], ""))
+        if extra:
+            hits = list(dict.fromkeys(hits + extra))
         if not hits:
             continue
-        if FORBIDDEN.search((issue.get("title") or "") + (issue.get("body") or "")):
-            # still list if we have a clean overlay mapping, but never quote their setenforce
-            pass
-        rows.append(render_item(issue, hits, fixes))
+        rows.append(render_item(rec, hits, fixes, answer))
         kept += 1
     inner = "\n".join(rows) if rows else (
         "<p>No open stock issues currently map to an Unwoke-only revertable workaround. "
@@ -328,7 +378,7 @@ def main() -> int:
     )
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(html_out, encoding="utf-8")
-    print(f"stock-issues: {kept} shown / {scanned} scanned / {ai_used} AI calls -> {OUT}")
+    print(f"stock-issues: {kept} shown / {scanned} scanned / {len(ai_map)} AI notes -> {OUT}")
     return 0
 
 
