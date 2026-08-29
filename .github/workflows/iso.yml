@@ -219,11 +219,7 @@ jobs:
             echo "FAIL: SIGNING_SECRET empty" >&2
             exit 1
           }
-          python3 -c 'import os, pathlib; t=pathlib.Path(os.environ["KEY"]).read_text(encoding="utf-8");
-print("key bytes", len(t.encode()));
-lines=[ln for ln in t.splitlines() if "BEGIN" in ln or "END" in ln];
-print("\n".join(lines) or "FAIL: no PEM BEGIN/END");
-raise SystemExit(0 if any("BEGIN" in ln for ln in lines) else 1)'
+          python3 -c "import os,pathlib; t=pathlib.Path(os.environ['KEY']).read_text(encoding='utf-8'); lines=[ln for ln in t.splitlines() if 'BEGIN' in ln or 'END' in ln]; print('key bytes', len(t.encode())); print('\\n'.join(lines) or 'FAIL: no PEM BEGIN/END'); raise SystemExit(0 if any('BEGIN' in ln for ln in lines) else 1)"
           export COSIGN_PASSWORD="${COSIGN_PASSWORD}"
           export COSIGN_YES=1
           export COSIGN_OCI_EXPERIMENTAL=0
