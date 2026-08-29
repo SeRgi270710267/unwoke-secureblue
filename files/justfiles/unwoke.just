@@ -21,6 +21,11 @@ loosened:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/first-session.sh --force --loosened
 
+# Proton.me (Mail/Pass/VPN/…). Web first. Official RPM only after SHA512 + asked locks.
+install-proton:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/install-proton.sh
+
 # Show this overlay's flavor / remotes / policy / store status
 unwoke-status:
     #!/usr/bin/bash

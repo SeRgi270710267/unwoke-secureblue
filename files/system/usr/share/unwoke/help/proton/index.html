@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>Proton.me apps | Tutorials | Unwoke SecureBlue</title>
+  <meta name="description" content="Install Proton Mail, Pass, VPN, Drive, Calendar the strict way: Trivalent first, WireGuard for VPN, official RPM only after SHA512.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+        <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="../index.html">Unwoke help (offline)</a></li>
+        <li><a href="https://sergi270710267.github.io/unwoke-secureblue/tutorials/">Online tutorials</a></li>
+      </ul>
+    </nav>
+
+  </header>
+  <main id="content">
+    <p class="eyebrow">Apps</p>
+    <h1>Proton.me without a store</h1>
+    <p><span class="chip">Keep locked</span> Same idea as stock <code>ujust install-steam</code>: a wizard, not Bazaar. Strictest path is the house browser. Desktop RPMs are a named downgrade. Flathub wrappers are unverified — we do not use them.</p>
+    <div class="alert tip">
+      <p><strong>Secure default.</strong> <code>ujust install-proton</code> or Unwoke setup → Proton.me → open Mail/Pass/Calendar/Drive in Trivalent. Zero extra packages. Zero extra locks.</p>
+    </div>
+    <ol class="steps">
+      <li>
+        <h3>Web first (recommended)</h3>
+        <pre><code>ujust install-proton</code></pre>
+        <p>Choose option 1. Opens mail, pass, calendar, drive on proton.me in Trivalent. Calendar, Drive, Docs, Meet, Lumo, Wallet have no official Linux desktop we will wrap.</p>
+      </li>
+      <li>
+        <h3>VPN: WireGuard, not the GUI</h3>
+        <p>Option 2. Download Proton’s WireGuard file (you must be signed in), import in GNOME/KDE Network Settings. Keep system DNS on the tunnel. Do not enable Trivalent DoH. That is stricter than their Fedora GUI RPM and stricter than Flathub <code>com.protonvpn.www</code>.</p>
+      </li>
+      <li>
+        <h3>Desktop Mail or Pass only if you insist</h3>
+        <p>Options 3–4 download Proton’s official RPM, check <strong>SHA512</strong> from their <code>version.json</code>, then ask before:</p>
+        <ul>
+          <li><code>ujust set-unconfined-userns on</code> (Electron often needs it; default No)</li>
+          <li><code>rpm-ostree install</code> (reboot)</li>
+        </ul>
+        <p>Mismatch hash → stop. Flathub stays off. Global lockdown stays on.</p>
+      </li>
+      <li>
+        <h3>What we will not automate</h3>
+        <p>Unverified Flathub <code>me.proton.*</code>, Snap, unofficial Drive AppImage, <code>curl | sh</code> CLIs, Distrobox. Search GNOME for “Proton” to open this wizard.</p>
+      </li>
+    </ol>
+    <nav class="tutorial-nav" aria-label="Adjacent tutorials">
+      <a href="../install-apps/index.html">Previous: Install an app</a>
+      <a href="../index.html">All tutorials</a>
+      <a href="../vpn-dns/index.html">Next: VPN without DNS leaks</a>
+    </nav>
+  </main>
+  <footer>
+    <a class="brand" href="https://sergi270710267.github.io/unwoke-secureblue/"><img src="../assets/logo.svg" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="../index.html">Tutorials</a></li>
+      <li><a href="https://sergi270710267.github.io/unwoke-secureblue/compared/">Compared</a></li>
+      <li><a href="https://sergi270710267.github.io/unwoke-secureblue/faq/">FAQ</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

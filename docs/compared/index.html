@@ -243,6 +243,10 @@
             <td><a href="tutorials/">Tutorials</a> with the secure path first. Features table for the rest.</td>
           </tr>
           <tr>
+            <td>Stock <code>ujust install-steam</code> / VPN helpers; no Proton wizard; Bazaar for the rest</td>
+            <td><code>ujust install-proton</code> / Setup → Proton.me: Trivalent first, WireGuard for VPN, official RPM only after SHA512 and an asked userns toggle. No unverified Flathub. Beats a store for Mail/Pass/VPN.</td>
+          </tr>
+          <tr>
             <td>Private GHCR packages block anonymous rebase</td>
             <td>Factory job tries to set packages Public after a bake. Warn-only if GitHub’s token cannot flip it.</td>
           </tr>
@@ -278,6 +282,12 @@
           <tr><th>When</th><th>What landed</th><th>Vs stock</th><th>Where</th></tr>
         </thead>
         <tbody>
+          <tr>
+            <td>2026-08-29</td>
+            <td><code>ujust install-proton</code> + Setup tab: proton.me apps without a store. Web in Trivalent (default). VPN WireGuard. Official Mail/Pass RPM only after SHA512 and a Yes to unconfined userns. No Flathub wrappers.</td>
+            <td>Easier than hunting RPMs. Stricter than stock+Bazaar or unverified Flatpaks. Same locks unless you say yes.</td>
+            <td>Next overlay bake + Pages tutorial</td>
+          </tr>
           <tr>
             <td>2026-08-29</td>
             <td>Last-green bake/inspect stamp on the site. Signed-reboot nag has a <strong>Reboot</strong> button (libnotify --action).</td>

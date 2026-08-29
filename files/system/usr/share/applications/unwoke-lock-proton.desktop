@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Proton Mail / VPN / Pass (Unwoke)
+GenericName=Proton
+Comment=No store. Opens Unwoke Proton setup: Trivalent first, hashed official RPM only if you insist.
+Exec=/usr/libexec/unwoke/first-session.sh --force --proton
+Icon=/usr/share/pixmaps/unwoke-logo.svg
+Terminal=false
+Categories=Settings;Network;Office;
+Keywords=proton;mail;vpn;pass;drive;calendar;protonmail;protonvpn;
+StartupNotify=true

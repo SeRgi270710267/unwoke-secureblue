@@ -162,6 +162,7 @@ Stock `ujust` still works.
 19. **Recommended default is Trivalent:** install picker, README, weekly ISO four `*-trivalent` desktops. Unsuffixed GHCR names stay Origin. Origin radio shows a warning. No lock loosened.
 20. **Search + undo + offline help:** `.desktop` launchers so GNOME/KDE search hits Bluetooth/camera/Flathub/sites/USB. Setup **You loosened** / `ujust loosened` puts locks back. Tutorials copied to `/usr/share/unwoke/help/` (`open-tutorial.sh` prefers local). Overlay bake required. No auto-unlock.
 21. **Last-green stamp + Reboot on the nag:** Pages writes `status.json` (bake + inspect + ISO if green). Home/Install/Images/Compared show it. `notify-reboot.sh` adds a Reboot button when libnotify supports `--action`; timer waits up to 180s. Overlay bake for the button. No lock loosened.
+22. **Proton.me wizard (no store):** `ujust install-proton` / Setup → Proton.me. Trivalent first; VPN WireGuard; official Mail/Pass RPM only after SHA512 + asked `set-unconfined-userns`. No unverified Flathub. Tutorial + Compared. Overlay bake required.
 
 Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only / `iso.yml` pushes should not rebuild images (`build.yml` paths-ignore).
 
@@ -171,7 +172,7 @@ Image-side theme and toggles land on the **image rebuild**, not Pages. Docs-only
 - `install-oras.sh` and `.github/workflows/isos/**` are in `build.yml` paths-ignore. Do not cancel a bake that is already running.
 - USB ISO: wrap still produces `output.iso` (~14 min). Run 18 [33252405109](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33252405109) died at Cosign (still hit public Rekor). Force `--tlog-upload=false`; **do not fail the wrap** if sign-blob fails — still upload ISO + SHA256SUMS. Drive `ublue-os/titanoboa@840217d`.
 - Do not add `on: push` to `iso.yml` or `verify.yml`.
-- Confirm on a real rebase: app grid **Unwoke setup** / `ujust setup` / `ujust why` / `ujust unwoke-status` / `ujust audit-unwoke`. Setup window + signed nag + daily-user dialog ship on the **next overlay bake**. Pages has the Install picker/copy/USB CTA immediately.
+- Confirm on a real rebase: app grid **Unwoke setup** / `ujust setup` / `ujust install-proton` / `ujust why` / `ujust unwoke-status`. Setup window + Proton wizard + signed nag ship on the **next overlay bake**. Pages has Tutorials/Compared/Install immediately.
 - Hard-refresh Pages if Install / Changelog look cached.
 - Do not start a tight `brave_t` jail unless the owner asks again and accepts breakage.
 - Origin/browserless still strip Trivalent. The dedicated `*-trivalent` flavor keeps it. Do not add a GUI store. Do not add xscreensaver. Do not Bubblejail Trivalent.

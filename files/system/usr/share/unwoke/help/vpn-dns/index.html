@@ -28,7 +28,11 @@
     <p><span class="chip">Keep locked</span> Firewall stays closed. The leak people hit is DNS: the tunnel is up, queries still go to a global resolver or browser DoH. Stock’s rule is the standard — follow it.</p>
     <ol class="steps">
       <li>
-        <h3>Install the VPN as a Flatpak if it exists</h3>
+        <h3>Proton VPN: WireGuard, not a random Flatpak</h3>
+        <p><code>ujust install-proton</code> option 2. Official config import. Then keep system DNS (next step). Do not use unverified <code>com.protonvpn.www</code>.</p>
+      </li>
+      <li>
+        <h3>Other VPNs: Flatpak only if it exists</h3>
         <p><a href="../install-apps/index.html">Verified Flathub</a> first. Grant only the network/device it needs in Flatseal. WireGuard in NetworkManager is fine. Random Electron VPN + brew is not the standard.</p>
       </li>
       <li>

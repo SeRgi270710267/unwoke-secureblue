@@ -135,6 +135,10 @@ if [[ ! -f "${work}/usr/libexec/unwoke/notify-reboot.sh" ]]; then
   echo "FAIL: missing notify-reboot.sh" >&2
   fail=1
 fi
+if [[ ! -f "${work}/usr/libexec/unwoke/install-proton.sh" ]]; then
+  echo "FAIL: missing install-proton.sh" >&2
+  fail=1
+fi
 
 selinux_mentions_origin() {
   grep -R -q '/opt/brave.com/brave-origin' \

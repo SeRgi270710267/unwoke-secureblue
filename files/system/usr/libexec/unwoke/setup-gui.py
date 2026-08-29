@@ -201,8 +201,9 @@ class SetupWindow(Gtk.Window):
         self.loosened_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
         self._fill_loosened()
         nb.append_page(self._scroll(self.loosened_box), Gtk.Label(label="You loosened"))
+        nb.append_page(self._scroll(self._page_proton()), Gtk.Label(label="Proton.me"))
 
-        jump_map = {"broken": 2, "stock": 3, "hardware": 1, "daily": 4, "loosened": 5}
+        jump_map = {"broken": 2, "stock": 3, "hardware": 1, "daily": 4, "loosened": 5, "proton": 6}
         if jump in jump_map:
             nb.set_current_page(jump_map[jump])
 
@@ -246,6 +247,9 @@ class SetupWindow(Gtk.Window):
         loose = Gtk.Button(label="You turned something off")
         loose.connect("clicked", lambda *_: self.nb.set_current_page(5))
         box.pack_start(loose, False, False, 0)
+        pr = Gtk.Button(label="Proton.me apps (no store)")
+        pr.connect("clicked", lambda *_: self.nb.set_current_page(6))
+        box.pack_start(pr, False, False, 0)
         return box
 
     def _fill_loosened(self) -> None:
@@ -500,6 +504,53 @@ class SetupWindow(Gtk.Window):
         dlg.destroy()
         return resp == Gtk.ResponseType.OK and val == "ALLOW"
 
+    def _page_proton(self) -> Gtk.Box:
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        box.set_margin_start(16)
+        box.set_margin_end(16)
+        box.set_margin_top(12)
+        box.pack_start(
+            Gtk.Label(
+                label="Like stock ujust install-steam, but Proton.me. Strictest: Trivalent. No unverified Flathub. Desktop RPM only after SHA512 and you accept userns.",
+                xalign=0,
+                wrap=True,
+            ),
+            False,
+            False,
+            8,
+        )
+        items = [
+            ("Open Mail / Pass / Calendar / Drive in Trivalent", "Recommended. Zero extra software, zero extra locks.", "--web"),
+            ("VPN: WireGuard import", "Official Proton config in Network Settings. No GUI app, no extra repo.", "--vpn"),
+            ("Desktop Mail (official RPM + SHA512)", "Named downgrade. Asks before unconfined userns. Reboot after layer.", "--mail-rpm"),
+            ("Desktop Pass (official RPM + SHA512)", "Same as Mail. Flathub wrapper is not used.", "--pass-rpm"),
+            ("Desktop VPN GUI (stock helper)", "Last. WireGuard is stricter. Extra RPM origin.", "--vpn-gui"),
+        ]
+        for title, blurb, flag in items:
+            box.pack_start(
+                row(title, blurb, lambda f=flag: self.run_proton(f), "proton"),
+                False,
+                False,
+                0,
+            )
+        return box
+
+    def run_proton(self, flag: str) -> None:
+        cmd = (
+            f"bash /usr/libexec/unwoke/install-proton.sh {flag}; echo; "
+            "read -r -p 'Enter to close... ' _ || true"
+        )
+        for term in (
+            ["ptyxis", "--", "bash", "-lc", cmd],
+            ["kgx", "-e", "bash", "-lc", cmd],
+            ["gnome-terminal", "--", "bash", "-lc", cmd],
+            ["konsole", "-e", "bash", "-lc", cmd],
+        ):
+            if subprocess.call(["bash", "-lc", f"command -v {term[0]}"], stdout=subprocess.DEVNULL) == 0:
+                subprocess.Popen(term)
+                return
+        info(self, "No terminal", f"Run: ujust install-proton   or   bash /usr/libexec/unwoke/install-proton.sh {flag}")
+
     def run_stock(self, recipe: str) -> None:
         cmd = f"ujust {recipe}; echo; read -r -p 'Enter to close... ' _ || true"
         if not confirm(self, "Run stock command?", f"ujust {recipe}\nOverlay locks are unchanged."):
@@ -571,6 +622,7 @@ def main() -> int:
     p.add_argument("--hardware", action="store_true")
     p.add_argument("--daily", action="store_true")
     p.add_argument("--loosened", action="store_true")
+    p.add_argument("--proton", action="store_true")
     args = p.parse_args()
     jump = ""
     if args.broken:
@@ -583,6 +635,8 @@ def main() -> int:
         jump = "daily"
     elif args.loosened:
         jump = "loosened"
+    elif args.proton:
+        jump = "proton"
     if not os.environ.get("DISPLAY") and not os.environ.get("WAYLAND_DISPLAY"):
         return 2
     win = SetupWindow(jump)
