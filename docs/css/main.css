@@ -1011,6 +1011,17 @@ footer .brand img {
   font-size: 0.8rem;
 }
 
+@media (min-width: 1100px) {
+  main,
+  .hero {
+    max-width: 68rem;
+  }
+
+  main.mirror {
+    max-width: 72rem;
+  }
+}
+
 @media only screen and (max-width: 735px) {
   .hero {
     flex-flow: column nowrap;
@@ -1028,10 +1039,6 @@ footer .brand img {
   }
 
   .hero h1 {
-    font-size: 2rem;
-  }
-
-  h1 {
     font-size: 1.85rem;
     line-height: 2.2rem;
   }
