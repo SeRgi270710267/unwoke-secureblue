@@ -3,7 +3,7 @@
 # Usage: issue-alarm.sh <iso|pages|factory|vendor> open|close
 set -euo pipefail
 
-preset="${1:?usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds|receipt open|close}"
+preset="${1:?usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds|receipt|stock-feats open|close}"
 cmd="${2:-open}"
 RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
@@ -144,8 +144,23 @@ The mirror still injected a \`ujust why\` / \`ujust setup\` box so people are no
 Do **not** attach the ISO (over 2 GiB). Do not auto-accept a new signing key. Next green full verify rewrites the release and closes this."
     CLOSE="Receipt release rewritten: ${RUN_URL}"
     ;;
+  stock-feats)
+    TITLE="Stock shipped a FEAT we already shipped (review, do not auto-copy)"
+    LABEL="stock-feats"
+    COLOR="8A6D1F"
+    DESC="secureblue closed a GitHub FEAT Unwoke already shipped"
+    BODY="Stock closed a feature request we already shipped first. The Shipped first page moved the card to They shipped after us.
+
+- Workflow: \`${GITHUB_WORKFLOW}\`
+- SHA: \`${GITHUB_SHA}\`
+- Run: ${RUN_URL}
+- Page: https://sergi270710267.github.io/unwoke-secureblue/ahead/
+
+Read their PR. If theirs is better, copy it on purpose and set \`adopted.on\` / \`adopted.note\` / \`adopted.commit\` in \`docs/_tools/stock-feats.json\`. If ours stays, set \`stock_reviewed\` to \`keep\`. Do **not** auto-merge their patch. Do not drop the ticket from the page."
+    CLOSE="Every stock-after-us FEAT is reviewed (keep or adopted): ${RUN_URL}"
+    ;;
   *)
-    echo "usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds|receipt open|close" >&2
+    echo "usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds|receipt|stock-feats open|close" >&2
     exit 1
     ;;
 esac

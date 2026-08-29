@@ -120,6 +120,11 @@
             <td>Auto-bump to <code>@main</code></td>
           </tr>
           <tr>
+            <td>Stock closes a GitHub FEAT we already shipped</td>
+            <td>Shipped first page keeps the ticket and moves it to “they shipped after us.” Opens <code>stock-feats</code> so you can read their PR</td>
+            <td>Auto-copy their patch. Drop the card</td>
+          </tr>
+          <tr>
             <td>Proton/IVPN/Mullvad URL moves on an allowlisted HTTPS host</td>
             <td>Heal rewrites JSON, regenerates the tutorials hub, overlay bake picks it up</td>
             <td>Add a new hostname, HTTP, Flathub, or <code>gpgcheck=0</code></td>
@@ -209,6 +214,11 @@
             <td>Vendor switches to Flathub / Snap / <code>gpgcheck=0</code></td>
             <td>That is a weaker contract. Heal must not “make it work”</td>
             <td>Keep WireGuard / official repo, or drop the app. Open issue stays</td>
+          </tr>
+          <tr>
+            <td>Stock ships a FEAT we already shipped</td>
+            <td>Their patch might be better or weaker. Auto-copy is how we import a lock we did not review</td>
+            <td>Read the PR on <a href="ahead/">Shipped first</a>. Keep ours (<code>stock_reviewed: keep</code>) or copy on purpose (<code>adopted</code> in <code>stock-feats.json</code>)</td>
           </tr>
           <tr>
             <td>Titanoboa pin dies</td>

@@ -1678,9 +1678,39 @@ body.page-ahead h1 {
   color: var(--accent);
 }
 
-.feat-closed .feat-status {
+.feat-closed .feat-status,
+.feat-after .feat-status {
   background: var(--warn-soft);
   color: var(--warn);
+}
+
+.feat-after {
+  border-color: rgba(224, 179, 106, 0.4);
+  background:
+    linear-gradient(165deg, rgba(224, 179, 106, 0.10), transparent 46%),
+    var(--bg-card);
+}
+
+.feat-adopted .feat-status {
+  background: var(--important-soft);
+  color: var(--important);
+}
+
+.feat-adopted {
+  border-color: rgba(171, 125, 248, 0.4);
+  background:
+    linear-gradient(165deg, rgba(171, 125, 248, 0.12), transparent 46%),
+    var(--bg-card);
+}
+
+.feat-declined .feat-status {
+  background: var(--bg-code);
+  color: var(--text-muted);
+}
+
+.feat-empty {
+  color: var(--text-dim);
+  font-size: 0.95rem;
 }
 
 .feat-race {

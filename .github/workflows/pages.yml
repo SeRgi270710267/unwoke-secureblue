@@ -60,7 +60,14 @@ jobs:
       - name: Stock FEATs we shipped first
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: python3 docs/_tools/generate-stock-feats.py
+        run: |
+          python3 docs/_tools/generate-stock-feats.py
+          extra=docs/ahead/catch-up.txt
+          if [[ -s "${extra}" ]]; then
+            ALARM_EXTRA="$(cat "${extra}")" bash .github/scripts/issue-alarm.sh stock-feats open || true
+          else
+            bash .github/scripts/issue-alarm.sh stock-feats close || true
+          fi
 
       - name: Stock issues that hit Unwoke
         env:

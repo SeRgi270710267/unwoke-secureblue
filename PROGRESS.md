@@ -203,7 +203,7 @@ Stock `ujust` still works.
 44. **Babysit less:** overlay `cancel-in-progress: false`. ISO oras one retry, same pin. No extra secrets. No auto-trust.
 45. **Stock FEAT we shipped, stock did not:** USB encrypt-on + Argon2 2 GiB (ISO kickstart + `/usr/etc/cryptsetup.conf`); Flatpak record-block (independent of lockdown, actually re-allows on off); extra xdg/host-root lockdown (never host-os); NFS/CIFS *clients* blacklisted while nfs-server stays masked; `audit-unwoke` warns on Flatpak browsers. All reversible except LUKS after you chose it at install. Compared page is the public scoreboard.
 46. **After you log in:** `docs/start/` is the first-session walkthrough (Unwoke setup, not GNOME Settings). First-hour tutorial is the offline copy. Nav **After login**. Install/Home/Post-install/FAQ point here. Setup window button still opens `first-hour`.
-47. **Shipped first:** `docs/ahead/` lists official secureblue GitHub FEATs we monitor and already ship (`stock-feats.json` + live open/closed at Pages). Honesty: skip UKI/ARM/kernel. Workarounds stays bugs.
+47. **Shipped first:** `docs/ahead/` tracks official secureblue GitHub FEATs we shipped first. Tickets never drop. Open = still ahead. When they close after us, the card moves and `stock-feats` opens so a human reviews their PR. If theirs is better: `adopted.on` / `note` / `commit` in `stock-feats.json`. If ours stays: `stock_reviewed: keep`. Never auto-copy.
 
 Image-side theme, privacy.sh, and Setup fingerprint button land on the **image rebuild**, not Pages. Docs-only / `iso.yml` / `pr-gate.yml` / CODEOWNERS are in `build.yml` paths-ignore (this commit is docs-only). Overlay scripts (`privacy.sh`, `apply-unwoke.sh`, `vendor.py`, `inspect-flavor.sh`) **do** bake.
 

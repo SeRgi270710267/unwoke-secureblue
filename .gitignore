@@ -12,6 +12,7 @@ docs/changelog/
 docs/status.json
 docs/progress.json
 docs/stock-issues/
+docs/ahead/catch-up.txt
 .github/workflows/isos/prep_rootfs.generated.sh
 upstream-drift/
 __pycache__/

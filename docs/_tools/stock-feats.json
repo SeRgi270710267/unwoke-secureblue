@@ -1,5 +1,5 @@
 {
-  "comment": "Official secureblue GitHub requests we monitor and have shipped as reversible Unwoke defaults. Live open/closed is refreshed at Pages deploy. Do not add a FEAT we did not actually ship. Do not claim kernel/UKI/ARM work.",
+  "comment": "Official secureblue GitHub requests we shipped first. Live open/closed + closing PR refresh at Pages. Never drop an item when they close it. If they ship after us, set nothing — the generator moves the card. After you review their patch: stock_reviewed=keep (ours stays) OR adopted:{on, note, commit} (we copied theirs because it was better). Do not auto-copy. Do not add a FEAT we did not ship. Do not claim kernel/UKI/ARM.",
   "repo": "secureblue/secureblue",
   "items": [
     {
