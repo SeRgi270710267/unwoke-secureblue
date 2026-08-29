@@ -59,3 +59,14 @@ fi
 if command -v glib-compile-schemas >/dev/null && [[ -d /usr/share/glib-2.0/schemas ]]; then
   glib-compile-schemas /usr/share/glib-2.0/schemas || true
 fi
+
+# Stock `ujust harden-flatpak` execs this path. Overlay file must win over the RPM.
+tramp="/usr/libexec/secureblue/harden_flatpak.py"
+if [[ ! -f "${tramp}" ]] || ! grep -q '/usr/libexec/unwoke/harden-flatpak.sh' "${tramp}"; then
+  echo "FAIL: ${tramp} is not the Unwoke trampoline" >&2
+  exit 1
+fi
+[[ -f /usr/libexec/unwoke/harden-flatpak.sh ]] || {
+  echo "FAIL: missing /usr/libexec/unwoke/harden-flatpak.sh" >&2
+  exit 1
+}

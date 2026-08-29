@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Unwoke stand-in for stock `ujust harden-flatpak` (global).
-# Does not exec /usr/libexec/secureblue/harden_flatpak.py.
+# Stock ujust execs /usr/libexec/secureblue/harden_flatpak.py; that file is
+# an Unwoke trampoline that execs this script. Do not run upstream Python.
 # Behavior last reviewed against files/upstream-snapshots/secureblue/harden_flatpak.py
 # (highest hwcap libhardened_malloc.so, host-os:ro, ELECTRON_OZONE_PLATFORM_HINT=auto).
 set -euo pipefail

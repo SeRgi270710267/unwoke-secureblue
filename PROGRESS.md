@@ -24,8 +24,11 @@ Display: **Unwoke SecureBlue** (`Unwoke` = modifier; `SecureBlue` = one word, S+
 - `ghcr.io/sergi270710267/<name>:latest`. Cosign with a GitHub Actions secret (not a hardware key).
 - First rebase is `ostree-unverified-registry`; first-boot promotes `ostree-image-signed`.
 - Image CI: `.github/workflows/build.yml` (paths-ignore docs). Pages: `.github/workflows/pages.yml` from `docs/`.
-- Base canary: `.github/scripts/scan-base-canary.sh` runs on the four official bases *before* the 12-image matrix. Inspects (docker create/copy, never run) for needles in `.github/scripts/base-canary-needles.txt`. Hit = no overlay. Does not catch a generic backdoor or obfuscation. Stock still cannot push to this GitHub/GHCR; user machines follow Unwoke GHCR after signed rebase.
-- Automatic snapshot refresh: `.github/scripts/auto-refresh-snapshots.sh` on main. If stock `harden_flatpak.py` / `flatpak.just` change and pass a targeting scan, CI commits snapshots and regenerates `flatpak-lockdown-lists.sh`. Overlay is not blocked. Runtime still uses Unwoke scripts, not their live Python. Poison (file names Unwoke) is not auto-copied.
+- Base canary: `.github/scripts/scan-base-canary.sh` runs on the four official bases *before* the 12-image matrix. `cosign verify` + `crane export` (never docker/podman pull — Atomic images exceed Docker layer depth; never run the image) for needles in `.github/scripts/base-canary-needles.txt`. Hit = no overlay. Does not catch a generic backdoor or obfuscation. Stock still cannot push to this GitHub/GHCR; user machines follow Unwoke GHCR after signed rebase. Canary matrix `fail-fast: false` so all four bases still report if one is red.
+- Automatic snapshot refresh: `.github/scripts/auto-refresh-snapshots.sh` on main. If stock `harden_flatpak.py` / `flatpak.just` change and pass a targeting scan, CI commits snapshots and regenerates `flatpak-lockdown-lists.sh`. Overlay is not blocked. Runtime still uses Unwoke scripts. Poison (file names Unwoke) is not auto-copied.
+- Stock `ujust harden-flatpak` hits `/usr/libexec/secureblue/harden_flatpak.py`, which is an Unwoke trampoline (`os.execv` to `/usr/libexec/unwoke/harden-flatpak.sh`). Compose fails if that trampoline is missing. Inspect also checks it.
+- Post-publish inspect: after each non-PR BlueBuild, `.github/scripts/inspect-flavor.sh` crane-exports the GHCR `:latest` (cosign + flavor + trampoline + no store). Twice-daily `verify.yml` does the same even with no push. Does not auto-accept a new `cosign.pub`.
+- Factory alarm: one GitHub issue, label `factory-alarm`, reused. Opened/commented when canary/watch/build/inspect fails (not on PRs). Closed only when canary + watch + bluebuild are all green. A canary hit or key rotation is not auto-merged.
 - Stock MOTD replaced (`usr/libexec/secureblue-motd`). User nags masked by default: deprecation notice, update-verification, flatpak-setup (`ujust set-stock-nags on` to restore). Key-enrollment check stays. Docs mirror sanitizes script-like HTML.
 - Daily image rebuilds 08:00 and 20:00 UTC. Docs mirror of secureblue.dev at 09:30 UTC into generated `docs/secureblue/` (gitignored).
 
@@ -143,6 +146,7 @@ Image-side theme and toggles land on the **next image rebuild**, not Pages. Docs
 
 ## Tomorrow / next chat
 
+- Confirm the next `bluebuild` run is green (canary uses crane, not docker pull). Last red runs (45–49) failed with Docker `max depth exceeded` on kinoite-main-hardened; that was the inspector, not targeting.
 - Confirm GHCR images after CI actually contain wallpaper + policy packs (`ujust unwoke-status` on a rebase). Theme and toggles are in the overlay; they are not live on an old local image until rebuild + rebase.
 - Hard-refresh Pages if Brand / Changelog look cached.
 - Changelog: `docs/_tools/generate-changelog.py`; output `docs/changelog/` is gitignored. Pages workflow now runs on every `main` push (`fetch-depth: 0`).

@@ -1,9 +1,12 @@
 name: verify
 on:
+  schedule:
+    - cron: "30 09 * * *"
+    - cron: "30 21 * * *"
   workflow_dispatch:
     inputs:
       image:
-        description: Image to inspect
+        description: Image to inspect (schedule inspects all twelve)
         required: true
         type: choice
         default: unwoke-silverblue
@@ -21,94 +24,72 @@ on:
           - unwoke-kinoite-trivalent
           - unwoke-kinoite-nvidia-open-trivalent
 permissions: {}
+concurrency:
+  group: verify-${{ github.event_name }}-${{ github.run_id }}
+  cancel-in-progress: false
 jobs:
   inspect:
-    name: Inspect ${{ inputs.image }}
-    runs-on: ubuntu-24.04
+    name: Inspect ${{ matrix.image }}
+    if: github.actor != 'dependabot[bot]' && (github.event_name != 'workflow_dispatch' || matrix.image == github.event.inputs.image)
+    runs-on: ubuntu-latest
     permissions:
+      contents: read
       packages: read
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - unwoke-silverblue
+          - unwoke-silverblue-nvidia-open
+          - unwoke-kinoite
+          - unwoke-kinoite-nvidia-open
+          - unwoke-silverblue-browserless
+          - unwoke-silverblue-nvidia-open-browserless
+          - unwoke-kinoite-browserless
+          - unwoke-kinoite-nvidia-open-browserless
+          - unwoke-silverblue-trivalent
+          - unwoke-silverblue-nvidia-open-trivalent
+          - unwoke-kinoite-trivalent
+          - unwoke-kinoite-nvidia-open-trivalent
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
         with:
           egress-policy: audit
 
-      - name: Log in to GHCR
-        run: echo "${{ github.token }}" | podman login ghcr.io -u "${{ github.actor }}" --password-stdin
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
 
-      - name: Pull
-        run: podman pull "ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/${{ inputs.image }}:latest"
+      - name: Install cosign
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
 
-      - name: Check flavor invariants
+      - name: Inspect published flavor
         env:
-          IMAGE: ghcr.io/${{ github.repository_owner }}/${{ inputs.image }}:latest
-          IMAGE_NAME: ${{ inputs.image }}
-        run: |
-          set -euo pipefail
-          IMAGE="${IMAGE,,}"
-          gone() {
-            local pkg="$1"
-            if podman run --rm --entrypoint /usr/bin/rpm "$IMAGE" -q "$pkg"; then
-              echo "FAIL: $pkg still installed"
-              exit 1
-            fi
-          }
-          for pkg in bazaar gnome-software plasma-discover brave-browser; do
-            gone "$pkg"
-          done
-          if [[ "${IMAGE_NAME}" == *trivalent* ]]; then
-            gone brave-origin
-            podman run --rm --entrypoint /usr/bin/bash "$IMAGE" -lc '
-              set -euo pipefail
-              [[ "$(tr -d "[:space:]" </usr/share/unwoke/flavor)" == trivalent ]]
-              [[ -e /usr/bin/trivalent || -e /usr/lib64/trivalent/trivalent ]]
-              if [[ -e /opt/brave.com/brave-origin/brave ]]; then
-                echo "FAIL: Brave Origin ELF on trivalent image"
-                exit 1
-              fi
-              if grep -q /opt/brave.com/brave-origin /etc/selinux/targeted/contexts/files/file_contexts 2>/dev/null; then
-                echo "FAIL: brave-origin still in file_contexts (brave_t loaded?)"
-                exit 1
-              fi
-              echo "OK: trivalent flavor — Trivalent present, no Origin, no store, no brave_t"
-            '
-          elif [[ "${IMAGE_NAME}" == *browserless* ]]; then
-            gone trivalent
-            if podman run --rm --entrypoint /usr/bin/test "$IMAGE" -e /opt/brave.com/brave-origin/brave; then
-              echo "FAIL: Brave Origin ELF on browserless image"
-              exit 1
-            fi
-            if podman run --rm --entrypoint /usr/bin/test "$IMAGE" -e /opt/brave.com/brave/brave; then
-              echo "FAIL: full brave-browser ELF still present"
-              exit 1
-            fi
-            gone brave-origin
-            podman run --rm --entrypoint /usr/bin/bash "$IMAGE" -lc '
-              set -euo pipefail
-              [[ "$(tr -d "[:space:]" </usr/share/unwoke/flavor)" == browserless ]]
-              if grep -q /opt/brave.com/brave-origin /etc/selinux/targeted/contexts/files/file_contexts 2>/dev/null; then
-                echo "FAIL: brave-origin still in file_contexts (brave_t loaded?)"
-                exit 1
-              fi
-              echo "OK: browserless — no Origin, no Trivalent, no store, no brave_t label"
-            '
-          else
-            gone trivalent
-            podman run --rm --entrypoint /usr/bin/test "$IMAGE" -e /opt/brave.com/brave-origin/brave
-            if podman run --rm --entrypoint /usr/bin/test "$IMAGE" -e /opt/brave.com/brave/brave; then
-              echo "FAIL: full brave-browser ELF still present"
-              exit 1
-            fi
-            podman run --rm --entrypoint /usr/bin/test "$IMAGE" -f /usr/share/unwoke/selinux/unwoke_brave.te
-            podman run --rm --entrypoint /usr/bin/bash "$IMAGE" -lc '
-              set -euo pipefail
-              grep -q brave-origin /etc/selinux/targeted/contexts/files/file_contexts
-              if find /opt/brave.com -xdev -perm -4000 -type f | grep -q .; then
-                echo "FAIL: SUID remains under /opt/brave.com"
-                find /opt/brave.com -xdev -perm -4000 -type f
-                exit 1
-              fi
-              echo "OK: Brave Origin labeled, no SUID"
-            '
-            echo "OK: Brave Origin present; full Brave, Trivalent, Bazaar, GUI stores absent"
-          fi
+          GITHUB_TOKEN: ${{ github.token }}
+        run: bash .github/scripts/inspect-flavor.sh "${{ matrix.image }}"
+
+  factory-alarm:
+    name: Factory alarm
+    if: always() && !cancelled() && github.actor != 'dependabot[bot]' && needs.inspect.result == 'failure'
+    needs: [inspect]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Open or update alarm
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash .github/scripts/factory-alarm.sh open
