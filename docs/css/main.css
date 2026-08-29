@@ -752,13 +752,68 @@ main.mirror .docs-index {
 }
 
 .factory-stamp {
-  margin: 0.75rem 0 1.25rem;
-  font-size: 0.92rem;
+  margin: 0.5rem 0 1.5rem;
+}
+
+.stamp-kicker {
+  margin: 0 0 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--text-muted);
 }
 
-.factory-stamp a {
+.stamp-grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+}
+
+.stamp-hit,
+.stamp-dead {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-height: 4.2rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-card);
+  text-decoration: none;
+  color: var(--text);
+}
+
+.stamp-hit:hover {
+  border-color: var(--accent);
+}
+
+.stamp-name {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.stamp-when {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.92rem;
+  line-height: 1.25;
   color: var(--accent);
+}
+
+.stamp-dead .stamp-when {
+  color: var(--text-muted);
+}
+
+@media (max-width: 735px) {
+  .stamp-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .copy-wrap {

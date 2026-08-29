@@ -9,7 +9,7 @@
   <meta name="description" content="Twelve public GHCR images: Silverblue and Kinoite, NVIDIA open, Origin / Trivalent / browserless.">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
-  <link rel="stylesheet" href="css/main.css?v=13">
+  <link rel="stylesheet" href="css/main.css?v=15">
 </head>
 <body>
   <a class="skip" href="#content">Skip to content</a>
@@ -40,7 +40,7 @@
   <main id="content">
     <h1>Images</h1>
     <p>Published as <code>ghcr.io/sergi270710267/&lt;name&gt;:latest</code>. Meant to be public so rebase does not need a GitHub login. The factory tries to flip visibility; if GitHub still leaves a name private, a <code>ghcr-private</code> issue nags until one Packages click. Rebuilt twice a day, 08:00 and 20:00 UTC, plus every recipe push. <strong>Recommended:</strong> names ending in <code>-trivalent</code> (stock Trivalent plus extra policies). No suffix = Brave Origin (pick on purpose). <code>-browserless</code> = no image browser. Every image gets the <a href="brand/">Unwoke wallpaper, lock screen, and blue accent</a>, Flathub/brew/Bluetooth/toolbox off until <code>ujust</code>, and the other overlay locks. Reverts: <a href="post-install/">Post-install</a>.</p>
-    <p class="factory-stamp" data-factory-stamp>Checking last green bake…</p>
+    <div class="factory-stamp" data-factory-stamp>Checking last green…</div>
 
     <p class="notice"><code>nvidia-open</code> images are for NVIDIA GPUs Turing or newer (GTX 16xx / RTX 20xx and later): proprietary driver with NVIDIA’s open kernel modules, not Nouveau. The non-NVIDIA images use Nouveau and are a poor choice for those GPUs.</p>
 
@@ -150,6 +150,6 @@
     </ul>
     <p>Not affiliated with secureblue.</p>
   </footer>
-  <script src="js/factory-status.js?v=2" defer></script>
+  <script src="js/factory-status.js?v=3" defer></script>
 </body>
 </html>

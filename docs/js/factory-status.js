@@ -6,7 +6,10 @@
     if (!iso) return "";
     const d = new Date(iso);
     if (isNaN(d.getTime())) return iso;
-    return d.toISOString().slice(0, 16).replace("T", " ") + " UTC";
+    const mon = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][d.getUTCMonth()];
+    const hh = String(d.getUTCHours()).padStart(2, "0");
+    const mm = String(d.getUTCMinutes()).padStart(2, "0");
+    return d.getUTCDate() + " " + mon + " " + hh + ":" + mm + " UTC";
   }
 
   function ghUrl(u) {
@@ -17,37 +20,38 @@
     return "";
   }
 
-  function addLink(label, run) {
-    if (!run || !run.updated_at) return;
-    el.appendChild(document.createTextNode(label));
-    const href = ghUrl(run.html_url || "");
-    if (href) {
-      const a = document.createElement("a");
-      a.href = href;
-      a.textContent = fmt(run.updated_at);
-      el.appendChild(a);
-    } else {
-      el.appendChild(document.createTextNode(fmt(run.updated_at)));
-    }
-    el.appendChild(document.createTextNode(". "));
+  function tile(name, run, missing) {
+    const li = document.createElement("li");
+    const href = run && ghUrl(run.html_url || "");
+    const inner = href ? document.createElement("a") : document.createElement("div");
+    if (href) inner.href = href;
+    inner.className = href ? "stamp-hit" : "stamp-dead";
+    const lab = document.createElement("span");
+    lab.className = "stamp-name";
+    lab.textContent = name;
+    const when = document.createElement("span");
+    when.className = "stamp-when";
+    when.textContent = run && run.updated_at ? fmt(run.updated_at) : missing;
+    inner.appendChild(lab);
+    inner.appendChild(when);
+    li.appendChild(inner);
+    return li;
   }
 
   function render(s) {
     el.textContent = "";
-    if (s && s.overlay && s.overlay.updated_at) {
-      addLink("Images last green: ", s.overlay);
-    } else {
-      el.appendChild(document.createTextNode("Images last green: no successful bake listed. "));
-    }
-    if (s && s.inspect && s.inspect.updated_at) {
-      addLink("Inspected: ", s.inspect);
-    }
-    if (s && s.iso && s.iso.ok && s.iso.updated_at) {
-      addLink("USB ISO last green: ", s.iso);
-    }
-    if (s && s.vendor && s.vendor.ok && s.vendor.updated_at) {
-      addLink("Vendor list last green: ", s.vendor);
-    }
+    el.classList.add("factory-stamp");
+    const kicker = document.createElement("p");
+    kicker.className = "stamp-kicker";
+    kicker.textContent = "Last green";
+    const ul = document.createElement("ul");
+    ul.className = "stamp-grid";
+    ul.appendChild(tile("Images", s && s.overlay, "No bake yet"));
+    ul.appendChild(tile("Inspected", s && s.inspect, "No inspect yet"));
+    ul.appendChild(tile("USB ISO", s && s.iso && s.iso.ok ? s.iso : null, "No ISO yet"));
+    ul.appendChild(tile("Vendors", s && s.vendor && s.vendor.ok ? s.vendor : null, "No watch yet"));
+    el.appendChild(kicker);
+    el.appendChild(ul);
   }
 
   function fromApi() {
