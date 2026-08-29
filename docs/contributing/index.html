@@ -59,7 +59,7 @@
     </ul>
     <p>Every new overlay lock needs a <code>ujust</code> revert. If it weakens a lock, it is opt-in and must warn. Fill the PR template. Use the issue forms (overlay bug vs lock idea). Stock kernel bugs go <a href="https://github.com/secureblue/secureblue/issues">upstream</a>.</p>
     <h2 id="mark"><a href="#mark">Public mark</a></h2>
-    <p>Every overlay file under <code>files/</code> and <code>recipes/</code> must carry <code>UNWOKE-SHIPPED-FIRST</code> and the MIT copyright line. Compose, inspect, and the PR gate fail if a new file is unmarked. Do not obfuscate. Do not change the license. Ideas on their tracker stay public; copies of this tree must keep the notice. Ledger: <a href="ahead/">Shipped first</a>.</p>
+    <p>Every overlay file under <code>files/</code> and <code>recipes/</code> must carry <code>UNWOKE-SHIPPED-FIRST</code> and the MIT copyright line. Compose stamps a forgotten file in the image. Inspect and the PR gate fail if git is still unmarked. Do not put the token into live Chromium/Brave/Trivalent <code>policies/managed</code> JSON. Do not obfuscate. Do not change the license. Do not weaken a lock to “protect credit.” Ledger: <a href="ahead/">Shipped first</a>.</p>
 <pre><code>git clone https://github.com/SeRgi270710267/unwoke-secureblue
 # recipes/  overlay modules
 # files/    scripts, SELinux, policies, just

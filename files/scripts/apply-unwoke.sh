@@ -175,4 +175,6 @@ fi
   echo "FAIL: missing /usr/share/unwoke/NOTICE or LICENSE" >&2
   exit 1
 }
-python3 /usr/libexec/unwoke/mark-check.py /
+# Stamp first so a new overlay file is marked without a human reminder.
+# Live Chromium/Brave/Trivalent managed JSON is scrubbed, not stamped.
+python3 /usr/libexec/unwoke/mark-check.py --apply /

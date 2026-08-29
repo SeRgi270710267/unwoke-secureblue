@@ -76,7 +76,8 @@ do
     name="${pack%%:*}"
     srcf="${pack##*:}"
     [[ -f "${SRC}/${srcf}" ]] || continue
-    cp -a "${SRC}/${srcf}" "${dest}/${name}.json"
+    python3 /usr/libexec/unwoke/mark-check.py --install-policy \
+      "${SRC}/${srcf}" "${dest}/${name}.json"
   done
 done
 
@@ -91,4 +92,7 @@ mkdir -p /usr/etc/trivalent/trivalent.conf.d
 if command -v glib-compile-schemas >/dev/null && [[ -d /usr/share/glib-2.0/schemas ]]; then
   glib-compile-schemas /usr/share/glib-2.0/schemas || true
 fi
+
+# Flavor copies land after apply-unwoke. Scrub live policies; stamp anything new.
+python3 /usr/libexec/unwoke/mark-check.py --apply /
 

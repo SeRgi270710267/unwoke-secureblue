@@ -124,7 +124,8 @@ policy_on() {
   while IFS= read -r d; do
     [[ -n "${d}" ]] || continue
     as_root mkdir -p "${d}"
-    as_root cp -a "${src}" "${d}/${file}"
+    as_root python3 /usr/libexec/unwoke/mark-check.py --install-policy \
+      "${src}" "${d}/${file}"
   done < <(policy_dirs)
   as_root rm -f "${off}"
 }
