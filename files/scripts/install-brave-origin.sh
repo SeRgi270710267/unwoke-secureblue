@@ -61,27 +61,6 @@ unwoke_rpm_extract "${rpm}" /
   exit 1
 }
 echo "unwoke: brave-origin files extracted (not registered in RPM db)"
-
-# Fedora runtime bits Brave wants. Extract only if the file is missing.
-# Isolated dnf5 download — still no image dnf install.
-need_so() {
-  local n="$1"
-  [[ -e "/usr/lib64/${n}" || -e "/usr/lib/${n}" ]]
-}
-if ! need_so libXss.so.1; then
-  echo "unwoke: extracting libXScrnSaver (libXss missing)"
-  unwoke_rpm_download "${work}/deps" libXScrnSaver
-  for r in "${work}/deps"/libXScrnSaver-*.rpm; do
-    [[ -f "${r}" ]] || continue
-    unwoke_rpm_extract "${r}" /
-  done
-fi
-if ! need_so libappindicator3.so.1 && ! need_so libayatana-appindicator3.so.1; then
-  echo "unwoke: extracting libappindicator-gtk3 (tray lib missing)"
-  unwoke_rpm_download "${work}/deps" libappindicator-gtk3 || \
-    unwoke_rpm_download "${work}/deps" libayatana-appindicator-gtk3 || true
-  for r in "${work}/deps"/lib*appindicator*.rpm; do
-    [[ -f "${r}" ]] || continue
-    unwoke_rpm_extract "${r}" /
-  done
-fi
+# Do not dnf Fedora extras here. Bake fac79ef died pulling libXScrnSaver
+# through a throwaway installroot that inherited secureblue.repo GPG.
+# USB wrap does not need libXss. Tray/screensaver libs can come later.

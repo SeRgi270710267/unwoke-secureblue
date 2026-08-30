@@ -67,12 +67,14 @@ unwoke_rpm_download() {
     "${dest}"
   rpm --initdb --dbpath "${root}/usr/lib/sysimage/rpm"
   printf '%s\n' "${fedora}" > "${root}/etc/dnf/vars/releasever"
-  if [[ -d /etc/yum.repos.d ]]; then
-    cp -a /etc/yum.repos.d/. "${root}/etc/yum.repos.d/" || true
-  fi
-  if [[ -d /usr/etc/yum.repos.d ]]; then
-    cp -a /usr/etc/yum.repos.d/. "${root}/etc/yum.repos.d/" || true
-  fi
+  # Fedora/updates only. Copying secureblue.repo into a throwaway
+  # installroot dies on an interactive GPG prompt (bake fac79ef).
+  for dir in /etc/yum.repos.d /usr/etc/yum.repos.d; do
+    [[ -d "${dir}" ]] || continue
+    for f in fedora.repo fedora-updates.repo fedora-cisco-openh264.repo; do
+      [[ -f "${dir}/${f}" ]] && cp -a "${dir}/${f}" "${root}/etc/yum.repos.d/"
+    done
+  done
   if [[ -d /etc/pki/rpm-gpg ]]; then
     cp -a /etc/pki/rpm-gpg/. "${root}/etc/pki/rpm-gpg/" || true
   fi
@@ -80,9 +82,10 @@ unwoke_rpm_download() {
     mkdir -p "${root}/etc"
     cp -a /etc/os-release "${root}/etc/os-release"
   fi
-  dnf5 --installroot="${root}" --releasever="${fedora}" \
+  dnf5 -y --installroot="${root}" --releasever="${fedora}" \
     --setopt=cachedir="${root}/var/cache/libdnf5" \
     --setopt=keepcache=True \
+    --nogpgcheck \
     download --destdir="${dest}" "$@"
   rm -rf "${root}"
 }
