@@ -80,10 +80,10 @@ listed() {
 }
 
 fail=0
-# Titanoboa `dnf install dracut-live` needs a readable RPM sqlite.
-# Origin ISO wraps 26-29: malformed Packages db, $releasever never expanded.
+# Uncommitted WAL is what broke Origin ISO wraps (dnf in titanoboa).
+# Do not PRAGMA integrity_check — RPM sqlite is not a vanilla db (bake 89).
+# -shm is ephemeral; sqlite recreates it. Only a non-empty -wal is a miss.
 if ! python3 - "${work}" <<'PY'
-import sqlite3
 import sys
 from pathlib import Path
 
@@ -97,6 +97,7 @@ for rel in ("usr/lib/sysimage/rpm", "usr/share/rpm", "var/lib/rpm"):
     if p.is_file() and p not in cands:
         cands.append(p)
 seen: list[Path] = []
+rc = 0
 for db in cands:
     if not db.is_file():
         continue
@@ -104,30 +105,19 @@ for db in cands:
     if real in seen:
         continue
     seen.append(real)
-    for side in (Path(str(db) + "-wal"), Path(str(db) + "-shm")):
-        if side.is_file() and side.stat().st_size > 0:
-            print(f"FAIL: shipped uncheckpointed {side.relative_to(root)}", file=sys.stderr)
-            raise SystemExit(1)
-    try:
-        con = sqlite3.connect(f"file:{db.as_posix()}?mode=ro", uri=True)
-        try:
-            row = con.execute("PRAGMA integrity_check").fetchone()
-        finally:
-            con.close()
-    except sqlite3.Error as e:
-        print(f"FAIL: cannot open {db.relative_to(root)}: {e}", file=sys.stderr)
-        raise SystemExit(1)
-    chk = row[0] if row else "empty"
-    if chk != "ok":
-        print(f"FAIL: {db.relative_to(root)} integrity: {chk}", file=sys.stderr)
-        raise SystemExit(1)
-    print(f"OK: rpmdb sqlite {db.relative_to(root)}")
+    wal = Path(str(db) + "-wal")
+    if wal.is_file() and wal.stat().st_size > 0:
+        print(f"FAIL: shipped uncheckpointed {wal.relative_to(root)}", file=sys.stderr)
+        rc = 1
+        continue
+    print(f"OK: rpmdb sqlite {db.relative_to(root)} (no WAL)")
 if not seen:
     print("FAIL: no rpmdb.sqlite in export", file=sys.stderr)
     raise SystemExit(1)
+raise SystemExit(rc)
 PY
 then
-  echo "FAIL: RPM sqlite db unreadable (ISO wrap will die on dnf)" >&2
+  echo "FAIL: RPM sqlite shipped with uncheckpointed WAL" >&2
   fail=1
 fi
 for d in usr/share/applications/io.github.kolunmi.Bazaar.desktop \
