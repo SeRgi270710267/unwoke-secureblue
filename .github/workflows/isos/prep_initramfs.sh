@@ -16,8 +16,23 @@ sed -i '/^install squashfs /d' /usr/lib/modprobe.d/secureblue.conf
 echo 'install squashfs /sbin/modprobe --ignore-install squashfs' > /etc/modprobe.d/zz-squashfs-override.conf
 echo 'install_items+=" /usr/lib64/libno_rlimit_as.so /etc/ld.so.cache /etc/modprobe.d/zz-squashfs-override.conf "' > /etc/dracut.conf.d/libs.conf
 
-echo "unwoke: recover RPM sqlite before titanoboa dnf"
+echo "unwoke: RPM sqlite / kernel-core check before titanoboa dnf"
 echo "unwoke: rpm _dbpath=$(rpm -E '%_dbpath' 2>/dev/null || echo empty)"
+
+# A healthy ostree index must not be sqlite3 .recover'd — recover of Origin
+# produced a 4.3 MiB stub and dnf then installed 100+ packages.
+if rpm -q kernel-core >/dev/null 2>&1; then
+  echo "unwoke: rpm -q kernel-core already ok ($(rpm -q kernel-core --queryformat '%{evr}.%{arch}\n'))"
+  fedora="$(rpm --eval '%{fedora}' 2>/dev/null || true)"
+  if [[ "${fedora}" =~ ^[0-9]+$ ]]; then
+    mkdir -p /etc/dnf/vars /etc/yum/vars
+    printf '%s\n' "${fedora}" > /etc/dnf/vars/releasever
+    printf '%s\n' "${fedora}" > /etc/yum/vars/releasever
+  fi
+  exit 0
+fi
+
+echo "WARN: rpm -q kernel-core failed; attempting recover" >&2
 
 db=""
 for cand in "$(rpm -E '%_dbpath' 2>/dev/null)/rpmdb.sqlite" \
