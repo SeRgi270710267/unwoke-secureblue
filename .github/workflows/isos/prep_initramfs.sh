@@ -128,7 +128,12 @@ fi
 if rpm -q kernel-core >/dev/null 2>&1; then
   echo "unwoke: rpm -q kernel-core ok ($(rpm -q kernel-core --queryformat '%{evr}.%{arch}\n'))"
 else
-  echo "WARN: rpm -q kernel-core still failed" >&2
+  # ISO wrap 33304494809: malformed 95 MiB sqlite, justdb died, then
+  # titanoboa `dnf install -y dracut-live` pulled 177 packages and
+  # failed OpenPGP. Do not hand that db to titanoboa. Overlay must
+  # ship a readable index. Do not bump titanoboa.
+  echo "FAIL: rpm -q kernel-core still failed; refusing titanoboa dnf on a malformed rpmdb" >&2
+  exit 1
 fi
 # Do not dnf install dracut-live here. A stub recovered index made dnf
 # pull 100+ packages, then rootfs-selinux-fix died on unlabeled rpc_pipefs.

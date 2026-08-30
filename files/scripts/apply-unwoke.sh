@@ -179,14 +179,17 @@ fi
 # Live Chromium/Brave/Trivalent managed JSON is scrubbed, not stamped.
 python3 /usr/libexec/unwoke/mark-check.py --apply /
 
-# Pre-flavor RPM sqlite. Origin extra dnf (Brave + selinux-policy-devel)
-# can malform Packages so titanoboa dnf dies. Flavor scripts restore this
-# copy if Packages is unreadable, then delete it so it does not ship.
+# Pre-flavor RPM sqlite + WAL/SHM. Origin extra dnf (Brave +
+# selinux-policy-devel) can malform Packages so titanoboa dnf dies.
+# Save the trio together: sqlite without its WAL is a torn index.
+# Flavor scripts restore the set, then delete it so it does not ship.
 bak=/usr/share/unwoke/.rpmdb-pre-flavor.sqlite
-rm -f "${bak}"
+rm -f "${bak}" "${bak}-wal" "${bak}-shm"
 for db in /usr/lib/sysimage/rpm/rpmdb.sqlite /usr/share/rpm/rpmdb.sqlite /var/lib/rpm/rpmdb.sqlite; do
   [[ -f "${db}" ]] || continue
   cp -a "${db}" "${bak}"
-  echo "unwoke: saved pre-flavor rpmdb from ${db}"
+  [[ -f "${db}-wal" ]] && cp -a "${db}-wal" "${bak}-wal"
+  [[ -f "${db}-shm" ]] && cp -a "${db}-shm" "${bak}-shm"
+  echo "unwoke: saved pre-flavor rpmdb from ${db} ($(stat -c %s "${bak}" 2>/dev/null || echo ?) bytes, wal=$(stat -c %s "${bak}-wal" 2>/dev/null || echo 0))"
   break
 done

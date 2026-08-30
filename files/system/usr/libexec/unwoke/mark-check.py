@@ -46,7 +46,16 @@ CIL_MARK = (
     f";; {TOKEN}\n"
 )
 SKIP_NAMES = {"LICENSE", "flavor"}
-SKIP_SUFFIX = {".jpg", ".jpeg", ".png", ".svg", ".pyc", ".woff", ".woff2"}
+SKIP_SUFFIX = {
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".svg",
+    ".pyc",
+    ".woff",
+    ".woff2",
+    ".sqlite",
+}
 IMAGE_EXTRAS = (
     "usr/libexec/secureblue/harden_flatpak.py",
     "usr/libexec/secureblue-motd",
@@ -62,6 +71,11 @@ def skip(path: Path) -> bool:
     if path.name in SKIP_NAMES:
         return True
     if path.suffix.lower() in SKIP_SUFFIX:
+        return True
+    # RPM sqlite backup + sidecars. Stamping a db malforms Packages.
+    if path.name.startswith(".rpmdb-pre-flavor"):
+        return True
+    if path.name.endswith(".sqlite-wal") or path.name.endswith(".sqlite-shm"):
         return True
     if "__pycache__" in path.parts or "upstream-snapshots" in path.parts:
         return True
