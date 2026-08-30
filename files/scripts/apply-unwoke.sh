@@ -178,3 +178,15 @@ fi
 # Stamp first so a new overlay file is marked without a human reminder.
 # Live Chromium/Brave/Trivalent managed JSON is scrubbed, not stamped.
 python3 /usr/libexec/unwoke/mark-check.py --apply /
+
+# Pre-flavor RPM sqlite. Origin extra dnf (Brave + selinux-policy-devel)
+# can malform Packages so titanoboa dnf dies. Flavor scripts restore this
+# copy if Packages is unreadable, then delete it so it does not ship.
+bak=/usr/share/unwoke/.rpmdb-pre-flavor.sqlite
+rm -f "${bak}"
+for db in /usr/lib/sysimage/rpm/rpmdb.sqlite /usr/share/rpm/rpmdb.sqlite /var/lib/rpm/rpmdb.sqlite; do
+  [[ -f "${db}" ]] || continue
+  cp -a "${db}" "${bak}"
+  echo "unwoke: saved pre-flavor rpmdb from ${db}"
+  break
+done

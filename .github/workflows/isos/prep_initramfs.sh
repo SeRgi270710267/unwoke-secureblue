@@ -94,10 +94,7 @@ if rpm -q kernel-core >/dev/null 2>&1; then
 else
   echo "WARN: rpm -q kernel-core still failed" >&2
 fi
-
-# Weak deps pulled 177 packages and still exited 1. Install only dracut-live.
-if [[ "${fedora}" =~ ^[0-9]+$ ]] && command -v dnf5 >/dev/null; then
-  dnf5 --releasever="${fedora}" -y --setopt=install_weak_deps=False install dracut-live && echo "unwoke: dnf5 installed dracut-live" || echo "WARN: dnf5 install dracut-live rc=$?"
-elif [[ "${fedora}" =~ ^[0-9]+$ ]] && command -v dnf >/dev/null; then
-  dnf --releasever="${fedora}" -y --setopt=install_weak_deps=False install dracut-live && echo "unwoke: dnf installed dracut-live" || echo "WARN: dnf install dracut-live rc=$?"
-fi
+# Do not dnf install dracut-live here. A stub recovered index made dnf
+# pull 100+ packages, then rootfs-selinux-fix died on unlabeled rpc_pipefs.
+# titanoboa's own `dnf install -y dracut-live` is enough once Packages
+# and kernel-core are readable.
