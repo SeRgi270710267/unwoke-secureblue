@@ -9,28 +9,13 @@ modules:
     include:
       - zz2-unwoke.gschema.override
 
-  # Brave Origin standalone RPM (not full brave-browser). Same official repo.
-  # Do not pin `repo: brave-browser` or dnf cannot pull Fedora deps.
-  - type: dnf
-    repos:
-      files:
-        - https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
-      keys:
-        - https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
-    install:
-      skip-unavailable: false
-      packages:
-        - liberation-fonts
-        - liberation-serif-fonts
-        - liberation-sans-fonts
-        - liberation-mono-fonts
-        - libappindicator-gtk3
-        - libXScrnSaver
-        - brave-origin
-
+  # Brave Origin as files only (rpm2cpio). Do not dnf install brave-origin
+  # or selinux-policy-devel — that extra Origin dnf malforms Packages so
+  # titanoboa cannot wrap a USB. Browserless still dnf-removes Trivalent.
   - type: script
     scripts:
       - remove-trivalent.sh
+      - install-brave-origin.sh
       - apply-brave.sh
       - install-brave-selinux.sh
       - rebuild-rpmdb.sh
