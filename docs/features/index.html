@@ -159,8 +159,8 @@
           <tr>
             <td>DevTools lock</td>
             <td>Unlocked</td>
-            <td>Unlocked until <code>ujust set-brave-devtools lock</code></td>
-            <td>Unlocked until the same lock toggle</td>
+            <td>Locked. <code>ujust set-brave-devtools allow</code></td>
+            <td>Locked. Same</td>
             <td>n/a</td>
           </tr>
           <tr>
@@ -356,7 +356,9 @@
       <li>Homebrew off (stock ships it). Camera/mic locked at module+udev. Wheel GUI lock after a daily user exists.</li>
       <li>Isolation pack (Origin + Trivalent): no WebGL/WebGPU, SitePerProcess, origin-keyed processes.</li>
       <li>First-boot: re-enable <code>harden_userns</code>, apply defaults unless you stamped them off, promote <code>ostree-unverified-registry</code> → <code>ostree-image-signed</code>.</li>
-      <li>RAM-disk noexec, CET tunables, <code>/boot</code> 700, Fedora-not-Mozilla CA blocklist, stock deprecation/Flathub-setup nags masked. All reversible.</li>
+      <li>RAM-disk noexec (fail-closed after first boot), CET tunables, <code>/boot</code> 700 plus compose-time 700 on <code>/usr/src</code> and module dirs, Fedora-not-Mozilla CA blocklist (fail-closed), stock deprecation/Flathub-setup nags masked. All reversible.</li>
+      <li>Chrony NTS on the installed OS (<code>ujust set-nts off</code>). USBGuard asked once on tty1, default skip.</li>
+      <li>DevTools locked by default on Origin and Trivalent. <code>ujust set-brave-devtools allow</code>.</li>
       <li>Privacy apply-boot: countme masked, no connectivity GET, DHCP anonymity (no hostname, iaid=mac, send-release, no LLMNR/mDNS), thumbnails off.</li>
       <li>Vendor installers (Proton, IVPN, Mullvad, …): JSON list, WireGuard/web first, hashed official RPM only if you insist. <code>ujust install-vendor NAME</code>.</li>
       <li><code>ujust unwoke-test</code> plus <a href="tutorials/see-it/">see each lock yourself</a>. Stock <code>audit-secureblue</code> does not list overlay extras.</li>
@@ -455,6 +457,12 @@
             <td><code>on</code></td>
           </tr>
           <tr>
+            <td><code>ujust set-nts</code></td>
+            <td><code>on</code></td>
+            <td>Chrony NTS (Cloudflare + nts.ntp.se). Independent of dns-selector.</td>
+            <td><code>off</code></td>
+          </tr>
+          <tr>
             <td><code>ujust set-brave-hardening</code> / <code>set-trivalent-hardening</code></td>
             <td><code>on</code> (Origin + Trivalent)</td>
             <td>HTTPS-only, no WebRTC IP leak, no metrics/sync/autofill/passwords/translate.</td>
@@ -492,9 +500,9 @@
           </tr>
           <tr>
             <td><code>ujust set-brave-devtools</code> / <code>set-trivalent-devtools</code></td>
-            <td><code>allow</code> (opt-in lock)</td>
-            <td>Lock <code>chrome://devtools</code>. Default unlocked.</td>
-            <td><code>lock</code> / <code>allow</code></td>
+            <td><code>lock</code></td>
+            <td>Lock <code>chrome://devtools</code>.</td>
+            <td><code>allow</code></td>
           </tr>
           <tr>
             <td><code>ujust set-trivalent-network-sandbox</code></td>
@@ -605,6 +613,7 @@ ujust set-ramdisk-exec on|off
 ujust set-cet on|off
 ujust set-boot-perm on|off
 ujust set-extra-cas on|off
+ujust set-nts on|off
 ujust set-brave-hardening on|off
 ujust set-brave-devices on|off
 ujust set-brave-jitless on|off

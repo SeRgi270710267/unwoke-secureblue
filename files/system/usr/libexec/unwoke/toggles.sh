@@ -285,6 +285,9 @@ for d in j.get("deployments") or []:
   if [[ -x /usr/libexec/unwoke/stock-nags.sh ]]; then
     info "stock-nags: $(/usr/libexec/unwoke/stock-nags.sh status)"
   fi
+  if [[ -x /usr/libexec/unwoke/nts.sh ]]; then
+    info "nts: $(/usr/libexec/unwoke/nts.sh status)"
+  fi
 
   if is_browserless; then
     ok "flavor: browserless (no image browser)"
@@ -421,7 +424,7 @@ for d in j.get("deployments") or []:
     echo "  ujust set-brave-extensions block|allow"
     echo "  ujust set-brave-isolation on|off"
     echo "  ujust set-brave-sandbox on|off"
-    echo "  ujust set-brave-devtools lock|allow  (default allow)"
+    echo "  ujust set-brave-devtools lock|allow  (default lock)"
     if is_origin; then
       echo "  ujust set-brave-bubblejail on|off"
     fi
@@ -467,9 +470,9 @@ status_packs() {
     info "${b} extra sandbox pack off — ujust set-brave-sandbox on"
   fi
   if policy_is_on "${DEVTOOLS_FILE}" "${DEVTOOLS_OFF}"; then
-    ok "${b} DevTools locked — ujust set-brave-devtools allow"
+    ok "${b} DevTools locked (default) — ujust set-brave-devtools allow"
   else
-    info "${b} DevTools allowed (default) — ujust set-brave-devtools lock"
+    info "${b} DevTools allowed — ujust set-brave-devtools lock"
   fi
 }
 
@@ -743,10 +746,7 @@ cmd_apply_boot() {
     boot_pack "${EXT_SRC}" "${EXT_FILE}" "${EXT_OFF}"
     boot_pack "${ISO_SRC}" "${ISO_FILE}" "${ISO_OFF}"
     boot_pack "${SANDBOX_SRC}" "${SANDBOX_FILE}" "${SANDBOX_OFF}"
-    # DevTools pack is opt-in. Never restore from image default.
-    if [[ -f "${DEVTOOLS_OFF}" ]]; then
-      boot_pack "${DEVTOOLS_SRC}" "${DEVTOOLS_FILE}" "${DEVTOOLS_OFF}"
-    fi
+    boot_pack "${DEVTOOLS_SRC}" "${DEVTOOLS_FILE}" "${DEVTOOLS_OFF}"
     if is_trivalent; then
       mkdir -p "${TRIV_CONF_D}"
       boot_conf "${ISO_CONF_SRC}" "${ISO_CONF}" "${ISO_OFF}"
@@ -801,6 +801,9 @@ cmd_apply_boot() {
   fi
   if [[ -x /usr/libexec/unwoke/ca-trim.sh ]]; then
     /usr/libexec/unwoke/ca-trim.sh apply-boot || true
+  fi
+  if [[ -x /usr/libexec/unwoke/nts.sh ]]; then
+    /usr/libexec/unwoke/nts.sh apply-boot || true
   fi
 }
 
@@ -873,6 +876,7 @@ case "${main}" in
   cet) exec /usr/libexec/unwoke/cet.sh "${1:-status}" ;;
   boot-perm) exec /usr/libexec/unwoke/boot-perm.sh "${1:-status}" ;;
   extra-cas) exec /usr/libexec/unwoke/ca-trim.sh "${1:-status}" ;;
+  nts) exec /usr/libexec/unwoke/nts.sh "${1:-status}" ;;
   countme) exec /usr/libexec/unwoke/privacy.sh countme "${1:-status}" ;;
   connectivity|connectivity-check) exec /usr/libexec/unwoke/privacy.sh connectivity "${1:-status}" ;;
   dhcp-hostname) exec /usr/libexec/unwoke/privacy.sh dhcp-hostname "${1:-status}" ;;

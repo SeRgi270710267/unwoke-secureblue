@@ -58,10 +58,19 @@ if command -v systemctl >/dev/null; then
   systemctl --global enable unwoke-user-defaults.service || true
   systemctl --global enable unwoke-signed-nag.timer || true
   systemctl enable unwoke-admin-split-setup.service || true
+  systemctl enable unwoke-usbguard-prompt.service || true
 fi
 
 # Every new libexec file is executable. Do not keep a name list.
 find /usr/libexec/unwoke -maxdepth 1 -type f -exec chmod a+x {} + 2>/dev/null || true
+
+# Stock #391: directory mode 700 on ostree-owned trees. /boot is runtime
+# (boot-perm.sh). Not recursive — do not strip exec from .ko files.
+for d in /usr/src /usr/lib/modules /lib/modules; do
+  if [[ -d "${d}" && ! -L "${d}" ]]; then
+    chmod 700 "${d}" 2>/dev/null || true
+  fi
+done
 
 # Stock #1606: PEM blocklist of Fedora CAs not in the Mozilla website set.
 if [[ -x /usr/libexec/unwoke/ca-trim-build.py ]] || [[ -f /usr/libexec/unwoke/ca-trim-build.py ]]; then

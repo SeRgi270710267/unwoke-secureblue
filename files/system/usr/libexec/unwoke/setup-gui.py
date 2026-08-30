@@ -86,6 +86,8 @@ LOOSENED = (
     ("SHSTK/IBT off", lambda: _exists("/etc/unwoke/cet.off"), ("cet", "on"), "first-hour"),
     ("/boot world-readable", lambda: _exists("/etc/unwoke/allow-boot-open"), ("boot-perm", "on"), "first-hour"),
     ("Extra CAs allowed", lambda: _exists("/etc/unwoke/allow-extra-cas"), ("extra-cas", "off"), "first-hour"),
+    ("Chrony NTS off", lambda: _exists("/etc/unwoke/allow-clear-ntp"), ("nts", "on"), "see-it"),
+    ("DevTools allowed", lambda: _exists("/etc/unwoke/brave-devtools.off"), ("devtools", "lock"), "see-it"),
     ("JavaScript JIT allowed", lambda: _exists("/etc/unwoke/brave-jitless.off"), ("jitless", "on"), "sites-broken"),
     ("Browser devices allowed", lambda: _exists("/etc/unwoke/brave-devices.off"), ("devices", "on"), "camera-mic"),
     ("Password / autofill pack off", lambda: _exists("/etc/unwoke/brave-hardening.off"), ("hardening", "on"), "sites-broken"),

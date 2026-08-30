@@ -310,10 +310,22 @@ RESULT: PASS</code></pre>
             <td>Untick Encrypt in Anaconda (weaker)</td>
           </tr>
           <tr>
-            <td>Live ISO time</td>
-            <td>Fedora NTP pool in the clear</td>
-            <td>NTS to Cloudflare + nts.ntp.se on the stick</td>
-            <td>Anaconda Time &amp; Date still lets you pick servers</td>
+            <td>Time (chrony)</td>
+            <td>ISO: fedora NTP pool in the clear. Installed: stock chrony</td>
+            <td>NTS to Cloudflare + nts.ntp.se on the stick <em>and</em> the installed OS</td>
+            <td><code>ujust set-nts off</code></td>
+          </tr>
+          <tr>
+            <td>DevTools</td>
+            <td>Unlocked</td>
+            <td>Locked on Origin and <code>*-trivalent</code></td>
+            <td><code>ujust set-brave-devtools allow</code></td>
+          </tr>
+          <tr>
+            <td>USBGuard at first boot</td>
+            <td>You must remember leftover stock</td>
+            <td>tty1 asks once (default No). Never silent-enable</td>
+            <td>Skip, or later <code>ujust setup-usbguard</code></td>
           </tr>
           <tr>
             <td>RAM disks</td>

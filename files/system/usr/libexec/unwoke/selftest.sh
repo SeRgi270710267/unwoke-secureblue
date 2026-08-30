@@ -112,6 +112,8 @@ need=(
   /usr/libexec/unwoke/network-fs.sh
   /usr/libexec/unwoke/theme.sh
   /usr/libexec/unwoke/selftest.sh
+  /usr/libexec/unwoke/nts.sh
+  /usr/libexec/unwoke/usbguard-prompt.sh
 )
 for p in "${need[@]}"; do
   if [[ -x "${p}" || -f "${p}" ]]; then
@@ -256,17 +258,7 @@ check_pack "20-unwoke-jitless.json" "/etc/unwoke/brave-jitless.off" "JIT blocked
 check_pack "30-unwoke-extensions.json" "/etc/unwoke/brave-extensions.off" "extension installs blocked"
 check_pack "40-unwoke-isolation.json" "/etc/unwoke/brave-isolation.off" "WebGL/WebGPU off, site isolation"
 check_pack "50-unwoke-sandbox.json" "/etc/unwoke/brave-sandbox.off" "audio sandbox / no screen capture / no JS optimizer"
-if is_browserless; then
-  skip "DevTools pack (no house browser)"
-elif [[ -f /etc/unwoke/brave-devtools.off ]]; then
-  pass "DevTools allowed (default)"
-  proof "/etc/unwoke/brave-devtools.off or no lock file — default is allow"
-elif policy_on_disk "60-unwoke-devtools.json"; then
-  loose "DevTools locked (you opted in)"
-  proof "60-unwoke-devtools.json present"
-else
-  pass "DevTools allowed (default; no lock file)"
-fi
+check_pack "60-unwoke-devtools.json" "/etc/unwoke/brave-devtools.off" "DevTools locked"
 
 if is_origin; then
   if [[ -f /etc/unwoke/brave-bubblejail.off ]]; then
@@ -352,12 +344,13 @@ if [[ -f /etc/unwoke/allow-ramdisk-exec ]]; then
 else
   pass "noexec /dev/shm and /tmp (default)"
   proof "${st}"
-  if awk '$2=="/tmp" && $4 ~ /(^|,)noexec(,|$)/ {found=1} END{exit found?0:1}' /proc/mounts 2>/dev/null; then
-    pass "/tmp is mounted noexec right now"
-    proof "$(awk '$2=="/tmp" {print}' /proc/mounts)"
+  if awk '$2=="/tmp" && $4 ~ /(^|,)noexec(,|$)/ {found=1} END{exit found?0:1}' /proc/mounts 2>/dev/null \
+    && awk '$2=="/dev/shm" && $4 ~ /(^|,)noexec(,|$)/ {found=1} END{exit found?0:1}' /proc/mounts 2>/dev/null; then
+    pass "/tmp and /dev/shm are mounted noexec right now"
+    proof "$(awk '$2=="/tmp" || $2=="/dev/shm" {print}' /proc/mounts)"
   else
-    loose "/tmp is not noexec in /proc/mounts yet (needs reboot after first apply-boot)"
-    proof "$(awk '$2=="/tmp" {print}' /proc/mounts || echo 'no /tmp line')"
+    fail "#697 mounts lack noexec after boot (apply-boot should remount; this is fail-closed)"
+    proof "$(awk '$2=="/tmp" || $2=="/dev/shm" {print}' /proc/mounts || echo 'no lines')"
   fi
 fi
 st="$(/usr/libexec/unwoke/cet.sh status 2>/dev/null || echo '?')"
@@ -414,11 +407,22 @@ else
   mode="$(stat -c '%a' /boot 2>/dev/null || echo '?')"
   if [[ "${mode}" == "700" ]]; then
     pass "#391 /boot is mode 700"
-    proof "stat -c %a /boot = ${mode} (ostree /usr is not chmod'd at runtime)"
+    proof "stat -c %a /boot = ${mode}"
   else
-    loose "#391 /boot is ${mode} (lock wanted; apply-boot may not have run yet)"
-    proof "stat -c %a /boot = ${mode}; script /usr/libexec/unwoke/boot-perm.sh"
+    fail "#391 /boot is ${mode} (want 700; boot-perm.sh apply-boot)"
+    proof "stat -c %a /boot = ${mode}"
   fi
+  for d in /usr/src /usr/lib/modules; do
+    [[ -d "${d}" && ! -L "${d}" ]] || continue
+    m="$(stat -c '%a' "${d}" 2>/dev/null || echo '?')"
+    if [[ "${m}" == "700" ]]; then
+      pass "#391 ${d} is mode 700 (compose)"
+      proof "stat -c %a ${d} = ${m}"
+    else
+      fail "#391 ${d} is ${m} (want 700 at compose)"
+      proof "stat -c %a ${d} = ${m}"
+    fi
+  done
 fi
 
 # #697 — noexec RAM disks
@@ -434,9 +438,8 @@ else
     proof "/dev/shm: ${shm}"
     proof "/tmp: ${tmpm}"
   else
-    loose "#697 mounts not noexec yet (needs first apply-boot/reboot)"
+    fail "#697 mounts lack noexec (fail-closed; first-boot apply-boot should remount)"
     proof "/dev/shm: ${shm:-missing} | /tmp: ${tmpm:-missing}"
-    proof "script /usr/libexec/unwoke/ramdisk.sh"
   fi
 fi
 
@@ -470,19 +473,18 @@ else
   fi
 fi
 
-# #1185 — live ISO NTS only
-if [[ -f /etc/chrony.d/50-unwoke-nts.conf ]]; then
-  if grep -q 'nts' /etc/chrony.d/50-unwoke-nts.conf \
-    && grep -q 'time.cloudflare.com' /etc/chrony.d/50-unwoke-nts.conf; then
-    pass "#1185 live chrony uses NTS (not fedora NTP pool in the clear)"
-    proof "$(grep -E '^server' /etc/chrony.d/50-unwoke-nts.conf | tr '\n' '; ')"
-  else
-    fail "#1185 NTS drop-in present but missing nts servers"
-    proof "/etc/chrony.d/50-unwoke-nts.conf"
-  fi
+# #1185 — NTS on live ISO and installed OS
+if [[ -f /etc/unwoke/allow-clear-ntp ]]; then
+  loose "#1185 chrony NTS drop-in off"
+  proof "/etc/unwoke/allow-clear-ntp"
+elif [[ -f /etc/chrony.d/50-unwoke-nts.conf ]] \
+  && grep -q 'nts' /etc/chrony.d/50-unwoke-nts.conf \
+  && grep -q 'time.cloudflare.com' /etc/chrony.d/50-unwoke-nts.conf; then
+  pass "#1185 chrony uses NTS (Cloudflare + nts.ntp.se)"
+  proof "$(grep -E '^server' /etc/chrony.d/50-unwoke-nts.conf | tr '\n' '; ')"
 else
-  skip "#1185 live-ISO NTS (installed ostree keeps stock chrony)"
-  proof "no /etc/chrony.d/50-unwoke-nts.conf — expected after USB install"
+  fail "#1185 NTS drop-in missing (fail-closed; nts.sh apply-boot)"
+  proof "looked at /etc/chrony.d/50-unwoke-nts.conf"
 fi
 
 # #1295 — CET
@@ -529,11 +531,9 @@ else
   if [[ "${nblock}" -gt 0 ]]; then
     pass "#1606 Fedora-not-Mozilla CAs blocklisted (${nblock} pems)"
     proof "/etc/pki/ca-trust/source/blocklist/unwoke-*.pem"
-  elif [[ -d /usr/share/unwoke/ca-blocklist ]]; then
-    loose "#1606 blocklist source shipped; apply-boot has not copied pems yet"
-    proof "/usr/share/unwoke/ca-blocklist"
   else
-    fail "#1606 CA blocklist source missing"
+    fail "#1606 CA blocklist not live (fail-closed; apply-boot should copy pems)"
+    proof "source=/usr/share/unwoke/ca-blocklist dest=/etc/pki/ca-trust/source/blocklist"
   fi
 fi
 
@@ -620,6 +620,18 @@ else
     pass "#2508 no Flatpak web browser installed"
     proof "flatpak list --app has none of the known browser IDs"
   fi
+fi
+
+# USBGuard: prompt once, never silent
+if [[ -f /etc/usbguard/rules.conf ]] && grep -q '[^[:space:]]' /etc/usbguard/rules.conf 2>/dev/null; then
+  pass "USBGuard rules file is non-empty"
+  proof "/etc/usbguard/rules.conf"
+elif [[ -f /etc/unwoke/usbguard-prompt.done ]]; then
+  loose "USBGuard first-boot prompt skipped (you chose No). Later: ujust setup-usbguard"
+  proof "/etc/unwoke/usbguard-prompt.done"
+else
+  skip "USBGuard prompt not run yet (tty1 first boot)"
+  proof "service unwoke-usbguard-prompt.service"
 fi
 
 # #2526 — LUKS argon2id 2 GiB

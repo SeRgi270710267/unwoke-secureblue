@@ -222,7 +222,7 @@ EOF
 sed -i -E 's/^(pool|server)[[:space:]]/# \1 /' /etc/chrony.conf 2>/dev/null || true
 mkdir -p /etc/chrony.d
 cat > /etc/chrony.d/50-unwoke-nts.conf <<'EOF'
-# Live ISO only. Installed image keeps stock chrony.
+# Live ISO. Installed ostree also ships this via nts.sh apply-boot.
 server time.cloudflare.com iburst nts
 server nts.ntp.se iburst nts
 nocerttimecheck 1

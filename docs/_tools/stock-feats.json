@@ -92,9 +92,9 @@
       "url": "https://github.com/secureblue/secureblue/issues/1185",
       "shipped": "2026-08-29",
       "tag": "USB install",
-      "we": "Live ISO chrony uses NTS (time.cloudflare.com, nts.ntp.se), not fedora NTP pool in the clear.",
-      "revert": "Anaconda Time & Date still lets you pick servers",
-      "where": "install/"
+      "we": "Chrony NTS (time.cloudflare.com, nts.ntp.se) on the live ISO and the installed OS. Independent of dns-selector.",
+      "revert": "ujust set-nts off",
+      "where": "tutorials/see-it/#1185"
     },
     {
       "issue": 1569,

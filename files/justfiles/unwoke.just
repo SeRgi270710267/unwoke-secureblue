@@ -191,7 +191,7 @@ set-trivalent-sandbox *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh sandbox "$@"
 
-# Origin or Trivalent: lock chrome://devtools. Default allow (opt-in lock).
+# Origin or Trivalent: lock chrome://devtools. Default locked.
 [positional-arguments]
 set-brave-devtools *args:
     #!/usr/bin/bash
@@ -279,6 +279,12 @@ set-thumbnails *args:
 set-stock-nags *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh stock-nags "$@"
+
+# Chrony NTS (Cloudflare + nts.ntp.se). Default on. Independent of dns-selector.
+[positional-arguments]
+set-nts *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/nts.sh "$@"
 
 # Re-apply Unwoke wallpaper + accent (GNOME schema / KDE wallpaper). Settings still override.
 [positional-arguments]

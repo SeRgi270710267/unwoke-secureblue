@@ -4,4 +4,5 @@
 enable unwoke-first-boot.service
 enable unwoke-browser-guard.service
 enable unwoke-admin-split-setup.service
+enable unwoke-usbguard-prompt.service
 

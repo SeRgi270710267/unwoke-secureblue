@@ -65,6 +65,8 @@
       <li><a href="#2432">#2432 Anaconda encrypt</a></li>
       <li><a href="#2508">#2508 Flatpak browsers</a></li>
       <li><a href="#2526">#2526 Argon2id 2 GiB</a></li>
+      <li><a href="#devtools">DevTools locked</a></li>
+      <li><a href="#usbguard">USBGuard first-boot prompt</a></li>
       <li><a href="#house">House defaults (BT, Flathub, brew…)</a></li>
     </ul>
 
@@ -85,16 +87,16 @@ ls /usr/share/unwoke/SHIPPED-FIRST.txt /usr/share/unwoke/NOTICE /usr/share/unwok
 
     <h2 id="391"><a href="#391">#391 — /boot is 700</a></h2>
     <p>Kernel image dir not world-readable. Stock still asks for this. Revert: <code>ujust set-boot-perm off</code>.</p>
-<pre><code>stat -c '%a %n' /boot
+<pre><code>stat -c '%a %n' /boot /usr/src /usr/lib/modules
 ls /etc/unwoke/allow-boot-open 2>/dev/null || echo 'lock wanted (no stamp)'</code></pre>
-    <p>Healthy: <code>700 /boot</code> and no stamp file. If the stamp exists, you loosened it.</p>
+    <p>Healthy: <code>700</code> on those directories. <code>/boot</code> is runtime; <code>/usr/src</code> and modules are 700 in the image. Stamp only re-opens <code>/boot</code>.</p>
 
     <h2 id="697"><a href="#697">#697 — RAM disks cannot exec</a></h2>
     <p>Payloads in <code>/dev/shm</code> and <code>/tmp</code> should not run. Revert: <code>ujust set-ramdisk-exec on</code>.</p>
 <pre><code>findmnt -no OPTIONS /dev/shm
 findmnt -no OPTIONS /tmp
 ls /etc/unwoke/allow-ramdisk-exec 2>/dev/null || echo 'lock wanted'</code></pre>
-    <p>Healthy: both option lists include <code>noexec</code> (and usually <code>nosuid</code>, <code>nodev</code>). Right after first boot, apply-boot may not have remounted yet — reboot once if they are missing.</p>
+    <p>Healthy: both option lists include <code>noexec</code>. If they do not after first boot and you did not stamp <code>allow-ramdisk-exec</code>, that is a <strong>fail</strong> (fail-closed).</p>
 
     <h2 id="887"><a href="#887">#887 — Flatpak session bus</a></h2>
     <p>Stock audit does not warn. Overlay lockdown should <em>not</em> grant session-bus, system-bus, or <code>org.freedesktop.Flatpak</code>.</p>
@@ -102,10 +104,11 @@ ls /etc/unwoke/allow-ramdisk-exec 2>/dev/null || echo 'lock wanted'</code></pre>
 flatpak override --user --show</code></pre>
     <p>Healthy: you see <code>!session-bus</code> / <code>!system-bus</code> (or those names absent as grants). A bare <code>session-bus</code> without <code>!</code> is a fail. Stamp <code>/etc/unwoke/flatpak-lockdown.off</code> means you turned lockdown off.</p>
 
-    <h2 id="1185"><a href="#1185">#1185 — live ISO uses NTS</a></h2>
-    <p>Only on the USB live session. Installed ostree keeps stock chrony — skip there.</p>
-<pre><code>cat /etc/chrony.d/50-unwoke-nts.conf</code></pre>
-    <p>Healthy on the stick: <code>server time.cloudflare.com iburst nts</code> and <code>server nts.ntp.se iburst nts</code>. If the file is missing after install, that is expected.</p>
+    <h2 id="1185"><a href="#1185">#1185 — chrony NTS</a></h2>
+    <p>Live USB and installed OS. Independent of <code>ujust dns-selector</code>. Revert: <code>ujust set-nts off</code>.</p>
+<pre><code>cat /etc/chrony.d/50-unwoke-nts.conf
+ls /etc/unwoke/allow-clear-ntp 2>/dev/null || echo 'NTS wanted'</code></pre>
+    <p>Healthy: <code>server time.cloudflare.com iburst nts</code> and <code>server nts.ntp.se iburst nts</code>. Missing after first boot is a <strong>fail</strong> unless you stamped <code>allow-clear-ntp</code>.</p>
 
     <h2 id="1295"><a href="#1295">#1295 — SHSTK + IBT</a></h2>
     <p>Intel CET glibc tunables. Revert: <code>ujust set-cet off</code>.</p>
@@ -125,7 +128,7 @@ cat /usr/share/unwoke/nm-privacy-dhcp.conf</code></pre>
 <pre><code>ls /etc/pki/ca-trust/source/blocklist/unwoke-*.pem
 ls /usr/share/unwoke/ca-blocklist 2>/dev/null | head
 ls /etc/unwoke/allow-extra-cas 2>/dev/null || echo 'trim wanted'</code></pre>
-    <p>Healthy: one or more <code>unwoke-*.pem</code> files in the blocklist. Some gov/old TLS will fail — that is the lock.</p>
+    <p>Healthy: one or more <code>unwoke-*.pem</code> in the blocklist after first boot. Empty with no <code>allow-extra-cas</code> stamp is a <strong>fail</strong>.</p>
 
     <h2 id="1885"><a href="#1885">#1885 — extra Flatpak folders</a></h2>
     <p>xdg + host-root cuts stock’s lockdown command does not force. Revert: <code>ujust set-flatpak-lockdown off</code>.</p>
@@ -160,6 +163,18 @@ lsmod | grep -E 'nfs|cifs' || echo 'modules not loaded (good)'</code></pre>
 <pre><code>cat /etc/cryptsetup.conf
 cat /usr/etc/cryptsetup.conf</code></pre>
     <p>Healthy: <code>pbkdf = argon2id</code> and <code>pbkdf-memory = 2097152</code> (KiB = 2 GiB).</p>
+
+    <h2 id="devtools"><a href="#devtools">DevTools locked</a></h2>
+    <p>Default locked. Revert: <code>ujust set-brave-devtools allow</code>.</p>
+<pre><code>ls /etc/brave-origin/policies/managed/60-unwoke-devtools.json /etc/trivalent/policies/managed/60-unwoke-devtools.json 2>/dev/null
+ls /etc/unwoke/brave-devtools.off 2>/dev/null || echo 'DevTools lock wanted'</code></pre>
+    <p>Healthy: the JSON exists on Origin or Trivalent. Stamp means you allowed DevTools. Browserless: skip.</p>
+
+    <h2 id="usbguard"><a href="#usbguard">USBGuard first-boot prompt</a></h2>
+    <p>Asked once on tty1, default <strong>No</strong>. Never silent-enable.</p>
+<pre><code>ls /etc/unwoke/usbguard-prompt.done 2>/dev/null || echo 'prompt not run yet'
+wc -l /etc/usbguard/rules.conf 2>/dev/null || echo 'no rules yet'</code></pre>
+    <p>Healthy: after first boot the done stamp exists. Non-empty rules only if you said Yes. Later: <code>ujust setup-usbguard</code>.</p>
 
     <h2 id="house"><a href="#house">House defaults (not stock tickets)</a></h2>
     <p>Same idea: look at the stamp. No stamp = lock wanted.</p>

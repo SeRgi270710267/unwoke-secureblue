@@ -374,6 +374,8 @@ loosened_loop() {
   [[ -f /etc/unwoke/cet.off ]] && add_item "SHSTK/IBT off" "cet on" "first-hour"
   [[ -f /etc/unwoke/allow-boot-open ]] && add_item "/boot world-readable" "boot-perm on" "first-hour"
   [[ -f /etc/unwoke/allow-extra-cas ]] && add_item "Extra CAs allowed" "extra-cas off" "first-hour"
+  [[ -f /etc/unwoke/allow-clear-ntp ]] && add_item "Chrony NTS off" "nts on" "see-it"
+  [[ -f /etc/unwoke/brave-devtools.off ]] && add_item "DevTools allowed" "devtools lock" "see-it"
   [[ -f /etc/unwoke/brave-jitless.off ]] && add_item "JavaScript JIT allowed" "jitless on" "sites-broken"
   [[ -f /etc/unwoke/brave-devices.off ]] && add_item "Browser devices allowed" "devices on" "camera-mic"
   [[ -f /etc/unwoke/brave-hardening.off ]] && add_item "Hardening pack off" "hardening on" "sites-broken"

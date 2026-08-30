@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Unwoke SecureBlue. Not affiliated. UNWOKE-SHIPPED-FIRST. Stock #391 was a request.
-# chmod 700 /boot. ostree /usr is image-owned; we do not chmod /usr.
+# chmod 700 /boot at runtime. Compose also sets /usr/src and module dirs 700.
 # Revert: ujust set-boot-perm off
 set -euo pipefail
 
