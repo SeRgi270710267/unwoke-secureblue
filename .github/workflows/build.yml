@@ -188,6 +188,30 @@ jobs:
           subject-digest: ${{ steps.digest.outputs.digest }}
           push-to-registry: true
 
+  rerun-cosign-flake:
+    name: Rerun stock cosign pin flake once
+    if: always() && !cancelled() && failure() && github.run_attempt == 1 && github.event_name != 'pull_request' && github.actor != 'dependabot[bot]'
+    needs: [canary, bluebuild]
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Rerun only pin-step failures
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash .github/scripts/rerun-cosign-flake.sh
+
   public-packages:
     name: Public GHCR packages
     if: always() && !cancelled() && github.event_name != 'pull_request' && github.actor != 'dependabot[bot]' && needs.bluebuild.result != 'skipped'
