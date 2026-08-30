@@ -98,7 +98,7 @@
 
     <div id="path-usb" class="install-path">
     <h2 id="usb"><a href="#usb">Empty disk: Unwoke USB ISO</a></h2>
-    <p>This wraps the GHCR image you picked. You do <em>not</em> install stock secureblue first. GitHub will not host a ~4 GB file as a normal release, so the ISO lives as a GHCR package plus a 14-day Actions download. The OS rebase path below does not wait on this baker.</p>
+    <p>This wraps the GHCR image you picked. You do <em>not</em> install stock secureblue first. GitHub will not host a ~4 GB file as a normal release, so the ISO lives as a GHCR package plus a 90-day Actions download. The OS rebase path below does not wait on this baker. How the baker sits on a clock: <a href="factory/#clock">Factory</a>.</p>
     <p id="iso-status" class="iso-status">Checking whether a USB ISO was published…</p>
     <p id="iso-actions" class="iso-actions" hidden>
       <a class="button" id="iso-download" href="#">Download USB (GitHub login)</a>
@@ -107,9 +107,9 @@
     <ol>
       <li>Get an ISO:
         <ul>
-          <li><strong>When a bake is green:</strong> pull <code>ghcr.io/sergi270710267/&lt;name&gt;-iso:latest</code> (box above) or download the Actions artifact (GitHub login).</li>
+          <li><strong>When a wrap is green:</strong> pull <code>ghcr.io/sergi270710267/&lt;name&gt;-iso:latest</code> (box above) or download the Actions artifact (GitHub login, 90 days).</li>
           <li><strong>Any flavor, on demand:</strong> GitHub → Actions → <strong>iso</strong> → Run workflow → pick the same image as above.</li>
-          <li><strong>Four Trivalent desktops, weekly</strong> (Sunday 10:00 UTC): Silverblue/Kinoite × NVIDIA/not. Origin and browserless: Run workflow.</li>
+          <li><strong>All twelve flavors, weekly</strong> (Sunday 10:00 UTC): Trivalent, Origin, and browserless × GNOME/KDE × NVIDIA/not. Overlay images still rebuild twice a day; USB is weekly on purpose.</li>
         </ul>
       </li>
       <li>Pull with <a href="https://oras.land/docs/installation">oras</a> (Linux/macOS) when the package exists:</li>
