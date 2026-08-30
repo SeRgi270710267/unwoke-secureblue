@@ -2,11 +2,11 @@
 # Live ISO only: stock blacklists squashfs, which the LiveCD root needs.
 # SPDX-FileCopyrightText: Copyright 2026 The Secureblue Authors
 # SPDX-License-Identifier: Apache-2.0
-# Origin overlay dnf can ship a malformed RPM sqlite. Titanoboa then dies
+# Origin overlay can ship a malformed RPM sqlite. Titanoboa then dies
 # on `dnf install -y dracut-live` and `rpm -q kernel-core`.
-# Do **not** rpm --rebuilddb here: bake ISO wrap c3e61d0 emptied the index
-# (kernel-core "is not installed" while the modules dir is on disk).
-# sqlite3 .recover the existing db, write dnf releasever, then dnf.
+# Do **not** rpm --rebuilddb (empties the index). Do **not** sqlite3
+# .recover a ~90 MiB db (4.3 MiB stub). If rpm -q kernel-core fails,
+# throw the sqlite away, initdb, justdb kernel-core + dracut-live.
 # Do not bump titanoboa.
 
 set -euo pipefail
@@ -54,44 +54,8 @@ if rpm -q kernel-core >/dev/null 2>&1; then
   exit 0
 fi
 
-echo "WARN: rpm -q kernel-core failed on live rootfs" >&2
-
-db=""
-for cand in "$(rpm -E '%_dbpath' 2>/dev/null)/rpmdb.sqlite" \
-            /usr/share/rpm/rpmdb.sqlite \
-            /usr/lib/sysimage/rpm/rpmdb.sqlite \
-            /var/lib/rpm/rpmdb.sqlite; do
-  [[ -f "${cand}" ]] || continue
-  db="${cand}"
-  break
-done
-
-dbsz=0
-[[ -n "${db}" && -f "${db}" ]] && dbsz="$(stat -c %s "${db}")"
-echo "unwoke: rpmdb ${db:-none} bytes=${dbsz}"
-
-# A full ostree index is ~90 MiB. sqlite3 .recover of Origin's 95 MiB
-# file wrote a 4.3 MiB stub and titanoboa dnf installed 189 packages.
-# Never recover a large db. justdb kernel-core onto it instead.
-if [[ -n "${db}" && "${dbsz}" -lt 20000000 ]]; then
-  if ! command -v sqlite3 >/dev/null; then
-    echo "WARN: sqlite3 CLI missing; cannot recover ${db}" >&2
-  else
-    recovered="/tmp/rpmdb.recovered.sqlite"
-    rm -f "${recovered}"
-    echo "unwoke: sqlite3 .recover ${db} (small/stub index)"
-    if sqlite3 "${db}" ".recover" | sqlite3 "${recovered}" \
-       && [[ -s "${recovered}" ]]; then
-      cp -a "${recovered}" "${db}"
-      rm -f "${db}-wal" "${db}-shm"
-      echo "unwoke: recovered ${db} ($(stat -c %s "${db}" 2>/dev/null || echo ?) bytes)"
-    else
-      echo "WARN: sqlite3 .recover failed for ${db}" >&2
-    fi
-  fi
-else
-  echo "unwoke: skipping recover on large rpmdb (${dbsz} bytes)"
-fi
+echo "WARN: rpm -q kernel-core failed on live rootfs — replacing malformed rpmdb" >&2
+ls -d /usr/lib/modules/* 2>/dev/null || true
 
 fedora="$(rpm --eval '%{fedora}' 2>/dev/null || true)"
 echo "unwoke: rpm fedora=${fedora:-empty}"
@@ -102,40 +66,65 @@ if [[ "${fedora}" =~ ^[0-9]+$ ]]; then
   echo "unwoke: wrote dnf vars releasever=${fedora}"
 fi
 
-if rpm -q kernel-core >/dev/null 2>&1; then
-  echo "unwoke: rpm -q kernel-core ok ($(rpm -q kernel-core))"
-else
-  echo "WARN: rpm -q kernel-core still failed after recover" >&2
-  ls -d /usr/lib/modules/* 2>/dev/null || true
-  # Recovered sqlite can drop ostree-shipped rows. titanoboa does
-  # `rpm -q kernel-core --queryformat '%{evr}.%{arch}'`. Register the
-  # on-disk kernel in the live db only (--justdb). Do not replace files.
-  krel="$(ls -1 /usr/lib/modules 2>/dev/null | head -n 1 || true)"
-  if [[ -n "${krel}" && "${fedora}" =~ ^[0-9]+$ ]]; then
-    mkdir -p /tmp/unwoke-kernel-rpm
-    (
-      cd /tmp/unwoke-kernel-rpm
-      if command -v dnf5 >/dev/null; then
-        dnf5 --releasever="${fedora}" -y download "kernel-core-${krel}" || dnf5 --releasever="${fedora}" -y download kernel-core
-      else
-        dnf --releasever="${fedora}" -y download "kernel-core-${krel}" || dnf --releasever="${fedora}" -y download kernel-core
-      fi
-      rpm --justdb --nodeps -ivh kernel-core-*.rpm
-    ) && echo "unwoke: justdb registered kernel-core for ${krel}" || echo "WARN: justdb kernel-core failed" >&2
+# ISO wraps through 33311501669: justdb into the 95 MiB ostree sqlite
+# dies (`Name` table malformed). sqlite3 .recover smashes it to 4.3 MiB
+# and titanoboa dnf installs 177 packages. Throw the db away, initdb,
+# justdb kernel-core + dracut-live. titanoboa's `dnf install dracut-live`
+# then sees it already installed. Do not bump titanoboa.
+krel="$(ls -1 /usr/lib/modules 2>/dev/null | head -n 1 || true)"
+[[ -n "${krel}" && "${fedora}" =~ ^[0-9]+$ ]] || {
+  echo "FAIL: no kernel modules dir or fedora releasever" >&2
+  exit 1
+}
+
+for dir in /usr/lib/sysimage/rpm /usr/share/rpm /var/lib/rpm; do
+  [[ -d "${dir}" ]] || continue
+  rm -f "${dir}"/rpmdb.sqlite "${dir}"/rpmdb.sqlite-wal "${dir}"/rpmdb.sqlite-shm \
+        "${dir}"/__db.* 2>/dev/null || true
+done
+mkdir -p /usr/share/rpm /usr/lib/sysimage/rpm
+rpm --initdb
+echo "unwoke: rpm --initdb at $(rpm -E '%_dbpath')"
+
+mkdir -p /tmp/unwoke-kernel-rpm
+(
+  cd /tmp/unwoke-kernel-rpm
+  rm -f ./*.rpm
+  if command -v dnf5 >/dev/null; then
+    dnf5 --releasever="${fedora}" -y --nogpgcheck download \
+      "kernel-core-${krel}" dracut-live \
+      || dnf5 --releasever="${fedora}" -y --nogpgcheck download kernel-core dracut-live
+  else
+    dnf --releasever="${fedora}" -y --nogpgcheck download \
+      "kernel-core-${krel}" dracut-live \
+      || dnf --releasever="${fedora}" -y --nogpgcheck download kernel-core dracut-live
   fi
+  ls -l ./*.rpm
+  rpm --justdb --nodeps -ivh ./*.rpm
+)
+dbpath="$(rpm -E '%_dbpath')"
+if [[ -n "${dbpath}" && -f "${dbpath}/rpmdb.sqlite" ]]; then
+  for dest in /usr/lib/sysimage/rpm /usr/share/rpm /var/lib/rpm; do
+    [[ -d "${dest}" ]] || continue
+    if [[ "${dest}/rpmdb.sqlite" -ef "${dbpath}/rpmdb.sqlite" ]]; then
+      continue
+    fi
+    cp -a "${dbpath}/rpmdb.sqlite" "${dest}/rpmdb.sqlite"
+    rm -f "${dest}/rpmdb.sqlite-wal" "${dest}/rpmdb.sqlite-shm"
+  done
 fi
 
 if rpm -q kernel-core >/dev/null 2>&1; then
   echo "unwoke: rpm -q kernel-core ok ($(rpm -q kernel-core --queryformat '%{evr}.%{arch}\n'))"
 else
-  # ISO wrap 33304494809: malformed 95 MiB sqlite, justdb died, then
-  # titanoboa `dnf install -y dracut-live` pulled 177 packages and
-  # failed OpenPGP. Do not hand that db to titanoboa. Overlay must
-  # ship a readable index. Do not bump titanoboa.
-  echo "FAIL: rpm -q kernel-core still failed; refusing titanoboa dnf on a malformed rpmdb" >&2
+  echo "FAIL: rpm -q kernel-core still failed after initdb+justdb" >&2
+  rpm -qa || true
   exit 1
 fi
-# Do not dnf install dracut-live here. A stub recovered index made dnf
-# pull 100+ packages, then rootfs-selinux-fix died on unlabeled rpc_pipefs.
-# titanoboa's own `dnf install -y dracut-live` is enough once Packages
-# and kernel-core are readable.
+if rpm -q dracut-live >/dev/null 2>&1; then
+  echo "unwoke: rpm -q dracut-live ok ($(rpm -q dracut-live))"
+else
+  echo "WARN: dracut-live not in justdb; titanoboa dnf may still pull deps" >&2
+fi
+# Files stay the ostree image. Only the live USB RPM index is a stub of
+# kernel-core + dracut-live so titanoboa queryformat + dnf install no-op.
