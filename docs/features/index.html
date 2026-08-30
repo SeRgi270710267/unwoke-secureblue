@@ -283,6 +283,55 @@
             <td>Off. Same</td>
           </tr>
           <tr>
+            <td>RAM disks</td>
+            <td>exec on <code>/tmp</code> and <code>/dev/shm</code></td>
+            <td>noexec. <code>ujust set-ramdisk-exec on</code></td>
+            <td>Same</td>
+            <td>Same</td>
+          </tr>
+          <tr>
+            <td>Intel CET</td>
+            <td>Open request</td>
+            <td>SHSTK+IBT tunables on. <code>ujust set-cet off</code></td>
+            <td>Same</td>
+            <td>Same</td>
+          </tr>
+          <tr>
+            <td><code>/boot</code></td>
+            <td>Typically world-readable</td>
+            <td>mode 700. <code>ujust set-boot-perm off</code></td>
+            <td>Same</td>
+            <td>Same</td>
+          </tr>
+          <tr>
+            <td>Extra Fedora CAs</td>
+            <td>Trusted</td>
+            <td>Blocklisted vs Mozilla website set. <code>ujust set-extra-cas on</code></td>
+            <td>Same</td>
+            <td>Same</td>
+          </tr>
+          <tr>
+            <td>Stock user nags</td>
+            <td>Deprecation / Flathub-setup timers</td>
+            <td>Masked. <code>ujust set-stock-nags on</code></td>
+            <td>Same</td>
+            <td>Same</td>
+          </tr>
+          <tr>
+            <td>Live ISO NTP</td>
+            <td>Cleartext fedora pool</td>
+            <td>NTS on the stick</td>
+            <td>Same ISO hook</td>
+            <td>Same ISO hook</td>
+          </tr>
+          <tr>
+            <td>Prove overlay on this disk</td>
+            <td><code>ujust audit-secureblue</code> only</td>
+            <td><code>ujust unwoke-test</code> + <a href="tutorials/see-it/">see-it</a></td>
+            <td>Same</td>
+            <td>Same</td>
+          </tr>
+          <tr>
             <td>Look</td>
             <td>Their defaults</td>
             <td>Unwoke wallpaper, lock, blue accent. <a href="brand/">Brand</a></td>
@@ -307,6 +356,10 @@
       <li>Homebrew off (stock ships it). Camera/mic locked at module+udev. Wheel GUI lock after a daily user exists.</li>
       <li>Isolation pack (Origin + Trivalent): no WebGL/WebGPU, SitePerProcess, origin-keyed processes.</li>
       <li>First-boot: re-enable <code>harden_userns</code>, apply defaults unless you stamped them off, promote <code>ostree-unverified-registry</code> → <code>ostree-image-signed</code>.</li>
+      <li>RAM-disk noexec, CET tunables, <code>/boot</code> 700, Fedora-not-Mozilla CA blocklist, stock deprecation/Flathub-setup nags masked. All reversible.</li>
+      <li>Privacy apply-boot: countme masked, no connectivity GET, DHCP anonymity (no hostname, iaid=mac, send-release, no LLMNR/mDNS), thumbnails off.</li>
+      <li>Vendor installers (Proton, IVPN, Mullvad, …): JSON list, WireGuard/web first, hashed official RPM only if you insist. <code>ujust install-vendor NAME</code>.</li>
+      <li><code>ujust unwoke-test</code> plus <a href="tutorials/see-it/">see each lock yourself</a>. Stock <code>audit-secureblue</code> does not list overlay extras.</li>
       <li>Unwoke wallpaper, lock image, GTK <code>#3b6cff</code>, GNOME named <code>blue</code>, KDE accent, GDM wallpaper. See <a href="brand/">Brand</a>.</li>
       <li>This site. Daily mirror of <em>their</em> markdown under <code>/secureblue/</code> (Apache-2.0). Our FAQ/Features/Install/Brand are never overwritten.</li>
       <li>Conduct, donate, contributing, post-install pages that are Unwoke’s, not theirs.</li>
@@ -339,6 +392,12 @@
             <td><code>ujust audit-unwoke</code></td>
             <td>—</td>
             <td>Fail if <code>harden_userns</code> / flavor browser / <code>brave_t</code> (Origin) / SUID invariants break. Warns (fails on browserless) if a Flatpak web browser is installed. Fails if the public mark file is missing.</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><code>ujust unwoke-test</code></td>
+            <td>—</td>
+            <td>PASS/LOOSE/SKIP/FAIL with a proof path for every overlay lock and each shipped-first ticket. Does not unlock. Hand checks: <a href="tutorials/see-it/">see-it</a>.</td>
             <td>—</td>
           </tr>
           <tr>

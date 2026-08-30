@@ -310,6 +310,42 @@ RESULT: PASS</code></pre>
             <td>Untick Encrypt in Anaconda (weaker)</td>
           </tr>
           <tr>
+            <td>Live ISO time</td>
+            <td>Fedora NTP pool in the clear</td>
+            <td>NTS to Cloudflare + nts.ntp.se on the stick</td>
+            <td>Anaconda Time &amp; Date still lets you pick servers</td>
+          </tr>
+          <tr>
+            <td>RAM disks</td>
+            <td>exec allowed on <code>/dev/shm</code> and <code>/tmp</code></td>
+            <td>noexec,nosuid,nodev</td>
+            <td><code>ujust set-ramdisk-exec on</code></td>
+          </tr>
+          <tr>
+            <td>Intel CET (SHSTK/IBT)</td>
+            <td>Open request; no default toggle</td>
+            <td>glibc tunables on (x86_64)</td>
+            <td><code>ujust set-cet off</code></td>
+          </tr>
+          <tr>
+            <td><code>/boot</code> mode</td>
+            <td>Typically 755</td>
+            <td>700 (ostree <code>/usr</code> is not chmod'd)</td>
+            <td><code>ujust set-boot-perm off</code></td>
+          </tr>
+          <tr>
+            <td>Trusted CAs</td>
+            <td>Full Fedora set</td>
+            <td>Fedora-not-Mozilla roots blocklisted</td>
+            <td><code>ujust set-extra-cas on</code></td>
+          </tr>
+          <tr>
+            <td>Stock user nags</td>
+            <td>Deprecation / update-verify / flatpak-setup timers</td>
+            <td>Masked (they can re-add Flathub or tell you to rebase to stock). Secure Boot key check stays</td>
+            <td><code>ujust set-stock-nags on</code></td>
+          </tr>
+          <tr>
             <td>Avahi / ModemManager</td>
             <td>Typically on</td>
             <td>Masked</td>
@@ -328,9 +364,9 @@ RESULT: PASS</code></pre>
             <td><code>ujust set-connectivity-check on</code></td>
           </tr>
           <tr>
-            <td>DHCP hostname / DUID</td>
-            <td>Sent (MAC random only)</td>
-            <td>Not sent; IPv6 stable-privacy</td>
+            <td>DHCP hostname / DUID / LLMNR</td>
+            <td>Hostname sent; MAC random only</td>
+            <td>No hostname; <code>iaid=mac</code>; send-release; IPv6 stable-privacy; no LLMNR/mDNS register</td>
             <td><code>ujust set-dhcp-hostname on</code></td>
           </tr>
           <tr>
@@ -451,7 +487,15 @@ RESULT: PASS</code></pre>
           </tr>
           <tr>
             <td>Wiki of <code>ujust</code> commands</td>
-            <td><a href="tutorials/">Tutorials</a> with the secure path first. Features table for the rest.</td>
+            <td><a href="tutorials/">Tutorials</a> with the secure path first. Features table for the rest. <a href="tutorials/see-it/">See each lock yourself</a> if you do not trust the script.</td>
+          </tr>
+          <tr>
+            <td>No overlay self-test</td>
+            <td><code>ujust unwoke-test</code> plus Setup → Test everything. Stock <code>audit-secureblue</code> still exists for kernel/USBGuard/malloc.</td>
+          </tr>
+          <tr>
+            <td>Mullvad / IVPN / Proton as store apps or Snap</td>
+            <td><code>ujust install-mullvad</code> / <code>install-ivpn</code> / <code>install-proton</code>: WireGuard or web first; official RPM only after hash + asked locks. Generic: <code>ujust install-vendor NAME</code>.</td>
           </tr>
           <tr>
             <td>Stock <code>ujust install-steam</code> / VPN helpers; no Proton wizard; Bazaar for the rest</td>
