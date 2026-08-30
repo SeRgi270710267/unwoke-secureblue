@@ -64,4 +64,7 @@ fi
 echo "== GHCR visibility =="
 ALARM=1 bash "${ROOT}/.github/scripts/public-packages.sh"
 
+echo "== stale overlay bake =="
+bash "${ROOT}/docs/_tools/watch-stale-bake.sh"
+
 echo "watch-trust: done"

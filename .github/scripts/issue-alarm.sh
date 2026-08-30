@@ -38,7 +38,7 @@ Do not auto-merge a canary hit or a new signing key."
 - Run: ${RUN_URL}
 
 Overlay images can still be green. This lane is only the Titanoboa wrap.
-A later green wrap of a *different* image still closes this reused issue.
+A one-image dispatch that succeeds does **not** close this issue. Only the weekly all-12 wrap may close it.
 Do **not** auto-bump the titanoboa pin to make this green. Re-dispatch after a runner flake. A canary/key problem is a factory-alarm, not this issue."
     CLOSE="ISO baker green again: ${RUN_URL}"
     ;;

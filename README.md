@@ -163,9 +163,9 @@ ujust set-allow-browsers off
 
 The OS **is** the GHCR image. A flashable ISO wraps that image.
 
-- On demand: Actions → **iso** → pick the image → artifact (14 days, GitHub login).
-- Weekly (Sunday 10:00 UTC): four Trivalent desktops to `ghcr.io/sergi270710267/<name>-iso:latest` once oras publish succeeds. Origin/browserless: Run workflow.
-- GitHub will not host a 3 GB ISO as a normal release. Not Ventoy. Enroll the **secureblue** Secure Boot key.
+- On demand: Actions → **iso** → pick the image → artifact (90 days, GitHub login).
+- Weekly (Sunday 10:00 UTC): all 12 flavors to `ghcr.io/sergi270710267/<name>-iso:latest` once oras publish succeeds. Overlay still bakes twice a day; USB is weekly so it does not wrap eight Origin sticks a day.
+- GitHub will not host a 3 GB ISO as a normal release. Not Ventoy. Enroll **your** Secure Boot key. Watch `factory-alarm` / `iso-alarm` issues if you are away.
 
 Stock-ISO-then-rebase still works.
 

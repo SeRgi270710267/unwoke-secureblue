@@ -127,6 +127,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: bash .github/scripts/vendor-alarm.sh close
 
+      - name: Heartbeat if main is idle
+        if: always() && !cancelled()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash docs/_tools/factory-heartbeat.sh
+
       - name: Fail job if still broken
         if: steps.recheck.outcome == 'failure'
         run: exit 1

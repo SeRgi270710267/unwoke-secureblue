@@ -1,14 +1,11 @@
 name: iso
-# Do not add on: push. Origin USB after a *fully green* main overlay bake
-# uses workflow_run (below). Cosign of our :latest still runs before wrap.
-# iso-alarm + receipt are the pass/fail signal — do not poll the job in chat.
+# Do not add on: push. Overlay bakes twice a day; USB wraps once a week
+# (all 12) after Sunday morning overlay. Cosign of our :latest still runs
+# before wrap. iso-alarm + receipt are the pass/fail signal.
 on:
   schedule:
-    # Weekly, after Sunday morning overlay rebuilds. Origin/browserless: dispatch.
+    # Sunday 10:00 UTC — overlay cron is 08:00. All 12 flavors.
     - cron: "00 10 * * 0"
-  workflow_run:
-    workflows: ["bluebuild"]
-    types: [completed]
   workflow_dispatch:
     inputs:
       image:
@@ -38,18 +35,7 @@ jobs:
   # ("Unrecognized named-value: 'matrix'"), which blocked Run workflow.
   pick:
     name: Pick images
-    # Origin auto-wrap: whole bluebuild run must be green (canary + inspect).
-    # PRs never wrap. Failed bake skips this job (no ISO, no false alarm).
-    if: >
-      github.actor != 'dependabot[bot]'
-      && (
-        github.event_name != 'workflow_run'
-        || (
-          github.event.workflow_run.conclusion == 'success'
-          && github.event.workflow_run.head_branch == 'main'
-          && github.event.workflow_run.event != 'pull_request'
-        )
-      )
+    if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -70,10 +56,8 @@ jobs:
           set -euo pipefail
           if [[ "${EVENT_NAME}" == "workflow_dispatch" ]]; then
             python3 -c 'import json,os; print("images="+json.dumps([os.environ["DISPATCH_IMAGE"]]))' >> "${GITHUB_OUTPUT}"
-          elif [[ "${EVENT_NAME}" == "workflow_run" ]]; then
-            python3 -c 'import json; print("images="+json.dumps(["unwoke-silverblue","unwoke-kinoite","unwoke-silverblue-nvidia-open","unwoke-kinoite-nvidia-open"]))' >> "${GITHUB_OUTPUT}"
           else
-            python3 -c 'import json; print("images="+json.dumps(["unwoke-silverblue-trivalent","unwoke-kinoite-trivalent","unwoke-silverblue-nvidia-open-trivalent","unwoke-kinoite-nvidia-open-trivalent"]))' >> "${GITHUB_OUTPUT}"
+            python3 -c 'import json; print("images="+json.dumps(["unwoke-silverblue-trivalent","unwoke-kinoite-trivalent","unwoke-silverblue-nvidia-open-trivalent","unwoke-kinoite-nvidia-open-trivalent","unwoke-silverblue","unwoke-kinoite","unwoke-silverblue-nvidia-open","unwoke-kinoite-nvidia-open","unwoke-silverblue-browserless","unwoke-kinoite-browserless","unwoke-silverblue-nvidia-open-browserless","unwoke-kinoite-nvidia-open-browserless"]))' >> "${GITHUB_OUTPUT}"
           fi
 
   iso:
@@ -102,8 +86,6 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
-          # Bake SHA so ISO hooks match the overlay we just published.
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Install cosign
         uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
@@ -317,7 +299,7 @@ jobs:
           name: ${{ matrix.image }}-iso
           path: output/
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 90
 
       - name: Upload ISO checksums
         if: steps.build.outcome == 'success'
@@ -417,12 +399,12 @@ jobs:
         if: needs.iso.result == 'failure'
         env:
           GH_TOKEN: ${{ github.token }}
-          IMAGE_HINT: ${{ github.event.inputs.image || (github.event_name == 'workflow_run' && 'origin-after-bake') || 'weekly-trivalent' }}
+          IMAGE_HINT: ${{ github.event.inputs.image || 'weekly-all-12' }}
         run: bash .github/scripts/issue-alarm.sh iso open
 
       - name: Close alarm
-        if: needs.iso.result == 'success'
+        if: needs.iso.result == 'success' && github.event_name == 'schedule'
         env:
           GH_TOKEN: ${{ github.token }}
-          IMAGE_HINT: ${{ github.event.inputs.image || (github.event_name == 'workflow_run' && 'origin-after-bake') || 'weekly-trivalent' }}
+          IMAGE_HINT: ${{ github.event.inputs.image || 'weekly-all-12' }}
         run: bash .github/scripts/issue-alarm.sh iso close
