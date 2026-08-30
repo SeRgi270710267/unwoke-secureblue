@@ -54,7 +54,7 @@ if rpm -q kernel-core >/dev/null 2>&1; then
   exit 0
 fi
 
-echo "WARN: rpm -q kernel-core failed; attempting recover" >&2
+echo "WARN: rpm -q kernel-core failed on live rootfs" >&2
 
 db=""
 for cand in "$(rpm -E '%_dbpath' 2>/dev/null)/rpmdb.sqlite" \
@@ -66,32 +66,31 @@ for cand in "$(rpm -E '%_dbpath' 2>/dev/null)/rpmdb.sqlite" \
   break
 done
 
-if [[ -z "${db}" ]]; then
-  echo "WARN: no rpmdb.sqlite found" >&2
-elif ! command -v sqlite3 >/dev/null; then
-  echo "WARN: sqlite3 CLI missing; cannot recover ${db}" >&2
-else
-  recovered="/tmp/rpmdb.recovered.sqlite"
-  rm -f "${recovered}"
-  echo "unwoke: sqlite3 .recover ${db}"
-  if sqlite3 "${db}" ".recover" | sqlite3 "${recovered}" \
-     && [[ -s "${recovered}" ]]; then
-    cp -a "${recovered}" "${db}"
-    rm -f "${db}-wal" "${db}-shm"
-    echo "unwoke: recovered ${db} ($(stat -c %s "${db}" 2>/dev/null || echo ?) bytes)"
-    src="${db}"
-    for dest in /usr/lib/sysimage/rpm /usr/share/rpm /var/lib/rpm; do
-      [[ -d "${dest}" ]] || continue
-      if [[ -e "${dest}/rpmdb.sqlite" ]] && [[ "${dest}/rpmdb.sqlite" -ef "${src}" ]]; then
-        continue
-      fi
-      cp -a "${src}" "${dest}/rpmdb.sqlite"
-      rm -f "${dest}/rpmdb.sqlite-wal" "${dest}/rpmdb.sqlite-shm"
-      echo "unwoke: copied recovered rpmdb to ${dest}"
-    done
+dbsz=0
+[[ -n "${db}" && -f "${db}" ]] && dbsz="$(stat -c %s "${db}")"
+echo "unwoke: rpmdb ${db:-none} bytes=${dbsz}"
+
+# A full ostree index is ~90 MiB. sqlite3 .recover of Origin's 95 MiB
+# file wrote a 4.3 MiB stub and titanoboa dnf installed 189 packages.
+# Never recover a large db. justdb kernel-core onto it instead.
+if [[ -n "${db}" && "${dbsz}" -lt 20000000 ]]; then
+  if ! command -v sqlite3 >/dev/null; then
+    echo "WARN: sqlite3 CLI missing; cannot recover ${db}" >&2
   else
-    echo "WARN: sqlite3 .recover failed for ${db}" >&2
+    recovered="/tmp/rpmdb.recovered.sqlite"
+    rm -f "${recovered}"
+    echo "unwoke: sqlite3 .recover ${db} (small/stub index)"
+    if sqlite3 "${db}" ".recover" | sqlite3 "${recovered}" \
+       && [[ -s "${recovered}" ]]; then
+      cp -a "${recovered}" "${db}"
+      rm -f "${db}-wal" "${db}-shm"
+      echo "unwoke: recovered ${db} ($(stat -c %s "${db}" 2>/dev/null || echo ?) bytes)"
+    else
+      echo "WARN: sqlite3 .recover failed for ${db}" >&2
+    fi
   fi
+else
+  echo "unwoke: skipping recover on large rpmdb (${dbsz} bytes)"
 fi
 
 fedora="$(rpm --eval '%{fedora}' 2>/dev/null || true)"
