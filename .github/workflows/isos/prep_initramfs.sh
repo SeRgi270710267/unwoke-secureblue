@@ -100,7 +100,13 @@ mkdir -p /tmp/unwoke-kernel-rpm
       || dnf --releasever="${fedora}" -y --nogpgcheck download kernel-core dracut-live
   fi
   ls -l ./*.rpm
-  rpm --justdb --nodeps -ivh ./*.rpm
+  # kernel-core files are already on the ostree image. Register only.
+  rpm --justdb --nodeps -ivh kernel-core-*.rpm
+  # dmsquash-live lives in the dracut-live RPM. justdb is not enough —
+  # wrap 33312106702: rpm -q ok, dnf no-op, dracut "Module dmsquash-live
+  # cannot be found". Install the files. --nodeps: the live root already
+  # has dracut from ostree.
+  rpm --nodeps --excludedocs -ivh dracut-live-*.rpm
 )
 dbpath="$(rpm -E '%_dbpath')"
 if [[ -n "${dbpath}" && -f "${dbpath}/rpmdb.sqlite" ]]; then
