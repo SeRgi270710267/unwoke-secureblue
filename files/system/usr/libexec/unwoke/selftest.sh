@@ -402,6 +402,238 @@ st="$(/usr/libexec/unwoke/admin-split.sh status 2>/dev/null || echo '?')"
 pass "admin-split status (see proof)"
 proof "${st}"
 
+section "Shipped first (stock tickets still open when we shipped)"
+echo "  Ledger: /usr/share/unwoke/SHIPPED-FIRST.txt"
+echo "  Site:   https://sergi270710267.github.io/unwoke-secureblue/ahead/"
+
+# #391 — chmod 700 /boot
+if [[ -f /etc/unwoke/allow-boot-open ]]; then
+  loose "#391 /boot not forced 700"
+  proof "ujust set-boot-perm off; $(stat -c '%a %n' /boot 2>/dev/null || echo 'no /boot')"
+else
+  mode="$(stat -c '%a' /boot 2>/dev/null || echo '?')"
+  if [[ "${mode}" == "700" ]]; then
+    pass "#391 /boot is mode 700"
+    proof "stat -c %a /boot = ${mode} (ostree /usr is not chmod'd at runtime)"
+  else
+    loose "#391 /boot is ${mode} (lock wanted; apply-boot may not have run yet)"
+    proof "stat -c %a /boot = ${mode}; script /usr/libexec/unwoke/boot-perm.sh"
+  fi
+fi
+
+# #697 — noexec RAM disks
+shm="$(awk '$2=="/dev/shm" {print}' /proc/mounts 2>/dev/null || true)"
+tmpm="$(awk '$2=="/tmp" {print}' /proc/mounts 2>/dev/null || true)"
+if [[ -f /etc/unwoke/allow-ramdisk-exec ]]; then
+  loose "#697 RAM-disk exec allowed"
+  proof "/etc/unwoke/allow-ramdisk-exec"
+else
+  if awk '$2=="/dev/shm" && $4 ~ /(^|,)noexec(,|$)/ {ok=1} END{exit ok?0:1}' /proc/mounts \
+    && awk '$2=="/tmp" && $4 ~ /(^|,)noexec(,|$)/ {ok=1} END{exit ok?0:1}' /proc/mounts; then
+    pass "#697 /dev/shm and /tmp mounted noexec,nosuid,nodev"
+    proof "/dev/shm: ${shm}"
+    proof "/tmp: ${tmpm}"
+  else
+    loose "#697 mounts not noexec yet (needs first apply-boot/reboot)"
+    proof "/dev/shm: ${shm:-missing} | /tmp: ${tmpm:-missing}"
+    proof "script /usr/libexec/unwoke/ramdisk.sh"
+  fi
+fi
+
+# #887 — Flatpak session/system bus in overlay audit
+fp_over="$( { command -v flatpak >/dev/null && { flatpak override --show; echo; flatpak override --user --show; }; } 2>/dev/null || true )"
+if ! command -v flatpak >/dev/null; then
+  skip "#887 Flatpak not installed (cannot show overrides)"
+elif [[ -f /etc/unwoke/flatpak-lockdown.off ]]; then
+  loose "#887 lockdown off — session-bus check is hygiene on a loosened image"
+  proof "/etc/unwoke/flatpak-lockdown.off"
+else
+  bus_hit=0
+  if printf '%s\n' "${fp_over}" | grep -E '(^|;)session-bus(;|$)' | grep -vq '!session-bus'; then
+    fail "#887 Flatpak session-bus is allowed"
+    proof "$(printf '%s\n' "${fp_over}" | grep -E 'session-bus' | head)"
+    bus_hit=1
+  fi
+  if printf '%s\n' "${fp_over}" | grep -E '(^|;)system-bus(;|$)' | grep -vq '!system-bus'; then
+    fail "#887 Flatpak system-bus is allowed"
+    proof "$(printf '%s\n' "${fp_over}" | grep -E 'system-bus' | head)"
+    bus_hit=1
+  fi
+  if printf '%s\n' "${fp_over}" | grep -q 'org.freedesktop.Flatpak' \
+    && ! printf '%s\n' "${fp_over}" | grep -q '!org.freedesktop.Flatpak'; then
+    fail "#887 Flatpak talk-name org.freedesktop.Flatpak present"
+    bus_hit=1
+  fi
+  if [[ "${bus_hit}" -eq 0 ]]; then
+    pass "#887 Flatpak session-bus / system-bus / org.freedesktop.Flatpak not allowed"
+    proof "flatpak override --show does not grant those (stock audit-secureblue still does not warn)"
+  fi
+fi
+
+# #1185 — live ISO NTS only
+if [[ -f /etc/chrony.d/50-unwoke-nts.conf ]]; then
+  if grep -q 'nts' /etc/chrony.d/50-unwoke-nts.conf \
+    && grep -q 'time.cloudflare.com' /etc/chrony.d/50-unwoke-nts.conf; then
+    pass "#1185 live chrony uses NTS (not fedora NTP pool in the clear)"
+    proof "$(grep -E '^server' /etc/chrony.d/50-unwoke-nts.conf | tr '\n' '; ')"
+  else
+    fail "#1185 NTS drop-in present but missing nts servers"
+    proof "/etc/chrony.d/50-unwoke-nts.conf"
+  fi
+else
+  skip "#1185 live-ISO NTS (installed ostree keeps stock chrony)"
+  proof "no /etc/chrony.d/50-unwoke-nts.conf — expected after USB install"
+fi
+
+# #1295 — CET
+if [[ -f /etc/unwoke/cet.off ]]; then
+  loose "#1295 CET tunables off"
+  proof "/etc/unwoke/cet.off"
+else
+  cetf=""
+  [[ -f /etc/systemd/system.conf.d/90-unwoke-cet.conf ]] && cetf="/etc/systemd/system.conf.d/90-unwoke-cet.conf"
+  [[ -z "${cetf}" && -f /usr/share/unwoke/cet-system.conf ]] && cetf="/usr/share/unwoke/cet-system.conf"
+  if [[ -n "${cetf}" ]] && grep -q 'x86_shstk=on' "${cetf}" && grep -q 'x86_ibt=on' "${cetf}"; then
+    pass "#1295 glibc SHSTK+IBT tunables shipped on"
+    proof "${cetf}: $(grep DefaultEnvironment "${cetf}" | head -n 1)"
+  else
+    fail "#1295 CET drop-in missing SHSTK/IBT"
+    proof "looked at ${cetf:-none}"
+  fi
+fi
+
+# #1569 — DHCP anonymization
+dhcpf=""
+[[ -f /etc/NetworkManager/conf.d/90-unwoke-dhcp.conf ]] && dhcpf="/etc/NetworkManager/conf.d/90-unwoke-dhcp.conf"
+[[ -z "${dhcpf}" && -f /usr/share/unwoke/nm-privacy-dhcp.conf ]] && dhcpf="/usr/share/unwoke/nm-privacy-dhcp.conf"
+if [[ -f /etc/unwoke/allow-dhcp-hostname ]]; then
+  loose "#1569 DHCP hostname/IDs loosened"
+  proof "/etc/unwoke/allow-dhcp-hostname"
+elif [[ -n "${dhcpf}" ]] \
+  && grep -q 'dhcp-send-release=true' "${dhcpf}" \
+  && grep -q 'dhcp-iaid=mac' "${dhcpf}" \
+  && grep -q 'dhcp-send-hostname=false' "${dhcpf}"; then
+  pass "#1569 DHCP anonymization (no hostname, iaid=mac, send-release)"
+  proof "${dhcpf}"
+else
+  fail "#1569 DHCP anonymization keys missing"
+  proof "file=${dhcpf:-none}"
+fi
+
+# #1606 — CA trim
+if [[ -f /etc/unwoke/allow-extra-cas ]]; then
+  loose "#1606 extra Fedora CAs allowed"
+  proof "/etc/unwoke/allow-extra-cas"
+else
+  nblock="$(find /etc/pki/ca-trust/source/blocklist -name 'unwoke-*.pem' 2>/dev/null | wc -l | tr -d ' ')"
+  if [[ "${nblock}" -gt 0 ]]; then
+    pass "#1606 Fedora-not-Mozilla CAs blocklisted (${nblock} pems)"
+    proof "/etc/pki/ca-trust/source/blocklist/unwoke-*.pem"
+  elif [[ -d /usr/share/unwoke/ca-blocklist ]]; then
+    loose "#1606 blocklist source shipped; apply-boot has not copied pems yet"
+    proof "/usr/share/unwoke/ca-blocklist"
+  else
+    fail "#1606 CA blocklist source missing"
+  fi
+fi
+
+# #1885 — extra Flatpak filesystem cuts
+if ! command -v flatpak >/dev/null; then
+  skip "#1885 Flatpak not installed"
+elif [[ -f /etc/unwoke/flatpak-lockdown.off ]]; then
+  loose "#1885 extra xdg/host-root cuts off with lockdown"
+  proof "/etc/unwoke/flatpak-lockdown.off"
+else
+  if printf '%s\n' "${fp_over}" | grep -q 'host-root' && printf '%s\n' "${fp_over}" | grep -q 'xdg-download'; then
+    pass "#1885 Flatpak extra xdg + host-root cuts present"
+    proof "$(printf '%s\n' "${fp_over}" | grep -E 'host-root|xdg-download' | head -n 4)"
+  else
+    loose "#1885 extra FS cuts not visible in override --show yet (apply-boot)"
+    proof "lockdown script extra_fs includes host-root and xdg-*"
+  fi
+fi
+
+# #2156 — Flatpak record streams
+if ! command -v flatpak >/dev/null; then
+  skip "#2156 Flatpak not installed"
+elif [[ -f /etc/unwoke/flatpak-record.off ]]; then
+  loose "#2156 Flatpak Pulse/PipeWire record allowed"
+  proof "/etc/unwoke/flatpak-record.off"
+else
+  if printf '%s\n' "${fp_over}" | grep -Eqi 'pulseaudio|pipewire'; then
+    pass "#2156 Flatpak record path mentioned in overrides"
+    proof "$(printf '%s\n' "${fp_over}" | grep -Ei 'pulseaudio|pipewire' | head -n 4)"
+  else
+    loose "#2156 record-block not visible in override --show yet (apply-boot)"
+    proof "flatpak-record.sh --nosocket=pulseaudio --nofilesystem=xdg-run/pipewire-0"
+  fi
+fi
+
+# #2354 — network fs clients
+if [[ -f /etc/unwoke/allow-network-fs ]]; then
+  loose "#2354 NFS/CIFS clients allowed"
+  proof "/etc/unwoke/allow-network-fs"
+else
+  nfsf=""
+  [[ -f /etc/modprobe.d/unwoke-network-fs.conf ]] && nfsf="/etc/modprobe.d/unwoke-network-fs.conf"
+  [[ -z "${nfsf}" && -f /usr/share/unwoke/modprobe-network-fs.conf ]] && nfsf="/usr/share/unwoke/modprobe-network-fs.conf"
+  if [[ -n "${nfsf}" ]] && grep -q 'blacklist nfs' "${nfsf}" && grep -q 'blacklist cifs' "${nfsf}"; then
+    pass "#2354 NFS/CIFS client modules blacklisted"
+    proof "${nfsf}"
+  else
+    fail "#2354 network-fs blacklist missing"
+  fi
+fi
+
+# #2432 — Anaconda encrypt default (live ISO)
+if grep -Rqs 'autopart --encrypted' /etc/anaconda /usr/share/anaconda 2>/dev/null \
+  || grep -qs 'autopart --encrypted' /etc/anaconda/profile.d/*.conf 2>/dev/null; then
+  pass "#2432 Anaconda autopart is encrypted by default"
+  proof "$(grep -R 'autopart --encrypted' /etc/anaconda /usr/share/anaconda 2>/dev/null | head -n 2)"
+else
+  skip "#2432 LUKS opt-out is live-ISO Anaconda (not on an installed ostree)"
+  proof "prep_rootfs.sh writes autopart --encrypted on the USB only"
+fi
+
+# #2508 — Flatpak web browsers
+if ! command -v flatpak >/dev/null; then
+  skip "#2508 Flatpak not installed"
+else
+  apps="$(flatpak list --app --columns=application 2>/dev/null || true)"
+  hit=""
+  while IFS= read -r br; do
+    [[ -n "${br}" ]] || continue
+    case "${br}" in
+      org.mozilla.firefox*|com.google.Chrome*|com.brave.Browser*|com.microsoft.Edge*|org.chromium.Chromium*|io.github.ungoogled*|net.mullvad.MullvadBrowser*|org.torproject.*|io.gitlab.librewolf*|app.zen_browser.*|org.gnome.Epiphany*|com.vivaldi.*|com.opera.Opera*)
+        hit="${hit} ${br}"
+        ;;
+    esac
+  done <<<"${apps}"
+  if [[ -n "${hit}" ]]; then
+    if is_browserless; then
+      fail "#2508 browserless image has Flatpak web browser(s):${hit}"
+    else
+      loose "#2508 Flatpak web browser installed:${hit} (hygiene; stock audit-secureblue does not report this)"
+    fi
+    proof "flatpak list --app"
+  else
+    pass "#2508 no Flatpak web browser installed"
+    proof "flatpak list --app has none of the known browser IDs"
+  fi
+fi
+
+# #2526 — LUKS argon2id 2 GiB
+cs=""
+[[ -f /etc/cryptsetup.conf ]] && cs="/etc/cryptsetup.conf"
+[[ -z "${cs}" && -f /usr/etc/cryptsetup.conf ]] && cs="/usr/etc/cryptsetup.conf"
+if [[ -n "${cs}" ]] && grep -q 'argon2id' "${cs}" && grep -q '2097152' "${cs}"; then
+  pass "#2526 cryptsetup default Argon2id memory 2 GiB"
+  proof "${cs}: $(grep -E 'pbkdf' "${cs}" | tr '\n' ' ')"
+else
+  fail "#2526 cryptsetup Argon2id 2 GiB conf missing"
+  proof "looked at /etc/cryptsetup.conf and /usr/etc/cryptsetup.conf"
+fi
+
 section "Look"
 if [[ -f /usr/share/backgrounds/unwoke/unwoke-desktop.jpg ]]; then
   pass "Unwoke wallpaper file"
@@ -431,7 +663,8 @@ echo
 echo "----------------------------------------"
 echo "PASS ${PASS}   LOOSE ${LOOSE}   SKIP ${SKIP}   FAIL ${FAIL}"
 echo "PASS = Unwoke default is on this disk. LOOSE = you turned that default off."
-echo "FAIL = this flavor is missing something we ship. SKIP = not this flavor."
+echo "FAIL = this flavor is missing something we ship. SKIP = not this flavor / live-ISO-only."
+echo "Shipped-first tickets (#391 #697 #887 #1185 #1295 #1569 #1606 #1885 #2156 #2354 #2432 #2508 #2526) have their own proof lines."
 echo "Put a lock back: ujust loosened   Map a symptom: ujust why"
 echo "Stock kernel/USBGuard/malloc: ujust audit-secureblue"
 if [[ "${FAIL}" -gt 0 ]]; then
