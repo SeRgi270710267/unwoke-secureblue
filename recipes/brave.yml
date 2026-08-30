@@ -33,5 +33,6 @@ modules:
       - remove-trivalent.sh
       - apply-brave.sh
       - install-brave-selinux.sh
+      - rebuild-rpmdb.sh
 
   - type: signing

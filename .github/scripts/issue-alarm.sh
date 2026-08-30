@@ -34,9 +34,11 @@ Do not auto-merge a canary hit or a new signing key."
 - Workflow: \`${GITHUB_WORKFLOW}\`
 - Event: \`${GITHUB_EVENT_NAME}\`
 - SHA: \`${GITHUB_SHA}\`
+- Image: \`${IMAGE_HINT:-unknown}\`
 - Run: ${RUN_URL}
 
 Overlay images can still be green. This lane is only the Titanoboa wrap.
+A later green wrap of a *different* image still closes this reused issue.
 Do **not** auto-bump the titanoboa pin to make this green. Re-dispatch after a runner flake. A canary/key problem is a factory-alarm, not this issue."
     CLOSE="ISO baker green again: ${RUN_URL}"
     ;;

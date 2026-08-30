@@ -14,5 +14,6 @@ modules:
     scripts:
       - remove-trivalent.sh
       - apply-browserless.sh
+      - rebuild-rpmdb.sh
 
   - type: signing

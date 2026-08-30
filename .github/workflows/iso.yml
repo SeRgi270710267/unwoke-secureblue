@@ -396,10 +396,12 @@ jobs:
         if: needs.iso.result == 'failure'
         env:
           GH_TOKEN: ${{ github.token }}
+          IMAGE_HINT: ${{ github.event.inputs.image || 'weekly-trivalent' }}
         run: bash .github/scripts/issue-alarm.sh iso open
 
       - name: Close alarm
         if: needs.iso.result == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
+          IMAGE_HINT: ${{ github.event.inputs.image || 'weekly-trivalent' }}
         run: bash .github/scripts/issue-alarm.sh iso close
