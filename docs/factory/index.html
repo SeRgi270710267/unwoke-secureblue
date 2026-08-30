@@ -67,6 +67,11 @@
         <p>Stock <code>cosign</code> sometimes says “no signatures found” for a few seconds. The pin step retries. If that was the <em>only</em> failed step, those jobs rerun once. Inspect and canary failures stay red.</p>
       </div>
       <div class="card">
+        <p class="eyebrow">On the box</p>
+        <h3>Users can prove the overlay</h3>
+        <p><code>ujust unwoke-test</code> is PASS/LOOSE/FAIL with a path for every lock and shipped-first ticket. Stock audit does not. <a href="compared/#prove">Compared</a>.</p>
+      </div>
+      <div class="card">
         <p class="eyebrow">Away</p>
         <h3>Alarms, not babysitting</h3>
         <p>If overlay has not been green for ~40 hours, <code>factory-alarm</code> opens. If git is idle 10+ days, a timestamp-only commit keeps GitHub from killing cron (~60 days of no activity). A one-image USB dispatch cannot close a weekly ISO fail.</p>

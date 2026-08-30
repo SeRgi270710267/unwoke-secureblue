@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#050a16">
   <meta name="color-scheme" content="dark">
   <title>Unwoke SecureBlue — hardening, Origin, Trivalent, or no browser</title>
-  <meta name="description" content="Unwoke SecureBlue: a personal overlay on official secureblue images. Brave Origin, stock Trivalent, or browserless. No GUI software store. Not affiliated with secureblue.">
+  <meta name="description" content="Unwoke SecureBlue: overlay on official secureblue. Prove every extra lock on the disk with ujust unwoke-test. Trivalent, Origin, or browserless. No store.">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css?v=15">
@@ -74,7 +74,7 @@
     <h2 id="about"><a href="#about">About</a></h2>
     <p><strong>Unwoke SecureBlue</strong> is a twice-daily <a href="https://blue-build.org/">BlueBuild</a> overlay on official <a href="https://secureblue.dev">secureblue</a> Fedora Atomic images. Kernel hardening, SELinux, <code>hardened_malloc</code>, closed firewall, and their <code>ujust</code> commands stay. We change house rules on top: no curator store, extra default-off locks (Flathub, brew, Bluetooth, toolbox, camera/mic), a first-day setup window, and a recommended <code>*-trivalent</code> house browser (Origin and browserless stay as named choices).</p>
     <p><strong>Recommended default:</strong> <code>*-trivalent</code> — stock <a href="https://github.com/secureblue/Trivalent">Trivalent</a> (Vanadium patches and their SELinux jail) plus extra reversible Chromium policies stock does not force. Unsuffixed names ship standalone <strong>Brave Origin</strong> (<code>brave-origin</code>, not full <code>brave-browser</code>) — looser SELinux, pick it on purpose. <strong>Browserless</strong> (<code>*-browserless</code>) strips Trivalent and installs nothing: no Origin, no <code>brave_t</code>, stock <code>harden_userns</code>. There is no GUI software store and no Flathub remote until <code>ujust set-flathub verified</code>. Every extra lock has a <code>ujust</code> to turn it off.</p>
-    <p>Shipped as OCI bootable container images. Empty disk: an Unwoke USB ISO. Already on Fedora Atomic / secureblue: rebase. After login, walk <a href="start/">After you log in</a>: <strong>Unwoke setup</strong> is first-time setup, not GNOME Settings. If something looks broken: <code>ujust why</code> — same locks, no auto-unlock. Everyday tasks: <a href="tutorials/">Tutorials</a>. Privacy vs stock: <a href="privacy/">Privacy</a>. Full delta: <a href="features/">Features</a>. Scorecard: <a href="compared/">Compared</a>. How the factory sits: <a href="factory/">Factory</a>.</p>
+    <p>Shipped as OCI bootable container images. Empty disk: an Unwoke USB ISO. Already on Fedora Atomic / secureblue: rebase. After login, walk <a href="start/">After you log in</a>: <strong>Unwoke setup</strong> is first-time setup, not GNOME Settings. If something looks broken: <code>ujust why</code> — same locks, no auto-unlock. Prove every overlay lock and shipped-first ticket on this disk: <code>ujust unwoke-test</code> (stock’s audit does not). Everyday tasks: <a href="tutorials/">Tutorials</a>. Privacy vs stock: <a href="privacy/">Privacy</a>. Full delta: <a href="features/">Features</a>. Scorecard: <a href="compared/">Compared</a>. How the factory sits: <a href="factory/">Factory</a>.</p>
     <p>You should not have to watch Actions. Overlay images rebuild twice a day. USB ISOs wrap <strong>all twelve</strong> flavors every Sunday. A bake that is already running is <strong>not cancelled</strong> by a later overlay push (it queues). Cosign pin flakes retry, then rerun once if that was the only failure. After a good bake, a small GitHub <a href="https://github.com/SeRgi270710267/unwoke-secureblue/releases/tag/receipt">receipt</a> (public key + verified fingerprints, not the OS, not the USB) rewrites itself. Trust changes still open one issue. Full clock: <a href="factory/">Factory</a>.</p>
 
     <div class="cards">
@@ -101,6 +101,10 @@
       <a class="card" href="compared/">
         <h3>Compared to stock</h3>
         <p>We beat stock on encrypt-on, harder LUKS, Flatpak record, extra folders, NFS/CIFS clients. Same kernel. No security cut.</p>
+      </a>
+      <a class="card" href="compared/#prove">
+        <h3>Prove it on the disk</h3>
+        <p><code>ujust unwoke-test</code> — PASS/LOOSE/FAIL with a proof path. Stock <code>audit-secureblue</code> does not cover our extras. Nothing unlocks.</p>
       </a>
       <a class="card" href="ahead/">
         <h3>Shipped first</h3>
