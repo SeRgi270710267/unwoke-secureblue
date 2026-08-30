@@ -407,7 +407,9 @@ case "${NAME}" in
       echo "FAIL: Trivalent present on Origin image" >&2
       fail=1
     fi
-    if ! listed opt/brave.com/brave-origin/brave && ! listed usr/bin/brave-origin; then
+    if ! listed opt/brave.com/brave-origin/brave \
+       && ! listed usr/lib/opt/brave.com/brave-origin/brave \
+       && ! listed usr/bin/brave-origin; then
       echo "FAIL: Origin ELF missing" >&2
       fail=1
     fi
@@ -415,13 +417,12 @@ case "${NAME}" in
       echo "FAIL: missing unwoke_brave.te" >&2
       fail=1
     fi
-    if [[ -d "${work}/opt/brave.com" ]]; then
-      suid="$(find "${work}/opt/brave.com" -xdev -perm -4000 -type f 2>/dev/null || true)"
-      if [[ -n "${suid}" ]]; then
-        echo "FAIL: SUID remains under /opt/brave.com" >&2
-        printf '%s\n' "${suid}" >&2
-        fail=1
-      fi
+    suid="$(find "${work}/opt/brave.com" "${work}/usr/lib/opt/brave.com" \
+      -xdev -perm -4000 -type f 2>/dev/null || true)"
+    if [[ -n "${suid}" ]]; then
+      echo "FAIL: SUID remains under Brave Origin tree" >&2
+      printf '%s\n' "${suid}" >&2
+      fail=1
     fi
     echo "OK: Origin flavor checks"
     ;;

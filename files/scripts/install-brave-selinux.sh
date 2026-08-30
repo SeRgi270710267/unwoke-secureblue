@@ -12,18 +12,18 @@ POLICY_SRC="/usr/share/unwoke/selinux"
   exit 1
 }
 
-if [[ ! -e /opt/brave.com/brave-origin/brave ]]; then
-  echo "Brave Origin ELF missing at /opt/brave.com/brave-origin/brave" >&2
-  ls -la /opt/brave.com 2>/dev/null || true
-  ls -la /opt/brave.com/brave-origin 2>/dev/null || true
+if [[ ! -e /opt/brave.com/brave-origin/brave && ! -e /usr/lib/opt/brave.com/brave-origin/brave ]]; then
+  echo "Brave Origin ELF missing" >&2
+  ls -la /opt/brave.com /usr/lib/opt/brave.com 2>/dev/null || true
   exit 1
 fi
 
 # Brave Origin RPM often ships chrome-sandbox SUID. Keep the image SUID-less;
 # Chromium then uses the namespace sandbox inside brave_t.
-if [[ -e /opt/brave.com/brave-origin ]]; then
-  find /opt/brave.com/brave-origin -xdev \( -perm -4000 -o -perm -2000 \) -type f -exec chmod a-s {} + 2>/dev/null || true
-fi
+for tree in /opt/brave.com/brave-origin /usr/lib/opt/brave.com/brave-origin; do
+  [[ -e "${tree}" ]] || continue
+  find "${tree}" -xdev \( -perm -4000 -o -perm -2000 \) -type f -exec chmod a-s {} + 2>/dev/null || true
+done
 
 # Never dnf install selinux-policy-devel (that extra Origin dnf malforms
 # Packages). Download RPMs into a throwaway installroot, extract files,
@@ -81,7 +81,7 @@ command -v checkmodule >/dev/null || { echo "FAIL: checkmodule missing" >&2; exi
 semodule -v -X 300 -i "${work}/unwoke_brave.pp" "${POLICY_SRC}/unwoke_brave_userns.cil"
 
 if command -v restorecon >/dev/null; then
-  restorecon -FR /opt/brave.com/brave-origin /usr/bin/brave-origin 2>/dev/null || true
+  restorecon -FR /opt/brave.com/brave-origin /usr/lib/opt/brave.com/brave-origin /usr/bin/brave-origin 2>/dev/null || true
 fi
 
 # Do not leave policy devel headers on the desktop image.

@@ -56,8 +56,21 @@ unwoke_rpm_verify "${rpm}" "${work}/brave-core.asc"
 echo "unwoke: brave-origin RPM GPG ok ($(basename "${rpm}"))"
 
 unwoke_rpm_extract "${rpm}" /
-[[ -e /opt/brave.com/brave-origin/brave ]] || {
-  echo "FAIL: extract left no /opt/brave.com/brave-origin/brave" >&2
+# ostree/Brave RPM payload is /usr/lib/opt/..., not /opt/...
+if [[ -e /usr/lib/opt/brave.com/brave-origin/brave && ! -e /opt/brave.com/brave-origin/brave ]]; then
+  mkdir -p /opt/brave.com
+  ln -sfn /usr/lib/opt/brave.com/brave-origin /opt/brave.com/brave-origin
+fi
+if [[ ! -e /usr/bin/brave-origin ]]; then
+  if [[ -e /usr/bin/brave-origin-stable ]]; then
+    ln -sfn brave-origin-stable /usr/bin/brave-origin
+  elif [[ -e /usr/lib/opt/brave.com/brave-origin/brave ]]; then
+    ln -sfn /usr/lib/opt/brave.com/brave-origin/brave /usr/bin/brave-origin
+  fi
+fi
+[[ -e /opt/brave.com/brave-origin/brave || -e /usr/lib/opt/brave.com/brave-origin/brave || -e /usr/bin/brave-origin ]] || {
+  echo "FAIL: extract left no Brave Origin ELF" >&2
+  ls -la /opt/brave.com /usr/lib/opt/brave.com /usr/bin/brave-origin* >&2 || true
   exit 1
 }
 echo "unwoke: brave-origin files extracted (not registered in RPM db)"
