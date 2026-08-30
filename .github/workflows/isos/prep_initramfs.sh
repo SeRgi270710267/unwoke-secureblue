@@ -69,12 +69,35 @@ fi
 if rpm -q kernel-core >/dev/null 2>&1; then
   echo "unwoke: rpm -q kernel-core ok ($(rpm -q kernel-core))"
 else
-  echo "WARN: rpm -q kernel-core still failed" >&2
+  echo "WARN: rpm -q kernel-core still failed after recover" >&2
   ls -d /usr/lib/modules/* 2>/dev/null || true
+  # Recovered sqlite can drop ostree-shipped rows. titanoboa does
+  # `rpm -q kernel-core --queryformat '%{evr}.%{arch}'`. Register the
+  # on-disk kernel in the live db only (--justdb). Do not replace files.
+  krel="$(ls -1 /usr/lib/modules 2>/dev/null | head -n 1 || true)"
+  if [[ -n "${krel}" && "${fedora}" =~ ^[0-9]+$ ]]; then
+    mkdir -p /tmp/unwoke-kernel-rpm
+    (
+      cd /tmp/unwoke-kernel-rpm
+      if command -v dnf5 >/dev/null; then
+        dnf5 --releasever="${fedora}" -y download "kernel-core-${krel}" || dnf5 --releasever="${fedora}" -y download kernel-core
+      else
+        dnf --releasever="${fedora}" -y download "kernel-core-${krel}" || dnf --releasever="${fedora}" -y download kernel-core
+      fi
+      rpm --justdb --nodeps -ivh kernel-core-*.rpm
+    ) && echo "unwoke: justdb registered kernel-core for ${krel}" || echo "WARN: justdb kernel-core failed" >&2
+  fi
 fi
 
+if rpm -q kernel-core >/dev/null 2>&1; then
+  echo "unwoke: rpm -q kernel-core ok ($(rpm -q kernel-core --queryformat '%{evr}.%{arch}\n'))"
+else
+  echo "WARN: rpm -q kernel-core still failed" >&2
+fi
+
+# Weak deps pulled 177 packages and still exited 1. Install only dracut-live.
 if [[ "${fedora}" =~ ^[0-9]+$ ]] && command -v dnf5 >/dev/null; then
-  dnf5 --releasever="${fedora}" -y install dracut-live && echo "unwoke: dnf5 installed dracut-live" || echo "WARN: dnf5 install dracut-live rc=$?"
+  dnf5 --releasever="${fedora}" -y --setopt=install_weak_deps=False install dracut-live && echo "unwoke: dnf5 installed dracut-live" || echo "WARN: dnf5 install dracut-live rc=$?"
 elif [[ "${fedora}" =~ ^[0-9]+$ ]] && command -v dnf >/dev/null; then
-  dnf --releasever="${fedora}" -y install dracut-live && echo "unwoke: dnf installed dracut-live" || echo "WARN: dnf install dracut-live rc=$?"
+  dnf --releasever="${fedora}" -y --setopt=install_weak_deps=False install dracut-live && echo "unwoke: dnf installed dracut-live" || echo "WARN: dnf install dracut-live rc=$?"
 fi
