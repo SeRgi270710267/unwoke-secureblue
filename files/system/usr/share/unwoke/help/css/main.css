@@ -1341,6 +1341,40 @@ body.page-compared h1 {
   text-transform: uppercase;
 }
 
+.prove {
+  margin: 1.75rem 0 2.1rem;
+  padding: 1.35rem 1.4rem 1.3rem;
+  border-radius: 18px;
+  border: 1px solid rgba(59, 108, 255, 0.45);
+  background:
+    linear-gradient(165deg, rgba(59, 108, 255, 0.16), transparent 48%),
+    var(--bg-card);
+}
+
+.prove h2 {
+  margin-top: 0;
+}
+
+.prove .lead {
+  color: var(--text-muted);
+  margin: 0.35rem 0 1rem;
+}
+
+.prove pre {
+  margin: 0.85rem 0 0;
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+
+.prove-kicker {
+  margin: 0 0 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
 .score-row {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

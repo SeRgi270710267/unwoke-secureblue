@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>See each lock yourself | Tutorials | Unwoke SecureBlue</title>
+  <meta name="description" content="Do not trust our script. Run these read-only commands yourself and look at the files. Same proofs as ujust unwoke-test.">
+  <base href="/unwoke-secureblue/">
+  <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css?v=18">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="./"><img src="assets/logo.svg?v=4" alt="">Unwoke SecureBlue</a></li>
+        <li><a href="features/">Features</a></li>
+        <li><a href="compared/">Compared</a></li>
+        <li><a href="ahead/">Shipped first</a></li>
+        <li><a href="privacy/">Privacy</a></li>
+        <li><a href="factory/">Factory</a></li>
+        <li><a href="brand/">Brand</a></li>
+        <li><a href="changelog/">Changelog</a></li>
+        <li><a href="images/">Images</a></li>
+        <li><a href="install/">Install</a></li>
+        <li><a href="start/">After login</a></li>
+        <li><a href="post-install/">Post-install</a></li>
+        <li aria-current="page"><a href="tutorials/">Tutorials</a></li>
+        <li><a href="faq/">FAQ</a></li>
+        <li><a href="stock-issues/">Workarounds</a></li>
+        <li><a href="contributing/">Contributing</a></li>
+        <li><a href="conduct/">Conduct</a></li>
+        <li><a href="donate/">Donate</a></li>
+        <li><a href="secureblue/">Their docs</a></li>
+        <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main id="content">
+
+    <p class="eyebrow">Trust</p>
+    <h1>See each lock yourself</h1>
+    <p><span class="chip">Keep locked</span> You do not have to believe <code>ujust unwoke-test</code>. These are the same proofs, one at a time, with commands you type. They only <em>read</em>. They do not unlock anything. Stock <code>ujust audit-secureblue</code> does not cover this list.</p>
+    <p>One-shot script first: <a href="tutorials/check-health/">Check health</a>. Tickets: <a href="ahead/">Shipped first</a>. Pitch vs stock: <a href="compared/#prove">Prove it on the disk</a>.</p>
+    <div class="alert">
+      <p><strong>How to read a result.</strong> You should see the “healthy” output. If a stamp file under <code>/etc/unwoke/</code> exists, <em>you</em> turned that default off — that is LOOSE, not a broken image. Live-ISO-only checks (#1185, #2432) skip on an installed ostree. That is expected.</p>
+    </div>
+
+    <h2 id="toc"><a href="#toc">Jump to a check</a></h2>
+    <ul>
+      <li><a href="#flavor">Flavor + no store</a></li>
+      <li><a href="#391">#391 /boot 700</a></li>
+      <li><a href="#697">#697 RAM noexec</a></li>
+      <li><a href="#887">#887 Flatpak buses</a></li>
+      <li><a href="#1185">#1185 live NTS</a></li>
+      <li><a href="#1295">#1295 CET</a></li>
+      <li><a href="#1569">#1569 DHCP</a></li>
+      <li><a href="#1606">#1606 CA trim</a></li>
+      <li><a href="#1885">#1885 extra Flatpak folders</a></li>
+      <li><a href="#2156">#2156 Flatpak record</a></li>
+      <li><a href="#2354">#2354 NFS/CIFS clients</a></li>
+      <li><a href="#2432">#2432 Anaconda encrypt</a></li>
+      <li><a href="#2508">#2508 Flatpak browsers</a></li>
+      <li><a href="#2526">#2526 Argon2id 2 GiB</a></li>
+      <li><a href="#house">House defaults (BT, Flathub, brew…)</a></li>
+    </ul>
+
+    <h2 id="flavor"><a href="#flavor">Flavor and no store</a></h2>
+    <ol class="steps">
+      <li>
+        <h3>Which overlay is this?</h3>
+<pre><code>cat /usr/share/unwoke/flavor
+ls /usr/share/unwoke/SHIPPED-FIRST.txt /usr/share/unwoke/NOTICE /usr/share/unwoke/LICENSE</code></pre>
+        <p>Healthy: <code>trivalent</code>, <code>brave-origin</code>, or <code>browserless</code>. The three files exist. Stock has none of these paths.</p>
+      </li>
+      <li>
+        <h3>Stores really gone</h3>
+<pre><code>rpm -q gnome-software plasma-discover bazaar</code></pre>
+        <p>Healthy: each line says “is not installed.” Stock ships Bazaar.</p>
+      </li>
+    </ol>
+
+    <h2 id="391"><a href="#391">#391 — /boot is 700</a></h2>
+    <p>Kernel image dir not world-readable. Stock still asks for this. Revert: <code>ujust set-boot-perm off</code>.</p>
+<pre><code>stat -c '%a %n' /boot
+ls /etc/unwoke/allow-boot-open 2>/dev/null || echo 'lock wanted (no stamp)'</code></pre>
+    <p>Healthy: <code>700 /boot</code> and no stamp file. If the stamp exists, you loosened it.</p>
+
+    <h2 id="697"><a href="#697">#697 — RAM disks cannot exec</a></h2>
+    <p>Payloads in <code>/dev/shm</code> and <code>/tmp</code> should not run. Revert: <code>ujust set-ramdisk-exec on</code>.</p>
+<pre><code>findmnt -no OPTIONS /dev/shm
+findmnt -no OPTIONS /tmp
+ls /etc/unwoke/allow-ramdisk-exec 2>/dev/null || echo 'lock wanted'</code></pre>
+    <p>Healthy: both option lists include <code>noexec</code> (and usually <code>nosuid</code>, <code>nodev</code>). Right after first boot, apply-boot may not have remounted yet — reboot once if they are missing.</p>
+
+    <h2 id="887"><a href="#887">#887 — Flatpak session bus</a></h2>
+    <p>Stock audit does not warn. Overlay lockdown should <em>not</em> grant session-bus, system-bus, or <code>org.freedesktop.Flatpak</code>.</p>
+<pre><code>flatpak override --show
+flatpak override --user --show</code></pre>
+    <p>Healthy: you see <code>!session-bus</code> / <code>!system-bus</code> (or those names absent as grants). A bare <code>session-bus</code> without <code>!</code> is a fail. Stamp <code>/etc/unwoke/flatpak-lockdown.off</code> means you turned lockdown off.</p>
+
+    <h2 id="1185"><a href="#1185">#1185 — live ISO uses NTS</a></h2>
+    <p>Only on the USB live session. Installed ostree keeps stock chrony — skip there.</p>
+<pre><code>cat /etc/chrony.d/50-unwoke-nts.conf</code></pre>
+    <p>Healthy on the stick: <code>server time.cloudflare.com iburst nts</code> and <code>server nts.ntp.se iburst nts</code>. If the file is missing after install, that is expected.</p>
+
+    <h2 id="1295"><a href="#1295">#1295 — SHSTK + IBT</a></h2>
+    <p>Intel CET glibc tunables. Revert: <code>ujust set-cet off</code>.</p>
+<pre><code>cat /etc/systemd/system.conf.d/90-unwoke-cet.conf
+cat /usr/share/unwoke/cet-system.conf
+ls /etc/unwoke/cet.off 2>/dev/null || echo 'CET wanted on'</code></pre>
+    <p>Healthy: <code>GLIBC_TUNABLES</code> contains <code>x86_shstk=on</code> and <code>x86_ibt=on</code>.</p>
+
+    <h2 id="1569"><a href="#1569">#1569 — DHCP anonymity</a></h2>
+    <p>No hostname, IAID=mac, send-release. Revert: <code>ujust set-dhcp-hostname on</code>.</p>
+<pre><code>cat /etc/NetworkManager/conf.d/90-unwoke-dhcp.conf
+cat /usr/share/unwoke/nm-privacy-dhcp.conf</code></pre>
+    <p>Healthy: <code>dhcp-send-hostname=false</code>, <code>dhcp-iaid=mac</code>, <code>dhcp-send-release=true</code>. If only the file under <code>/usr/share</code> exists, apply-boot has not copied it to <code>/etc</code> yet — reboot.</p>
+
+    <h2 id="1606"><a href="#1606">#1606 — fewer trusted CAs</a></h2>
+    <p>Fedora roots that are not Mozilla website-trusted. Revert: <code>ujust set-extra-cas on</code>.</p>
+<pre><code>ls /etc/pki/ca-trust/source/blocklist/unwoke-*.pem
+ls /usr/share/unwoke/ca-blocklist 2>/dev/null | head
+ls /etc/unwoke/allow-extra-cas 2>/dev/null || echo 'trim wanted'</code></pre>
+    <p>Healthy: one or more <code>unwoke-*.pem</code> files in the blocklist. Some gov/old TLS will fail — that is the lock.</p>
+
+    <h2 id="1885"><a href="#1885">#1885 — extra Flatpak folders</a></h2>
+    <p>xdg + host-root cuts stock’s lockdown command does not force. Revert: <code>ujust set-flatpak-lockdown off</code>.</p>
+<pre><code>flatpak override --show | grep -E 'host-root|xdg-download|xdg-documents'</code></pre>
+    <p>Healthy: those names appear as denied filesystems (often with <code>!</code>). Empty output right after first boot: run <code>ujust set-flatpak-lockdown on</code> only if you already turned it off; otherwise reboot and look again.</p>
+
+    <h2 id="2156"><a href="#2156">#2156 — Flatpak cannot record</a></h2>
+    <p>Pulse + PipeWire capture blocked for Flatpaks. Native speakers stay. Revert: <code>ujust set-flatpak-record off</code>.</p>
+<pre><code>flatpak override --show | grep -Ei 'pulseaudio|pipewire'
+ls /etc/unwoke/flatpak-record.off 2>/dev/null || echo 'record-block wanted'</code></pre>
+    <p>Healthy: Pulse socket / PipeWire path denied, no stamp file.</p>
+
+    <h2 id="2354"><a href="#2354">#2354 — NFS/CIFS clients</a></h2>
+    <p>Stock only masks the NFS <em>server</em>. We also blacklist client modules. Revert: <code>ujust set-network-fs on</code>.</p>
+<pre><code>cat /etc/modprobe.d/unwoke-network-fs.conf
+cat /usr/share/unwoke/modprobe-network-fs.conf
+lsmod | grep -E 'nfs|cifs' || echo 'modules not loaded (good)'</code></pre>
+    <p>Healthy: <code>blacklist nfs</code> and <code>blacklist cifs</code> in the conf. <code>lsmod</code> should not show them unless you loosened.</p>
+
+    <h2 id="2432"><a href="#2432">#2432 — Encrypt on in Anaconda</a></h2>
+    <p>Live USB only. After install this file is gone — skip.</p>
+<pre><code>grep -R 'autopart --encrypted' /etc/anaconda /usr/share/anaconda 2>/dev/null | head</code></pre>
+    <p>Healthy on the stick: a line with <code>autopart --encrypted</code>. You can still untick Encrypt in the GUI. Stock starts with Encrypt off.</p>
+
+    <h2 id="2508"><a href="#2508">#2508 — Flatpak web browsers</a></h2>
+    <p>Stock audit does not list them. Browserless should have none.</p>
+<pre><code>flatpak list --app --columns=application</code></pre>
+    <p>Healthy: no Firefox/Chrome/Brave/Edge/Chromium/Tor/LibreWolf IDs. If one is there on a <code>-browserless</code> image, that is a fail.</p>
+
+    <h2 id="2526"><a href="#2526">#2526 — LUKS Argon2id 2 GiB</a></h2>
+    <p>Default for later LUKS format on the OS (and the live ISO). Weaker only if you format LUKS yourself without this conf.</p>
+<pre><code>cat /etc/cryptsetup.conf
+cat /usr/etc/cryptsetup.conf</code></pre>
+    <p>Healthy: <code>pbkdf = argon2id</code> and <code>pbkdf-memory = 2097152</code> (KiB = 2 GiB).</p>
+
+    <h2 id="house"><a href="#house">House defaults (not stock tickets)</a></h2>
+    <p>Same idea: look at the stamp. No stamp = lock wanted.</p>
+<pre><code># Bluetooth (Wi-Fi stays)
+systemctl is-enabled bluetooth 2>/dev/null || echo 'masked/disabled (good)'
+ls /etc/unwoke/allow-bluetooth 2>/dev/null || echo 'BT lock wanted'
+
+# Flathub
+flatpak remotes
+cat /etc/unwoke/flathub 2>/dev/null || echo 'no stamp = Flathub off'
+
+# Homebrew / toolbox / camera
+ls /etc/unwoke/allow-brew /etc/unwoke/allow-toolbox /etc/unwoke/allow-camera-mic 2>/dev/null || echo 'those three locks wanted'
+
+# Countme census
+systemctl is-enabled rpm-ostree-countme.timer 2>/dev/null || echo 'countme not enabled (good)'
+ls /etc/unwoke/allow-countme 2>/dev/null || echo 'countme lock wanted'</code></pre>
+    <p>Healthy: remotes do not include Flathub until you chose it; Bluetooth not enabled; those <code>allow-*</code> files absent; countme timer not enabled.</p>
+
+    <div class="alert">
+      <p>If a check fails and you did not loosen it: do not “fix” it by turning the lock off. File a GitHub issue. Canary hits and a new <code>keys/secureblue.pub</code> stay manual on our side.</p>
+    </div>
+    <nav class="tutorial-nav" aria-label="Adjacent tutorials">
+      <a href="tutorials/check-health/">Previous: Check the box is what we shipped</a>
+      <a href="tutorials/">All tutorials</a>
+      <a href="tutorials/daily-user/">Next: Daily user vs wheel</a>
+    </nav>
+  </main>
+  <footer>
+    <a class="brand" href="./"><img src="assets/logo.svg?v=4" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="tutorials/">Tutorials</a></li>
+      <li><a href="ahead/">Shipped first</a></li>
+      <li><a href="compared/">Compared</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

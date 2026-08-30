@@ -6,6 +6,7 @@
         {"href": "start/", "eyebrow": "Start", "h3": "After you log in", "p": "Unwoke setup, not GNOME Settings. Daily user, signed reboot, leftover stock. Keep the locks."},
         {"href": "tutorials/updates/", "eyebrow": "Stay current", "h3": "Updates and rollback", "p": "Updates are automatic and signed. Check status, reboot, roll back if a bake is bad."},
         {"href": "tutorials/check-health/", "eyebrow": "Trust", "h3": "Check the box is what we shipped", "p": "ujust unwoke-test: PASS/LOOSE/FAIL with proof for every overlay lock. Then stock audit and cosign."},
+        {"href": "tutorials/see-it/", "eyebrow": "Trust", "h3": "See each lock yourself", "p": "Do not trust our script. Type these read-only commands and look at the files. Same proofs, one at a time."},
         {"href": "tutorials/daily-user/", "eyebrow": "Accounts", "h3": "Daily user vs wheel", "p": "Graphical session as a non-admin. run0 when you need privilege. That is the standard."}
       ]
     },
