@@ -60,6 +60,16 @@ audit-unwoke:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh audit
 
+# Prove every overlay addition on this disk. PASS/LOOSE/SKIP/FAIL with proof.
+# Does not unlock anything. FAIL means the image is missing what this flavor ships.
+unwoke-test:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/selftest.sh
+
+test-unwoke:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/selftest.sh
+
 # System Flathub: off (default, all flavors) | verified | full
 [positional-arguments]
 set-flathub *args:

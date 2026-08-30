@@ -138,11 +138,10 @@
       <li>
         <p class="when">Trust</p>
         <h3>Confirm the box is what we shipped</h3>
-        <p>In Unwoke setup → Start → Show status, or:</p>
-        <pre><code>ujust unwoke-status
-ujust audit-unwoke
+        <p>Unwoke setup → Start → <strong>Test everything Unwoke added</strong>, or:</p>
+        <pre><code>ujust unwoke-test
 ujust audit-secureblue</code></pre>
-        <p>Five minutes. No extra scanner. Longer version: <a href="tutorials/check-health/">Check health</a>.</p>
+        <p>PASS = that lock is on this disk. LOOSE = you turned it off. FAIL = the image is missing what this flavor ships. Each line has a <code>proof:</code> path. Stock kernel/USBGuard/malloc is the second command. Longer version: <a href="tutorials/check-health/">Check health</a>.</p>
       </li>
       <li>
         <p class="when">Now Settings is fine</p>

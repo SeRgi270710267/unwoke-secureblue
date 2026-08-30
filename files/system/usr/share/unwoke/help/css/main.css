@@ -1,4 +1,3 @@
-/* Unwoke SecureBlue. Not affiliated with secureblue. MIT License. Copyright (c) 2026 SeRgi270710267. UNWOKE-SHIPPED-FIRST. */
 /* Unwoke SecureBlue.
    One palette: real blue (hue ~224), not lime, not teal/cyan, not Bootstrap.
    Dark navy from Old Glory Blue (#002868). Warning/caution stay amber on purpose. */
@@ -1604,4 +1603,243 @@ body.page-start ol.steps .when {
 
 .button.ghost:hover {
   background: var(--accent-soft);
+}
+
+/* Shipped first (stock GitHub FEATs) */
+body.page-ahead main {
+  max-width: 920px;
+}
+
+body.page-ahead h1 {
+  letter-spacing: -0.04em;
+}
+
+.feat-grid {
+  display: grid;
+  gap: 0.9rem;
+  margin: 0.5rem 0 2rem;
+}
+
+@media (min-width: 760px) {
+  .feat-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.feat-card {
+  margin: 0;
+  padding: 1.15rem 1.2rem 1.2rem;
+  border-radius: 16px;
+  border: 1px solid var(--border-soft);
+  background:
+    linear-gradient(165deg, rgba(59, 108, 255, 0.12), transparent 44%),
+    var(--bg-card);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.feat-card h3 {
+  margin: 0.1rem 0 0.15rem;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+}
+
+.feat-card p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.feat-card .tag {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.feat-status {
+  display: inline-block;
+  align-self: flex-start;
+  margin: 0 0 0.15rem !important;
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.68rem !important;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.feat-open .feat-status {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.feat-closed .feat-status,
+.feat-after .feat-status {
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+
+.feat-after {
+  border-color: rgba(224, 179, 106, 0.4);
+  background:
+    linear-gradient(165deg, rgba(224, 179, 106, 0.10), transparent 46%),
+    var(--bg-card);
+}
+
+.feat-adopted .feat-status {
+  background: var(--important-soft);
+  color: var(--important);
+}
+
+.feat-adopted {
+  border-color: rgba(171, 125, 248, 0.4);
+  background:
+    linear-gradient(165deg, rgba(171, 125, 248, 0.12), transparent 46%),
+    var(--bg-card);
+}
+
+.feat-declined .feat-status {
+  background: var(--bg-code);
+  color: var(--text-muted);
+}
+
+.feat-empty {
+  color: var(--text-dim);
+  font-size: 0.95rem;
+}
+
+.feat-race {
+  color: var(--text) !important;
+  font-size: 0.9rem !important;
+}
+
+.feat-revert {
+  margin-top: 0.25rem !important;
+}
+
+.feat-revert span {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.15rem;
+}
+
+.feat-links {
+  margin-top: auto !important;
+  padding-top: 0.65rem;
+  font-size: 0.88rem !important;
+}
+
+.feat-links a {
+  font-weight: 600;
+}
+
+.clock {
+  list-style: none;
+  margin: 1.25rem 0;
+  padding: 0;
+  border-left: 2px solid var(--border);
+}
+
+.clock li {
+  position: relative;
+  padding: 0.85rem 0 0.85rem 1.4rem;
+}
+
+.clock li::before {
+  content: "";
+  position: absolute;
+  left: -0.4rem;
+  top: 1.15rem;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--bg);
+}
+
+.clock time {
+  display: block;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.clock p {
+  margin: 0.2rem 0 0;
+  color: var(--text-muted);
+}
+
+.pipe {
+  counter-reset: pipe;
+  list-style: none;
+  margin: 1.25rem 0;
+  padding: 0;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.pipe li {
+  counter-increment: pipe;
+  display: grid;
+  grid-template-columns: 2.2rem 1fr;
+  gap: 0.85rem;
+  align-items: start;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+}
+
+.pipe li::before {
+  content: counter(pipe);
+  grid-row: 1 / span 2;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pipe li strong,
+.pipe li span {
+  grid-column: 2;
+}
+
+.pipe strong {
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.pipe span {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.split-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+@media (max-width: 735px) {
+  .split-2 {
+    grid-template-columns: 1fr;
+  }
 }

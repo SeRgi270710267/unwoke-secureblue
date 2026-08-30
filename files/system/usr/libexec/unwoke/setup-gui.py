@@ -261,6 +261,9 @@ class SetupWindow(Gtk.Window):
         st = Gtk.Button(label="Show status")
         st.connect("clicked", self.on_status)
         box.pack_start(st, False, False, 0)
+        test = Gtk.Button(label="Test everything Unwoke added")
+        test.connect("clicked", self.on_selftest)
+        box.pack_start(test, False, False, 0)
         rb = Gtk.Button(label="Reboot now")
         rb.connect("clicked", self.on_reboot)
         box.pack_start(rb, False, False, 0)
@@ -460,7 +463,7 @@ class SetupWindow(Gtk.Window):
             ("Enroll their Secure Boot key", "BIOS prompt password: secureblue", "enroll-secureblue-secure-boot-key", "first-hour"),
             ("Apply hardening kernel arguments", "Needed if you rebased instead of their ISO.", "set-kargs-hardening", "first-hour"),
             ("USBGuard from current devices", "Allow what is plugged in now. Block the rest.", "setup-usbguard", "usb"),
-            ("audit-secureblue", "Stock audit. Overlay audit is ujust audit-unwoke.", "audit-secureblue", "check-health"),
+            ("audit-secureblue", "Stock audit. Overlay proof is ujust unwoke-test.", "audit-secureblue", "check-health"),
             ("Open BIOS/UEFI", "ujust bios", "bios", "first-hour"),
         ]
         for title, blurb, recipe, slug in stock:
@@ -760,6 +763,22 @@ class SetupWindow(Gtk.Window):
     def on_status(self, *_: object) -> None:
         body = run_toggle("status")
         info(self, "Status", body)
+
+    def on_selftest(self, *_: object) -> None:
+        cmd = (
+            "echo 'PASS = default on. LOOSE = you turned it off. FAIL = image is wrong.'; "
+            "ujust unwoke-test; echo; read -r -p 'Enter to close... ' _ || true"
+        )
+        for term in (
+            ["ptyxis", "--", "bash", "-lc", cmd],
+            ["kgx", "-e", "bash", "-lc", cmd],
+            ["gnome-terminal", "--", "bash", "-lc", cmd],
+            ["konsole", "-e", "bash", "-lc", cmd],
+        ):
+            if subprocess.call(["bash", "-lc", f"command -v {term[0]}"], stdout=subprocess.DEVNULL) == 0:
+                subprocess.Popen(term)
+                return
+        info(self, "No terminal", "Run: ujust unwoke-test")
 
     def on_reboot(self, *_: object) -> None:
         if not confirm(self, "Reboot now?", "The machine will reboot."):

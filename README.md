@@ -75,7 +75,7 @@ KDE → `unwoke-kinoite-trivalent`. NVIDIA → add `-nvidia-open` before `-triva
 
 Empty disk: flash a USB from [Actions](https://github.com/SeRgi270710267/unwoke-secureblue/actions/workflows/iso.yml) (artifact, GitHub login) or a [secureblue ISO](https://secureblue.dev/install) then rebase. Encrypt, wheel, enroll **their** Secure Boot key. Not Ventoy.
 
-After first graphical login: **Unwoke setup** (`ujust setup`). `ujust why` if something looks broken. Nothing unlocks unless you pick it. Everyday tasks: [Tutorials](https://sergi270710267.github.io/unwoke-secureblue/tutorials/). Proton.me: `ujust install-proton`. IVPN: `ujust install-ivpn`. Mullvad: `ujust install-mullvad`.
+After first graphical login: **Unwoke setup** (`ujust setup`). `ujust why` if something looks broken. `ujust unwoke-test` proves every overlay lock on this disk (PASS/LOOSE/FAIL with a path). Nothing unlocks unless you pick it. Everyday tasks: [Tutorials](https://sergi270710267.github.io/unwoke-secureblue/tutorials/). Proton.me: `ujust install-proton`. IVPN: `ujust install-ivpn`. Mullvad: `ujust install-mullvad`.
 
 Published as `ghcr.io/sergi270710267/<name>:latest`. OS images are **public**. No GitHub login to pull.
 

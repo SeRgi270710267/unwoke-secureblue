@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#050a16">
   <meta name="color-scheme" content="dark">
   <title>Check the box is what we shipped | Tutorials | Unwoke SecureBlue</title>
-  <meta name="description" content="ujust status and audits, plus cosign verify of the GHCR image.">
+  <meta name="description" content="ujust unwoke-test proves every overlay lock on this disk. Then stock audit and cosign.">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css?v=13">
@@ -43,13 +43,12 @@
 
     <p class="eyebrow">Trust</p>
     <h1>Check the box is what we shipped</h1>
-    <p><span class="chip">Keep locked</span> Five minutes, terminal only. No extra scanner app, no store, no new key.</p>
+    <p><span class="chip">Keep locked</span> Terminal only. No extra scanner app, no store, no new key. Nothing unlocks.</p>
     <ol class="steps">
       <li>
-        <h3>Overlay dashboard</h3>
-        <pre><code>ujust unwoke-status
-ujust audit-unwoke</code></pre>
-        <p>Status is flavor, remotes, policies, store absence. Audit is invariants: <code>harden_userns</code>, house browser for that flavor, no leftover Trivalent on Origin/browserless, no SUID under Origin.</p>
+        <h3>Prove every Unwoke addition</h3>
+        <pre><code>ujust unwoke-test</code></pre>
+        <p>Walks flavor, browser, every default-off lock, privacy extras, wallpaper, and vendor schema. Each line is <strong>PASS</strong> (default is on this disk), <strong>LOOSE</strong> (you turned that default off), <strong>SKIP</strong> (not this flavor), or <strong>FAIL</strong> (the image is missing what we ship). Each line prints a <code>proof:</code> path or command. Setup → <strong>Test everything Unwoke added</strong> runs the same thing. Short dashboard: <code>ujust unwoke-status</code>. Fast invariants only: <code>ujust audit-unwoke</code>.</p>
       </li>
       <li>
         <h3>Stock audit</h3>

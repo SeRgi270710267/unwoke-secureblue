@@ -103,6 +103,7 @@ menu() {
   0) Mullvad VPN (WireGuard first)
   i) Fingerprinting vs locks (read only — nothing unlocks)
   s) Show status
+  t) Test everything Unwoke added (proof on this disk)
   r) Reboot now
   n) Do not show this on login again
   q) Quit
@@ -324,7 +325,7 @@ stock_loop() {
         ;;
       4)
         run_stock audit-secureblue \
-          "Stock audit. Overlay audit is: ujust audit-unwoke"
+          "Stock audit. Overlay proof is: ujust unwoke-test"
         ;;
       5)
         run_stock bios \
@@ -447,6 +448,10 @@ loop() {
         open_tutorial fingerprint
         ;;
       s|S) run_toggle status ;;
+      t|T)
+        echo "PASS = default lock is on. LOOSE = you turned it off. FAIL = image is wrong."
+        bash /usr/libexec/unwoke/selftest.sh || true
+        ;;
       r|R)
         echo "Rebooting."
         reboot_now
