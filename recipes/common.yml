@@ -24,6 +24,8 @@ modules:
         - gtk3
         - python3-gobject
         - dialog
+        # ISO hook sqlite3 .recover for Origin's malformed RPM sqlite.
+        - sqlite
 
   # Drop Bazaar and any GUI software store. Flavor files drop Trivalent if needed.
   - type: script
