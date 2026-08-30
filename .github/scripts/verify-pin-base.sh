@@ -23,9 +23,22 @@ base="$(awk '/^base-image:/{print $2; exit}' "$recipe")"
 
 ref="${base}:latest"
 echo "Verifying $ref with official secureblue cosign.pub"
-cosign verify --key "$key" "$ref"
+extra=()
+if cosign verify --help 2>&1 | grep -q -- '--new-bundle-format'; then
+  extra+=(--new-bundle-format=false)
+fi
+ok=0
+for n in 1 2 3 4 5; do
+  if COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key "$key" "${extra[@]}" "$ref"; then
+    ok=1
+    break
+  fi
+  echo "pin: cosign verify failed (${n}/5) on ${ref}" >&2
+  sleep 20
+done
+[[ "${ok}" -eq 1 ]] || { echo "FAIL: no official signature on ${ref}" >&2; exit 1; }
 
-digest="$(cosign verify --key "$key" "$ref" 2>/dev/null | python3 -c 'import json,sys; print(json.load(sys.stdin)[0]["critical"]["image"]["docker-manifest-digest"])')"
+digest="$(COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key "$key" "${extra[@]}" "$ref" 2>/dev/null | python3 -c 'import json,sys; print(json.load(sys.stdin)[0]["critical"]["image"]["docker-manifest-digest"])')"
 [[ "$digest" == sha256:* ]] || { echo "bad digest: $digest" >&2; exit 1; }
 
 echo "Pinning $recipe -> ${ref}@${digest}"

@@ -26,9 +26,22 @@ fi
 
 ref="${base}:latest"
 echo "canary: verifying ${ref}"
-cosign verify --key "$key" "$ref" >/dev/null
+extra=()
+if cosign verify --help 2>&1 | grep -q -- '--new-bundle-format'; then
+  extra+=(--new-bundle-format=false)
+fi
+ok=0
+for n in 1 2 3 4 5; do
+  if COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key "$key" "${extra[@]}" "$ref" >/dev/null; then
+    ok=1
+    break
+  fi
+  echo "canary: cosign verify failed (${n}/5) on ${ref}" >&2
+  sleep 20
+done
+[[ "${ok}" -eq 1 ]] || { echo "FAIL: no official signature on ${ref}" >&2; exit 1; }
 
-digest="$(cosign verify --key "$key" "$ref" 2>/dev/null | python3 -c 'import json,sys; print(json.load(sys.stdin)[0]["critical"]["image"]["docker-manifest-digest"])')"
+digest="$(COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key "$key" "${extra[@]}" "$ref" 2>/dev/null | python3 -c 'import json,sys; print(json.load(sys.stdin)[0]["critical"]["image"]["docker-manifest-digest"])')"
 [[ "${digest}" == sha256:* ]] || { echo "bad digest: ${digest}" >&2; exit 1; }
 img="${base}@${digest}"
 echo "canary: exporting ${img} (crane, no run, no docker pull)"
