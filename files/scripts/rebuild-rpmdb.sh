@@ -15,22 +15,14 @@ flavor=""
 [[ -f /usr/share/unwoke/flavor ]] && flavor="$(tr -d '[:space:]' < /usr/share/unwoke/flavor)"
 
 # Origin extra dnf (Brave RPM + selinux-policy-devel) malforms Packages.
-# ISO wrap 33304494809: restore copied sqlite on top of Origin's leftover
-# WAL, then python checkpoint mixed the two. rpm said the 95 MiB file was
-# malformed (`SELECT ... FROM 'Name'`), justdb died, titanoboa dnf pulled
-# 177 packages. Drop live sidecars first, restore sqlite+WAL as one set.
+# apply-unwoke now checkpoints before save, so bak is a complete sqlite.
+# Drop live Origin WAL first, copy sqlite only. Do not reattach a WAL.
 # Brave files stay on disk. Do not bump titanoboa.
 place_rpmdb() {
   local dest="$1"
   [[ -d "${dest}" ]] || return 0
   rm -f "${dest}/rpmdb.sqlite-wal" "${dest}/rpmdb.sqlite-shm"
   cp -a "${bak}" "${dest}/rpmdb.sqlite"
-  if [[ -f "${bak}-wal" ]]; then
-    cp -a "${bak}-wal" "${dest}/rpmdb.sqlite-wal"
-  fi
-  if [[ -f "${bak}-shm" ]]; then
-    cp -a "${bak}-shm" "${dest}/rpmdb.sqlite-shm"
-  fi
   echo "unwoke: Origin — restored pre-flavor rpmdb into ${dest} ($(stat -c %s "${dest}/rpmdb.sqlite" 2>/dev/null || echo ?) bytes)"
 }
 

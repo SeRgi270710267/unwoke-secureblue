@@ -179,17 +179,54 @@ fi
 # Live Chromium/Brave/Trivalent managed JSON is scrubbed, not stamped.
 python3 /usr/libexec/unwoke/mark-check.py --apply /
 
-# Pre-flavor RPM sqlite + WAL/SHM. Origin extra dnf (Brave +
-# selinux-policy-devel) can malform Packages so titanoboa dnf dies.
-# Save the trio together: sqlite without its WAL is a torn index.
-# Flavor scripts restore the set, then delete it so it does not ship.
+# Pre-flavor RPM sqlite. Origin extra dnf (Brave + selinux-policy-devel)
+# malforms Packages so titanoboa dnf dies. ISO wrap 33305773882: saving
+# sqlite while WAL was live still produced a 95 MiB malformed index
+# (`SELECT ... FROM 'Name'`). Checkpoint first (same as Trivalent's
+# end-of-compose path), drop sidecars, then copy sqlite only.
+# Flavor scripts restore that file and delete it so it does not ship.
+echo "unwoke: checkpoint RPM sqlite before pre-flavor save"
+python3 - <<'PY'
+import sqlite3
+import sys
+from pathlib import Path
+
+dirs = [Path("/usr/lib/sysimage/rpm"), Path("/usr/share/rpm"), Path("/var/lib/rpm")]
+seen = []
+for d in dirs:
+    if not d.is_dir():
+        continue
+    for dbp in sorted(d.glob("*.sqlite")):
+        try:
+            real = dbp.resolve()
+        except OSError:
+            real = dbp
+        if real in seen:
+            continue
+        seen.append(real)
+        try:
+            con = sqlite3.connect(str(dbp))
+            try:
+                con.execute("PRAGMA wal_checkpoint(TRUNCATE)")
+                con.commit()
+            finally:
+                con.close()
+            print(f"unwoke: checkpointed {dbp}")
+        except sqlite3.Error as e:
+            print(f"WARN: checkpoint {dbp}: {e}", file=sys.stderr)
+PY
+for dir in /usr/lib/sysimage/rpm /usr/share/rpm /var/lib/rpm; do
+  [[ -d "${dir}" ]] || continue
+  find "${dir}" -maxdepth 1 \( \
+    -name '*.sqlite-wal' -o -name '*.sqlite-shm' -o -name '__db.*' \
+  \) -delete 2>/dev/null || true
+done
+
 bak=/usr/share/unwoke/.rpmdb-pre-flavor.sqlite
 rm -f "${bak}" "${bak}-wal" "${bak}-shm"
 for db in /usr/lib/sysimage/rpm/rpmdb.sqlite /usr/share/rpm/rpmdb.sqlite /var/lib/rpm/rpmdb.sqlite; do
   [[ -f "${db}" ]] || continue
   cp -a "${db}" "${bak}"
-  [[ -f "${db}-wal" ]] && cp -a "${db}-wal" "${bak}-wal"
-  [[ -f "${db}-shm" ]] && cp -a "${db}-shm" "${bak}-shm"
-  echo "unwoke: saved pre-flavor rpmdb from ${db} ($(stat -c %s "${bak}" 2>/dev/null || echo ?) bytes, wal=$(stat -c %s "${bak}-wal" 2>/dev/null || echo 0))"
+  echo "unwoke: saved pre-flavor rpmdb from ${db} ($(stat -c %s "${bak}" 2>/dev/null || echo ?) bytes, wal=0 after checkpoint)"
   break
 done
