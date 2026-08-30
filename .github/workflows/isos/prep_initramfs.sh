@@ -17,7 +17,29 @@ echo 'install squashfs /sbin/modprobe --ignore-install squashfs' > /etc/modprobe
 echo 'install_items+=" /usr/lib64/libno_rlimit_as.so /etc/ld.so.cache /etc/modprobe.d/zz-squashfs-override.conf "' > /etc/dracut.conf.d/libs.conf
 
 echo "unwoke: RPM sqlite / kernel-core check before titanoboa dnf"
-echo "unwoke: rpm _dbpath=$(rpm -E '%_dbpath' 2>/dev/null || echo empty)"
+dbpath="$(rpm -E '%_dbpath' 2>/dev/null || true)"
+echo "unwoke: rpm _dbpath=${dbpath:-empty}"
+ls -l /usr/lib/sysimage/rpm/rpmdb.sqlite /usr/share/rpm/rpmdb.sqlite /var/lib/rpm/rpmdb.sqlite 2>/dev/null || true
+
+# Compose restores the full index at /usr/lib/sysimage/rpm. Live rpm
+# %_dbpath is /usr/share/rpm. If those are different files, copy the
+# larger sqlite onto %_dbpath before any recover.
+sysimg=/usr/lib/sysimage/rpm/rpmdb.sqlite
+if [[ -n "${dbpath}" && -f "${sysimg}" && -d "${dbpath}" ]]; then
+  dest="${dbpath}/rpmdb.sqlite"
+  if [[ -f "${dest}" ]] && [[ "${sysimg}" -ef "${dest}" ]]; then
+    echo "unwoke: sysimage and %_dbpath are the same rpmdb"
+  else
+    syssz="$(stat -c %s "${sysimg}" 2>/dev/null || echo 0)"
+    destsz="$(stat -c %s "${dest}" 2>/dev/null || echo 0)"
+    echo "unwoke: rpmdb sizes sysimage=${syssz} dbpath=${destsz}"
+    if [[ "${syssz}" -gt "${destsz}" ]]; then
+      cp -a "${sysimg}" "${dest}"
+      rm -f "${dest}-wal" "${dest}-shm"
+      echo "unwoke: copied larger sysimage rpmdb onto %_dbpath"
+    fi
+  fi
+fi
 
 # A healthy ostree index must not be sqlite3 .recover'd — recover of Origin
 # produced a 4.3 MiB stub and dnf then installed 100+ packages.
