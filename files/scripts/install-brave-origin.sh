@@ -16,37 +16,12 @@ BRAVE_KEY_URL="https://brave-browser-rpm-release.s3.brave.com/brave-core.asc"
 work="$(mktemp -d)"
 trap 'rm -rf "${work}"' EXIT
 
-echo "unwoke: downloading brave-origin RPM (files only, no rpmdb write)"
-cat > "${work}/brave-browser.repo" <<EOF
-[brave-browser]
-name=Brave Browser
-enabled=1
-gpgcheck=0
-baseurl=${BRAVE_REPO}
-EOF
-
-# Isolated installroot + this repo only for the Brave NEVRA.
-root="$(mktemp -d)"
-fedora="$(unwoke_rpm_fedora)"
-mkdir -p \
-  "${root}/usr/lib/sysimage/rpm" \
-  "${root}/etc/yum.repos.d" \
-  "${root}/etc/dnf/vars" \
-  "${root}/var/cache" \
-  "${work}/rpms"
-rpm --initdb --dbpath "${root}/usr/lib/sysimage/rpm"
-printf '%s\n' "${fedora}" > "${root}/etc/dnf/vars/releasever"
-cp -a "${work}/brave-browser.repo" "${root}/etc/yum.repos.d/"
-dnf5 --installroot="${root}" --releasever="${fedora}" \
-  --setopt=cachedir="${root}/var/cache/libdnf5" \
-  --setopt=keepcache=True \
-  --nogpgcheck \
-  download --destdir="${work}/rpms" brave-origin
-rm -rf "${root}"
-
-rpm="$(find "${work}/rpms" -maxdepth 1 -name 'brave-origin-*.rpm' -print | head -n 1)"
+echo "unwoke: downloading brave-origin RPM (curl, no dnf, no rpmdb write)"
+mkdir -p "${work}/rpms"
+unwoke_yum_fetch "${work}/rpms" "${BRAVE_REPO}" brave-origin
+rpm="$(find "${work}/rpms" -maxdepth 1 -name 'brave-origin*.rpm' -print | head -n 1)"
 [[ -n "${rpm}" && -f "${rpm}" ]] || {
-  echo "FAIL: dnf5 download did not produce brave-origin-*.rpm" >&2
+  echo "FAIL: curl did not produce brave-origin*.rpm" >&2
   ls -la "${work}/rpms" >&2 || true
   exit 1
 }

@@ -84,6 +84,7 @@ fail=0
 # Do not PRAGMA integrity_check — RPM sqlite is not a vanilla db (bake 89).
 # -shm is ephemeral; sqlite recreates it. Only a non-empty -wal is a miss.
 if ! python3 - "${work}" <<'PY'
+import sqlite3
 import sys
 from pathlib import Path
 
@@ -110,6 +111,39 @@ for db in cands:
         print(f"FAIL: shipped uncheckpointed {wal.relative_to(root)}", file=sys.stderr)
         rc = 1
         continue
+    # Do not PRAGMA integrity_check (false bake fail). rpm -q kernel-core
+    # reads Name/Packages — if those SELECT as malformed, USB wrap dies.
+    try:
+        con = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+        try:
+            con.execute("SELECT count(*) FROM sqlite_master").fetchone()
+            tables = [
+                r[0]
+                for r in con.execute(
+                    "SELECT name FROM sqlite_master WHERE type='table'"
+                )
+            ]
+            hit = False
+            for t in tables:
+                if t.lower() in {"name", "packages"}:
+                    con.execute(f'SELECT count(*) FROM "{t}"').fetchone()
+                    hit = True
+                    print(
+                        f"OK: rpmdb {db.relative_to(root)} table {t} readable"
+                    )
+            if not hit:
+                print(
+                    f"FAIL: rpmdb {db.relative_to(root)} has no Name/Packages",
+                    file=sys.stderr,
+                )
+                rc = 1
+                continue
+        finally:
+            con.close()
+    except sqlite3.Error as e:
+        print(f"FAIL: rpmdb {db.relative_to(root)} unreadable: {e}", file=sys.stderr)
+        rc = 1
+        continue
     print(f"OK: rpmdb sqlite {db.relative_to(root)} (no WAL)")
 if not seen:
     print("FAIL: no rpmdb.sqlite in export", file=sys.stderr)
@@ -117,7 +151,7 @@ if not seen:
 raise SystemExit(rc)
 PY
 then
-  echo "FAIL: RPM sqlite shipped with uncheckpointed WAL" >&2
+  echo "FAIL: RPM sqlite WAL or unreadable Name/Packages" >&2
   fail=1
 fi
 for d in usr/share/applications/io.github.kolunmi.Bazaar.desktop \

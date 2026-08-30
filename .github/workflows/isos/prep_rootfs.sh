@@ -19,9 +19,16 @@ fi
 sed -i '/^install squashfs /d' /usr/lib/modprobe.d/secureblue.conf 2>/dev/null || true
 
 # Live session only: drop bulky fonts and leftover store bits; add Anaconda.
-dnf remove -y google-noto-fonts-all homebrew bazaar 2>/dev/null || true
-dnf reinstall -y polkit || true
-dnf install -y anaconda-live firefox libblockdev-btrfs libblockdev-lvm libblockdev-dm
+# Origin USB: prep_initramfs.sh may have replaced a malformed ostree sqlite
+# with a stub (kernel-core + live extras). dnf against that stub pulls the
+# world or dies on GPG (wrap 33312639083). Skip dnf; hook already laid files.
+if [[ -f /etc/unwoke/iso-rpmdb-stub ]]; then
+  echo "unwoke: stub rpmdb — skip dnf remove/reinstall/install (hook already installed anaconda-live)"
+else
+  dnf remove -y google-noto-fonts-all homebrew bazaar 2>/dev/null || true
+  dnf reinstall -y polkit || true
+  dnf install -y anaconda-live firefox libblockdev-btrfs libblockdev-lvm libblockdev-dm
+fi
 
 systemctl disable --global secureblue-flatpak-setup.service secureblue-flatpak-setup.timer podman-auto-update.timer flatpak-user-update.timer 2>/dev/null || true
 systemctl disable rpm-ostreed-automatic.timer rpm-ostree-countme.service bootloader-update.service 2>/dev/null || true

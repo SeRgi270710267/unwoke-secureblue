@@ -6,8 +6,9 @@
 # on `dnf install -y dracut-live` and `rpm -q kernel-core`.
 # Do **not** rpm --rebuilddb (empties the index). Do **not** sqlite3
 # .recover a ~90 MiB db (4.3 MiB stub). If rpm -q kernel-core fails,
-# throw the sqlite away, initdb, justdb kernel-core + dracut-live.
-# Do not bump titanoboa.
+# throw the sqlite away, initdb, justdb kernel-core, and rpm --nodeps
+# -ivh dracut-live + livesys-scripts + fuse-overlayfs + anaconda-live
+# so later titanoboa/prep_rootfs dnf is a no-op. Do not bump titanoboa.
 
 set -euo pipefail
 
@@ -90,24 +91,42 @@ mkdir -p /tmp/unwoke-kernel-rpm
 (
   cd /tmp/unwoke-kernel-rpm
   rm -f ./*.rpm
-  if command -v dnf5 >/dev/null; then
-    dnf5 --releasever="${fedora}" -y --nogpgcheck download \
-      "kernel-core-${krel}" dracut-live \
-      || dnf5 --releasever="${fedora}" -y --nogpgcheck download kernel-core dracut-live
-  else
-    dnf --releasever="${fedora}" -y --nogpgcheck download \
-      "kernel-core-${krel}" dracut-live \
-      || dnf --releasever="${fedora}" -y --nogpgcheck download kernel-core dracut-live
-  fi
+  # titanoboa dnf-installs these later against the stub db (empty system)
+  # and either pulls 100+ deps or dies on GPG. Download + rpm --nodeps
+  # so those steps are no-ops. Wrap 33312639083: initramfs/dracut ok,
+  # then rootfs-install-livesys-scripts `dnf install livesys-scripts` died.
+  dl() {
+    if command -v dnf5 >/dev/null; then
+      dnf5 --releasever="${fedora}" -y --nogpgcheck download "$@"
+    else
+      dnf --releasever="${fedora}" -y --nogpgcheck download "$@"
+    fi
+  }
+  dl "kernel-core-${krel}" || dl kernel-core
+  for pkg in dracut-live livesys-scripts fuse-overlayfs \
+             anaconda-live anaconda anaconda-core anaconda-gui anaconda-tui \
+             anaconda-webui firefox \
+             libblockdev-btrfs libblockdev-lvm libblockdev-dm; do
+    dl "${pkg}" || echo "WARN: download ${pkg} failed" >&2
+  done
   ls -l ./*.rpm
   # kernel-core files are already on the ostree image. Register only.
   rpm --justdb --nodeps -ivh kernel-core-*.rpm
-  # dmsquash-live lives in the dracut-live RPM. justdb is not enough —
-  # wrap 33312106702: rpm -q ok, dnf no-op, dracut "Module dmsquash-live
-  # cannot be found". Install the files. --nodeps: the live root already
-  # has dracut from ostree.
-  rpm --nodeps --excludedocs -ivh dracut-live-*.rpm
+  # Files titanoboa/prep_rootfs need on disk. --nodeps: ostree already
+  # has the rest of the desktop. --replacepkgs: some names may exist
+  # as leftover rows after initdb (they should not).
+  for rpmf in dracut-live-*.rpm livesys-scripts-*.rpm fuse-overlayfs-*.rpm \
+              anaconda*.rpm firefox-*.rpm libblockdev-*.rpm; do
+    [[ -f "${rpmf}" ]] || continue
+    rpm --nodeps --excludedocs --noscripts --replacepkgs -ivh "${rpmf}" \
+      || rpm --justdb --nodeps -ivh "${rpmf}" \
+      || echo "WARN: rpm -i ${rpmf} failed" >&2
+  done
 )
+echo "unwoke: live session desktops:"
+ls -l /usr/share/wayland-sessions/*.desktop /usr/share/xsessions/*.desktop 2>/dev/null || true
+mkdir -p /etc/unwoke
+printf '1\n' > /etc/unwoke/iso-rpmdb-stub
 dbpath="$(rpm -E '%_dbpath')"
 if [[ -n "${dbpath}" && -f "${dbpath}/rpmdb.sqlite" ]]; then
   for dest in /usr/lib/sysimage/rpm /usr/share/rpm /var/lib/rpm; do
@@ -130,7 +149,16 @@ fi
 if rpm -q dracut-live >/dev/null 2>&1; then
   echo "unwoke: rpm -q dracut-live ok ($(rpm -q dracut-live))"
 else
-  echo "WARN: dracut-live not in justdb; titanoboa dnf may still pull deps" >&2
+  echo "FAIL: dracut-live not in stub db" >&2
+  exit 1
 fi
-# Files stay the ostree image. Only the live USB RPM index is a stub of
-# kernel-core + dracut-live so titanoboa queryformat + dnf install no-op.
+if rpm -q livesys-scripts >/dev/null 2>&1; then
+  echo "unwoke: rpm -q livesys-scripts ok ($(rpm -q livesys-scripts))"
+else
+  echo "FAIL: livesys-scripts not in stub db" >&2
+  rpm -qa || true
+  exit 1
+fi
+ls -d /usr/lib/dracut/modules.d/*dmsquash-live* 2>/dev/null \
+  || echo "WARN: dmsquash-live dracut module dir missing" >&2
+# Stub index of kernel-core + live extras so titanoboa dnf is a no-op.
