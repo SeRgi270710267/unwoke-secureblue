@@ -238,6 +238,11 @@ class SetupWindow(Gtk.Window):
             nb.set_current_page(jump_map[jump])
         if jump == "whonix":
             GLib.idle_add(self.run_whonix)
+        vend = os.environ.get("UNWOKE_CONTINUE_VENDOR") or ""
+        if jump == "vendors" and vend:
+            GLib.idle_add(self.run_vendor, vend)
+        if jump == "ivpn" and Path.home().joinpath(".config/unwoke/continue").is_file():
+            GLib.idle_add(self.run_ivpn, "--repo")
 
     def _scroll(self, child: Gtk.Widget) -> Gtk.ScrolledWindow:
         s = Gtk.ScrolledWindow()

@@ -1,0 +1,16 @@
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
+[Unit]
+Description=Unwoke: reboot onto staged signed image if nobody is logged in (once)
+After=unwoke-first-boot.service network-online.target
+Wants=network-online.target
+ConditionPathExists=/etc/unwoke/signed-staged
+ConditionPathExists=!/etc/unwoke/signed-idle-reboot.done
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash /usr/libexec/unwoke/signed-idle-reboot.sh
+
+[Install]
+WantedBy=multi-user.target

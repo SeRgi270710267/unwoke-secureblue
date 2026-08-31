@@ -61,6 +61,7 @@ if command -v systemctl >/dev/null; then
   systemctl --global enable unwoke-play-agent.service || true
   systemctl enable unwoke-admin-split-setup.service || true
   systemctl enable unwoke-usbguard-prompt.service || true
+  systemctl enable unwoke-signed-idle-reboot.service || true
 fi
 
 # GameMode session config (GPU high + split-lock off while clients are in).

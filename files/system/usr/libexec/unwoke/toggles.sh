@@ -833,6 +833,16 @@ cmd_apply_user() {
   if [[ -x /usr/libexec/unwoke/stock-nags.sh ]]; then
     /usr/libexec/unwoke/stock-nags.sh apply-user || true
   fi
+  # Kinoite: pin Unwoke setup once. User can unpin.
+  donef="${XDG_CONFIG_HOME:-$HOME/.config}/unwoke/kde-favorites.done"
+  if [[ ! -f "${donef}" ]] && { command -v kwriteconfig6 >/dev/null || command -v kwriteconfig5 >/dev/null; }; then
+    mkdir -p "$(dirname "${donef}")"
+    kw=kwriteconfig6
+    command -v kwriteconfig6 >/dev/null || kw=kwriteconfig5
+    "${kw}" --file kickoffrc --group Favorites --key favoriteApps \
+      "unwoke-setup.desktop,preferred://browser,org.kde.dolphin.desktop,org.kde.konsole.desktop" >/dev/null 2>&1 || true
+    touch "${donef}"
+  fi
 }
 
 usage() {

@@ -99,7 +99,10 @@ do_rpm_json() {
   fi
   ostree_install "${rpm}"
   rm -rf "${tmp}"
-  echo "Reboot: systemctl reboot"
+  # shellcheck source=/usr/libexec/unwoke/continue-ostree.sh
+  source /usr/libexec/unwoke/continue-ostree.sh
+  unwoke_write_continue vendor "${name}"
+  echo "Reboot. Next login resumes this installer. Or reboot now."
   if ask "Reboot now?" "n"; then
     systemctl reboot
   fi
@@ -141,6 +144,10 @@ do_yum_repo() {
       ostree_install "${pkg}"
     fi
   done < <(spec_get "${name}" packages_optional)
+  # shellcheck source=/usr/libexec/unwoke/continue-ostree.sh
+  source /usr/libexec/unwoke/continue-ostree.sh
+  unwoke_write_continue vendor "${name}"
+  echo "Reboot. Next login resumes this installer."
   if ask "Reboot now?" "n"; then
     systemctl reboot
   fi

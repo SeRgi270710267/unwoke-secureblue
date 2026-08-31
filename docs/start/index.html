@@ -107,7 +107,7 @@
       <li>
         <p class="when">If you see a reboot nag</p>
         <h3>Reboot onto the signed image first</h3>
-        <p>The first rebase cannot check our stamp yet. After that boot, a service stages <code>ostree-image-signed</code>. A notification (and MOTD) repeats every login and every 15 minutes until you reboot, with a Reboot button. In Unwoke setup → Start → <strong>Reboot now</strong>.</p>
+        <p>The first rebase cannot check our stamp yet. After that boot, a service stages <code>ostree-image-signed</code>. If <strong>nobody is logged in</strong>, we reboot onto it once. If you are already in a session, a notification repeats until you reboot (Reboot button). Unwoke setup → Start → <strong>Reboot now</strong>.</p>
         <pre><code>rpm-ostree status</code></pre>
         <p>You want a staged signed deployment, then one reboot. Until then, updates are not locked to our <code>cosign.pub</code>. No staged row? Network, or the command on <a href="install/#signed">Install</a>.</p>
       </li>

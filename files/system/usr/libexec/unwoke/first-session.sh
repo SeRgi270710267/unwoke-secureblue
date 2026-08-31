@@ -31,17 +31,31 @@ for arg in "$@"; do
   esac
 done
 
-CONTINUE_WHONIX="${XDG_CONFIG_HOME:-$HOME/.config}/unwoke/continue-whonix"
-if [[ -f "${CONTINUE_WHONIX}" ]]; then
-  force=1
-  jump+=(--whonix)
-  notify "Finish Whonix" "KVM is layered. The wizard continues. Locks stay on."
-fi
-
 notify() {
   command -v notify-send >/dev/null || return 0
   notify-send -u critical -a "Unwoke SecureBlue" "$1" "$2" || true
 }
+
+# Resume ostree-layer wizards after reboot (Whonix, vendor RPMs, IVPN, …).
+CONT="${XDG_CONFIG_HOME:-$HOME/.config}/unwoke/continue"
+if [[ ! -f "${CONT}" && -f "${XDG_CONFIG_HOME:-$HOME/.config}/unwoke/continue-whonix" ]]; then
+  mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/unwoke"
+  printf 'whonix\n' > "${CONT}"
+fi
+if [[ -f "${CONT}" ]]; then
+  force=1
+  kind="$(head -n1 "${CONT}" | tr -d '[:space:]')"
+  extra="$(sed -n '2p' "${CONT}" | tr -d '[:space:]')"
+  case "${kind}" in
+    whonix) jump+=(--whonix) ;;
+    ivpn) jump+=(--ivpn) ;;
+    mullvad) jump+=(--mullvad) ;;
+    proton) jump+=(--proton) ;;
+    vendor) jump+=(--vendors) ;;
+  esac
+  notify "Finish install" "Layered packages are ready. The wizard continues. Locks stay on."
+  export UNWOKE_CONTINUE_VENDOR="${extra}"
+fi
 
 if [[ -f "${STAGED}" ]]; then
   # Background: Reboot button must not block the setup window.

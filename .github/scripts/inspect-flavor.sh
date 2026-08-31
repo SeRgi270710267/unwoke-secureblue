@@ -219,6 +219,14 @@ if [[ ! -f "${work}/usr/libexec/unwoke/anon-net.sh" ]]; then
   echo "FAIL: missing anon-net.sh" >&2
   fail=1
 fi
+if [[ ! -f "${work}/usr/libexec/unwoke/continue-ostree.sh" ]]; then
+  echo "FAIL: missing continue-ostree.sh" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/lib/systemd/system/unwoke-signed-idle-reboot.service" ]]; then
+  echo "FAIL: missing signed-idle-reboot.service" >&2
+  fail=1
+fi
 if [[ ! -f "${work}/usr/libexec/unwoke/network-fs.sh" ]]; then
   echo "FAIL: missing /usr/libexec/unwoke/network-fs.sh" >&2
   fail=1

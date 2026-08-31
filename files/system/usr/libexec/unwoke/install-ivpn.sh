@@ -94,6 +94,9 @@ official_cli() {
   fi
   write_repo
   ostree_install ivpn
+  # shellcheck source=/usr/libexec/unwoke/continue-ostree.sh
+  source /usr/libexec/unwoke/continue-ostree.sh
+  unwoke_write_continue ivpn
   echo "Layered ivpn. After reboot: run0 systemctl enable --now ivpn-service"
   echo "Login: ivpn login   Connect: ivpn connect"
   if ask "Also layer ivpn-ui (GUI: AntiTracker, multi-hop)?" "n"; then

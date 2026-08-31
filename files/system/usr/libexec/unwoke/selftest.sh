@@ -120,6 +120,8 @@ need=(
   /usr/libexec/unwoke/install-whonix.sh
   /usr/libexec/unwoke/start-whonix.sh
   /usr/libexec/unwoke/anon-net.sh
+  /usr/libexec/unwoke/continue-ostree.sh
+  /usr/libexec/unwoke/signed-idle-reboot.sh
 )
 for p in "${need[@]}"; do
   if [[ -x "${p}" || -f "${p}" ]]; then

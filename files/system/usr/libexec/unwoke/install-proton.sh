@@ -81,6 +81,9 @@ install_official_rpm() {
       run0 rpm-ostree install "${rpm}"
     fi
     echo "Layered. Reboot: systemctl reboot"
+    # shellcheck source=/usr/libexec/unwoke/continue-ostree.sh
+    source /usr/libexec/unwoke/continue-ostree.sh
+    unwoke_write_continue proton
     if ask "Reboot now?" "n"; then
       systemctl reboot
     fi

@@ -83,14 +83,17 @@ if [[ "${need_layer}" -eq 1 ]]; then
       # shellcheck disable=SC2086
       run0 rpm-ostree install ${pkgs} || run0 rpm-ostree install qemu-kvm libvirt-client virt-manager virt-viewer xz gnupg2
     fi
-    mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/unwoke"
-    echo "resume" > "${XDG_CONFIG_HOME:-$HOME/.config}/unwoke/continue-whonix"
+    # shellcheck source=/usr/libexec/unwoke/continue-ostree.sh
+    source /usr/libexec/unwoke/continue-ostree.sh
+    unwoke_write_continue whonix
     echo "Reboot. Next login opens this wizard again. Or: ujust install-whonix"
     exit 0
   fi
 fi
 
-rm -f "${XDG_CONFIG_HOME:-$HOME/.config}/unwoke/continue-whonix"
+# shellcheck source=/usr/libexec/unwoke/continue-ostree.sh
+source /usr/libexec/unwoke/continue-ostree.sh
+unwoke_clear_continue
 
 command -v gpg >/dev/null || { echo "FAIL: gpg missing" >&2; exit 1; }
 command -v virsh >/dev/null || { echo "FAIL: virsh missing — layer KVM then reboot" >&2; exit 1; }
