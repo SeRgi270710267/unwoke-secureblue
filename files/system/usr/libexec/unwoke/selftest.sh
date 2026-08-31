@@ -366,12 +366,20 @@ else
   fail "gamemoderun missing (overlay should ship Fedora gamemode)"
   proof "command -v gamemoderun"
 fi
-if [[ -f /etc/unwoke/play-scx.on ]]; then
-  loose "sched-ext allowed during play windows"
-  proof "/etc/unwoke/play-scx.on"
+if [[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/unwoke/play-scx.off" ]]; then
+  pass "sched-ext during play opted off"
+  proof "play-scx.off"
+elif command -v scxctl >/dev/null; then
+  pass "sched-ext tools present (auto during play, unload on Steam exit)"
+  proof "$(command -v scxctl)"
 else
-  pass "sched-ext during play off (default — no extra BPF scheduler)"
-  proof "no /etc/unwoke/play-scx.on"
+  skip "scxctl not on this image (Fedora package optional)"
+fi
+if [[ -f /etc/gamemode.ini ]] && grep -q 'disable_splitlock=1' /etc/gamemode.ini; then
+  pass "GameMode split-lock off only while clients are in"
+  proof "/etc/gamemode.ini disable_splitlock=1"
+else
+  skip "GameMode ini not installed yet (compose copies it)"
 fi
 
 section "Memory / boot / CAs / nags"

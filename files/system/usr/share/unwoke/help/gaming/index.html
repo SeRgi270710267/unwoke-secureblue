@@ -39,9 +39,8 @@
         <p>After install, the app-grid Steam icon wraps GameMode. A login agent sees Steam start and quit. <strong>You do not type anything to turn it off.</strong> Close Steam. Locks return. Optional: <code>ujust play stop</code>.</p>
       </li>
       <li>
-        <h3>Optional: sched-ext (closest CachyOS switch)</h3>
-        <pre><code>ujust play scx on</code></pre>
-        <p>Fedora’s kernel already has sched-ext. This loads <code>scx_lavd</code> gaming mode <em>for the session</em>. Stop unloads it; CFS/EEVDF returns. Not baked (extra packages). Default off. BPF in kernel only while you play.</p>
+        <h3>sched-ext is automatic if the tools are there</h3>
+        <p>If <code>scxctl</code> is on the image, the agent loads gaming mode with Steam and unloads it when you quit. Opt out: <code>ujust play scx off</code>.</p>
       </li>
       <li>
         <h3>Prove you are locked again</h3>

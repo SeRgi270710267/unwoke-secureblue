@@ -8,6 +8,10 @@ set -euo pipefail
 systemctl --user start gamemoded.service >/dev/null 2>&1 || true
 systemctl --user start unwoke-play-agent.service >/dev/null 2>&1 || true
 /usr/libexec/unwoke/play-window.sh arm >/dev/null 2>&1 || true
+# Proton on Fedora 44: NTsync/fsync. Not a security cut. Restores by process exit.
+export PROTON_USE_NTSYNC="${PROTON_USE_NTSYNC:-1}"
+export WINEFSYNC="${WINEFSYNC:-1}"
+export WINEESYNC="${WINEESYNC:-1}"
 if command -v flatpak >/dev/null && flatpak info com.valvesoftware.Steam >/dev/null 2>&1; then
   if command -v gamemoderun >/dev/null; then
     exec gamemoderun flatpak run com.valvesoftware.Steam "$@"

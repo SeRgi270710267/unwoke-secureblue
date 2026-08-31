@@ -825,9 +825,9 @@ class SetupWindow(Gtk.Window):
         )
         box.pack_start(
             row(
-                "Allow sched-ext during play (asked)",
-                "Closest CachyOS switch without their kernel. Needs scxctl. Default off.",
-                lambda: self.run_play("scx", "on"),
+                "Turn sched-ext off during play",
+                "Default is on when scxctl exists. This opts out. Put it back: ujust play scx on.",
+                lambda: self.run_play("scx", "off"),
                 "gaming",
             ),
             False,

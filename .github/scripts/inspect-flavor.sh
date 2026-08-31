@@ -361,6 +361,14 @@ if [[ ! -f "${work}/usr/lib/systemd/user/unwoke-play-agent.service" ]]; then
   echo "FAIL: missing play-window login agent" >&2
   fail=1
 fi
+if [[ ! -f "${work}/usr/share/unwoke/gamemode.ini" ]]; then
+  echo "FAIL: missing GameMode session ini" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/lib/modules-load.d/unwoke-ntsync.conf" ]]; then
+  echo "FAIL: missing ntsync modules-load" >&2
+  fail=1
+fi
 if [[ ! -f "${work}/usr/share/applications/unwoke-lock-gaming.desktop" ]]; then
   echo "FAIL: missing Gaming tab launcher" >&2
   fail=1

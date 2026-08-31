@@ -116,6 +116,48 @@
       </table>
     </div>
 
+    <h2 id="auto"><a href="#auto">What turns on by itself when you click Steam</a></h2>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr><th>CachyOS does</th><th>We do automatically</th><th>When you quit</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>game-performance</code> (power profile)</td>
+            <td>Yes — <code>performance</code> via power-profiles-daemon</td>
+            <td>Previous profile</td>
+          </tr>
+          <tr>
+            <td>GameMode (if they install it)</td>
+            <td>Yes — CPU governor, GPU high, screensaver off, split-lock stutter fix</td>
+            <td>GameMode clients leave; kernel split-lock back on</td>
+          </tr>
+          <tr>
+            <td>sched-ext <code>scx_lavd</code> gaming</td>
+            <td>Yes if Fedora shipped <code>scxctl</code>. Opt out: <code>ujust play scx off</code></td>
+            <td>Default kernel scheduler</td>
+          </tr>
+          <tr>
+            <td>Proton NTsync / fsync</td>
+            <td>Yes — env on the Steam wrapper + <code>ntsync</code> module</td>
+            <td>Process gone (module can stay; it is Fedora’s Proton path)</td>
+          </tr>
+          <tr>
+            <td>linux-cachyos + rebuilt mesa</td>
+            <td><strong>No.</strong> That is a different signed kernel. We keep stock</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>SMT / Spectre off</td>
+            <td><strong>No.</strong> Reboot-only, and we will not</td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>The leftover FPS gap is their kernel and rebuilt packages. Everything else that can be a <em>session</em> is automatic. Click Steam. Close Steam.</p>
+
     <h2 id="do"><a href="#do">On the machine</a></h2>
 <pre><code>ujust install-steam
 # then just click Steam in the app grid

@@ -9,8 +9,9 @@ set -euo pipefail
 
 CFG="${XDG_CONFIG_HOME:-$HOME/.config}/unwoke"
 STAMP="${CFG}/play-window.active"
+SAVE="${CFG}/play-window.save"
 ALLOW_SCX="${CFG}/play-scx.on"
-# Also honor the old system stamp if a prior image left one.
+DENY_SCX="${CFG}/play-scx.off"
 SYS_STAMP="/etc/unwoke/play-window.active"
 SYS_SCX="/etc/unwoke/play-scx.on"
 
@@ -23,7 +24,11 @@ as_root() {
   fi
 }
 
-scx_wanted() { [[ -f "${ALLOW_SCX}" || -f "${SYS_SCX}" ]]; }
+scx_wanted() {
+  [[ -f "${DENY_SCX}" ]] && return 1
+  [[ -f "${ALLOW_SCX}" || -f "${SYS_SCX}" ]] && return 0
+  command -v scxctl >/dev/null
+}
 
 game_running() {
   pgrep -x steam >/dev/null 2>&1 \
@@ -64,6 +69,14 @@ active() { [[ -f "${STAMP}" || -f "${SYS_STAMP}" ]]; }
 cmd_restore() {
   local talk="${1:-1}"
   scx_stop
+  if [[ -f "${SAVE}" ]]; then
+    # shellcheck disable=SC1090
+    source "${SAVE}" || true
+    if [[ -n "${PREV_PP:-}" ]] && command -v powerprofilesctl >/dev/null; then
+      powerprofilesctl set "${PREV_PP}" >/dev/null 2>&1 || true
+    fi
+    rm -f "${SAVE}"
+  fi
   rm -f "${STAMP}"
   if [[ -f "${SYS_STAMP}" ]]; then
     as_root rm -f "${SYS_STAMP}" 2>/dev/null || rm -f "${SYS_STAMP}" 2>/dev/null || true
@@ -81,9 +94,16 @@ cmd_restore_boot() {
 }
 
 cmd_arm() {
-  # Called when a game is detected. No prompts.
+  # Called when a game is detected. No prompts. No run0.
   if active && game_running; then
     return 0
+  fi
+  mkdir -p "${CFG}"
+  local prev=""
+  if command -v powerprofilesctl >/dev/null; then
+    prev="$(powerprofilesctl get 2>/dev/null || true)"
+    printf 'PREV_PP=%q\n' "${prev}" > "${SAVE}"
+    powerprofilesctl set performance >/dev/null 2>&1 || true
   fi
   write_stamp
   systemctl --user start gamemoded.service >/dev/null 2>&1 || true
@@ -128,14 +148,17 @@ cmd_agent() {
 
 cmd_scx_on() {
   mkdir -p "${CFG}"
+  rm -f "${DENY_SCX}"
   touch "${ALLOW_SCX}"
-  echo "sched-ext allowed during automatic play windows. Revert: ujust play scx off"
+  echo "sched-ext during play: on (also the default if scxctl is installed)."
 }
 
 cmd_scx_off() {
+  mkdir -p "${CFG}"
   rm -f "${ALLOW_SCX}"
+  touch "${DENY_SCX}"
   scx_stop
-  echo "sched-ext during play: off (default)."
+  echo "sched-ext during play: off. Put it back: ujust play scx on"
 }
 
 cmd_status() {

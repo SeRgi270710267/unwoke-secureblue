@@ -34,7 +34,8 @@ grant_steam() {
     --filesystem=home --filesystem=xdg-download \
     --filesystem=/run/media --filesystem=/var/mnt \
     --filesystem=xdg-run/pipewire-0 \
-    --talk-name=com.feralinteractive.GameMode || true
+    --talk-name=com.feralinteractive.GameMode \
+    --unset-env=LD_PRELOAD || true
   echo "Per-app grants on ${APP_ID} (user override). Other Flatpaks keep overlay lockdown."
 }
 

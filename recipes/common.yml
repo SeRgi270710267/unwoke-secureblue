@@ -29,6 +29,16 @@ modules:
         # Play window: Feral GameMode (governor/GPU while a game runs, restores after).
         - gamemode
 
+  # Optional gaming extras. Missing packages must not fail the overlay bake.
+  - type: dnf
+    install:
+      skip-unavailable: true
+      packages:
+        - power-profiles-daemon
+        - scx-scheds
+        - scx-tools
+        - gamemode.i686
+
   # Drop Bazaar and any GUI software store. Flavor files drop Trivalent if needed.
   - type: script
     scripts:

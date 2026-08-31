@@ -63,6 +63,11 @@ if command -v systemctl >/dev/null; then
   systemctl enable unwoke-usbguard-prompt.service || true
 fi
 
+# GameMode session config (GPU high + split-lock off while clients are in).
+if [[ -f /usr/share/unwoke/gamemode.ini ]]; then
+  install -m 644 /usr/share/unwoke/gamemode.ini /etc/gamemode.ini
+fi
+
 # Every new libexec file is executable. Do not keep a name list.
 find /usr/libexec/unwoke -maxdepth 1 -type f -exec chmod a+x {} + 2>/dev/null || true
 
