@@ -117,6 +117,7 @@ need=(
   /usr/libexec/unwoke/play-window.sh
   /usr/libexec/unwoke/play-steam.sh
   /usr/libexec/unwoke/install-steam.sh
+  /usr/libexec/unwoke/install-docker.sh
   /usr/libexec/unwoke/install-whonix.sh
   /usr/libexec/unwoke/start-whonix.sh
   /usr/libexec/unwoke/anon-net.sh

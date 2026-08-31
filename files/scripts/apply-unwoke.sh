@@ -191,6 +191,7 @@ import re
 renames = (
     "install-steam",
     "install-vpn",
+    "install-docker",
     "enable-dangerzone",
     "distrobox-assemble",
     "toolbox-assemble",

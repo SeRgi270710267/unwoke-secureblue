@@ -16,7 +16,7 @@
         {"href": "tutorials/install-apps/", "eyebrow": "Software", "h3": "Install an app", "p": "No GUI store. Verified Flathub, then Flatpak. Lockdown stays; grant in Flatseal."},
         {"href": "tutorials/steam/", "eyebrow": "Games", "h3": "Steam", "p": "Same stock Flatpak. Overlay locks that would break games are asked first. Nothing silent."},
         {"href": "tutorials/gaming/", "eyebrow": "Games", "h3": "Play window", "p": "GameMode while you play. Close the game, full locks. No CachyOS kernel swap."},
-        {"href": "tutorials/stock-installs/", "eyebrow": "Software", "h3": "Stock installers", "p": "install-steam, install-vpn, enable-dangerzone, distrobox-assemble, unfiltered Flathub — intercepted. Asked, not silent."},
+        {"href": "tutorials/stock-installs/", "eyebrow": "Software", "h3": "Stock installers", "p": "install-steam, install-vpn, install-docker, enable-dangerzone, distrobox-assemble, unfiltered Flathub — intercepted. Asked, not silent."},
         {"href": "tutorials/whonix/", "eyebrow": "Anonymity", "h3": "Whonix KVM", "p": "Official images, OpenPGP, clipboard/USB/mic off. Gateway then Workstation. Not Qubes, not Tails."},
         {"href": "anonymity/", "eyebrow": "Anonymity", "h3": "Stay unnamed", "p": "Host is not Tor. Whonix for IP. TCP timestamps off. Do not mix accounts."},
         {"href": "tutorials/usb/", "eyebrow": "Peripherals", "h3": "USB sticks and gadgets", "p": "USBGuard: allow what is plugged in now, block the rest. Do this once, on purpose."}

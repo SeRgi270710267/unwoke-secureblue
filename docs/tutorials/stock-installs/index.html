@@ -60,6 +60,11 @@
         <p>Does <strong>not</strong> run stock’s layerer (that can disable Unbound). Menu: Proton / IVPN / Mullvad (WireGuard first) or Tailscale (asked extra repo). Same as <code>ujust install-proton</code> and friends.</p>
       </li>
       <li>
+        <h3>Docker</h3>
+        <pre><code>ujust install-docker</code></pre>
+        <p>Intercepted. Prefers podman (already installed). Docker CE is a root-equivalent daemon. Asks leftover container userns first. Undo: leftover <code>ujust uninstall-docker</code>.</p>
+      </li>
+      <li>
         <h3>Dangerzone</h3>
         <pre><code>ujust enable-dangerzone</code></pre>
         <p>Asks leftover container userns + ptrace, then stock’s helper. Podman is not stubbed.</p>

@@ -29,15 +29,9 @@ modules:
         # Play window: Feral GameMode (governor/GPU while a game runs, restores after).
         - gamemode
 
-  # Optional gaming extras. Missing packages must not fail the overlay bake.
-  - type: dnf
-    install:
-      skip-unavailable: true
-      packages:
-        - power-profiles-daemon
-        - scx-scheds
-        - scx-tools
-        - gamemode.i686
+  # Do not dnf power-profiles-daemon (conflicts with Fedora tuned-ppd) or
+  # scx-scheds/scx-tools (not in Fedora 44). play-window.sh already uses
+  # powerprofilesctl if present and scxctl only if Fedora shipped it.
 
   # Drop Bazaar and any GUI software store. Flavor files drop Trivalent if needed.
   - type: script

@@ -54,6 +54,13 @@
       "more": ["tutorials/stock-installs/", "Stock installers"]
     },
     {
+      "id": "docker",
+      "needles": ["ujust install-docker", "How do I install Docker"],
+      "code": "ujust install-docker\n# prefer: podman (already installed)\n# undo: ujust uninstall-docker",
+      "note": "Intercepted. Docker CE is a <strong>root-equivalent</strong> daemon (group docker = root). Stock leftover: container userns. Overlay asks those first and prefers podman. Nothing silent. Uninstall is leftover stock.",
+      "more": ["tutorials/stock-installs/", "Stock installers"]
+    },
+    {
       "id": "dangerzone",
       "needles": ["ujust enable-dangerzone", "How do I manage potentially dangerous"],
       "code": "ujust enable-dangerzone",

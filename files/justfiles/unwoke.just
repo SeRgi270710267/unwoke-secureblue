@@ -49,6 +49,11 @@ install-vpn:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/install-vpn.sh
 
+# Stock install-docker. Root-equivalent daemon. Asks leftover userns. Prefer podman.
+install-docker:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/install-docker.sh
+
 # Stock enable-dangerzone. Asks leftover userns/ptrace. Nothing silent.
 enable-dangerzone:
     #!/usr/bin/bash

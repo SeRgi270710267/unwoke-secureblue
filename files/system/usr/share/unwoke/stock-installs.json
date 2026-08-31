@@ -12,6 +12,11 @@
       "collides": ["dns-unbound", "unconfined-userns"],
       "dispatch": ["install-proton", "install-ivpn", "install-mullvad", "install-vendor tailscale_repo"]
     },
+    "install-docker": {
+      "script": "install-docker.sh",
+      "collides": ["container-userns"],
+      "prefer": "podman"
+    },
     "enable-dangerzone": {
       "script": "install-dangerzone.sh",
       "collides": ["container-userns", "ptrace"],
