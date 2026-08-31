@@ -94,7 +94,7 @@ set-network-fs *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh network-fs "$@"
 
-# noexec /dev/shm and /tmp. Default locked. Some Electron/old JIT need: on
+# noexec /dev/shm, /tmp, and /var/tmp. Default locked. Some Electron/old JIT need: on
 [positional-arguments]
 set-ramdisk-exec *args:
     #!/usr/bin/bash

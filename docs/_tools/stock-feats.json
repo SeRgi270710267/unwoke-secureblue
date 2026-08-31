@@ -125,7 +125,7 @@
       "url": "https://github.com/secureblue/secureblue/issues/697",
       "shipped": "2026-08-29",
       "tag": "Memory",
-      "we": "noexec,nosuid,nodev on /dev/shm and /tmp. Payloads in RAM cannot exec.",
+      "we": "noexec,nosuid,nodev on /dev/shm, /tmp, and /var/tmp. Payloads in RAM or persistent temp cannot exec.",
       "revert": "ujust set-ramdisk-exec on",
       "where": "features/#toggles"
     },

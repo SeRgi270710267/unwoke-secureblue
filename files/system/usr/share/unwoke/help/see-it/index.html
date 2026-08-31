@@ -74,11 +74,12 @@ ls /etc/unwoke/allow-boot-open 2>/dev/null || echo 'lock wanted (no stamp)'</cod
     <p>Healthy: <code>700</code> on those directories. <code>/boot</code> is runtime; <code>/usr/src</code> and modules are 700 in the image. Stamp only re-opens <code>/boot</code>.</p>
 
     <h2 id="697"><a href="#697">#697 — RAM disks cannot exec</a></h2>
-    <p>Payloads in <code>/dev/shm</code> and <code>/tmp</code> should not run. Revert: <code>ujust set-ramdisk-exec on</code>.</p>
+    <p>Payloads in <code>/dev/shm</code>, <code>/tmp</code>, and <code>/var/tmp</code> should not run. Stock asked only for the RAM disks; we also bind-mount <code>/var/tmp</code> noexec so a payload cannot dodge into persistent temp. Revert: <code>ujust set-ramdisk-exec on</code>.</p>
 <pre><code>findmnt -no OPTIONS /dev/shm
 findmnt -no OPTIONS /tmp
+findmnt -no OPTIONS /var/tmp
 ls /etc/unwoke/allow-ramdisk-exec 2>/dev/null || echo 'lock wanted'</code></pre>
-    <p>Healthy: both option lists include <code>noexec</code>. If they do not after first boot and you did not stamp <code>allow-ramdisk-exec</code>, that is a <strong>fail</strong> (fail-closed).</p>
+    <p>Healthy: all three option lists include <code>noexec</code>. If they do not after first boot and you did not stamp <code>allow-ramdisk-exec</code>, that is a <strong>fail</strong> (fail-closed).</p>
 
     <h2 id="887"><a href="#887">#887 — Flatpak session bus</a></h2>
     <p>Stock audit does not warn. Overlay lockdown should <em>not</em> grant session-bus, system-bus, or <code>org.freedesktop.Flatpak</code>.</p>

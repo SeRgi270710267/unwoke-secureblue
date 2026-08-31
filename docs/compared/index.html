@@ -92,7 +92,7 @@
       </div>
 <pre><code>ujust unwoke-test
 == Shipped first (stock tickets still open when we shipped) ==
-  PASS  #697 /dev/shm and /tmp mounted noexec,nosuid,nodev
+  PASS  #697 /dev/shm, /tmp, and /var/tmp mounted noexec,nosuid,nodev
         proof: /dev/shm: tmpfs … noexec
   PASS  #2526 cryptsetup default Argon2id memory 2 GiB
         proof: /etc/cryptsetup.conf: pbkdf = argon2id pbkdf-memory = 2097152
@@ -166,7 +166,7 @@ RESULT: PASS</code></pre>
       <article class="win-card">
         <p class="tag">Memory</p>
         <h3>noexec RAM disk</h3>
-        <p><code>/dev/shm</code> and <code>/tmp</code> cannot run payloads. <code>ujust set-ramdisk-exec on</code></p>
+        <p><code>/dev/shm</code>, <code>/tmp</code>, and <code>/var/tmp</code> cannot run payloads. <code>ujust set-ramdisk-exec on</code></p>
       </article>
       <article class="win-card">
         <p class="tag">CPU</p>
@@ -328,9 +328,9 @@ RESULT: PASS</code></pre>
             <td>Skip, or later <code>ujust setup-usbguard</code></td>
           </tr>
           <tr>
-            <td>RAM disks</td>
-            <td>exec allowed on <code>/dev/shm</code> and <code>/tmp</code></td>
-            <td>noexec,nosuid,nodev</td>
+            <td>RAM disks + /var/tmp</td>
+            <td>exec allowed on <code>/dev/shm</code>, <code>/tmp</code>, and <code>/var/tmp</code></td>
+            <td>noexec,nosuid,nodev (bind on <code>/var/tmp</code>)</td>
             <td><code>ujust set-ramdisk-exec on</code></td>
           </tr>
           <tr>

@@ -12,22 +12,23 @@
 - Workarounds: https://sergi270710267.github.io/unwoke-secureblue/stock-issues/
 - Fingerprint tutorial: https://sergi270710267.github.io/unwoke-secureblue/tutorials/fingerprint/
 - Changelog: https://sergi270710267.github.io/unwoke-secureblue/changelog/ (generated; gitignored)
-- **Handoff commit:** `08c44db` Harden further than stock (NTS, DevTools lock, USBGuard prompt, fail-closed proofs) **plus this PROGRESS.md save**. After push, `git log -1` is the pickup HEAD.
+- **Handoff commit:** `/var/tmp` noexec (same revert as RAM disks) **plus this PROGRESS.md save**. After push, `git log -1` is the pickup HEAD.
 - **GitHub ruleset:** only **`main-strict`**, Active, target `refs/heads/main`. Requires PR + 1 approval + Code Owners + status **`Strict PR gate`** (GitHub Actions). Block force-push + deletion. **Repository admin bypass** so the owner (and this agent) can still `git push` to `main`. No `protect-main`. No auto-merge. Grok cannot merge.
 
 **How to resume:** clone the repo (or open it), say you are continuing Unwoke SecureBlue from `PROGRESS.md`. Do not rebuild images for docs-only work. Do not docker-pull Atomic images (layer depth). Do not auto-accept a new `cosign.pub` or auto-exec live `/usr/libexec/secureblue/*.py`. Do not sit on 35-minute ISO jobs in chat (`iso-alarm` + `receipt` are the signal).
 
-## Close-chat pickup (2026-08-30)
+## Close-chat pickup (2026-08-31)
 
 **GitHub `main` is the source of truth.** Pull on the other PC: `git pull origin main`.
 
 ### What is done
 
 - **Origin USB ISO is green.** Hook stubs a torn ostree sqlite (`prep_initramfs.sh`: initdb, justdb kernel-core, `rpm --nodeps` dracut-live + livesys-scripts + fuse-overlayfs + anaconda-live). `prep_rootfs.sh` skips dnf when `/etc/unwoke/iso-rpmdb-stub` exists. Titanoboa pin stays `ublue-os/titanoboa@840217d`. Do **not** bump it. Do **not** `rpm --rebuilddb` or `sqlite3 .recover` a ~90 MiB rpmdb.
-- **Overlay bake:** last green all-12 was `9f37fa5` / `d5284fd` era; **this push `08c44db` starts a new overlay bake** (scripts + justfiles). Wait for that bake before claiming GHCR has NTS/DevTools-lock/USBGuard-prompt. Inspect Name/Packages unreadable is **WARN** (not FAIL) so Origin compose can attest.
-- **Factory automation:** overlay twice daily; **Sunday 10:00 UTC wraps all 12 USBs** (not Origin-after-every-bake). Cosign pin retries then **one** rerun of pin-only failures (never inspect/canary). `iso-alarm` closes **only** on weekly all-12 success. ISO artifacts **90 days**. Stale overlay (~40h) opens `factory-alarm`. Idle main 10+ days: vendor-watch heartbeat commit (`docs/factory-heartbeat.txt`) so GitHub cron does not die at ~60 days.
-- **On-disk proof:** `ujust unwoke-test` (alias `test-unwoke`). Setup → Test everything. PASS/LOOSE/SKIP/FAIL + `proof:` path. Fail-closed: RAM `noexec` and CA pems must be live or FAIL. Hand checks: `docs/tutorials/see-it/`. Stock `ujust audit-secureblue` still for kernel/USBGuard/malloc.
-- **Further vs stock (in `08c44db`, needs bake+reboot):** NTS on installed OS (`ujust set-nts off`); DevTools **locked** by default (`set-brave-devtools allow`); USBGuard tty1 prompt once, default **No**; compose `chmod 700` `/usr/src` and module dirs; Origin **files-only** Trivalent remove (no `dnf remove` — sqlite).
+- **Overlay bake:** `08c44db` all-12 green ([33323408362](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33323408362)); scheduled bake of `31204c2` also green ([33339259890](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33339259890)). GHCR `:latest` already has NTS / DevTools-lock / USBGuard prompt / fail-closed noexec+CA. Inspect Name/Packages unreadable is **WARN** (not FAIL) so Origin compose can attest.
+- **Factory automation:** overlay twice daily; **Sunday 10:00 UTC wraps all 12 USBs** (not Origin-after-every-bake). Cosign pin retries then **one** rerun of pin-only failures (never inspect/canary). `iso-alarm` closes **only** on weekly all-12 success. ISO artifacts **90 days**. Stale overlay (~40h) opens `factory-alarm`. Idle main 10+ days: vendor-watch heartbeat commit (`docs/factory-heartbeat.txt`) so GitHub cron does not die at ~60 days. Alarms were closed at pickup; verify.yml and vendor-watch green.
+- **On-disk proof:** `ujust unwoke-test` (alias `test-unwoke`). Setup → Test everything. PASS/LOOSE/SKIP/FAIL + `proof:` path. Fail-closed: RAM + `/var/tmp` `noexec` and CA pems must be live or FAIL. Hand checks: `docs/tutorials/see-it/`. Stock `ujust audit-secureblue` still for kernel/USBGuard/malloc.
+- **Further vs stock (in GHCR from `08c44db`):** NTS on installed OS (`ujust set-nts off`); DevTools **locked** by default (`set-brave-devtools allow`); USBGuard tty1 prompt once, default **No**; compose `chmod 700` `/usr/src` and module dirs; Origin **files-only** Trivalent remove (no `dnf remove` — sqlite).
+- **This pickup:** `/var/tmp` bind-mounted `noexec,nosuid,nodev` (same `ujust set-ramdisk-exec` as `/tmp` and `/dev/shm`). Stock #697 was only the RAM disks; payloads that dodged into persistent temp now fail too. Needs the overlay bake from this push + reboot. Electron/old JIT or layered RPM scriptlets that exec from `/var/tmp`: `ujust set-ramdisk-exec on`.
 - **Pages:** Factory clock, Compared `#prove`, scorecard gaps filled, see-it tutorial. Site deploys on `main` push.
 
 ### Do not
@@ -127,7 +128,7 @@ Display: **Unwoke SecureBlue** (`Unwoke` = modifier; `SecureBlue` = one word, S+
 
 **Chrony NTS:** default on (ISO + installed OS). `ujust set-nts off`. Independent of `dns-selector`.
 
-**Fail-closed after first boot:** `ujust unwoke-test` **FAIL** if RAM `noexec` or CA blocklist pems are not live and the user did not loosen those stamps.
+**Fail-closed after first boot:** `ujust unwoke-test` **FAIL** if RAM/`/var/tmp` `noexec` or CA blocklist pems are not live and the user did not loosen those stamps.
 
 **toolbox:** `/usr/bin/toolbox` and distrobox* replaced with wrappers at compose. Real bins in `/usr/libexec/unwoke/real-bin/`. `ujust set-toolbox on`.
 
@@ -183,7 +184,10 @@ Stock `ujust` still works.
 - Hardware signing key / their SLSA for the *overlay* key
 - GNOME Shell custom hex accent (named `blue` only)
 - Browserless guard is a seatbelt (toolbox/brew/AppImage/`--disableexcludes` still work)
-- `/var/tmp` exec not locked (only `/tmp` and `/dev/shm`)
+- Native PipeWire record still possible (Flatpak capture is blocked; camera-mic kernel lock exists — do not kill speakers)
+- `hidepid=` only if leftover stock kargs (do not fight `set-kargs-hardening`)
+- Thunderbolt/DMA: leftover stock `ujust set-thunderbolt`; never silent-enable
+- Vendor RPM path still asks for unconfined userns (keep WireGuard-first)
 
 ## Key paths
 
@@ -264,13 +268,12 @@ Image-side theme, privacy.sh, Setup fingerprint button, rpmdb restore, and sqlit
 ## Tomorrow / next chat
 
 - Pickup: *continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.* Other PC: `git clone https://github.com/SeRgi270710267/unwoke-secureblue.git` then `git pull`. Phrase: continuing Unwoke SecureBlue from `PROGRESS.md`.
-- Close-chat HEAD after this file is pushed: `git log -1 --oneline`. Product overlay in GHCR `:latest` is checkpoint-before-save bake `b1cb805` / run [33306351364](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33306351364) until the files-only Brave bake is green.
-- **In flight:** overlay bake of files-only Origin Brave (this commit). Do not cancel. Do not dispatch Origin ISO until that bake is green. Trivalent/browserless USB still green.
-- USB: **8 green** (all Trivalent + all browserless). Origin still red.
-  - green: [silverblue-trivalent](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33271596640) [kinoite-trivalent](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33271598181) [silverblue-nvidia-open-trivalent](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33271599868) [kinoite-nvidia-open-trivalent](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33271601020) [silverblue-browserless](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33271607795) [silverblue-nvidia-open-browserless](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33271608871) [kinoite-browserless](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33271610062) [kinoite-nvidia-open-browserless](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33271611064)
-- Recommended USB today: `unwoke-silverblue-trivalent` Actions artifact. Not Ventoy. Enroll **their** Secure Boot key. Weekly still four Trivalent.
+- Close-chat HEAD after this file is pushed: `git log -1 --oneline`. Product overlay in GHCR `:latest` is bake `31204c2` / [33339259890](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33339259890) until **this** `/var/tmp` bake is green.
+- **In flight:** overlay bake of `/var/tmp` noexec (this commit). Do not cancel. Do not sit on the bake in chat. ISO wrap is Sunday all-12; Origin USB class of bug is closed.
+- USB: Origin + Trivalent + browserless wraps are green. Recommended stick: `unwoke-silverblue-trivalent`. Not Ventoy. Enroll **their** Secure Boot key. Weekly Sunday 10:00 UTC all 12.
 - Public mark is automatic (`mark-check.py --apply` at compose). Do not put `UNWOKE-SHIPPED-FIRST` into live Chromium/Brave/Trivalent `policies/managed`. Do not weaken privacy/security for credit. Do not stamp `.rpmdb-pre-flavor.sqlite`.
-- Confirm on a real USB/rebase **after the `08c44db` overlay bake is green and rebooted:** `ujust unwoke-test` (FAIL-closed on noexec/CAs), `ujust setup`, `ujust why`. See-it: https://sergi270710267.github.io/unwoke-secureblue/tutorials/see-it/  Shipped first: https://sergi270710267.github.io/unwoke-secureblue/ahead/
+- Confirm on a real USB/rebase **after this overlay bake is green and rebooted:** `ujust unwoke-test` (FAIL-closed on noexec including `/var/tmp`, and CAs), `ujust setup`, `ujust why`. See-it: https://sergi270710267.github.io/unwoke-secureblue/tutorials/see-it/  Shipped first: https://sergi270710267.github.io/unwoke-secureblue/ahead/
+- Remaining overlay-sized table (needs an explicit decision, do not silent-ship): native PipeWire record (do not kill speakers), `hidepid=` (do not fight stock kargs), Thunderbolt/DMA (never silent-enable), silent vendor-RPM userns (keep asking).
 - **#5** was a false alarm (pin still `840217d` / tag v0.2). Do not bump.
 - First stranger PR: confirm **Strict PR gate** runs; if the merge box cannot find the check, edit `main-strict` and pick it from search after that run.
 - Do not add `on: push` to `iso.yml` or `verify.yml`.

@@ -342,15 +342,16 @@ if [[ -f /etc/unwoke/allow-ramdisk-exec ]]; then
   loose "RAM disk exec allowed"
   proof "${st}"
 else
-  pass "noexec /dev/shm and /tmp (default)"
+  pass "noexec /dev/shm, /tmp, and /var/tmp (default)"
   proof "${st}"
   if awk '$2=="/tmp" && $4 ~ /(^|,)noexec(,|$)/ {found=1} END{exit found?0:1}' /proc/mounts 2>/dev/null \
-    && awk '$2=="/dev/shm" && $4 ~ /(^|,)noexec(,|$)/ {found=1} END{exit found?0:1}' /proc/mounts 2>/dev/null; then
-    pass "/tmp and /dev/shm are mounted noexec right now"
-    proof "$(awk '$2=="/tmp" || $2=="/dev/shm" {print}' /proc/mounts)"
+    && awk '$2=="/dev/shm" && $4 ~ /(^|,)noexec(,|$)/ {found=1} END{exit found?0:1}' /proc/mounts 2>/dev/null \
+    && awk '$2=="/var/tmp" && $4 ~ /(^|,)noexec(,|$)/ {found=1} END{exit found?0:1}' /proc/mounts 2>/dev/null; then
+    pass "/tmp, /dev/shm, and /var/tmp are mounted noexec right now"
+    proof "$(awk '$2=="/tmp" || $2=="/dev/shm" || $2=="/var/tmp" {print}' /proc/mounts)"
   else
     fail "#697 mounts lack noexec after boot (apply-boot should remount; this is fail-closed)"
-    proof "$(awk '$2=="/tmp" || $2=="/dev/shm" {print}' /proc/mounts || echo 'no lines')"
+    proof "$(awk '$2=="/tmp" || $2=="/dev/shm" || $2=="/var/tmp" {print}' /proc/mounts || echo 'no lines')"
   fi
 fi
 st="$(/usr/libexec/unwoke/cet.sh status 2>/dev/null || echo '?')"
@@ -425,21 +426,24 @@ else
   done
 fi
 
-# #697 — noexec RAM disks
+# #697 — noexec RAM disks + /var/tmp (stock asked only shm/tmp)
 shm="$(awk '$2=="/dev/shm" {print}' /proc/mounts 2>/dev/null || true)"
 tmpm="$(awk '$2=="/tmp" {print}' /proc/mounts 2>/dev/null || true)"
+vtmp="$(awk '$2=="/var/tmp" {print}' /proc/mounts 2>/dev/null || true)"
 if [[ -f /etc/unwoke/allow-ramdisk-exec ]]; then
   loose "#697 RAM-disk exec allowed"
   proof "/etc/unwoke/allow-ramdisk-exec"
 else
   if awk '$2=="/dev/shm" && $4 ~ /(^|,)noexec(,|$)/ {ok=1} END{exit ok?0:1}' /proc/mounts \
-    && awk '$2=="/tmp" && $4 ~ /(^|,)noexec(,|$)/ {ok=1} END{exit ok?0:1}' /proc/mounts; then
-    pass "#697 /dev/shm and /tmp mounted noexec,nosuid,nodev"
+    && awk '$2=="/tmp" && $4 ~ /(^|,)noexec(,|$)/ {ok=1} END{exit ok?0:1}' /proc/mounts \
+    && awk '$2=="/var/tmp" && $4 ~ /(^|,)noexec(,|$)/ {ok=1} END{exit ok?0:1}' /proc/mounts; then
+    pass "#697 /dev/shm, /tmp, and /var/tmp mounted noexec,nosuid,nodev"
     proof "/dev/shm: ${shm}"
     proof "/tmp: ${tmpm}"
+    proof "/var/tmp: ${vtmp}"
   else
     fail "#697 mounts lack noexec (fail-closed; first-boot apply-boot should remount)"
-    proof "/dev/shm: ${shm:-missing} | /tmp: ${tmpm:-missing}"
+    proof "/dev/shm: ${shm:-missing} | /tmp: ${tmpm:-missing} | /var/tmp: ${vtmp:-missing}"
   fi
 fi
 

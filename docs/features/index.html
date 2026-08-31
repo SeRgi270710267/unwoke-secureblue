@@ -283,8 +283,8 @@
             <td>Off. Same</td>
           </tr>
           <tr>
-            <td>RAM disks</td>
-            <td>exec on <code>/tmp</code> and <code>/dev/shm</code></td>
+            <td>RAM disks + /var/tmp</td>
+            <td>exec on <code>/tmp</code>, <code>/dev/shm</code>, and <code>/var/tmp</code></td>
             <td>noexec. <code>ujust set-ramdisk-exec on</code></td>
             <td>Same</td>
             <td>Same</td>
@@ -356,7 +356,7 @@
       <li>Homebrew off (stock ships it). Camera/mic locked at module+udev. Wheel GUI lock after a daily user exists.</li>
       <li>Isolation pack (Origin + Trivalent): no WebGL/WebGPU, SitePerProcess, origin-keyed processes.</li>
       <li>First-boot: re-enable <code>harden_userns</code>, apply defaults unless you stamped them off, promote <code>ostree-unverified-registry</code> → <code>ostree-image-signed</code>.</li>
-      <li>RAM-disk noexec (fail-closed after first boot), CET tunables, <code>/boot</code> 700 plus compose-time 700 on <code>/usr/src</code> and module dirs, Fedora-not-Mozilla CA blocklist (fail-closed), stock deprecation/Flathub-setup nags masked. All reversible.</li>
+      <li>RAM-disk noexec plus <code>/var/tmp</code> bind noexec (fail-closed after first boot), CET tunables, <code>/boot</code> 700 plus compose-time 700 on <code>/usr/src</code> and module dirs, Fedora-not-Mozilla CA blocklist (fail-closed), stock deprecation/Flathub-setup nags masked. All reversible.</li>
       <li>Chrony NTS on the installed OS (<code>ujust set-nts off</code>). USBGuard asked once on tty1, default skip.</li>
       <li>DevTools locked by default on Origin and Trivalent. <code>ujust set-brave-devtools allow</code>.</li>
       <li>Privacy apply-boot: countme masked, no connectivity GET, DHCP anonymity (no hostname, iaid=mac, send-release, no LLMNR/mDNS), thumbnails off.</li>
@@ -435,7 +435,7 @@
           <tr>
             <td><code>ujust set-ramdisk-exec</code></td>
             <td><code>off</code> (noexec)</td>
-            <td>noexec,nosuid,nodev on <code>/dev/shm</code> and <code>/tmp</code>.</td>
+            <td>noexec,nosuid,nodev on <code>/dev/shm</code>, <code>/tmp</code>, and <code>/var/tmp</code>.</td>
             <td><code>on</code></td>
           </tr>
           <tr>

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Unwoke SecureBlue. Not affiliated. UNWOKE-SHIPPED-FIRST. Stock #697 was a request.
-# noexec,nosuid,nodev on /dev/shm and /tmp. Default on.
-# Electron/old JIT that mmap(PROT_EXEC) from shm: ujust set-ramdisk-exec on
+# noexec,nosuid,nodev on /dev/shm, /tmp, and /var/tmp. Default on.
+# Electron/old JIT that mmap(PROT_EXEC) from shm or /var/tmp: ujust set-ramdisk-exec on
 set -euo pipefail
 
 ALLOW="/etc/unwoke/allow-ramdisk-exec"
@@ -22,6 +22,10 @@ as_root() {
 
 wanted_lock() { [[ ! -f "${ALLOW}" ]]; }
 
+is_mounted() {
+  awk -v m="$1" '$2==m {found=1} END{exit found?0:1}' /proc/mounts
+}
+
 strip_fstab() {
   [[ -f "${FSTAB}" ]] || return 0
   local tmp
@@ -32,6 +36,23 @@ strip_fstab() {
     !skip {print}
   ' "${FSTAB}" > "${tmp}"
   mv "${tmp}" "${FSTAB}"
+}
+
+lock_vartmp() {
+  mkdir -p /var/tmp
+  if ! is_mounted /var/tmp; then
+    mount --bind /var/tmp /var/tmp 2>/dev/null || true
+  fi
+  mount -o remount,bind,noexec,nosuid,nodev /var/tmp 2>/dev/null \
+    || mount -o remount,noexec,nosuid,nodev /var/tmp 2>/dev/null \
+    || true
+}
+
+unlock_vartmp() {
+  if is_mounted /var/tmp; then
+    mount -o remount,exec /var/tmp 2>/dev/null || true
+    umount /var/tmp 2>/dev/null || true
+  fi
 }
 
 cmd_apply_boot() {
@@ -50,14 +71,17 @@ EOF
       echo "${MARK_BEGIN}"
       echo "# UNWOKE-SHIPPED-FIRST"
       echo "tmpfs /dev/shm tmpfs defaults,nodev,nosuid,noexec 0 0"
+      echo "/var/tmp /var/tmp none bind,noexec,nosuid,nodev,x-systemd.requires-mounts-for=/var 0 0"
       echo "${MARK_END}"
     } >> "${FSTAB}"
     mount -o remount,nodev,nosuid,noexec /dev/shm 2>/dev/null || true
     systemctl daemon-reload >/dev/null 2>&1 || true
     mount -o remount,nosuid,nodev,noexec /tmp 2>/dev/null || true
+    lock_vartmp
   else
     mount -o remount,exec /dev/shm 2>/dev/null || true
     systemctl daemon-reload >/dev/null 2>&1 || true
+    unlock_vartmp
   fi
 }
 
@@ -65,19 +89,19 @@ cmd_on() {
   as_root mkdir -p /etc/unwoke
   as_root rm -f "${ALLOW}"
   as_root /usr/bin/bash /usr/libexec/unwoke/ramdisk.sh apply-boot
-  echo "RAM disk LOCKED (noexec on /dev/shm and /tmp). Revert: ujust set-ramdisk-exec on"
+  echo "Temp dirs LOCKED (noexec on /dev/shm, /tmp, /var/tmp). Revert: ujust set-ramdisk-exec on"
 }
 
 cmd_off() {
   as_root mkdir -p /etc/unwoke
   as_root touch "${ALLOW}"
   as_root /usr/bin/bash /usr/libexec/unwoke/ramdisk.sh apply-boot
-  echo "RAM disk exec ALLOWED. Put the lock back: ujust set-ramdisk-exec off"
+  echo "Temp dir exec ALLOWED. Put the lock back: ujust set-ramdisk-exec off"
 }
 
 cmd_status() {
   if wanted_lock; then
-    echo "off/locked (default — noexec /dev/shm /tmp)"
+    echo "off/locked (default — noexec /dev/shm /tmp /var/tmp)"
   else
     echo "on/allowed (${ALLOW})"
   fi

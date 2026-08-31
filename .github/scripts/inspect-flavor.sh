@@ -239,6 +239,10 @@ if [[ ! -f "${work}/usr/etc/cryptsetup.conf" ]] || ! grep -q 'pbkdf-memory = 209
   echo "FAIL: missing /usr/etc/cryptsetup.conf Argon2 2 GiB default" >&2
   fail=1
 fi
+if ! grep -q '/var/tmp' "${work}/usr/libexec/unwoke/ramdisk.sh" 2>/dev/null; then
+  echo "FAIL: ramdisk.sh missing /var/tmp noexec" >&2
+  fail=1
+fi
 for f in usr/libexec/unwoke/ramdisk.sh \
          usr/libexec/unwoke/cet.sh \
          usr/libexec/unwoke/boot-perm.sh \

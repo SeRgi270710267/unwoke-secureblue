@@ -72,7 +72,7 @@
         <p class="tag">Memory</p>
         <h3>RAM disk protection?</h3>
         <p class="feat-race">Opened 2024-12-19 as a request. We shipped 2026-08-29. They had been asking for 20 months. Still open there, so they have not shipped it. This card stays until they do.</p>
-        <p>noexec,nosuid,nodev on /dev/shm and /tmp. Payloads in RAM cannot exec.</p>
+        <p>noexec,nosuid,nodev on /dev/shm, /tmp, and /var/tmp. Payloads in RAM or persistent temp cannot exec.</p>
         <p class="feat-revert"><span>Revert</span> <code>ujust set-ramdisk-exec on</code></p>
         <p class="feat-links"><a href="https://github.com/secureblue/secureblue/issues/697">Stock #697</a> · <a href="features/#toggles">On Unwoke</a></p>
       </article>
