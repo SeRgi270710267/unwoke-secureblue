@@ -56,7 +56,7 @@ trap 'rm -rf "${work}"' EXIT
 echo "inspect: export ${IMG}"
 crane export "${IMG}" - | python3 "${extract}" "${work}" "${work}/members.txt" \
   usr/share/unwoke usr/bin usr/lib64 usr/libexec opt usr/share/applications \
-  usr/lib/systemd usr/lib/modules-load.d usr/lib/sysctl.d \
+  usr/lib/systemd usr/lib/modules-load.d usr/lib/sysctl.d usr/lib/opt \
   etc/selinux usr/etc usr/share/glib-2.0/schemas \
   usr/share/fish usr/share/gnome-background-properties \
   usr/share/wallpapers/UnwokeSecureBlue \
@@ -558,7 +558,9 @@ case "${NAME}" in
       echo "FAIL: Trivalent binary missing" >&2
       fail=1
     fi
-    if listed opt/brave.com/brave-origin/brave; then
+    if listed opt/brave.com/brave-origin/brave \
+       || listed usr/lib/opt/brave.com/brave-origin/brave \
+       || listed usr/bin/brave-origin; then
       echo "FAIL: Origin ELF on trivalent image" >&2
       fail=1
     fi
@@ -570,7 +572,9 @@ case "${NAME}" in
     ;;
   *browserless*)
     [[ "${flavor}" == "browserless" ]] || { echo "FAIL: flavor != browserless (${flavor})" >&2; fail=1; }
-    if listed opt/brave.com/brave-origin/brave; then
+    if listed opt/brave.com/brave-origin/brave \
+       || listed usr/lib/opt/brave.com/brave-origin/brave \
+       || listed usr/bin/brave-origin; then
       echo "FAIL: Origin ELF on browserless image" >&2
       fail=1
     fi

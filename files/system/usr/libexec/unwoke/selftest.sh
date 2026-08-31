@@ -712,7 +712,7 @@ elif [[ -f /etc/unwoke/usbguard-prompt.done ]]; then
   loose "USBGuard first-boot prompt skipped (you chose No). Later: ujust setup-usbguard"
   proof "/etc/unwoke/usbguard-prompt.done"
 else
-  skip "USBGuard prompt not run yet (tty1 first boot)"
+  skip "USBGuard prompt not run yet (Unwoke setup after login)"
   proof "service unwoke-usbguard-prompt.service"
 fi
 

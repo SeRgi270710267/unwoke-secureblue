@@ -174,7 +174,7 @@ ls /etc/unwoke/brave-devtools.off 2>/dev/null || echo 'DevTools lock wanted'</co
     <p>Healthy: the JSON exists on Origin or Trivalent. Stamp means you allowed DevTools. Browserless: skip.</p>
 
     <h2 id="usbguard"><a href="#usbguard">USBGuard first-boot prompt</a></h2>
-    <p>Asked once on tty1, default <strong>No</strong>. Never silent-enable.</p>
+    <p>Asked in Unwoke setup after login, default <strong>No</strong>. Never silent-enable. Does not block GDM on tty1.</p>
 <pre><code>ls /etc/unwoke/usbguard-prompt.done 2>/dev/null || echo 'prompt not run yet'
 wc -l /etc/usbguard/rules.conf 2>/dev/null || echo 'no rules yet'</code></pre>
     <p>Healthy: after first boot the done stamp exists. Non-empty rules only if you said Yes. Later: <code>ujust setup-usbguard</code>.</p>

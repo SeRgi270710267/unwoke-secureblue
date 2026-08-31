@@ -366,7 +366,7 @@
       <li>Isolation pack (Origin + Trivalent): no WebGL/WebGPU, SitePerProcess, origin-keyed processes.</li>
       <li>First-boot: re-enable <code>harden_userns</code>, apply defaults unless you stamped them off, promote <code>ostree-unverified-registry</code> → <code>ostree-image-signed</code>.</li>
       <li>RAM-disk noexec plus <code>/var/tmp</code> bind noexec (fail-closed after first boot), CET tunables, <code>/boot</code> 700 plus compose-time 700 on <code>/usr/src</code> and module dirs, Fedora-not-Mozilla CA blocklist (fail-closed), stock deprecation/Flathub-setup nags masked. All reversible.</li>
-      <li>Chrony NTS on the installed OS (<code>ujust set-nts off</code>). USBGuard asked once on tty1, default skip.</li>
+      <li>Chrony NTS on the installed OS (<code>ujust set-nts off</code>). USBGuard asked in Unwoke setup after login, default skip.</li>
       <li>DevTools locked by default on Origin and Trivalent. <code>ujust set-brave-devtools allow</code>.</li>
       <li>Privacy apply-boot: countme masked, no connectivity GET, DHCP anonymity (no hostname, iaid=mac, send-release, no LLMNR/mDNS), thumbnails off.</li>
       <li>Vendor installers (Proton, IVPN, Mullvad, …): JSON list, WireGuard/web first, hashed official RPM only if you insist. <code>ujust install-vendor NAME</code>.</li>

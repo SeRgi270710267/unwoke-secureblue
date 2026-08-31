@@ -71,7 +71,8 @@ do
     20-unwoke-jitless:brave-jitless.json \
     30-unwoke-extensions:brave-extensions.json \
     40-unwoke-isolation:brave-isolation.json \
-    50-unwoke-sandbox:brave-sandbox.json
+    50-unwoke-sandbox:brave-sandbox.json \
+    60-unwoke-devtools:brave-devtools.json
   do
     name="${pack%%:*}"
     srcf="${pack##*:}"
