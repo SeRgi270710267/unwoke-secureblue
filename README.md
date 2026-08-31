@@ -163,9 +163,10 @@ ujust set-allow-browsers off
 
 The OS **is** the GHCR image. A flashable ISO wraps that image.
 
+- After each green overlay bake: the two recommended Trivalent sticks (`unwoke-silverblue-trivalent`, `unwoke-kinoite-trivalent`) to `ghcr.io/sergi270710267/<name>-iso:latest`. Still `cosign verify` of our `:latest`.
 - On demand: Actions → **iso** → pick the image → artifact (90 days, GitHub login).
-- Weekly (Sunday 10:00 UTC): all 12 flavors to `ghcr.io/sergi270710267/<name>-iso:latest` once oras publish succeeds. Overlay still bakes twice a day; USB is weekly so it does not wrap eight Origin sticks a day.
-- GitHub will not host a 3 GB ISO as a normal release. Not Ventoy. Enroll **your** Secure Boot key. Watch `factory-alarm` / `iso-alarm` issues if you are away.
+- Weekly (Sunday 10:00 UTC): all 12 flavors. Origin and the other ten stay weekly so it does not wrap eight Origin sticks a day.
+- GitHub will not host a 3 GB ISO as a normal release. Not Ventoy. Enroll **your** Secure Boot key. Watch `factory-alarm` / `iso-alarm` issues if you are away. Map: [Factory](https://sergi270710267.github.io/unwoke-secureblue/factory/).
 
 Stock-ISO-then-rebase still works.
 
@@ -190,7 +191,7 @@ image-version: latest
 
 We do **not** rebuild their kernel or re-run their SLSA pipeline.
 
-Factory extras (this repo, not the desktop): Harden-Runner; Actions pinned to SHAs; SLSA-style provenance; checksum-pinned crane `v0.20.3`; inspect after each bake and twice daily; one reused `factory-alarm` issue; stock `ujust harden-flatpak` is a trampoline to Unwoke’s script.
+Factory extras (this repo, not the desktop): Harden-Runner; Actions pinned to SHAs; SLSA-style provenance; checksum-pinned crane `v0.20.3`; inspect after each bake and twice daily; one reused issue per alarm label; `pr-gate` + ruleset `main-strict`; stock `ujust harden-flatpak` is a trampoline to Unwoke’s script. Living map: [Factory](https://sergi270710267.github.io/unwoke-secureblue/factory/).
 
 We do **not** use a hardware signing key. `cosign.key` lives only as the GitHub secret `SIGNING_SECRET`.
 

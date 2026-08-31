@@ -111,7 +111,8 @@
         <ul>
           <li><strong>When a wrap is green:</strong> pull <code>ghcr.io/sergi270710267/&lt;name&gt;-iso:latest</code> (box above) or download the Actions artifact (GitHub login, 90 days).</li>
           <li><strong>Any flavor, on demand:</strong> GitHub → Actions → <strong>iso</strong> → Run workflow → pick the same image as above.</li>
-          <li><strong>All twelve flavors, weekly</strong> (Sunday 10:00 UTC): Trivalent, Origin, and browserless × GNOME/KDE × NVIDIA/not. Overlay images still rebuild twice a day; USB is weekly on purpose.</li>
+          <li><strong>Recommended Trivalent sticks</strong> (GNOME + KDE, no NVIDIA): wrapped after each green overlay bake. Same <code>cosign verify</code> of our <code>:latest</code>.</li>
+          <li><strong>All twelve flavors, weekly</strong> (Sunday 10:00 UTC): Trivalent, Origin, and browserless × GNOME/KDE × NVIDIA/not. Origin and the other ten stay weekly on purpose. Clock and alarms: <a href="factory/#clock">Factory</a>.</li>
         </ul>
       </li>
       <li>Pull with <a href="https://oras.land/docs/installation">oras</a> (Linux/macOS) when the package exists:</li>

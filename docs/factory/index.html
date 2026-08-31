@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#050a16">
   <meta name="color-scheme" content="dark">
   <title>Factory | Unwoke SecureBlue</title>
-  <meta name="description" content="How Unwoke automates overlay bakes, weekly USB ISOs, alarms, and idle keep-alive — and which trust gates still need a human. Nothing here auto-unlocks.">
+  <meta name="description" content="How Unwoke automates overlay bakes, recommended USB wraps, weekly all-12 ISOs, GitHub gates, alarms, and idle keep-alive — and which trust gates still need a human. Nothing here auto-unlocks.">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css?v=16">
@@ -60,8 +60,8 @@
       </div>
       <div class="card">
         <p class="eyebrow">USB</p>
-        <h3>Once a week, all twelve</h3>
-        <p>Sunday wraps Trivalent, Origin, and browserless into flashable ISOs. Overlay stays twice daily so your rebase is fresh; USB is weekly so the baker does not wrap eight Origin sticks a day.</p>
+        <h3>Recommended after overlay; all twelve on Sunday</h3>
+        <p>After a green overlay (not a PR), wrap the two advertised Trivalent sticks. Sunday still wraps all twelve. Origin stays weekly so the baker does not wrap eight Origin sticks a day. Each wrap still verifies <em>our</em> <code>:latest</code>.</p>
       </div>
       <div class="card">
         <p class="eyebrow">Flakes</p>
@@ -76,9 +76,82 @@
       <div class="card">
         <p class="eyebrow">Away</p>
         <h3>Alarms, not babysitting</h3>
-        <p>If overlay has not been green for ~40 hours, <code>factory-alarm</code> opens. If git is idle 10+ days, a timestamp-only commit keeps GitHub from killing cron (~60 days of no activity). A one-image USB dispatch cannot close a weekly ISO fail.</p>
+        <p>If overlay has not been green for ~40 hours, <code>factory-alarm</code> opens. If git is idle 10+ days, a timestamp-only commit keeps GitHub from killing cron (~60 days of no activity). A one-image USB dispatch cannot close a weekly ISO fail. Watch issues, not Actions.</p>
       </div>
     </div>
+
+    <h2 id="github"><a href="#github">GitHub map</a></h2>
+    <p>This is the same factory, named as GitHub objects. The pager is still the stamp above and the issues in <a href="#alarms">Alarms</a>. You should not have to live in Actions.</p>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr><th>Object</th><th>What it does</th><th>Where you look</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Repo</td>
+            <td>Overlay sources, workflows, this site. Not a fork of stock.</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue">SeRgi270710267/unwoke-secureblue</a></td>
+          </tr>
+          <tr>
+            <td><code>bluebuild</code></td>
+            <td>Canary → pin → overlay all twelve → inspect → attest → try Public → rewrite <code>receipt</code>. Twice daily and on overlay pushes. Docs / ISO / Pages edits do not start it.</td>
+            <td>Actions → <a href="https://github.com/SeRgi270710267/unwoke-secureblue/actions/workflows/build.yml">bluebuild</a></td>
+          </tr>
+          <tr>
+            <td><code>iso</code></td>
+            <td>USB baker. After a green overlay: two recommended Trivalent sticks. Sunday: all twelve. Dispatch: the one you picked. Not <code>on: push</code>.</td>
+            <td>Actions → <a href="https://github.com/SeRgi270710267/unwoke-secureblue/actions/workflows/iso.yml">iso</a></td>
+          </tr>
+          <tr>
+            <td><code>pages</code></td>
+            <td>This site: changelog, tutorials hub, last-green stamp, docs mirror, Workarounds, Shipped first.</td>
+            <td>Actions → <a href="https://github.com/SeRgi270710267/unwoke-secureblue/actions/workflows/pages.yml">pages</a></td>
+          </tr>
+          <tr>
+            <td><code>verify</code></td>
+            <td>Twice-daily inspect of published images, stock-key / titanoboa-pin / GHCR-public watch, rewrite <code>receipt</code>. Schedule + dispatch only. Does not bake.</td>
+            <td>Actions → <a href="https://github.com/SeRgi270710267/unwoke-secureblue/actions/workflows/verify.yml">verify</a></td>
+          </tr>
+          <tr>
+            <td><code>vendor-watch</code></td>
+            <td>Allowlisted vendor URL heal, tutorial hub, idle heartbeat so cron stays enabled.</td>
+            <td>Actions → <a href="https://github.com/SeRgi270710267/unwoke-secureblue/actions/workflows/vendor-watch.yml">vendor-watch</a></td>
+          </tr>
+          <tr>
+            <td><code>pr-gate</code></td>
+            <td>Pull requests only. Blocks <code>gpgcheck=0</code>, <code>setenforce 0</code>, secrets in the diff, <code>pull_request_target</code>, auto-merge in workflows. Vendor schema, Python compile, public mark. Does not bake or publish.</td>
+            <td>Actions → <a href="https://github.com/SeRgi270710267/unwoke-secureblue/actions/workflows/pr-gate.yml">pr-gate</a>. Job name <code>Strict PR gate</code>.</td>
+          </tr>
+          <tr>
+            <td>Dependabot</td>
+            <td>Weekly GitHub Actions SHA bumps. Those PRs are still CI code.</td>
+            <td>Review and merge. Do not auto-merge.</td>
+          </tr>
+          <tr>
+            <td><code>CODEOWNERS</code></td>
+            <td><code>@SeRgi270710267</code> on every path. Green CI is not permission to land.</td>
+            <td><code>.github/CODEOWNERS</code>. <a href="contributing/">Contributing</a>.</td>
+          </tr>
+          <tr>
+            <td>Ruleset <code>main-strict</code></td>
+            <td>PRs to <code>main</code> need 1 approval + Code Owners + status <code>Strict PR gate</code>. Blocks force-push and deletion. Repository admin bypass so the owner (and this agent) can still <code>git push</code> <code>main</code>. No auto-merge. Grok cannot merge.</td>
+            <td>Repo → Settings → Rules → <code>main-strict</code>. Only that ruleset; no <code>protect-main</code>.</td>
+          </tr>
+          <tr>
+            <td>Release <code>receipt</code></td>
+            <td>One moving tag: <code>cosign.pub</code> + verified GHCR digests. After a USB wrap, tiny <code>SHA256SUMS</code> only. Never the ISO (GitHub will not host ~4 GB).</td>
+            <td><a href="https://github.com/SeRgi270710267/unwoke-secureblue/releases/tag/receipt">Releases → receipt</a></td>
+          </tr>
+          <tr>
+            <td>GHCR</td>
+            <td>Twelve OS images <code>:latest</code> and twelve <code>-iso:latest</code> packages. Anonymous rebase/USB fetch needs Public. The factory tries; GitHub often still wants one click.</td>
+            <td>Repo → Packages. Working URL is <code>/pkgs/container/NAME</code>, not <code>/users/…/settings</code>.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Stranger path: fork → PR → green <code>pr-gate</code> + canary → the maintainer merges. There is no auto-merge. Owner pushes to <code>main</code> skip the ruleset because of the admin bypass; the overlay bake and inspect still run on that push.</p>
 
     <h2 id="lanes"><a href="#lanes">Four lanes</a></h2>
     <div class="cards">
@@ -90,7 +163,7 @@
       <div class="card">
         <p class="eyebrow">USB</p>
         <h3>ISO baker</h3>
-        <p>Weekly (Sunday 10:00 UTC) wrap of <strong>all twelve</strong> flavors after the morning overlay. Dispatch any one image on demand. Each wrap still <code>cosign verify</code>s <em>our</em> <code>:latest</code> before Titanoboa. <code>oras push</code> retries once (same titanoboa pin). Actions artifact kept 90 days; GHCR <code>-iso:latest</code> is the long-lived copy. Tiny checksums go on the <code>receipt</code> tag; never the 4 GB ISO. Own <code>iso-alarm</code>: a one-image dispatch that succeeds does not close a weekly fail.</p>
+        <p>After a green overlay bake (not a PR): wrap the two advertised Trivalent sticks (<code>unwoke-silverblue-trivalent</code>, <code>unwoke-kinoite-trivalent</code>). Sunday 10:00 UTC still wraps <strong>all twelve</strong>. Dispatch any one image on demand. Each wrap still <code>cosign verify</code>s <em>our</em> <code>:latest</code> before Titanoboa. Auto wraps queue with each other; a human dispatch does not cancel them. <code>oras push</code> retries once (same titanoboa pin). Actions artifact kept 90 days; GHCR <code>-iso:latest</code> is the long-lived copy. Tiny checksums go on the <code>receipt</code> tag; never the 4 GB ISO. Own <code>iso-alarm</code>: a recommended-two wrap or a one-image dispatch that succeeds does not close a weekly fail.</p>
       </div>
       <div class="card">
         <p class="eyebrow">Site</p>
@@ -187,9 +260,14 @@
             <td>—</td>
           </tr>
           <tr>
+            <td>Green overlay bake (push or twice-daily, not a PR)</td>
+            <td>Wrap the two advertised Trivalent USBs. Still <code>cosign verify</code> our <code>:latest</code>. Same titanoboa pin. Queues with Sunday’s baker</td>
+            <td>Wrap Origin or all 12 after every bake. Skip verify. Close <code>iso-alarm</code> (only Sunday all-12 may)</td>
+          </tr>
+          <tr>
             <td>ISO wrap or Pages deploy fails</td>
             <td>Own GitHub issue. ISO alarm closes only when the weekly all-12 wrap is green. Pages closes when that deploy is green</td>
-            <td>Auto-bump titanoboa. Let a one-image dispatch hide another flavor’s fail</td>
+            <td>Auto-bump titanoboa. Let a recommended-two wrap or a one-image dispatch hide another flavor’s fail</td>
           </tr>
           <tr>
             <td>No successful overlay bake for ~40 hours</td>
@@ -283,6 +361,11 @@
             <td>Review and merge. Do not auto-merge</td>
           </tr>
           <tr>
+            <td>Origin / NVIDIA / browserless USB mid-week</td>
+            <td>Those ten wraps stay on Sunday. Origin’s torn rpmdb path is the slow/fragile one; we will not bake eight of those a day</td>
+            <td>Dispatch that one image if you need it. Do not add <code>on: push</code> to <code>iso.yml</code></td>
+          </tr>
+          <tr>
             <td>Enroll Secure Boot</td>
             <td>The kernel is still theirs. Their key, not ours</td>
             <td>Stock post-install. We do not enroll a second key for you</td>
@@ -295,13 +378,15 @@
     <p>You should not have to refresh Actions to learn something is red. Each lane reuses a single issue (comment on repeat, close when green):</p>
     <ul>
       <li><code>factory-alarm</code> — canary, snapshot watch, overlay bake, post-publish inspect, or no green bake for ~40 hours</li>
-      <li><code>iso-alarm</code> — USB wrap. Overlay can be green while this is red. A dispatch of one image does not close it; only Sunday’s all-12 success does</li>
+      <li><code>iso-alarm</code> — USB wrap. Overlay can be green while this is red. A recommended-two wrap or a dispatch of one image does not close it; only Sunday’s all-12 success does</li>
       <li><code>pages-alarm</code> — site generate/deploy</li>
       <li><code>vendor-installers</code> — a vendor contract still broken after allowlisted heal</li>
       <li><code>ghcr-private</code> — a package is still private; one Public click, then it closes</li>
       <li><code>stock-key</code> — their published key changed; do not auto-accept</li>
       <li><code>titanoboa-pin</code> — the USB wrap commit is gone; do not auto-bump</li>
       <li><code>receipt-alarm</code> — the moving GitHub Release <code>receipt</code> could not be rewritten; last good files stay. Next green full verify or bake heals it. Never attach the ISO</li>
+      <li><code>mirror-cmds</code> — stock docs grew a <code>ujust</code> we do not footnote yet. The mirror still injects <code>ujust why</code>. Do not auto-unlock Flathub to match them</li>
+      <li><code>stock-feats</code> — they closed a FEAT we already shipped. Read their PR on <a href="ahead/">Shipped first</a>. Do not auto-copy</li>
     </ul>
     <p>A 429 is not a contract break. Heal does not rewrite on transients. Inspect on a schedule does not close <code>factory-alarm</code> by itself (that would hide a failed canary behind a still-signed old image).</p>
 
@@ -331,9 +416,9 @@
         </ol>
       </div>
       <div>
-        <h3>USB ISO (Sunday, all twelve)</h3>
+        <h3>USB ISO</h3>
         <ol class="pipe">
-          <li><strong>Pick</strong><span>Schedule = all 12 names. Dispatch = the one you chose. Not <code>on: push</code>.</span></li>
+          <li><strong>Pick</strong><span>Green overlay (not a PR) = the two recommended Trivalent sticks. Sunday schedule = all 12 names. Dispatch = the one you chose. Not <code>on: push</code>.</span></li>
           <li><strong>Verify ours</strong><span><code>cosign verify --key cosign.pub</code> on <code>ghcr.io/sergi270710267/&lt;name&gt;:latest</code>. Unsigned images are not wrapped.</span></li>
           <li><strong>Titanoboa</strong><span>Pinned commit <code>840217d</code> only. Live hook can stub a torn Origin RPM index so initramfs still builds. The pin is never auto-bumped.</span></li>
           <li><strong>Publish</strong><span><code>oras push</code> <code>&lt;name&gt;-iso:latest</code>, retry once. Sign the package. Upload the Actions artifact (90 days). Attach tiny <code>SHA256SUMS</code> to <code>receipt</code>.</span></li>
@@ -345,7 +430,11 @@
     <ol class="clock">
       <li>
         <time datetime="08:00">08:00 and 20:00</time>
-        <p>Overlay bake of all twelve images, then rewrite <code>receipt</code>. Later overlay pushes queue; they do not cancel a bake that is already running.</p>
+        <p>Overlay bake of all twelve images, then rewrite <code>receipt</code>. Later overlay pushes queue; they do not cancel a bake that is already running. If that bake is green and was not a pull request, the USB baker then wraps the two recommended Trivalent sticks (still <code>cosign verify</code> of our <code>:latest</code>).</p>
+      </li>
+      <li>
+        <time>After overlay</time>
+        <p>Recommended USB: <code>unwoke-silverblue-trivalent</code> and <code>unwoke-kinoite-trivalent</code> only. Queues with Sunday’s all-12 baker; a one-image dispatch keeps its own lane. Origin, NVIDIA, and browserless stay weekly.</p>
       </li>
       <li>
         <time datetime="09:15">09:15 and 21:15</time>
@@ -363,7 +452,7 @@
     <p>Docs-only and ISO workflow edits do not start an overlay bake (<code>build.yml</code> paths-ignore). Changing the vendor JSON or overlay scripts does.</p>
 
     <h2 id="away"><a href="#away">If you are away</a></h2>
-    <p>Turn on GitHub email for issues on this repo. The factory will keep overlay images current and wrap USBs on Sunday. Flash a Trivalent stick before a long trip if you might need a USB: GHCR <code>-iso:latest</code> outlives the Actions zip. Real trust hits (key, canary, titanoboa pin) stay red until a human is back. That is the design.</p>
+    <p>Turn on GitHub email for issues on this repo. The factory will keep overlay images current, wrap the two recommended Trivalent USBs after each green overlay, and wrap all twelve on Sunday. GHCR <code>-iso:latest</code> outlives the Actions zip. Real trust hits (key, canary, titanoboa pin, new vendor host, Dependabot) stay red until a human is back. That is the design.</p>
 
     <h2 id="not"><a href="#not">What this page is not</a></h2>
     <p>Not a store. Not a promise that canary catches a generic backdoor. Not affiliated with secureblue. Kernel, SELinux, <code>hardened_malloc</code>, USBGuard, firewall remain theirs. We overlay. We do not fork.</p>

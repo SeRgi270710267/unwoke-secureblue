@@ -1,7 +1,10 @@
 name: iso
-# Do not add on: push. Overlay bakes twice a day; USB wraps once a week
-# (all 12) after Sunday morning overlay. Cosign of our :latest still runs
-# before wrap. iso-alarm + receipt are the pass/fail signal.
+# Do not add on: push. Overlay bakes twice a day. USB wraps:
+# - the two recommended Trivalent sticks after a successful non-PR
+#   bluebuild (workflow_run; still cosign-verify our :latest)
+# - all 12 on Sunday 10:00 UTC
+# Origin and the other ten stay weekly on purpose. iso-alarm closes
+# only on weekly all-12 success. Do not auto-bump titanoboa.
 on:
   schedule:
     # Sunday 10:00 UTC — overlay cron is 08:00. All 12 flavors.
@@ -26,16 +29,21 @@ on:
           - unwoke-silverblue-nvidia-open-browserless
           - unwoke-kinoite-browserless
           - unwoke-kinoite-nvidia-open-browserless
+  workflow_run:
+    workflows: ["bluebuild"]
+    types: [completed]
 permissions: {}
 concurrency:
-  group: iso-${{ github.event_name }}-${{ github.event.inputs.image || 'weekly' }}
+  # Human dispatch of one image is its own lane. Auto baker (Sunday
+  # all-12 + post-overlay recommended two) share a group so they queue.
+  group: iso-${{ github.event_name == 'workflow_dispatch' && github.event.inputs.image || 'baker' }}
   cancel-in-progress: false
 jobs:
   # Do not use `matrix` in a job-level if. workflow_dispatch parse rejects it
   # ("Unrecognized named-value: 'matrix'"), which blocked Run workflow.
   pick:
     name: Pick images
-    if: github.actor != 'dependabot[bot]'
+    if: github.actor != 'dependabot[bot]' && (github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event != 'pull_request'))
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -56,8 +64,11 @@ jobs:
           set -euo pipefail
           if [[ "${EVENT_NAME}" == "workflow_dispatch" ]]; then
             python3 -c 'import json,os; print("images="+json.dumps([os.environ["DISPATCH_IMAGE"]]))' >> "${GITHUB_OUTPUT}"
-          else
+          elif [[ "${EVENT_NAME}" == "schedule" ]]; then
             python3 -c 'import json; print("images="+json.dumps(["unwoke-silverblue-trivalent","unwoke-kinoite-trivalent","unwoke-silverblue-nvidia-open-trivalent","unwoke-kinoite-nvidia-open-trivalent","unwoke-silverblue","unwoke-kinoite","unwoke-silverblue-nvidia-open","unwoke-kinoite-nvidia-open","unwoke-silverblue-browserless","unwoke-kinoite-browserless","unwoke-silverblue-nvidia-open-browserless","unwoke-kinoite-nvidia-open-browserless"]))' >> "${GITHUB_OUTPUT}"
+          else
+            # workflow_run after a green overlay: advertised Trivalent only.
+            python3 -c 'import json; print("images="+json.dumps(["unwoke-silverblue-trivalent","unwoke-kinoite-trivalent"]))' >> "${GITHUB_OUTPUT}"
           fi
 
   iso:
@@ -399,12 +410,12 @@ jobs:
         if: needs.iso.result == 'failure'
         env:
           GH_TOKEN: ${{ github.token }}
-          IMAGE_HINT: ${{ github.event.inputs.image || 'weekly-all-12' }}
+          IMAGE_HINT: ${{ github.event.inputs.image || (github.event_name == 'schedule' && 'weekly-all-12') || 'recommended-trivalent' }}
         run: bash .github/scripts/issue-alarm.sh iso open
 
       - name: Close alarm
         if: needs.iso.result == 'success' && github.event_name == 'schedule'
         env:
           GH_TOKEN: ${{ github.token }}
-          IMAGE_HINT: ${{ github.event.inputs.image || 'weekly-all-12' }}
+          IMAGE_HINT: weekly-all-12
         run: bash .github/scripts/issue-alarm.sh iso close
