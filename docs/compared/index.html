@@ -9,7 +9,7 @@
   <meta name="description" content="Prove Unwoke on the disk with ujust unwoke-test. Stock audit does not. Then the living ledger vs official secureblue.">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
-  <link rel="stylesheet" href="css/main.css?v=22">
+  <link rel="stylesheet" href="css/main.css?v=23">
 </head>
 <body class="page-compared">
   <a class="skip" href="#content">Skip to content</a>
@@ -28,19 +28,28 @@
         <li><a href="faq/">FAQ</a></li>
         <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
       </ul>
-      <ul class="nav-side">
-        <li><a href="ahead/">Shipped first</a></li>
+      <div class="nav-side">
+        <p class="nav-kicker">Factory</p>
+        <ul>
         <li><a href="factory/">Factory</a></li>
-        <li><a href="brand/">Brand</a></li>
+        <li><a href="ahead/">Shipped first</a></li>
         <li><a href="changelog/">Changelog</a></li>
         <li><a href="images/">Images</a></li>
+        </ul>
+        <p class="nav-kicker">On the disk</p>
+        <ul>
         <li><a href="post-install/">Post-install</a></li>
         <li><a href="stock-issues/">Workarounds</a></li>
+        <li><a href="brand/">Brand</a></li>
+        </ul>
+        <p class="nav-kicker">Project</p>
+        <ul>
         <li><a href="contributing/">Contributing</a></li>
         <li><a href="conduct/">Conduct</a></li>
         <li><a href="donate/">Donate</a></li>
         <li><a href="secureblue/">Their docs</a></li>
-      </ul>
+        </ul>
+      </div>
     </nav>
   </header>
 
@@ -560,7 +569,7 @@ RESULT: PASS</code></pre>
       </table>
     </div>
 
-    <h2 id="factory"><a href="#factory">Factory (you never see this, you still benefit)</a></h2>
+    <h2 id="factory-how"><a href="#factory-how">Factory (you never see this, you still benefit)</a></h2>
     <p>The living map of auto-heal vs human gates is <a href="factory/">Factory</a>. Short version:</p>
     <ul>
       <li>Download their public key, check it still matches our copy, <code>cosign verify</code> the base, pin the digest so <code>:latest</code> cannot swap mid-build.</li>

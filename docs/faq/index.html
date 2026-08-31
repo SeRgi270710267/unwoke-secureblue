@@ -9,7 +9,7 @@
   <meta name="description" content="Affiliation, Origin vs Trivalent vs browserless, toggles, Flathub, Flatpak lockdown, theme, signing.">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
-  <link rel="stylesheet" href="css/main.css?v=22">
+  <link rel="stylesheet" href="css/main.css?v=23">
 </head>
 <body>
   <a class="skip" href="#content">Skip to content</a>
@@ -28,19 +28,28 @@
         <li aria-current="page"><a href="faq/">FAQ</a></li>
         <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
       </ul>
-      <ul class="nav-side">
-        <li><a href="ahead/">Shipped first</a></li>
+      <div class="nav-side">
+        <p class="nav-kicker">Factory</p>
+        <ul>
         <li><a href="factory/">Factory</a></li>
-        <li><a href="brand/">Brand</a></li>
+        <li><a href="ahead/">Shipped first</a></li>
         <li><a href="changelog/">Changelog</a></li>
         <li><a href="images/">Images</a></li>
+        </ul>
+        <p class="nav-kicker">On the disk</p>
+        <ul>
         <li><a href="post-install/">Post-install</a></li>
         <li><a href="stock-issues/">Workarounds</a></li>
+        <li><a href="brand/">Brand</a></li>
+        </ul>
+        <p class="nav-kicker">Project</p>
+        <ul>
         <li><a href="contributing/">Contributing</a></li>
         <li><a href="conduct/">Conduct</a></li>
         <li><a href="donate/">Donate</a></li>
         <li><a href="secureblue/">Their docs</a></li>
-      </ul>
+        </ul>
+      </div>
     </nav>
   </header>
 
@@ -48,7 +57,7 @@
     <h1>FAQ</h1>
     <p>This page is only Unwoke SecureBlue. Stock secureblue questions (rollback, USBGuard, kargs, Trivalent, …) live in the <a href="secureblue/faq/">mirrored secureblue FAQ</a>, which updates daily from their repo.</p>
 
-    <h2 id="ahead"><a href="#ahead">Did you ship stock feature requests faster than they did?</a></h2>
+    <h2 id="shipped-first"><a href="#shipped-first">Did you ship stock feature requests faster than they did?</a></h2>
     <p>Some. We watch official secureblue GitHub. Those tickets stay on <a href="ahead/">Shipped first</a> until they ship, then the card says they shipped after us. If we later copy their better patch, that is written on the same page. We do not auto-copy. We do not claim kernel/UKI/ARM work an overlay cannot do.</p>
 
     <h2 id="now-what"><a href="#now-what">I installed it. I logged in. Now what?</a></h2>
@@ -205,7 +214,7 @@ ujust set-thumbnails on</code></pre>
     <h2 id="name"><a href="#name">Why Unwoke SecureBlue that way?</a></h2>
     <p><em>Unwoke</em> is the adjective/verb modifier. <em>SecureBlue</em> is one proper name (S and B capped), not “Secure Blue”. Repo and GHCR slugs stay lowercase because registries do.</p>
 
-    <h2 id="changelog"><a href="#changelog">Where is the changelog?</a></h2>
+    <h2 id="where-changelog"><a href="#where-changelog">Where is the changelog?</a></h2>
     <p><a href="changelog/">Changelog</a> is rebuilt with the site from public git subjects (title + date + short hash). The top of that page, Home “What’s new”, and the Compared ledger are the people-facing cut (overlay, install, tutorials). Factory-only commits stay off those lists. Optional <code>People:</code> / <code>Vs:</code> / <code>Where:</code> in a commit body write the Compared row in easy words. No commit bodies, diffs, or file lists in the public log. Subjects that look like secrets are dropped.</p>
 
     <h2 id="updates"><a href="#updates">How do updates work?</a></h2>

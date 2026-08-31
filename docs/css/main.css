@@ -216,6 +216,14 @@ pre code {
   letter-spacing: -0.02em;
 }
 
+#site-menu .nav-side {
+  display: contents;
+}
+
+#site-menu .nav-kicker {
+  display: none;
+}
+
 @media (min-width: 64rem) {
   body {
     display: grid;
@@ -223,6 +231,7 @@ pre code {
     grid-template-rows: auto minmax(0, 1fr) auto;
     min-height: 100vh;
     min-height: 100dvh;
+    overflow-x: hidden;
   }
 
   body:has(> .hero) {
@@ -259,36 +268,46 @@ pre code {
     z-index: 4;
   }
 
-  #site-menu .nav-top li:last-child {
-    margin-left: auto;
-  }
-
   #site-menu .nav-side {
-    grid-column: 1;
-    grid-row: 2 / -2;
+    display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
+    grid-column: 1;
+    grid-row: 2 / -2;
     align-self: start;
     position: sticky;
     top: 0;
     max-height: 100vh;
     max-height: 100dvh;
+    overflow-x: hidden;
     overflow-y: auto;
     background: transparent;
     border-right: none;
     z-index: 3;
-    padding: 0.85rem 0 1.5rem;
+    padding: 0.55rem 0 1.5rem;
   }
 
-  #site-menu .nav-side::before {
-    content: "More";
+  #site-menu .nav-side > .nav-kicker:first-child {
+    margin-top: 0.1rem;
+  }
+
+  #site-menu .nav-kicker {
     display: block;
-    padding: 0.45rem 1.15rem 0.55rem;
-    font-size: 0.72rem;
+    margin: 0.85rem 0 0.15rem;
+    padding: 0.35rem 1.15rem 0.2rem;
+    font-size: 0.68rem;
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--text-dim);
+  }
+
+  #site-menu .nav-side ul {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    margin: 0 0 0.35rem;
+    padding: 0;
   }
 
   #site-menu .nav-side li {
@@ -298,7 +317,7 @@ pre code {
   #site-menu .nav-side li a {
     width: 100%;
     box-sizing: border-box;
-    padding: 0.5rem 1.15rem;
+    padding: 0.42rem 1.15rem;
     font-size: 0.875rem;
   }
 
@@ -310,17 +329,22 @@ pre code {
   .hero {
     grid-column: 2;
     grid-row: 2;
-    justify-self: center;
+    justify-self: stretch;
     width: 100%;
+    max-width: 100%;
     min-width: 0;
+    box-sizing: border-box;
   }
 
   main {
     grid-column: 2;
     grid-row: 2;
-    justify-self: center;
+    justify-self: stretch;
     width: 100%;
+    max-width: 100%;
     min-width: 0;
+    box-sizing: border-box;
+    overflow-x: auto;
   }
 
   body:has(> .hero) main {
@@ -769,6 +793,8 @@ main.mirror .docs-index {
   border-radius: 12px;
   background: var(--bg-table);
   border: 1px solid var(--border-soft);
+  max-width: 100%;
+  min-width: 0;
 }
 
 .table-container table {
@@ -1327,11 +1353,11 @@ footer .brand img {
 @media (min-width: 1100px) {
   main,
   .hero {
-    max-width: 68rem;
+    max-width: min(68rem, 100%);
   }
 
   main.mirror {
-    max-width: 72rem;
+    max-width: min(72rem, 100%);
   }
 }
 

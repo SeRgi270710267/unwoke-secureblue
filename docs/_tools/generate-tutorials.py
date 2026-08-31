@@ -36,19 +36,28 @@ NAV = """      <ul class="nav-top">
         <li><a href="faq/">FAQ</a></li>
         <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
       </ul>
-      <ul class="nav-side">
-        <li><a href="ahead/">Shipped first</a></li>
+      <div class="nav-side">
+        <p class="nav-kicker">Factory</p>
+        <ul>
         <li><a href="factory/">Factory</a></li>
-        <li><a href="brand/">Brand</a></li>
+        <li><a href="ahead/">Shipped first</a></li>
         <li><a href="changelog/">Changelog</a></li>
         <li><a href="images/">Images</a></li>
+        </ul>
+        <p class="nav-kicker">On the disk</p>
+        <ul>
         <li><a href="post-install/">Post-install</a></li>
         <li><a href="stock-issues/">Workarounds</a></li>
+        <li><a href="brand/">Brand</a></li>
+        </ul>
+        <p class="nav-kicker">Project</p>
+        <ul>
         <li><a href="contributing/">Contributing</a></li>
         <li><a href="conduct/">Conduct</a></li>
         <li><a href="donate/">Donate</a></li>
         <li><a href="secureblue/">Their docs</a></li>
-      </ul>"""
+        </ul>
+      </div>"""
 
 
 def esc(s: str) -> str:
@@ -143,7 +152,7 @@ def write_missing_page(slug: str, items: list[tuple[str, dict]]) -> None:
   <meta name="description" content="Strict installer for {esc(slug)}. Generated from vendor-installers.json.">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
-  <link rel="stylesheet" href="css/main.css?v=22">
+  <link rel="stylesheet" href="css/main.css?v=23">
 </head>
 <body>
   <a class="skip" href="#content">Skip to content</a>
@@ -187,7 +196,7 @@ def write_hub(core: dict, grouped: OrderedDict) -> None:
         '  <meta name="description" content="Everyday Unwoke tasks the secure way. Vendor apps are generated from vendor-installers.json.">',
         '  <base href="/unwoke-secureblue/">',
         '  <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">',
-        '  <link rel="stylesheet" href="css/main.css?v=22">',
+        '  <link rel="stylesheet" href="css/main.css?v=23">',
         "</head>",
         "<body>",
         '  <a class="skip" href="#content">Skip to content</a>',
