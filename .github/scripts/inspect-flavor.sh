@@ -219,6 +219,14 @@ if [[ ! -f "${work}/usr/libexec/unwoke/anon-net.sh" ]]; then
   echo "FAIL: missing anon-net.sh" >&2
   fail=1
 fi
+if [[ ! -f "${work}/usr/libexec/unwoke/anaconda-brand.sh" ]]; then
+  echo "FAIL: missing anaconda-brand.sh" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/share/unwoke/anaconda-gtk-extra.css" ]]; then
+  echo "FAIL: missing anaconda-gtk-extra.css" >&2
+  fail=1
+fi
 if [[ ! -f "${work}/usr/libexec/unwoke/continue-ostree.sh" ]]; then
   echo "FAIL: missing continue-ostree.sh" >&2
   fail=1

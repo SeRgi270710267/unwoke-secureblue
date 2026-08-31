@@ -64,6 +64,11 @@ if command -v systemctl >/dev/null; then
   systemctl enable unwoke-signed-idle-reboot.service || true
 fi
 
+# Anaconda is not in the ostree; ISO wrap installs anaconda-live then this no-ops here.
+if [[ -x /usr/libexec/unwoke/anaconda-brand.sh ]]; then
+  bash /usr/libexec/unwoke/anaconda-brand.sh || true
+fi
+
 # GameMode session config (GPU high + split-lock off while clients are in).
 if [[ -f /usr/share/unwoke/gamemode.ini ]]; then
   install -m 644 /usr/share/unwoke/gamemode.ini /etc/gamemode.ini

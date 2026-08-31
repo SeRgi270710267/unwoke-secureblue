@@ -1,0 +1,21 @@
+/* Unwoke SecureBlue. Not affiliated. UNWOKE-SHIPPED-FIRST.
+ * Appended to Cockpit distro branding so Anaconda Web UI follows our palette. */
+.anaconda {
+  --brand-default-light: #6b91ff;
+  --brand-default: #3b6cff;
+  --brand-default-dark: #2554e8;
+}
+
+.anaconda .logo {
+  background-image: url("/usr/share/pixmaps/unwoke-logo.svg");
+}
+
+.pf-v6-theme-dark .anaconda {
+  --pf-t--global--color--brand--default: var(--brand-default-light);
+  --pf-t--global--color--brand--hover: var(--brand-default);
+}
+
+:not(.pf-v6-theme-dark) .anaconda {
+  --pf-t--global--color--brand--default: var(--brand-default);
+  --pf-t--global--color--brand--hover: var(--brand-default-dark);
+}

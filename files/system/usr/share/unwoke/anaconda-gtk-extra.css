@@ -1,0 +1,30 @@
+/* Unwoke SecureBlue. Not affiliated. UNWOKE-SHIPPED-FIRST.
+ * Appended to /usr/share/anaconda/anaconda-gtk.css on the live ISO. */
+@define-color product_bg_color #050a16;
+@define-color theme_selected_bg_color #3b6cff;
+@define-color theme_selected_fg_color #e8edf8;
+
+.logo-sidebar {
+  background-color: #050a16;
+  background-image: url("/usr/share/backgrounds/unwoke/unwoke-desktop.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.product-logo {
+  background-image: url("/usr/share/pixmaps/unwoke-logo.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+AnacondaSpokeWindow #nav-box {
+  background-color: #050a16;
+  background-image: none;
+  color: #e8edf8;
+}
+
+window,
+.background {
+  background-color: #0a1328;
+  color: #e8edf8;
+}

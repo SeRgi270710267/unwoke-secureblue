@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Unwoke SecureBlue. Not affiliated. UNWOKE-SHIPPED-FIRST.
+# Dark Adwaita + Unwoke palette for Anaconda on the live USB.
+export GTK_THEME="${GTK_THEME:-Adwaita:dark}"
+export GTK_APPLICATION_PREFER_DARK_THEME=1
+export ADW_DISABLE_PORTAL=1
+if [[ -x /usr/sbin/liveinst ]]; then
+  exec /usr/sbin/liveinst "$@"
+fi
+if command -v liveinst >/dev/null; then
+  exec "$(command -v liveinst)" "$@"
+fi
+echo "Anaconda liveinst is not on this image (USB ISO only)." >&2
+exit 1

@@ -122,6 +122,8 @@ need=(
   /usr/libexec/unwoke/anon-net.sh
   /usr/libexec/unwoke/continue-ostree.sh
   /usr/libexec/unwoke/signed-idle-reboot.sh
+  /usr/libexec/unwoke/anaconda-brand.sh
+  /usr/libexec/unwoke/liveinst-dark
 )
 for p in "${need[@]}"; do
   if [[ -x "${p}" || -f "${p}" ]]; then

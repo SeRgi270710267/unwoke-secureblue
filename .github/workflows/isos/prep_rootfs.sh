@@ -45,6 +45,11 @@ rm -f /usr/share/applications/org.mozilla.Firefox.desktop \
 
 sed -i '/^Prepend=/s/$/;liveinst.desktop/' /usr/share/kde-settings/kde-profile/default/xdg/kicker-extra-favoritesrc || true
 
+# Dark Unwoke chrome for Anaconda (package exists only on this live rootfs).
+if [[ -x /usr/libexec/unwoke/anaconda-brand.sh ]]; then
+  bash /usr/libexec/unwoke/anaconda-brand.sh || true
+fi
+
 install -d /usr/share/pki/containers
 cat > /usr/share/pki/containers/unwoke.pub <<'EOF'
 -----BEGIN PUBLIC KEY-----
