@@ -14,6 +14,7 @@
       "label": "Apps and files",
       "cards": [
         {"href": "tutorials/install-apps/", "eyebrow": "Software", "h3": "Install an app", "p": "No GUI store. Verified Flathub, then Flatpak. Lockdown stays; grant in Flatseal."},
+        {"href": "tutorials/steam/", "eyebrow": "Games", "h3": "Steam", "p": "Same stock Flatpak. Overlay locks that would break games are asked first. Nothing silent."},
         {"href": "tutorials/usb/", "eyebrow": "Peripherals", "h3": "USB sticks and gadgets", "p": "USBGuard: allow what is plugged in now, block the rest. Do this once, on purpose."}
       ]
     },

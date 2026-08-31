@@ -235,6 +235,14 @@ if [[ ! -f "${work}/usr/share/unwoke/help/network-fs/index.html" ]]; then
   echo "FAIL: missing offline help for network-fs" >&2
   fail=1
 fi
+if [[ ! -f "${work}/usr/share/unwoke/help/steam/index.html" ]]; then
+  echo "FAIL: missing offline help for steam" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/share/applications/unwoke-lock-steam.desktop" ]]; then
+  echo "FAIL: missing Steam wizard launcher" >&2
+  fail=1
+fi
 if [[ ! -f "${work}/usr/etc/cryptsetup.conf" ]] || ! grep -q 'pbkdf-memory = 2097152' "${work}/usr/etc/cryptsetup.conf"; then
   echo "FAIL: missing /usr/etc/cryptsetup.conf Argon2 2 GiB default" >&2
   fail=1
@@ -335,6 +343,10 @@ if [[ ! -f "${work}/usr/libexec/unwoke/notify-reboot.sh" ]]; then
 fi
 if [[ ! -f "${work}/usr/libexec/unwoke/install-proton.sh" ]]; then
   echo "FAIL: missing install-proton.sh" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/libexec/unwoke/install-steam.sh" ]]; then
+  echo "FAIL: missing install-steam.sh" >&2
   fail=1
 fi
 if [[ ! -f "${work}/usr/libexec/unwoke/install-ivpn.sh" ]]; then

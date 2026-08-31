@@ -1,0 +1,14 @@
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
+[Desktop Entry]
+Type=Application
+Name=Steam (Unwoke)
+GenericName=Steam
+Comment=Stock Flatpak Steam. Asks overlay locks that would break games. Nothing silent.
+Exec=/usr/libexec/unwoke/first-session.sh --force --steam
+Icon=/usr/share/pixmaps/unwoke-logo.svg
+Terminal=false
+Categories=Game;Settings;
+Keywords=steam;game;games;proton;valve;flathub;
+StartupNotify=true

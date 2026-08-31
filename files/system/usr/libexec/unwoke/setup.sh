@@ -23,9 +23,10 @@ case "${1:-}" in
   --ivpn|ivpn) jump="ivpn" ;;
   --vendors|vendors) jump="vendors" ;;
   --mullvad|mullvad) jump="mullvad" ;;
+  --steam|steam) jump="steam" ;;
   "" ) ;;
   *)
-    echo "usage: setup.sh [--broken|--stock|--hardware|--loosened|--proton|--ivpn|--mullvad|--vendors]" >&2
+    echo "usage: setup.sh [--broken|--stock|--hardware|--loosened|--proton|--ivpn|--mullvad|--vendors|--steam]" >&2
     exit 2
     ;;
 esac
@@ -101,6 +102,7 @@ menu() {
   8) IVPN (WireGuard first; official repo only if you insist)
   9) All strict apps (every vendor in the watched list)
   0) Mullvad VPN (WireGuard first)
+  g) Steam (stock Flatpak; asks overlay locks)
   i) Fingerprinting vs locks (read only — nothing unlocks)
   s) Show status
   t) Test everything Unwoke added (proof on this disk)
@@ -424,6 +426,7 @@ loop() {
     ivpn) bash /usr/libexec/unwoke/install-ivpn.sh ;;
     vendors) bash /usr/libexec/unwoke/install-vendor.sh ;;
     mullvad) bash /usr/libexec/unwoke/install-mullvad.sh ;;
+    steam) bash /usr/libexec/unwoke/install-steam.sh ;;
   esac
   while true; do
     menu
@@ -444,6 +447,7 @@ loop() {
       8) bash /usr/libexec/unwoke/install-ivpn.sh ;;
       9) bash /usr/libexec/unwoke/install-vendor.sh ;;
       0) bash /usr/libexec/unwoke/install-mullvad.sh ;;
+      g|G) bash /usr/libexec/unwoke/install-steam.sh ;;
       i|I)
         echo "Security first. Extra browser packs make you rarer than stock Trivalent."
         echo "Phone-home off (countme, hostname) does not fingerprint websites. Leave those off."

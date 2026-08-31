@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>Steam | Tutorials | Unwoke SecureBlue</title>
+  <meta name="description" content="Install Steam the stock Flatpak way, but answer Unwoke lock questions first so games can actually run.">
+  <base href="/unwoke-secureblue/">
+  <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css?v=13">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="./"><img src="assets/logo.svg?v=4" alt="">Unwoke SecureBlue</a></li>
+        <li><a href="features/">Features</a></li>
+        <li><a href="compared/">Compared</a></li>
+        <li><a href="ahead/">Shipped first</a></li>
+        <li><a href="privacy/">Privacy</a></li>
+        <li><a href="factory/">Factory</a></li>
+        <li><a href="brand/">Brand</a></li>
+        <li><a href="changelog/">Changelog</a></li>
+        <li><a href="images/">Images</a></li>
+        <li><a href="install/">Install</a></li>
+        <li><a href="start/">After login</a></li>
+        <li><a href="post-install/">Post-install</a></li>
+        <li aria-current="page"><a href="tutorials/">Tutorials</a></li>
+        <li><a href="faq/">FAQ</a></li>
+        <li><a href="stock-issues/">Workarounds</a></li>
+        <li><a href="contributing/">Contributing</a></li>
+        <li><a href="conduct/">Conduct</a></li>
+        <li><a href="donate/">Donate</a></li>
+        <li><a href="secureblue/">Their docs</a></li>
+        <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main id="content">
+    <p class="eyebrow">Games</p>
+    <h1>Steam without skipping the locks</h1>
+    <p><span class="chip">Asked, not silent</span> Same command as stock: <code>ujust install-steam</code>. Same package: Flathub <code>com.valvesoftware.Steam</code> (not verified). On Unwoke that command <strong>asks</strong> before touching overlay locks. Stock’s script would just turn on unfiltered Flathub and leave games broken.</p>
+    <div class="alert tip">
+      <p><strong>Secure default.</strong> If you never install Steam, leave Flathub off and lockdown on. Search “Steam” in the app grid to open this wizard. Nothing is flipped unless you say yes.</p>
+    </div>
+    <ol class="steps">
+      <li>
+        <h3>Run the wizard</h3>
+        <pre><code>ujust install-steam</code></pre>
+        <p>Or Unwoke setup → Steam. Required: unfiltered Flathub (<code>full</code>). Steam is not on the verified subset.</p>
+      </li>
+      <li>
+        <h3>What we ask (Unwoke extras vs stock)</h3>
+        <ul>
+          <li>Per-app Steam grants (net, library, GPU, pads, audio) while <em>other</em> Flatpaks stay locked — default yes</li>
+          <li>Global Flatpak lockdown off — default no</li>
+          <li>Global Flatpak Pulse/PipeWire record — default no (per-app audio is enough for games)</li>
+          <li>Allow exec on <code>/tmp</code>, <code>/dev/shm</code>, <code>/var/tmp</code> (Proton/Wine) — default no</li>
+          <li>Camera/mic hardware (Steam Voice) — default no</li>
+          <li>Bluetooth (wireless controllers) — default no</li>
+          <li>Xwayland — same question stock asks, default no</li>
+        </ul>
+      </li>
+      <li>
+        <h3>Leftover stock, not overlay</h3>
+        <p>32-bit games: their <code>kargs-32bit</code>. Anti-cheat / some mods: <code>ujust set-anticheat-support</code>. USB dongle blocked: leftover USBGuard. We do not silent-enable those.</p>
+      </li>
+      <li>
+        <h3>Put the locks back</h3>
+        <pre><code>ujust setup
+# You loosened
+ujust set-flathub off
+ujust set-flatpak-lockdown on
+ujust set-ramdisk-exec off</code></pre>
+      </li>
+    </ol>
+    <nav class="tutorial-nav" aria-label="Adjacent tutorials">
+      <a href="tutorials/install-apps/">Previous: Install an app</a>
+      <a href="tutorials/">All tutorials</a>
+      <a href="tutorials/proton/">Next: Proton.me</a>
+    </nav>
+  </main>
+  <footer>
+    <a class="brand" href="./"><img src="assets/logo.svg?v=4" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="tutorials/">Tutorials</a></li>
+      <li><a href="compared/">Compared</a></li>
+      <li><a href="faq/">FAQ</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

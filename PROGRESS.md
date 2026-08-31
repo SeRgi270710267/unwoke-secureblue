@@ -29,6 +29,7 @@
 - **On-disk proof:** `ujust unwoke-test` (alias `test-unwoke`). Setup → Test everything. PASS/LOOSE/SKIP/FAIL + `proof:` path. Fail-closed: RAM + `/var/tmp` `noexec` and CA pems must be live or FAIL. Hand checks: `docs/tutorials/see-it/`. Stock `ujust audit-secureblue` still for kernel/USBGuard/malloc.
 - **Further vs stock (in GHCR from `08c44db`):** NTS on installed OS (`ujust set-nts off`); DevTools **locked** by default (`set-brave-devtools allow`); USBGuard tty1 prompt once, default **No**; compose `chmod 700` `/usr/src` and module dirs; Origin **files-only** Trivalent remove (no `dnf remove` — sqlite).
 - **This pickup:** `/var/tmp` bind-mounted `noexec,nosuid,nodev` (same `ujust set-ramdisk-exec` as `/tmp` and `/dev/shm`). Stock #697 was only the RAM disks; payloads that dodged into persistent temp now fail too. Needs the overlay bake from this push + reboot. Electron/old JIT or layered RPM scriptlets that exec from `/var/tmp`: `ujust set-ramdisk-exec on`.
+- **Steam:** stock `ujust install-steam` **does collide**. Unwoke wrapper asks before unfiltered Flathub, per-app Steam grants, optional lockdown/record/tmp/mic/BT/Xwayland. Does not silent-enable anti-cheat or 32-bit kargs. Recipe shadows stock (compose renames theirs to `install-steam-stock`).
 - **Pages:** Factory clock, Compared `#prove`, scorecard gaps filled, see-it tutorial. Site deploys on `main` push.
 
 ### Do not
@@ -144,6 +145,7 @@ Site palette: navy `#050a16` / `#0a1328`, accent `#3b6cff`. Brand tab shows the 
 
 ```
 ujust setup
+ujust install-steam
 ujust why
 ujust unwoke-status
 ujust audit-unwoke
@@ -269,7 +271,7 @@ Image-side theme, privacy.sh, Setup fingerprint button, rpmdb restore, and sqlit
 
 - Pickup: *continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.* Other PC: `git clone https://github.com/SeRgi270710267/unwoke-secureblue.git` then `git pull`. Phrase: continuing Unwoke SecureBlue from `PROGRESS.md`.
 - Close-chat HEAD after this file is pushed: `git log -1 --oneline`. Product overlay in GHCR `:latest` is bake `31204c2` / [33339259890](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33339259890) until **this** `/var/tmp` bake is green.
-- **In flight:** overlay bake of `/var/tmp` noexec (this commit). Do not cancel. Do not sit on the bake in chat. ISO wrap is Sunday all-12; Origin USB class of bug is closed.
+- **In flight:** overlay bake of `/var/tmp` noexec + Steam wizard (this commit). Do not cancel. Do not sit on the bake in chat. ISO wrap is Sunday all-12; Origin USB class of bug is closed.
 - USB: Origin + Trivalent + browserless wraps are green. Recommended stick: `unwoke-silverblue-trivalent`. Not Ventoy. Enroll **their** Secure Boot key. Weekly Sunday 10:00 UTC all 12.
 - Public mark is automatic (`mark-check.py --apply` at compose). Do not put `UNWOKE-SHIPPED-FIRST` into live Chromium/Brave/Trivalent `policies/managed`. Do not weaken privacy/security for credit. Do not stamp `.rpmdb-pre-flavor.sqlite`.
 - Confirm on a real USB/rebase **after this overlay bake is green and rebooted:** `ujust unwoke-test` (FAIL-closed on noexec including `/var/tmp`, and CAs), `ujust setup`, `ujust why`. See-it: https://sergi270710267.github.io/unwoke-secureblue/tutorials/see-it/  Shipped first: https://sergi270710267.github.io/unwoke-secureblue/ahead/

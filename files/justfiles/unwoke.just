@@ -24,6 +24,11 @@ loosened:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/first-session.sh --force --loosened
 
+# Steam (stock Flatpak). Asks overlay locks that would break it. Nothing silent.
+install-steam:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/install-steam.sh
+
 # Proton.me (Mail/Pass/VPN/…). Web first. Official RPM only after SHA512 + asked locks.
 install-proton:
     #!/usr/bin/bash

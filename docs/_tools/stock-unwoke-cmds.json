@@ -17,7 +17,6 @@
     "set-unconfined-userns",
     "set-ptrace",
     "set-anticheat-support",
-    "install-steam",
     "install-docker",
     "uninstall-docker",
     "install-dangerzone",
@@ -38,6 +37,13 @@
     "distrobox-assemble"
   ],
   "cmds": [
+    {
+      "id": "steam",
+      "needles": ["ujust install-steam", "How do I install Steam"],
+      "code": "ujust install-steam",
+      "note": "Same command as stock. On Unwoke it <strong>asks</strong> before unfiltered Flathub, Flatpak lockdown, temp noexec, mic, and Bluetooth. Stock’s script would skip those questions and leave games broken. Nothing silent.",
+      "more": ["tutorials/steam/", "Steam tutorial"]
+    },
     {
       "id": "flathub",
       "needles": ["ujust set-flathub-unfiltered", "Software store"],

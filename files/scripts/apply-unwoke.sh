@@ -170,6 +170,27 @@ if command -v glib-compile-schemas >/dev/null && [[ -d /usr/share/glib-2.0/schem
   glib-compile-schemas /usr/share/glib-2.0/schemas || true
 fi
 
+# Stock `ujust install-steam` enables unfiltered Flathub with no overlay questions.
+# Rename their recipe so 60-custom.just `install-steam` is the only one (just forbids dupes).
+python3 - <<'PY'
+from pathlib import Path
+import re
+root = Path("/usr/share/ublue-os/just")
+paths = []
+if root.is_dir():
+    paths.extend(sorted(root.glob("*.just")))
+jf = Path("/usr/share/ublue-os/justfile")
+if jf.is_file():
+    paths.append(jf)
+rx = re.compile(r"(?m)^install-steam(\b)")
+for p in paths:
+    text = p.read_text(encoding="utf-8", errors="replace")
+    if not rx.search(text):
+        continue
+    p.write_text(rx.sub(r"install-steam-stock\1", text, count=1), encoding="utf-8")
+    print(f"renamed stock install-steam -> install-steam-stock in {p}")
+PY
+
 # Stock `ujust harden-flatpak` execs this path. Overlay file must win over the RPM.
 tramp="/usr/libexec/secureblue/harden_flatpak.py"
 if [[ ! -f "${tramp}" ]] || ! grep -q '/usr/libexec/unwoke/harden-flatpak.sh' "${tramp}"; then

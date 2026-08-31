@@ -217,6 +217,7 @@ class SetupWindow(Gtk.Window):
         nb.append_page(self._scroll(self._page_ivpn()), Gtk.Label(label="IVPN"))
         nb.append_page(self._scroll(self._page_vendors()), Gtk.Label(label="Strict apps"))
         nb.append_page(self._scroll(self._page_mullvad()), Gtk.Label(label="Mullvad"))
+        nb.append_page(self._scroll(self._page_steam()), Gtk.Label(label="Steam"))
 
         jump_map = {
             "broken": 2,
@@ -228,6 +229,7 @@ class SetupWindow(Gtk.Window):
             "ivpn": 7,
             "vendors": 8,
             "mullvad": 9,
+            "steam": 10,
         }
         if jump in jump_map:
             nb.set_current_page(jump_map[jump])
@@ -737,6 +739,50 @@ class SetupWindow(Gtk.Window):
                 return
         info(self, "No terminal", f"Run: ujust install-mullvad")
 
+    def _page_steam(self) -> Gtk.Box:
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        box.set_margin_start(16)
+        box.set_margin_end(16)
+        box.set_margin_top(12)
+        box.pack_start(
+            Gtk.Label(
+                label="Stock ujust install-steam is unfiltered Flathub. Overlay extras that stop Steam working as well as on stock are asked first. Nothing silent.",
+                xalign=0,
+                wrap=True,
+            ),
+            False,
+            False,
+            8,
+        )
+        box.pack_start(
+            row(
+                "Install Steam (asks overlay locks)",
+                "Flathub full, per-app Steam grants, optional lockdown/tmp/mic/BT. Xwayland same as stock.",
+                self.run_steam,
+                "steam",
+            ),
+            False,
+            False,
+            0,
+        )
+        return box
+
+    def run_steam(self) -> None:
+        cmd = (
+            "bash /usr/libexec/unwoke/install-steam.sh; echo; "
+            "read -r -p 'Enter to close... ' _ || true"
+        )
+        for term in (
+            ["ptyxis", "--", "bash", "-lc", cmd],
+            ["kgx", "-e", "bash", "-lc", cmd],
+            ["gnome-terminal", "--", "bash", "-lc", cmd],
+            ["konsole", "-e", "bash", "-lc", cmd],
+        ):
+            if subprocess.call(["bash", "-lc", f"command -v {term[0]}"], stdout=subprocess.DEVNULL) == 0:
+                subprocess.Popen(term)
+                return
+        info(self, "No terminal", "Run: ujust install-steam")
+
     def run_stock(self, recipe: str) -> None:
         cmd = f"ujust {recipe}; echo; read -r -p 'Enter to close... ' _ || true"
         if not confirm(self, "Run stock command?", f"ujust {recipe}\nOverlay locks are unchanged."):
@@ -828,6 +874,7 @@ def main() -> int:
     p.add_argument("--ivpn", action="store_true")
     p.add_argument("--vendors", action="store_true")
     p.add_argument("--mullvad", action="store_true")
+    p.add_argument("--steam", action="store_true")
     args = p.parse_args()
     jump = ""
     if args.broken:
@@ -848,6 +895,8 @@ def main() -> int:
         jump = "vendors"
     elif args.mullvad:
         jump = "mullvad"
+    elif args.steam:
+        jump = "steam"
     if not os.environ.get("DISPLAY") and not os.environ.get("WAYLAND_DISPLAY"):
         return 2
     win = SetupWindow(jump)

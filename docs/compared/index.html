@@ -510,8 +510,8 @@ RESULT: PASS</code></pre>
             <td><code>ujust install-mullvad</code> / <code>install-ivpn</code> / <code>install-proton</code>: WireGuard or web first; official RPM only after hash + asked locks. Generic: <code>ujust install-vendor NAME</code>.</td>
           </tr>
           <tr>
-            <td>Stock <code>ujust install-steam</code> / VPN helpers; no Proton wizard; Bazaar for the rest</td>
-            <td><code>ujust install-proton</code> / Setup → Proton.me: Trivalent first, WireGuard for VPN, official RPM only after SHA512 and an asked userns toggle. No unverified Flathub. Beats a store for Mail/Pass/VPN. <code>ujust install-ivpn</code>: WireGuard first; official IVPN repo only if you need in-app AntiTracker. No Snap.</td>
+            <td>Stock <code>ujust install-steam</code> turns on unfiltered Flathub with no overlay questions; VPN helpers; Bazaar for the rest</td>
+            <td><code>ujust install-steam</code> asks Unwoke locks first (Flathub full, per-app Steam grants, optional tmp/mic/BT). <code>ujust install-proton</code> / Setup → Proton.me: Trivalent first, WireGuard for VPN, official RPM only after SHA512 and an asked userns toggle. No unverified Flathub. <code>ujust install-ivpn</code>: WireGuard first; official IVPN repo only if you need in-app AntiTracker. No Snap.</td>
           </tr>
           <tr>
             <td>Private GHCR packages block anonymous rebase</td>
