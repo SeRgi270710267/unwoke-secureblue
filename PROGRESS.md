@@ -35,7 +35,7 @@
 - **Whonix:** `ujust install-whonix` — official KVM archive, OpenPGP fingerprint pinned (`916B8D99…2EEACCDA`), `qemu:///session`, XML clipboard/USB/mic off. `ujust start-whonix` Gateway then Workstation; refuse extra Workstation NICs. Not VirtualBox, not baked qcow2, not Qubes. Host stays clearnet.
 - **Anon host (no security cut):** TCP timestamps off by default (`ujust set-anon-net on` = stock timestamps). Optional local hostname `host` (`ujust set-anon-hostname on`). No host Tor, no UTC default, no kloak. Site: https://sergi270710267.github.io/unwoke-secureblue/anonymity/
 - **Usable, no silent unlock:** Unwoke setup first on GNOME dash and Kinoite Kickoff. Any rpm-ostree layer writes `~/.config/unwoke/continue`; next login resumes. Signed image: auto-reboot **once** only if no user session; otherwise nag.
-- **Anaconda live ISO:** dark Adwaita + navy/accent + logo via `anaconda-brand.sh` in `prep_rootfs.sh` after `anaconda-live`. No-op on ostree. Next weekly USB wrap.
+- **Anaconda live ISO:** dark Adwaita + navy/accent + logo via `anaconda-brand.sh` in `prep_rootfs.sh` after `anaconda-live`. Grid name: Install Unwoke SecureBlue (stock NoDisplay). USBGuard asked in Setup (default No); boot no longer blocks GDM on tty1. Setup Start has Steam/Gaming/Whonix. Compared: first-day vs stock.
 - **Pages:** Factory clock, Compared `#prove`, scorecard gaps filled, see-it tutorial. Site deploys on `main` push.
 
 ### Do not

@@ -55,12 +55,37 @@ if [[ -x "${WRAP}" ]]; then
   done < <(find /usr/share/applications /usr/share/anaconda \( -name '*liveinst*.desktop' -o -name '*AnacondaInstaller*.desktop' \) -print0 2>/dev/null || true)
 fi
 
+# Show Install in the grid (Fedora hides liveinst with NoDisplay=true).
+if [[ -x "${WRAP}" ]]; then
+  cat > /usr/share/applications/unwoke-install.desktop <<EOF
+# Unwoke SecureBlue. UNWOKE-SHIPPED-FIRST. Live USB only.
+[Desktop Entry]
+Type=Application
+Name=Install Unwoke SecureBlue
+GenericName=Install
+Comment=Empty disk. Dark Unwoke Anaconda. Encrypts by default.
+Exec=/usr/libexec/unwoke/liveinst-dark
+Icon=/usr/share/pixmaps/unwoke-logo.svg
+Terminal=false
+Categories=System;Settings;
+Keywords=install;anaconda;usb;unwoke;
+StartupNotify=true
+NoDisplay=false
+EOF
+  while IFS= read -r -d '' desk; do
+    sed -i \
+      -e 's/^NoDisplay=.*/NoDisplay=false/' \
+      -e 's/^Name=.*/Name=Install Unwoke SecureBlue/' \
+      "${desk}" 2>/dev/null || true
+  done < <(find /usr/share/applications /usr/share/anaconda \( -name '*liveinst*.desktop' -o -name '*AnacondaInstaller*.desktop' \) -print0 2>/dev/null || true)
+fi
+
 # Live GNOME dash: Install first (setup is disabled on the USB).
-if [[ -f /usr/share/applications/liveinst.desktop ]]; then
+if [[ -f /usr/share/applications/liveinst.desktop || -f /usr/share/applications/unwoke-install.desktop ]]; then
   cat > /usr/share/glib-2.0/schemas/zz3-unwoke-liveinst.gschema.override <<'EOF'
 # Unwoke SecureBlue. UNWOKE-SHIPPED-FIRST. Live USB only.
 [org.gnome.shell]
-favorite-apps = ['liveinst.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Ptyxis.desktop']
+favorite-apps = ['unwoke-install.desktop', 'liveinst.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Ptyxis.desktop']
 EOF
   glib-compile-schemas /usr/share/glib-2.0/schemas >/dev/null 2>&1 || true
 fi

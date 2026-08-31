@@ -302,6 +302,18 @@ class SetupWindow(Gtk.Window):
         mu = Gtk.Button(label="Mullvad VPN (WireGuard first)")
         mu.connect("clicked", lambda *_: self.nb.set_current_page(9))
         box.pack_start(mu, False, False, 0)
+        stmb = Gtk.Button(label="Steam (asks overlay locks)")
+        stmb.connect("clicked", lambda *_: self.nb.set_current_page(10))
+        box.pack_start(stmb, False, False, 0)
+        gmb = Gtk.Button(label="Gaming / play window")
+        gmb.connect("clicked", lambda *_: self.nb.set_current_page(11))
+        box.pack_start(gmb, False, False, 0)
+        whb = Gtk.Button(label="Whonix (official KVM)")
+        whb.connect("clicked", self.run_whonix)
+        box.pack_start(whb, False, False, 0)
+        usb = Gtk.Button(label="USBGuard (default No)")
+        usb.connect("clicked", lambda *_: self.run_usbguard())
+        box.pack_start(usb, False, False, 0)
         return box
 
     def _fill_loosened(self) -> None:
@@ -476,7 +488,7 @@ class SetupWindow(Gtk.Window):
         stock = [
             ("Enroll their Secure Boot key", "BIOS prompt password: secureblue", "enroll-secureblue-secure-boot-key", "first-hour"),
             ("Apply hardening kernel arguments", "Needed if you rebased instead of their ISO.", "set-kargs-hardening", "first-hour"),
-            ("USBGuard from current devices", "Allow what is plugged in now. Block the rest.", "setup-usbguard", "usb"),
+            ("USBGuard from current devices", "Default No. Ask here, not on a hidden tty before GNOME.", "setup-usbguard", "usb"),
             ("audit-secureblue", "Stock audit. Overlay proof is ujust unwoke-test.", "audit-secureblue", "check-health"),
             ("Open BIOS/UEFI", "ujust bios", "bios", "first-hour"),
         ]
@@ -792,6 +804,22 @@ class SetupWindow(Gtk.Window):
                 subprocess.Popen(term)
                 return
         info(self, "No terminal", "Run: ujust install-steam")
+
+    def run_usbguard(self) -> None:
+        cmd = (
+            "bash /usr/libexec/unwoke/usbguard-prompt.sh --gui; echo; "
+            "read -r -p 'Enter to close... ' _ || true"
+        )
+        for term in (
+            ["ptyxis", "--", "bash", "-lc", cmd],
+            ["kgx", "-e", "bash", "-lc", cmd],
+            ["gnome-terminal", "--", "bash", "-lc", cmd],
+            ["konsole", "-e", "bash", "-lc", cmd],
+        ):
+            if subprocess.call(["bash", "-lc", f"command -v {term[0]}"], stdout=subprocess.DEVNULL) == 0:
+                subprocess.Popen(term)
+                return
+        info(self, "No terminal", "Run: ujust setup-usbguard")
 
     def run_whonix(self) -> bool:
         cmd = (

@@ -1,23 +1,17 @@
 # Unwoke SecureBlue. Not affiliated with secureblue.
 # MIT License. Copyright (c) 2026 SeRgi270710267.
 # UNWOKE-SHIPPED-FIRST
+# Do not block GDM. Ask in Unwoke setup (default No).
 [Unit]
-Description=Unwoke: ask once to generate USBGuard policy (default skip)
-DefaultDependencies=no
-After=local-fs.target unwoke-admin-split-setup.service
-Before=display-manager.service gdm.service sddm.service
+Description=Unwoke: mark USBGuard as pending (ask in Setup, default skip)
+After=local-fs.target
 ConditionPathExists=/usr/libexec/unwoke/usbguard-prompt.sh
 ConditionPathExists=!/etc/unwoke/usbguard-prompt.done
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/bash /usr/libexec/unwoke/usbguard-prompt.sh
-TimeoutStartSec=120
-StandardInput=tty-force
-StandardOutput=tty
-StandardError=tty
-TTYPath=/dev/tty1
+ExecStart=/usr/bin/bash /usr/libexec/unwoke/usbguard-prompt.sh --defer
 RemainAfterExit=yes
 
 [Install]
-WantedBy=graphical.target
+WantedBy=multi-user.target

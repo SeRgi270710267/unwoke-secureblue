@@ -187,6 +187,36 @@ RESULT: PASS</code></pre>
       </article>
     </div>
 
+    <h2 id="first-day"><a href="#first-day">First day vs stock</a></h2>
+    <p>Stock drops you on a hardened desktop and a wiki. We talk, then get out of the way. Locks stay on unless you pick one.</p>
+    <div class="cards">
+      <article class="win-card">
+        <p class="tag">USB stick</p>
+        <h3>Install Unwoke SecureBlue</h3>
+        <p>Dark Anaconda, navy sidebar, our logo. The app is <strong>in the grid</strong> (stock hides <code>liveinst</code>). Encrypt on by default. Rebase has no installer.</p>
+      </article>
+      <article class="win-card">
+        <p class="tag">Login</p>
+        <h3>Setup on the dash</h3>
+        <p>GNOME and Kinoite pin <strong>Unwoke setup</strong> first. Stock has no overlay conversation. Keep defaults is one button.</p>
+      </article>
+      <article class="win-card">
+        <p class="tag">USBGuard</p>
+        <h3>Asked in the window, default No</h3>
+        <p>We do not freeze tty1 for two minutes before GNOME. Setup → USBGuard. Stock leftover is still their helper — we never silent-enable.</p>
+      </article>
+      <article class="win-card">
+        <p class="tag">Games</p>
+        <h3>Click Steam</h3>
+        <p>Play window restores when you quit. Stock <code>install-steam</code> leaves Xwayland/ptrace on. Start page has Steam / Gaming / Whonix.</p>
+      </article>
+      <article class="win-card">
+        <p class="tag">Updates</p>
+        <h3>Signed image without a scavenger hunt</h3>
+        <p>If nobody is logged in, we reboot onto the staged signed image once. If you are in a session, a Reboot button nags. Layered RPMs resume after reboot.</p>
+      </article>
+    </div>
+
     <h2 id="easy"><a href="#easy">Easy words</a></h2>
     <p>Stock is a locked-down Fedora Atomic desktop with Trivalent and a curated store (Bazaar). Unwoke is that same OS with different house rules and a first-day conversation.</p>
     <ul>
@@ -194,7 +224,7 @@ RESULT: PASS</code></pre>
       <li><strong>No curator store.</strong> Bazaar / GNOME Software / Discover are gone. Flathub is off until you turn verified apps on. That is a security choice, not a missing package.</li>
       <li><strong>More things start off.</strong> Bluetooth, brew, toolbox, camera/mic, extra daemons. You turn on only what you need.</li>
       <li><strong>We phone home less.</strong> No Fedora countme, no connectivity GET, no DHCP hostname. Browser: no Privacy Sandbox, no Cast, no Google time-query. Safe Browsing stays. Detail: <a href="privacy/">Privacy</a>.</li>
-      <li><strong>The first hour talks to you.</strong> Stock dumps you into a hardened desktop and a wiki. We open <strong>Unwoke setup</strong>, nag until the signed update is actually booted, and map “this is broken” to “this is a lock.”</li>
+      <li><strong>The first hour talks to you.</strong> Stock dumps you into a hardened desktop and a wiki. We open <strong>Unwoke setup</strong> (dash pin), dark-brand the USB installer, ask USBGuard in the GUI (default No), nag until the signed update is booted, and map “this is broken” to “this is a lock.” Detail: <a href="#first-day">First day vs stock</a>.</li>
       <li><strong>You can prove we are what we claim.</strong> <code>ujust unwoke-test</code> walks every overlay lock and every shipped-first ticket with a proof path. Stock <code>audit-secureblue</code> does not do that for our extras.</li>
       <li><strong>Recommended default is Trivalent.</strong> Same jail as stock, plus extra policies. Origin and browserless stay as named choices. Stock only ships Trivalent.</li>
     </ul>

@@ -57,6 +57,11 @@ if [[ -f "${CONT}" ]]; then
   export UNWOKE_CONTINUE_VENDOR="${extra}"
 fi
 
+if [[ -f /etc/unwoke/usbguard-prompt.pending && ! -f /etc/unwoke/usbguard-prompt.done ]]; then
+  notify "USB devices" \
+    "Unwoke setup → USBGuard (default No), or leftover stock. We do not silent-enable."
+fi
+
 if [[ -f "${STAGED}" ]]; then
   # Background: Reboot button must not block the setup window.
   bash /usr/libexec/unwoke/notify-reboot.sh --background || \
