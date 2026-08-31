@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>Gaming vs stock | Unwoke SecureBlue</title>
+  <meta name="description" content="Play a match with GameMode. Close the game, full Unwoke locks return. Stock leaves Xwayland and anti-cheat on. We do not swap the CachyOS kernel.">
+  <base href="/unwoke-secureblue/">
+  <link rel="icon" href="assets/logo.svg?v=5" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css?v=15">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="./"><img src="assets/logo.svg?v=5" alt="">Unwoke SecureBlue</a></li>
+        <li><a href="features/">Features</a></li>
+        <li><a href="compared/">Compared</a></li>
+        <li><a href="ahead/">Shipped first</a></li>
+        <li><a href="privacy/">Privacy</a></li>
+        <li aria-current="page"><a href="gaming/">Gaming</a></li>
+        <li><a href="factory/">Factory</a></li>
+        <li><a href="brand/">Brand</a></li>
+        <li><a href="changelog/">Changelog</a></li>
+        <li><a href="images/">Images</a></li>
+        <li><a href="install/">Install</a></li>
+        <li><a href="start/">After login</a></li>
+        <li><a href="post-install/">Post-install</a></li>
+        <li><a href="tutorials/">Tutorials</a></li>
+        <li><a href="faq/">FAQ</a></li>
+        <li><a href="stock-issues/">Workarounds</a></li>
+        <li><a href="contributing/">Contributing</a></li>
+        <li><a href="conduct/">Conduct</a></li>
+        <li><a href="donate/">Donate</a></li>
+        <li><a href="secureblue/">Their docs</a></li>
+        <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="content">
+    <p class="eyebrow">Vs stock secureblue · vs CachyOS</p>
+    <h1>Play the match. Then the box locks itself again.</h1>
+    <p class="lead">Stock will let you game. The problem is what happens <strong>after</strong>. Their Steam install turns on Xwayland or anti-cheat and <strong>leaves those holes open</strong> until you remember to close them. Unwoke asks once, then a <strong>play window</strong> borrows CachyOS’s session trick — GameMode while the title runs — and puts every overlay lock back when you quit. Crash or reboot: the leftover stamp is a <strong>fail</strong>, not a quiet weaker machine.</p>
+    <p><span class="chip">Restores</span> <span class="chip">No kernel swap</span> <span class="chip">Nothing silent</span></p>
+    <div class="alert tip">
+      <p><strong>One sentence.</strong> Same signed secureblue kernel. Faster governors for the match. Full Unwoke the moment Steam exits. We do not become CachyOS. We do not stay as loose as stock.</p>
+    </div>
+
+    <h2 id="story"><a href="#story">Three rooms</a></h2>
+    <div class="cards">
+      <div class="card">
+        <p class="eyebrow">01 · Stock</p>
+        <h3>They loosen and forget</h3>
+        <p>Need Xwayland? <code>ujust set-xwayland on</code>. Need Easy Anti-Cheat? <code>ujust set-ptrace on</code>. Tomorrow you are in the browser with ptrace still allowed. There is no “the game is over.”</p>
+      </div>
+      <div class="card">
+        <p class="eyebrow">02 · CachyOS</p>
+        <h3>They rebuild the whole OS for FPS</h3>
+        <p>Custom kernel, packages compiled for your CPU, Proton with extra patches. That is a different, faster computer. It is not a signed secureblue ostree. You cannot overlay it and still say “same foundation.”</p>
+      </div>
+      <div class="card">
+        <p class="eyebrow">03 · Unwoke</p>
+        <h3>A window, not a second OS</h3>
+        <p>Setup → <strong>Gaming</strong>, or <code>ujust play steam</code>. Fedora GameMode raises CPU/GPU governors for that process. Close Steam: a watcher restores. Optional asked sched-ext is the closest CachyOS <em>switch</em> without their kernel. SMT and Spectre mitigations stay.</p>
+      </div>
+    </div>
+
+    <h2 id="table"><a href="#table">Who wins what</a></h2>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr><th></th><th>Stock secureblue</th><th>CachyOS</th><th>Unwoke</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>After you quit</td>
+            <td>Xwayland / ptrace often still on</td>
+            <td>Still a gaming distro</td>
+            <td><strong>Locks back.</strong> Stamp leftover with no game = FAIL</td>
+          </tr>
+          <tr>
+            <td>Steam install</td>
+            <td>Unfiltered Flathub, no overlay questions</td>
+            <td>Their stack, not Atomic</td>
+            <td>Asks Flathub, lockdown, temp, mic, BT first</td>
+          </tr>
+          <tr>
+            <td>Session speed</td>
+            <td>No GameMode story</td>
+            <td>GameMode + sched-ext + their kernel</td>
+            <td>GameMode baked. sched-ext asked, session-only</td>
+          </tr>
+          <tr>
+            <td>Kernel</td>
+            <td>Signed hardened Fedora</td>
+            <td>linux-cachyos (LTO, BORE)</td>
+            <td>Same signed stock. We will not swap it</td>
+          </tr>
+          <tr>
+            <td>SMT / mitigations</td>
+            <td>Off / on for Spectre — reboot to change</td>
+            <td>Tuned for frames</td>
+            <td>Left as stock. A play window cannot flip this</td>
+          </tr>
+          <tr>
+            <td>Prove it</td>
+            <td><code>audit-secureblue</code> does not know overlay locks</td>
+            <td>n/a</td>
+            <td><code>ujust play stop</code> then <code>ujust unwoke-test</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="do"><a href="#do">On the machine</a></h2>
+<pre><code>ujust install-steam
+ujust play steam
+# play the match
+# close Steam — or:
+ujust play stop
+ujust unwoke-test</code></pre>
+    <p>Healthy after stop: <code>PASS  no play window (full overlay locks)</code>. How-to with the watcher and optional sched-ext: <a href="tutorials/gaming/">Play window tutorial</a>. Steam questions: <a href="tutorials/steam/">Steam</a>.</p>
+
+    <h2 id="not"><a href="#not">What this page does not claim</a></h2>
+    <p>We will not beat CachyOS at raw FPS on a weak GPU. Their rebuilt mesa and kernel are real. We will not turn off Spectre mitigations “just for the game.” We will not silent-enable ptrace. The sell is simpler: <strong>you can play, and you do not stay open.</strong></p>
+  </main>
+  <footer>
+    <a class="brand" href="./"><img src="assets/logo.svg?v=5" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="tutorials/gaming/">How to</a></li>
+      <li><a href="compared/">Compared</a></li>
+      <li><a href="privacy/">Privacy</a></li>
+    </ul>
+    <p>Not affiliated with secureblue. Not affiliated with CachyOS.</p>
+  </footer>
+</body>
+</html>
