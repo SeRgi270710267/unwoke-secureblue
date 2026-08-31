@@ -127,6 +127,23 @@ if [[ "${GRANT}" -eq 1 ]]; then
   grant_steam
 fi
 
+# Same name as stock Steam so the grid icon is the wrapped one (GameMode + auto restore).
+apps="${XDG_DATA_HOME:-$HOME/.local/share}/applications"
+mkdir -p "${apps}"
+cat > "${apps}/com.valvesoftware.Steam.desktop" <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=Steam
+Comment=Play. Unwoke restores locks when you quit.
+Exec=/usr/libexec/unwoke/play-steam.sh
+Icon=com.valvesoftware.Steam
+Terminal=false
+Categories=Game;
+Keywords=steam;game;valve;
+StartupNotify=true
+EOF
+echo "App grid Steam icon now wraps GameMode. Close Steam — restore is automatic."
+
 echo
 echo "Stock leftover (same as their FAQ; we do not silent-enable):"
 if ask "Enable Xwayland (many games still need it; stock also asks)?" "n"; then
@@ -145,8 +162,8 @@ echo "  ujust set-flatpak-record on"
 echo "  ujust set-ramdisk-exec off"
 echo "  ujust set-camera-mic off"
 echo "  ujust set-bluetooth off"
-echo "Play window (GameMode, restores locks when Steam exits): ujust play steam"
-echo "Tutorial: ujust setup, or https://sergi270710267.github.io/unwoke-secureblue/tutorials/steam/"
+echo "Click Steam in the app grid. Close it — restore is automatic."
+echo "Tutorial: https://sergi270710267.github.io/unwoke-secureblue/tutorials/gaming/"
 if [[ -x /usr/libexec/unwoke/open-tutorial.sh ]]; then
   bash /usr/libexec/unwoke/open-tutorial.sh steam || true
 fi

@@ -58,6 +58,7 @@ if command -v systemctl >/dev/null; then
   systemctl --global enable unwoke-user-defaults.service || true
   systemctl --global enable unwoke-signed-nag.timer || true
   systemctl --global enable gamemoded.service || true
+  systemctl --global enable unwoke-play-agent.service || true
   systemctl enable unwoke-admin-split-setup.service || true
   systemctl enable unwoke-usbguard-prompt.service || true
 fi

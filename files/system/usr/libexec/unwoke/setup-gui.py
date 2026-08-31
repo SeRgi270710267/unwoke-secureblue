@@ -792,7 +792,7 @@ class SetupWindow(Gtk.Window):
         box.set_margin_top(12)
         box.pack_start(
             Gtk.Label(
-                label="Better than stock for games: their install-steam leaves Xwayland/ptrace on forever. Our play window uses GameMode (and optional sched-ext) only while the game runs, then restores. We do not swap the signed kernel (that would be CachyOS). Close the game → full locks.",
+                label="Click Steam. GameMode runs in the background. Close Steam and locks return — no typing. Stock leaves Xwayland/ptrace on. Optional: End play window now. We do not swap the CachyOS kernel.",
                 xalign=0,
                 wrap=True,
             ),
@@ -808,8 +808,8 @@ class SetupWindow(Gtk.Window):
         )
         box.pack_start(
             row(
-                "Start Steam in a play window",
-                "GameMode on. sched-ext only if you allowed it. Watcher restores when Steam exits.",
+                "Open Steam (same as the app-grid icon)",
+                "Optional. Normal is: click Steam. Restore is still automatic when it exits.",
                 lambda: self.run_play("steam"),
                 "gaming",
             ),

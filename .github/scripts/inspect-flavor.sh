@@ -353,6 +353,14 @@ if [[ ! -f "${work}/usr/libexec/unwoke/play-window.sh" ]]; then
   echo "FAIL: missing play-window.sh" >&2
   fail=1
 fi
+if [[ ! -f "${work}/usr/libexec/unwoke/play-steam.sh" ]]; then
+  echo "FAIL: missing play-steam.sh" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/lib/systemd/user/unwoke-play-agent.service" ]]; then
+  echo "FAIL: missing play-window login agent" >&2
+  fail=1
+fi
 if [[ ! -f "${work}/usr/share/applications/unwoke-lock-gaming.desktop" ]]; then
   echo "FAIL: missing Gaming tab launcher" >&2
   fail=1

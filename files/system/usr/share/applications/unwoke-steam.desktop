@@ -1,0 +1,16 @@
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
+[Desktop Entry]
+Type=Application
+Name=Steam
+GenericName=Steam
+Comment=Play. Unwoke restores locks when you quit. No extra typing.
+Exec=/usr/libexec/unwoke/play-steam.sh
+TryExec=/usr/libexec/unwoke/play-steam.sh
+Icon=steam
+Terminal=false
+Categories=Game;
+Keywords=steam;game;valve;play;
+StartupNotify=true
+NoDisplay=true

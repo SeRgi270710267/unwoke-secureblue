@@ -118,12 +118,10 @@
 
     <h2 id="do"><a href="#do">On the machine</a></h2>
 <pre><code>ujust install-steam
-ujust play steam
-# play the match
-# close Steam — or:
-ujust play stop
-ujust unwoke-test</code></pre>
-    <p>Healthy after stop: <code>PASS  no play window (full overlay locks)</code>. How-to with the watcher and optional sched-ext: <a href="tutorials/gaming/">Play window tutorial</a>. Steam questions: <a href="tutorials/steam/">Steam</a>.</p>
+# then just click Steam in the app grid
+# play
+# close Steam — restore is automatic</code></pre>
+    <p>No extra command to “turn it off.” A login agent sees Steam start and quit. <code>ujust play stop</code> still exists if you want it. Healthy later: <code>ujust unwoke-test</code> says <code>PASS  no play window</code>. How-to: <a href="tutorials/gaming/">Play window tutorial</a>.</p>
 
     <h2 id="not"><a href="#not">What this page does not claim</a></h2>
     <p>We will not beat CachyOS at raw FPS on a weak GPU. Their rebuilt mesa and kernel are real. We will not turn off Spectre mitigations “just for the game.” We will not silent-enable ptrace. The sell is simpler: <strong>you can play, and you do not stay open.</strong></p>

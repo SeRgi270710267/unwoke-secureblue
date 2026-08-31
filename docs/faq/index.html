@@ -127,11 +127,8 @@ ujust set-allow-browsers on ALLOW</code></pre>
     <h2 id="gaming"><a href="#gaming">How do I game without leaving locks off?</a></h2>
     <p>Setup → Gaming, or:</p>
 <pre><code>ujust install-steam
-ujust play steam
-# close Steam
-ujust play stop
-ujust unwoke-test</code></pre>
-    <p>GameMode (CPU/GPU governor) only while the game runs. Optional asked sched-ext. We do not ship the CachyOS kernel. Stock has no restore-on-exit. Long form: <a href="tutorials/gaming/">Play window</a>.</p>
+# click Steam, play, close Steam</code></pre>
+    <p>Restore is automatic. Optional: <code>ujust play stop</code>. Optional asked sched-ext. We do not ship the CachyOS kernel. Long form: <a href="tutorials/gaming/">Play window</a>.</p>
 
     <h2 id="steam"><a href="#steam">How do I install Steam?</a></h2>
     <p>Same command as stock, but Unwoke extras that would break games are <strong>asked</strong> first (Flathub is off; Steam is not verified; lockdown, temp noexec, mic, Bluetooth). Nothing silent:</p>

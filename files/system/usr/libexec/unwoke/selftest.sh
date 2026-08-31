@@ -115,6 +115,7 @@ need=(
   /usr/libexec/unwoke/nts.sh
   /usr/libexec/unwoke/usbguard-prompt.sh
   /usr/libexec/unwoke/play-window.sh
+  /usr/libexec/unwoke/play-steam.sh
   /usr/libexec/unwoke/install-steam.sh
 )
 for p in "${need[@]}"; do
@@ -339,17 +340,24 @@ elif [[ ! -f /etc/unwoke/allow-connectivity ]]; then
 fi
 
 section "Play window"
-if [[ -f /etc/unwoke/play-window.active ]]; then
+play_stamp="${XDG_CONFIG_HOME:-$HOME/.config}/unwoke/play-window.active"
+if [[ -f "${play_stamp}" || -f /etc/unwoke/play-window.active ]]; then
   if pgrep -x steam >/dev/null 2>&1 || pgrep -f 'com.valvesoftware.Steam' >/dev/null 2>&1; then
-    loose "play window live — restore with ujust play stop when the game exits"
-    proof "/etc/unwoke/play-window.active"
+    loose "play window live — close Steam and the agent restores (optional: ujust play stop)"
+    proof "${play_stamp}"
   else
-    fail "play window stamp leftover with no game (fail-closed; first-boot should restore)"
-    proof "/etc/unwoke/play-window.active"
+    fail "play window stamp leftover with no game (fail-closed; login agent should restore)"
+    proof "${play_stamp}"
   fi
 else
   pass "no play window (full overlay locks)"
-  proof "no /etc/unwoke/play-window.active"
+  proof "no play-window.active"
+fi
+if [[ -f /usr/lib/systemd/user/unwoke-play-agent.service ]]; then
+  pass "play-window login agent unit shipped"
+  proof "/usr/lib/systemd/user/unwoke-play-agent.service"
+else
+  fail "missing unwoke-play-agent.service"
 fi
 if command -v gamemoderun >/dev/null; then
   pass "GameMode (gamemoderun) on PATH"

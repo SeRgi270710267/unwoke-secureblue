@@ -1,0 +1,16 @@
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
+[Unit]
+Description=Unwoke play window agent (GameMode around games, restore on exit)
+After=default.target
+ConditionPathExists=/usr/share/unwoke/flavor
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/bash /usr/libexec/unwoke/play-window.sh agent
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
