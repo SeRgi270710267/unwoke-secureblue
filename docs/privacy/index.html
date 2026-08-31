@@ -63,12 +63,17 @@
         <p>GNOME/NetworkManager fetches a Fedora/GNOME URL whenever you join a network. That is how they learn you came online. We disable it. Hotel captive-portal pages may need <code>ujust set-connectivity-check on</code>.</p>
       </div>
       <div class="card">
-        <p class="eyebrow">03 · The LAN</p>
+        <p class="eyebrow">03 · Disk leftovers</p>
+        <h3>Less leftover on disk</h3>
+        <p>Not Tails. The ostree still exists. We stop writing the usual forensic buckets: persistent journals, hibernate RAM images, crash dumps, file indexers, GTK “recent files.” Revert: <code>ujust set-disk-traces on</code> if you need <code>journalctl -b -1</code> or hibernate.</p>
+      </div>
+      <div class="card">
+        <p class="eyebrow">04 · The LAN</p>
         <h3>No hostname on DHCP</h3>
         <p>Stock randomizes MAC, then still announces your hostname and a stable DHCPv6 DUID. We do not send hostname, use MAC-based DHCP ids, IPv6 stable-privacy, and turn off LLMNR/mDNS registration. Their own ticket for this was never shipped. Revert: <code>ujust set-dhcp-hostname on</code>.</p>
       </div>
       <div class="card">
-        <p class="eyebrow">04 · The browser</p>
+        <p class="eyebrow">05 · The browser</p>
         <h3>No Google extras. Safe Browsing stays.</h3>
         <p>Hardening pack: no metrics, sync, autofill, saved passwords, translate, hyperlink <code>ping</code>, Privacy Sandbox (Topics/ads), Cast beacon, or Chrome-to-Google time. Prefetch off. WebRTC does not leak local IPs. <strong>Safe Browsing stays on</strong> — turning it off is a security cut, so it is not a default.</p>
       </div>
@@ -104,6 +109,12 @@
             <td>On (FAQ says turn them off)</td>
             <td>Off (GNOME Files + Dolphin)</td>
             <td><code>ujust set-thumbnails on</code></td>
+          </tr>
+          <tr>
+            <td>Disk leftovers (forensics)</td>
+            <td>Persistent journal, hibernate-to-disk, coredumps, Tracker/LocalSearch, GTK recent files</td>
+            <td>Volatile journal, hibernate denied, cores none, indexer masked, recent-files off</td>
+            <td><code>ujust set-disk-traces on</code></td>
           </tr>
           <tr>
             <td>Avahi / ModemManager</td>

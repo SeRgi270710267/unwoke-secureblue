@@ -121,6 +121,10 @@ ujust set-allow-browsers on ALLOW</code></pre>
 <pre><code>ujust install-ivpn</code></pre>
     <p>Default: import their WireGuard file in Network Settings (filename ≤ 15 characters on GNOME). Keep system DNS; no Trivalent DoH. Official <code>ivpn</code> / <code>ivpn-ui</code> from their Fedora repo only if you accept an extra RPM origin. Snap is not used. Long form: <a href="tutorials/ivpn/">IVPN tutorial</a>.</p>
 
+    <h2 id="disk-traces"><a href="#disk-traces">Where did last boot’s logs / hibernate go?</a></h2>
+    <p>Default: journal stays in RAM only, hibernate-to-disk is denied, crash dumps are not saved, the file indexer is off. That cuts forensic leftovers. It is not Tails (your ostree is still on disk). Need <code>journalctl -b -1</code> or hibernate:</p>
+<pre><code>ujust set-disk-traces on</code></pre>
+
     <h2 id="stock-installs"><a href="#stock-installs">Do stock ujust install-* still work?</a></h2>
     <p>The <strong>names</strong> work. The stock scripts are intercepted so overlay locks are asked first (Flathub off, lockdown, toolbox stubs, temp noexec). Catalog: <a href="tutorials/stock-installs/">Stock installers</a>. Vendor repos (Proton, IVPN, Mullvad, Tailscale) are watched and healed. Do not run <code>ujust rebase-secureblue</code> — that leaves Unwoke.</p>
 

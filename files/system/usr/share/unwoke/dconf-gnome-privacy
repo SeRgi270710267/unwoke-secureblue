@@ -3,3 +3,11 @@
 # UNWOKE-SHIPPED-FIRST
 [org/gnome/desktop/privacy]
 remember-app-usage=false
+remember-recent-files=false
+recent-files-max-age=-1
+[org/gtk/settings/file-chooser]
+gtk-recent-files-max-age=0
+gtk-recent-files-limit=0
+[org/gtk/gtk4/settings/file-chooser]
+gtk-recent-files-max-age=0
+gtk-recent-files-limit=0

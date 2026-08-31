@@ -331,6 +331,15 @@ fi
 locked_stamp /etc/unwoke/allow-connectivity "connectivity HTTP check" "$(/usr/libexec/unwoke/privacy.sh connectivity-check status 2>/dev/null || echo '?')"
 locked_stamp /etc/unwoke/allow-dhcp-hostname "DHCP hostname" "$(/usr/libexec/unwoke/privacy.sh dhcp-hostname status 2>/dev/null || echo '?')"
 locked_stamp /etc/unwoke/allow-thumbnails "file thumbnails" "$(/usr/libexec/unwoke/privacy.sh thumbnails status 2>/dev/null || echo '?')"
+locked_stamp /etc/unwoke/allow-disk-traces "disk traces (journal/hibernate/cores/indexer)" "$(/usr/libexec/unwoke/privacy.sh disk-traces status 2>/dev/null || echo '?')"
+if [[ ! -f /etc/unwoke/allow-disk-traces ]]; then
+  if [[ -f /etc/systemd/journald.conf.d/90-unwoke-volatile.conf ]]; then
+    pass "journald Storage=volatile drop-in live"
+    proof "/etc/systemd/journald.conf.d/90-unwoke-volatile.conf"
+  else
+    fail "disk-traces wanted but journald volatile drop-in missing (fail-closed after first boot)"
+  fi
+fi
 if [[ -f /etc/NetworkManager/conf.d/90-unwoke-connectivity.conf ]]; then
   pass "NetworkManager connectivity drop-in on disk"
   proof "/etc/NetworkManager/conf.d/90-unwoke-connectivity.conf"

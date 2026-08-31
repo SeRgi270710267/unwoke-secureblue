@@ -31,6 +31,7 @@
 - **This pickup:** `/var/tmp` bind-mounted `noexec,nosuid,nodev` (same `ujust set-ramdisk-exec` as `/tmp` and `/dev/shm`). Stock #697 was only the RAM disks; payloads that dodged into persistent temp now fail too. Needs the overlay bake from this push + reboot. Electron/old JIT or layered RPM scriptlets that exec from `/var/tmp`: `ujust set-ramdisk-exec on`.
 - **Stock app installers:** intercepted (compose renames theirs to `NAME-stock`). Steam, `install-vpn` (Proton/IVPN/Mullvad/Tailscale, WireGuard first), `enable-dangerzone` (asks leftover userns/ptrace), `distrobox-assemble`/`toolbox-assemble` (asks `set-toolbox on`), `set-flathub-unfiltered` (maps to our stamp). Tailscale yum-repo is on the vendor watch/heal list. Catalog: `docs/tutorials/stock-installs/`. Do not run stock `rebase-secureblue`.
 - **Play window:** click Steam. Auto: power-profile performance, GameMode GPU/split-lock, Proton NTsync, sched-ext if `scxctl` exists (opt out `ujust play scx off`). Close Steam → restore. No CachyOS kernel / SMT / mitigations. Site: https://sergi270710267.github.io/unwoke-secureblue/gaming/
+- **Disk traces (forensics leftovers, not Tails):** default volatile journal, hibernate denied, coredumps none, Tracker/LocalSearch masked, GTK recent-files off. Revert: `ujust set-disk-traces on`. Does not make the ostree amnesic.
 - **Pages:** Factory clock, Compared `#prove`, scorecard gaps filled, see-it tutorial. Site deploys on `main` push.
 
 ### Do not

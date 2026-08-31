@@ -312,6 +312,12 @@ set-thumbnails *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh thumbnails "$@"
 
+# Persistent journal, hibernate-to-disk, coredumps, file indexer. Default off.
+[positional-arguments]
+set-disk-traces *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh disk-traces "$@"
+
 # Stock deprecation / update-verify / flatpak-setup user units. Default off (masked).
 [positional-arguments]
 set-stock-nags *args:

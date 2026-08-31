@@ -371,6 +371,7 @@ loosened_loop() {
   [[ -f /etc/unwoke/allow-connectivity ]] && add_item "Connectivity check" "connectivity-check off" "first-hour"
   [[ -f /etc/unwoke/allow-dhcp-hostname ]] && add_item "DHCP hostname" "dhcp-hostname off" "first-hour"
   [[ -f /etc/unwoke/allow-thumbnails ]] && add_item "Thumbnails" "thumbnails off" "first-hour"
+  [[ -f /etc/unwoke/allow-disk-traces ]] && add_item "Disk traces (journal/hibernate)" "disk-traces off" "first-hour"
   [[ -f /etc/unwoke/flatpak-lockdown.off ]] && add_item "Flatpak lockdown off" "lockdown on" "install-apps"
   [[ -f /etc/unwoke/flatpak-record.off ]] && add_item "Flatpak record allowed" "flatpak-record on" "camera-mic"
   [[ -f /etc/unwoke/allow-network-fs ]] && add_item "NFS/CIFS clients allowed" "network-fs off" "network-fs"

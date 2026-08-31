@@ -11,6 +11,20 @@ ALLOW_COUNTME="/etc/unwoke/allow-countme"
 ALLOW_CONN="/etc/unwoke/allow-connectivity"
 ALLOW_DHCP="/etc/unwoke/allow-dhcp-hostname"
 ALLOW_THUMBS="/etc/unwoke/allow-thumbnails"
+ALLOW_TRACES="/etc/unwoke/allow-disk-traces"
+SRC_JOURNAL="/usr/share/unwoke/journald-volatile.conf"
+DST_JOURNAL="/etc/systemd/journald.conf.d/90-unwoke-volatile.conf"
+SRC_LOGIND="/usr/share/unwoke/logind-no-hibernate.conf"
+DST_LOGIND="/etc/systemd/logind.conf.d/90-unwoke-no-hibernate.conf"
+SRC_CORE="/usr/share/unwoke/coredump-none.conf"
+DST_CORE="/etc/systemd/coredump.conf.d/90-unwoke-none.conf"
+INDEXER_UNITS=(
+  localsearch-3.service
+  localsearch-control-3.timer
+  tracker-miner-fs-3.service
+  tracker-extract-3.service
+  tracker-miner-fs.service
+)
 NM_DIR="/etc/NetworkManager/conf.d"
 NM_CONN="${NM_DIR}/90-unwoke-connectivity.conf"
 NM_DHCP="${NM_DIR}/90-unwoke-dhcp.conf"
@@ -39,6 +53,39 @@ countme_off() { [[ ! -f "${ALLOW_COUNTME}" ]]; }
 conn_off() { [[ ! -f "${ALLOW_CONN}" ]]; }
 dhcp_off() { [[ ! -f "${ALLOW_DHCP}" ]]; }
 thumbs_off() { [[ ! -f "${ALLOW_THUMBS}" ]]; }
+traces_off() { [[ ! -f "${ALLOW_TRACES}" ]]; }
+
+apply_dropin() {
+  local src="$1" dst="$2" want="$3"
+  mkdir -p "$(dirname "${dst}")"
+  if [[ "${want}" == "1" && -f "${src}" ]]; then
+    cp -a "${src}" "${dst}"
+  else
+    rm -f "${dst}"
+  fi
+}
+
+apply_disk_traces() {
+  local want
+  want="$(traces_off && echo 1 || echo 0)"
+  apply_dropin "${SRC_JOURNAL}" "${DST_JOURNAL}" "${want}"
+  apply_dropin "${SRC_LOGIND}" "${DST_LOGIND}" "${want}"
+  apply_dropin "${SRC_CORE}" "${DST_CORE}" "${want}"
+  local u
+  if [[ "${want}" == "1" ]]; then
+    for u in "${INDEXER_UNITS[@]}"; do
+      systemctl --global mask "$u" >/dev/null 2>&1 || true
+      systemctl mask --now "$u" >/dev/null 2>&1 || true
+    done
+    systemctl mask systemd-pstore.service >/dev/null 2>&1 || true
+  else
+    for u in "${INDEXER_UNITS[@]}"; do
+      systemctl --global unmask "$u" >/dev/null 2>&1 || true
+      systemctl unmask "$u" >/dev/null 2>&1 || true
+    done
+    systemctl unmask systemd-pstore.service >/dev/null 2>&1 || true
+  fi
+}
 
 apply_countme() {
   local u
@@ -141,6 +188,7 @@ cmd_apply_boot() {
   apply_thumbnails
   apply_gnome_privacy
   apply_resolved
+  apply_disk_traces
 }
 
 set_flag() {
@@ -159,10 +207,11 @@ cmd_status_all() {
   if conn_off; then echo "connectivity-check: off (default)"; else echo "connectivity-check: on (${ALLOW_CONN})"; fi
   if dhcp_off; then echo "dhcp-hostname: off (default — not sent)"; else echo "dhcp-hostname: on (${ALLOW_DHCP})"; fi
   if thumbs_off; then echo "thumbnails: off (default)"; else echo "thumbnails: on (${ALLOW_THUMBS})"; fi
+  if traces_off; then echo "disk-traces: off (default — volatile journal, no hibernate, no cores, no indexer)"; else echo "disk-traces: on (${ALLOW_TRACES})"; fi
 }
 
 usage() {
-  echo "usage: privacy.sh countme|connectivity|dhcp-hostname|thumbnails|apply-boot|status  [on|off|status]" >&2
+  echo "usage: privacy.sh countme|connectivity|dhcp-hostname|thumbnails|disk-traces|apply-boot|status  [on|off|status]" >&2
   exit 2
 }
 
@@ -200,6 +249,14 @@ case "${main}" in
       on|enable) set_flag "${ALLOW_THUMBS}" 1; echo "Thumbnails ON. Revert: ujust set-thumbnails off" ;;
       off|disable) set_flag "${ALLOW_THUMBS}" 0; echo "Thumbnails OFF (GNOME Files + Dolphin). Revert: ujust set-thumbnails on" ;;
       status) thumbs_off && echo "off (default)" || echo "on" ;;
+      *) usage ;;
+    esac
+    ;;
+  disk-traces|traces|forensics)
+    case "${1:-status}" in
+      on|enable) set_flag "${ALLOW_TRACES}" 1; echo "Disk traces ON (persistent journal, hibernate allowed, indexers). Revert: ujust set-disk-traces off" ;;
+      off|disable) set_flag "${ALLOW_TRACES}" 0; echo "Disk traces OFF (volatile journal, no hibernate, no cores, no file indexer). Revert: ujust set-disk-traces on" ;;
+      status) traces_off && echo "off (default)" || echo "on" ;;
       *) usage ;;
     esac
     ;;

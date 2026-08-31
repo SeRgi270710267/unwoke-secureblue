@@ -199,6 +199,18 @@ if [[ ! -f "${work}/usr/libexec/unwoke/privacy.sh" ]]; then
   echo "FAIL: missing /usr/libexec/unwoke/privacy.sh" >&2
   fail=1
 fi
+if [[ ! -f "${work}/usr/share/unwoke/journald-volatile.conf" ]]; then
+  echo "FAIL: missing journald-volatile.conf" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/share/unwoke/logind-no-hibernate.conf" ]]; then
+  echo "FAIL: missing logind-no-hibernate.conf" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/share/unwoke/coredump-none.conf" ]]; then
+  echo "FAIL: missing coredump-none.conf" >&2
+  fail=1
+fi
 if [[ ! -f "${work}/usr/libexec/unwoke/network-fs.sh" ]]; then
   echo "FAIL: missing /usr/libexec/unwoke/network-fs.sh" >&2
   fail=1

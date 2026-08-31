@@ -415,6 +415,7 @@ for d in j.get("deployments") or []:
   echo "  ujust set-connectivity-check on|off"
   echo "  ujust set-dhcp-hostname on|off"
   echo "  ujust set-thumbnails on|off"
+  echo "  ujust set-disk-traces on|off"
   echo "  ujust set-stock-nags on|off"
   if is_browserless; then
     echo "  ujust set-allow-browsers on ALLOW|off"
@@ -886,6 +887,7 @@ case "${main}" in
   connectivity|connectivity-check) exec /usr/libexec/unwoke/privacy.sh connectivity "${1:-status}" ;;
   dhcp-hostname) exec /usr/libexec/unwoke/privacy.sh dhcp-hostname "${1:-status}" ;;
   thumbnails) exec /usr/libexec/unwoke/privacy.sh thumbnails "${1:-status}" ;;
+  disk-traces|traces|forensics) exec /usr/libexec/unwoke/privacy.sh disk-traces "${1:-status}" ;;
   stock-nags) exec /usr/libexec/unwoke/stock-nags.sh "${1:-status}" ;;
   apply-boot) cmd_apply_boot ;;
   apply-user) cmd_apply_user ;;
