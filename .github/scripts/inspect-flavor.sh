@@ -211,6 +211,14 @@ if [[ ! -f "${work}/usr/share/unwoke/coredump-none.conf" ]]; then
   echo "FAIL: missing coredump-none.conf" >&2
   fail=1
 fi
+if [[ ! -f "${work}/usr/share/unwoke/sysctl-anon.conf" ]]; then
+  echo "FAIL: missing sysctl-anon.conf" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/libexec/unwoke/anon-net.sh" ]]; then
+  echo "FAIL: missing anon-net.sh" >&2
+  fail=1
+fi
 if [[ ! -f "${work}/usr/libexec/unwoke/network-fs.sh" ]]; then
   echo "FAIL: missing /usr/libexec/unwoke/network-fs.sh" >&2
   fail=1

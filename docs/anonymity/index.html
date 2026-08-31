@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>Anonymity | Unwoke SecureBlue</title>
+  <meta name="description" content="Unwoke is not Tails. Hide your IP with official Whonix KVM. Host wins: TCP timestamps off, no DHCP hostname. Do not mix accounts.">
+  <base href="/unwoke-secureblue/">
+  <link rel="icon" href="assets/logo.svg?v=5" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css?v=15">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="./"><img src="assets/logo.svg?v=5" alt="">Unwoke SecureBlue</a></li>
+        <li><a href="features/">Features</a></li>
+        <li><a href="compared/">Compared</a></li>
+        <li><a href="ahead/">Shipped first</a></li>
+        <li><a href="privacy/">Privacy</a></li>
+        <li><a href="gaming/">Gaming</a></li>
+        <li aria-current="page"><a href="anonymity/">Anonymity</a></li>
+        <li><a href="factory/">Factory</a></li>
+        <li><a href="brand/">Brand</a></li>
+        <li><a href="changelog/">Changelog</a></li>
+        <li><a href="images/">Images</a></li>
+        <li><a href="install/">Install</a></li>
+        <li><a href="start/">After login</a></li>
+        <li><a href="post-install/">Post-install</a></li>
+        <li><a href="tutorials/">Tutorials</a></li>
+        <li><a href="faq/">FAQ</a></li>
+        <li><a href="stock-issues/">Workarounds</a></li>
+        <li><a href="contributing/">Contributing</a></li>
+        <li><a href="conduct/">Conduct</a></li>
+        <li><a href="donate/">Donate</a></li>
+        <li><a href="secureblue/">Their docs</a></li>
+        <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main id="content">
+    <p class="eyebrow">Vs Tails · Whonix · Qubes</p>
+    <h1>Hide the IP in Whonix. Keep this OS locked.</h1>
+    <p class="lead">Unwoke does <strong>not</strong> route your desktop through Tor. That would break updates and is not Whonix. Anonymity here means: official Whonix VMs when you need Tor, plus a few host leaks we can close <strong>without</strong> turning off SELinux, Safe Browsing, or NTS.</p>
+    <p><span class="chip">Not Tails</span> <span class="chip">Not host Tor</span> <span class="chip">No security cut</span></p>
+
+    <h2 id="do"><a href="#do">If you need to be hard to name</a></h2>
+    <div class="cards">
+      <div class="card">
+        <p class="eyebrow">01 · Persistent Tor</p>
+        <h3>Whonix on this box</h3>
+        <p><code>ujust install-whonix</code> then <code>ujust start-whonix</code>. Work <em>only</em> in Workstation. Same Google account on Trivalent on the host still names you. How-to: <a href="tutorials/whonix/">Whonix KVM</a>.</p>
+      </div>
+      <div class="card">
+        <p class="eyebrow">02 · Hostile PC</p>
+        <h3>Boot Tails</h3>
+        <p>Hotel laptop, border search, leave no disk. That is a USB OS, not an overlay. Unwoke cannot fake amnesia.</p>
+      </div>
+      <div class="card">
+        <p class="eyebrow">03 · Split lives</p>
+        <h3>Qubes-Whonix</h3>
+        <p>Different computer. Xen, not KVM on Unwoke. Highest stack; you leave this OS.</p>
+      </div>
+    </div>
+
+    <h2 id="host"><a href="#host">Host wins we did ship (no Tor)</a></h2>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr><th>Leak</th><th>Default</th><th>Revert</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>DHCP hostname / DUID</td>
+            <td>Not sent</td>
+            <td><code>ujust set-dhcp-hostname on</code></td>
+          </tr>
+          <tr>
+            <td>TCP timestamps (clock skew)</td>
+            <td>Off (Kicksecure-style). Does not disable NTS.</td>
+            <td><code>ujust set-anon-net on</code></td>
+          </tr>
+          <tr>
+            <td>Local hostname still “fedora”</td>
+            <td>Unchanged (printers). Opt-in <code>host</code></td>
+            <td><code>ujust set-anon-hostname on</code> / <code>off</code></td>
+          </tr>
+          <tr>
+            <td>MAC on café Wi‑Fi</td>
+            <td>Leftover stock</td>
+            <td><code>ujust toggle-mac-randomization</code></td>
+          </tr>
+          <tr>
+            <td>Disk leftovers</td>
+            <td>Volatile journal, no hibernate</td>
+            <td><code>ujust set-disk-traces on</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>We did <strong>not</strong> add host Tor, UTC-by-default, kloak, or a fake machine-id. Those either break security, break the desktop, or make you <em>more</em> unique.</p>
+  </main>
+  <footer>
+    <a class="brand" href="./"><img src="assets/logo.svg?v=5" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <p>Not affiliated with Tails, Whonix, Qubes, or secureblue.</p>
+  </footer>
+</body>
+</html>

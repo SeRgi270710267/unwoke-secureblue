@@ -22,6 +22,7 @@
         <li><a href="ahead/">Shipped first</a></li>
         <li><a href="privacy/">Privacy</a></li>
         <li><a href="gaming/">Gaming</a></li>
+        <li><a href="anonymity/">Anonymity</a></li>
         <li><a href="factory/">Factory</a></li>
         <li><a href="brand/">Brand</a></li>
         <li><a href="changelog/">Changelog</a></li>
@@ -120,6 +121,9 @@ ujust set-allow-browsers on ALLOW</code></pre>
     <p>IVPN is a VPN (AntiTracker is inside their official app — not a Mail/Pass suite). No store:</p>
 <pre><code>ujust install-ivpn</code></pre>
     <p>Default: import their WireGuard file in Network Settings (filename ≤ 15 characters on GNOME). Keep system DNS; no Trivalent DoH. Official <code>ivpn</code> / <code>ivpn-ui</code> from their Fedora repo only if you accept an extra RPM origin. Snap is not used. Long form: <a href="tutorials/ivpn/">IVPN tutorial</a>.</p>
+
+    <h2 id="anonymity"><a href="#anonymity">Does Unwoke hide my IP?</a></h2>
+    <p>No. The host is still your ISP. Hide the IP with <a href="tutorials/whonix/">Whonix KVM</a>. Host extras that do <strong>not</strong> turn off Safe Browsing or NTS: TCP timestamps off (<code>ujust set-anon-net on</code> puts stock timestamps back); optional <code>ujust set-anon-hostname on</code>. Long form: <a href="anonymity/">Anonymity</a>.</p>
 
     <h2 id="whonix"><a href="#whonix">How do I run Whonix?</a></h2>
     <p>Official KVM, not VirtualBox. OpenPGP is required. Clipboard/USB/mic stay off:</p>

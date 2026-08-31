@@ -29,6 +29,7 @@ NAV = """        <li><a href="./"><img src="assets/logo.svg?v=4" alt="">Unwoke S
         <li><a href="ahead/">Shipped first</a></li>
         <li><a href="privacy/">Privacy</a></li>
         <li><a href="gaming/">Gaming</a></li>
+        <li><a href="anonymity/">Anonymity</a></li>
         <li><a href="factory/">Factory</a></li>
         <li><a href="brand/">Brand</a></li>
         <li><a href="changelog/">Changelog</a></li>

@@ -119,6 +119,7 @@ need=(
   /usr/libexec/unwoke/install-steam.sh
   /usr/libexec/unwoke/install-whonix.sh
   /usr/libexec/unwoke/start-whonix.sh
+  /usr/libexec/unwoke/anon-net.sh
 )
 for p in "${need[@]}"; do
   if [[ -x "${p}" || -f "${p}" ]]; then
@@ -334,6 +335,21 @@ locked_stamp /etc/unwoke/allow-connectivity "connectivity HTTP check" "$(/usr/li
 locked_stamp /etc/unwoke/allow-dhcp-hostname "DHCP hostname" "$(/usr/libexec/unwoke/privacy.sh dhcp-hostname status 2>/dev/null || echo '?')"
 locked_stamp /etc/unwoke/allow-thumbnails "file thumbnails" "$(/usr/libexec/unwoke/privacy.sh thumbnails status 2>/dev/null || echo '?')"
 locked_stamp /etc/unwoke/allow-disk-traces "disk traces (journal/hibernate/cores/indexer)" "$(/usr/libexec/unwoke/privacy.sh disk-traces status 2>/dev/null || echo '?')"
+locked_stamp /etc/unwoke/allow-tcp-timestamps "TCP timestamps (clock-skew)" "$(/usr/libexec/unwoke/anon-net.sh timestamps status 2>/dev/null || echo '?')"
+if [[ -f /etc/unwoke/anon-hostname ]]; then
+  loose "local hostname forced to host"
+  proof "/etc/unwoke/anon-hostname"
+fi
+if [[ ! -f /etc/unwoke/allow-tcp-timestamps ]]; then
+  ts="$(sysctl -n net.ipv4.tcp_timestamps 2>/dev/null || echo '?')"
+  if [[ "${ts}" == "0" ]]; then
+    pass "tcp_timestamps=0 live"
+    proof "net.ipv4.tcp_timestamps = 0"
+  else
+    fail "tcp_timestamps wanted 0 after boot (fail-closed)"
+    proof "net.ipv4.tcp_timestamps = ${ts}"
+  fi
+fi
 if [[ ! -f /etc/unwoke/allow-disk-traces ]]; then
   if [[ -f /etc/systemd/journald.conf.d/90-unwoke-volatile.conf ]]; then
     pass "journald Storage=volatile drop-in live"

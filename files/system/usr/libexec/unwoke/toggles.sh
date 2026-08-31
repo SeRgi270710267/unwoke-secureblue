@@ -416,6 +416,8 @@ for d in j.get("deployments") or []:
   echo "  ujust set-dhcp-hostname on|off"
   echo "  ujust set-thumbnails on|off"
   echo "  ujust set-disk-traces on|off"
+  echo "  ujust set-anon-net on|off"
+  echo "  ujust set-anon-hostname on|off"
   echo "  ujust set-stock-nags on|off"
   if is_browserless; then
     echo "  ujust set-allow-browsers on ALLOW|off"
@@ -798,6 +800,9 @@ cmd_apply_boot() {
   if [[ -x /usr/libexec/unwoke/play-window.sh ]]; then
     /usr/libexec/unwoke/play-window.sh restore-boot || true
   fi
+  if [[ -x /usr/libexec/unwoke/anon-net.sh ]]; then
+    /usr/libexec/unwoke/anon-net.sh apply-boot || true
+  fi
   if [[ -x /usr/libexec/unwoke/cet.sh ]]; then
     /usr/libexec/unwoke/cet.sh apply-boot || true
   fi
@@ -888,6 +893,8 @@ case "${main}" in
   dhcp-hostname) exec /usr/libexec/unwoke/privacy.sh dhcp-hostname "${1:-status}" ;;
   thumbnails) exec /usr/libexec/unwoke/privacy.sh thumbnails "${1:-status}" ;;
   disk-traces|traces|forensics) exec /usr/libexec/unwoke/privacy.sh disk-traces "${1:-status}" ;;
+  anon-net) exec /usr/libexec/unwoke/anon-net.sh timestamps "${1:-status}" ;;
+  anon-hostname) exec /usr/libexec/unwoke/anon-net.sh hostname "${1:-status}" ;;
   stock-nags) exec /usr/libexec/unwoke/stock-nags.sh "${1:-status}" ;;
   apply-boot) cmd_apply_boot ;;
   apply-user) cmd_apply_user ;;

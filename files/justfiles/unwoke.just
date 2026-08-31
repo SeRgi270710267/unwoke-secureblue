@@ -327,6 +327,18 @@ set-disk-traces *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/toggles.sh disk-traces "$@"
 
+# TCP timestamps. Default off (less clock-skew leak). on = stock timestamps.
+[positional-arguments]
+set-anon-net *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh anon-net "$@"
+
+# Local hostname "host". Default unchanged (DHCP still silent). Can break printers.
+[positional-arguments]
+set-anon-hostname *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/toggles.sh anon-hostname "$@"
+
 # Stock deprecation / update-verify / flatpak-setup user units. Default off (masked).
 [positional-arguments]
 set-stock-nags *args:

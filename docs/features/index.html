@@ -22,6 +22,7 @@
         <li><a href="ahead/">Shipped first</a></li>
         <li><a href="privacy/">Privacy</a></li>
         <li><a href="gaming/">Gaming</a></li>
+        <li><a href="anonymity/">Anonymity</a></li>
         <li><a href="factory/">Factory</a></li>
         <li><a href="brand/">Brand</a></li>
         <li><a href="changelog/">Changelog</a></li>
@@ -601,6 +602,12 @@
             <td><code>on</code></td>
           </tr>
           <tr>
+            <td><code>ujust set-anon-net</code></td>
+            <td><code>off</code></td>
+            <td>TCP timestamps disabled (clock-skew). Not host Tor.</td>
+            <td><code>on</code> (stock timestamps)</td>
+          </tr>
+          <tr>
             <td><code>ujust set-stock-nags</code></td>
             <td><code>off</code></td>
             <td>Mask stock deprecation / update-verify / flatpak-setup user units (can fight Flathub-off or tell you to rebase to them). Their Secure Boot key check stays.</td>
@@ -659,6 +666,8 @@ ujust set-connectivity-check on|off
 ujust set-dhcp-hostname on|off
 ujust set-thumbnails on|off
 ujust set-disk-traces on|off
+ujust set-anon-net on|off
+ujust set-anon-hostname on|off
 ujust set-stock-nags on|off
 ujust set-unwoke-theme apply
 ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
