@@ -360,7 +360,7 @@ def main() -> int:
     block = (
         section(
             "Still ahead of stock",
-            "ahead",
+            "still-ahead",
             "Open [FEAT] tickets on their GitHub. That means requested, not shipped. Defaults here until they close the ticket.",
             ahead,
             "None yet — we would have no open tickets left to beat them on.",

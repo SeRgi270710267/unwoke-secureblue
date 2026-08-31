@@ -246,7 +246,7 @@ pre code {
     grid-row: 2 / -2;
     background: var(--bg-nav);
     border-right: 1px solid var(--border);
-    z-index: 0;
+    z-index: 2;
   }
 
   #site-menu .nav-top {
@@ -256,6 +256,7 @@ pre code {
     overflow-x: auto;
     background: var(--bg-nav);
     border-bottom: 1px solid var(--border);
+    z-index: 4;
   }
 
   #site-menu .nav-top li:last-child {
@@ -275,7 +276,7 @@ pre code {
     overflow-y: auto;
     background: transparent;
     border-right: none;
-    z-index: 1;
+    z-index: 3;
     padding: 0.85rem 0 1.5rem;
   }
 
@@ -311,6 +312,7 @@ pre code {
     grid-row: 2;
     justify-self: center;
     width: 100%;
+    min-width: 0;
   }
 
   main {
@@ -318,6 +320,7 @@ pre code {
     grid-row: 2;
     justify-self: center;
     width: 100%;
+    min-width: 0;
   }
 
   body:has(> .hero) main {
@@ -1768,6 +1771,7 @@ body.page-ahead h1 {
   display: grid;
   gap: 0.9rem;
   margin: 0.5rem 0 2rem;
+  min-width: 0;
 }
 
 @media (min-width: 760px) {
@@ -1787,6 +1791,8 @@ body.page-ahead h1 {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .feat-card h3 {
@@ -1794,6 +1800,7 @@ body.page-ahead h1 {
   font-size: 1.05rem;
   letter-spacing: -0.02em;
   line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .feat-card p {
