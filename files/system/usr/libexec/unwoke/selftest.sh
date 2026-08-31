@@ -117,6 +117,8 @@ need=(
   /usr/libexec/unwoke/play-window.sh
   /usr/libexec/unwoke/play-steam.sh
   /usr/libexec/unwoke/install-steam.sh
+  /usr/libexec/unwoke/install-whonix.sh
+  /usr/libexec/unwoke/start-whonix.sh
 )
 for p in "${need[@]}"; do
   if [[ -x "${p}" || -f "${p}" ]]; then

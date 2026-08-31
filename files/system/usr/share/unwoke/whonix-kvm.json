@@ -1,0 +1,20 @@
+{
+  "UnwokeShippedFirst": "UNWOKE-SHIPPED-FIRST. MIT License. Copyright (c) 2026 SeRgi270710267. Not affiliated with Whonix or secureblue.",
+  "comment": "Official Whonix KVM pin. Bump version + archive_url together after a signed release. Do not bake qcow2.",
+  "version": "18.2.1.9",
+  "archive_url": "https://download.whonix.org/libvirt/18.2.1.9/Whonix-LXQt-18.2.1.9.Intel_AMD64.qcow2.libvirt.xz",
+  "sig_url": "https://download.whonix.org/libvirt/18.2.1.9/Whonix-LXQt-18.2.1.9.Intel_AMD64.qcow2.libvirt.xz.asc",
+  "key_url": "https://www.whonix.org/keys/derivative.asc",
+  "fingerprint": "916B8D99C38EAF5E8ADC7A2A8D66066A2EEACCDA",
+  "docs": "https://www.whonix.org/wiki/KVM",
+  "license": "https://www.whonix.org/wiki/License_Agreement",
+  "packages": [
+    "qemu-kvm",
+    "libvirt-daemon-kvm",
+    "libvirt-client",
+    "virt-manager",
+    "virt-viewer",
+    "edk2-ovmf",
+    "xz"
+  ]
+}

@@ -121,6 +121,12 @@ ujust set-allow-browsers on ALLOW</code></pre>
 <pre><code>ujust install-ivpn</code></pre>
     <p>Default: import their WireGuard file in Network Settings (filename ≤ 15 characters on GNOME). Keep system DNS; no Trivalent DoH. Official <code>ivpn</code> / <code>ivpn-ui</code> from their Fedora repo only if you accept an extra RPM origin. Snap is not used. Long form: <a href="tutorials/ivpn/">IVPN tutorial</a>.</p>
 
+    <h2 id="whonix"><a href="#whonix">How do I run Whonix?</a></h2>
+    <p>Official KVM, not VirtualBox. OpenPGP is required. Clipboard/USB/mic stay off:</p>
+<pre><code>ujust install-whonix
+ujust start-whonix</code></pre>
+    <p>Not Qubes. Not Tails. Host stays Unwoke. Long form: <a href="tutorials/whonix/">Whonix tutorial</a>.</p>
+
     <h2 id="disk-traces"><a href="#disk-traces">Where did last boot’s logs / hibernate go?</a></h2>
     <p>Default: journal stays in RAM only, hibernate-to-disk is denied, crash dumps are not saved, the file indexer is off. That cuts forensic leftovers. It is not Tails (your ostree is still on disk). Need <code>journalctl -b -1</code> or hibernate:</p>
 <pre><code>ujust set-disk-traces on</code></pre>

@@ -118,6 +118,16 @@
       ],
       "docs": "https://tailscale.com/kb/1049/fedora",
       "strictest": false
+    },
+    "whonix_kvm": {
+      "kind": "https-ok",
+      "title": "Whonix KVM (official wiki)",
+      "group": "whonix",
+      "tutorial": "whonix",
+      "keywords": "whonix;tor;kvm;anonymity",
+      "url": "https://www.whonix.org/wiki/KVM",
+      "docs": "https://www.whonix.org/wiki/KVM",
+      "strictest": true
     }
   }
 }

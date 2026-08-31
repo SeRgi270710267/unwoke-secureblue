@@ -36,6 +36,9 @@ HOSTS = frozenset(
         "pkgs.tailscale.com",
         "tailscale.com",
         "www.tailscale.com",
+        "whonix.org",
+        "www.whonix.org",
+        "download.whonix.org",
     }
 )
 KINDS = frozenset(

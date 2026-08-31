@@ -25,9 +25,10 @@ case "${1:-}" in
   --mullvad|mullvad) jump="mullvad" ;;
   --steam|steam) jump="steam" ;;
   --gaming|gaming|play) jump="gaming" ;;
+  --whonix|whonix) jump="whonix" ;;
   "" ) ;;
   *)
-    echo "usage: setup.sh [--broken|--stock|--hardware|--loosened|--proton|--ivpn|--mullvad|--vendors|--steam|--gaming]" >&2
+    echo "usage: setup.sh [--broken|--stock|--hardware|--loosened|--proton|--ivpn|--mullvad|--vendors|--steam|--gaming|--whonix]" >&2
     exit 2
     ;;
 esac
@@ -105,6 +106,7 @@ menu() {
   0) Mullvad VPN (WireGuard first)
   g) Steam (stock Flatpak; asks overlay locks)
   p) Gaming / play window (GameMode; restores locks after)
+  w) Whonix (official KVM; OpenPGP; not VirtualBox)
   i) Fingerprinting vs locks (read only — nothing unlocks)
   s) Show status
   t) Test everything Unwoke added (proof on this disk)
@@ -430,6 +432,7 @@ loop() {
     vendors) bash /usr/libexec/unwoke/install-vendor.sh ;;
     mullvad) bash /usr/libexec/unwoke/install-mullvad.sh ;;
     steam) bash /usr/libexec/unwoke/install-steam.sh ;;
+    whonix) bash /usr/libexec/unwoke/install-whonix.sh ;;
     gaming) jump="" ;;
   esac
   while true; do
@@ -452,6 +455,7 @@ loop() {
       9) bash /usr/libexec/unwoke/install-vendor.sh ;;
       0) bash /usr/libexec/unwoke/install-mullvad.sh ;;
       g|G) bash /usr/libexec/unwoke/install-steam.sh ;;
+      w|W) bash /usr/libexec/unwoke/install-whonix.sh ;;
       p|P)
         echo
         echo "Gaming tab. Play window uses GameMode. Close the game → ujust play stop."

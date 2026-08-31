@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>Whonix KVM | Tutorials | Unwoke SecureBlue</title>
+  <meta name="description" content="Official Whonix on Unwoke: KVM, OpenPGP, clipboard/USB/mic off. Gateway then Workstation. Not Qubes, not Tails, not VirtualBox.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+        <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="../index.html">Unwoke help (offline)</a></li>
+        <li><a href="https://sergi270710267.github.io/unwoke-secureblue/tutorials/">Online tutorials</a></li>
+      </ul>
+    </nav>
+
+  </header>
+  <main id="content">
+    <p class="eyebrow">Anonymity</p>
+    <h1>Whonix, already configured the hard way</h1>
+    <p><span class="chip">OpenPGP required</span> <span class="chip">KVM not VirtualBox</span> Official images. Their Gateway/Internal nets. Clipboard, USB passthrough, and mic <strong>off</strong> so the host cannot correlate you. Start order is Gateway, then Workstation. Not Qubes. Not Tails.</p>
+    <div class="alert tip">
+      <p><strong>Host stays Unwoke.</strong> Do not Tor the host. Do not enable a host VPN kill-switch while these VMs run. Do not log into the same accounts in Trivalent on the host. Work <em>inside</em> Workstation.</p>
+    </div>
+    <ol class="steps">
+      <li>
+        <h3>Install (asked)</h3>
+        <pre><code>ujust install-whonix</code></pre>
+        <p>Layers Fedora KVM if needed (reboot, run again). Downloads the pinned archive from <code>download.whonix.org</code>. Refuses if Patrick Schleizer’s fingerprint is not <code>916B8D99C38EAF5E8ADC7A2A8D66066A2EEACCDA</code>. Unpacks, imports <code>qemu:///session</code>, hardens XML.</p>
+      </li>
+      <li>
+        <h3>Start</h3>
+        <pre><code>ujust start-whonix</code></pre>
+        <p>Or the Whonix (Unwoke) icon. Refuses to start if Workstation grew extra NICs.</p>
+      </li>
+      <li>
+        <h3>Inside the Workstation</h3>
+        <p>Use Tor Browser there. Updates: Whonix’s own. Default user is passwordless per their docs — change that in the VMs.</p>
+      </li>
+    </ol>
+    <p>Highest anonymity on Unwoke is this. Highest anywhere is still <strong>Qubes-Whonix</strong> (different OS). Hotel PC / no disk trace is still <strong>Tails</strong>.</p>
+    <nav class="tutorial-nav">
+      <a href="../index.html">All tutorials</a>
+      <a href="https://sergi270710267.github.io/unwoke-secureblue/privacy/">Privacy</a>
+    </nav>
+  </main>
+  <footer>
+    <a class="brand" href="https://sergi270710267.github.io/unwoke-secureblue/"><img src="../assets/logo.svg" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <p>Not affiliated with Whonix, Qubes, Tails, or secureblue.</p>
+  </footer>
+</body>
+</html>

@@ -361,6 +361,32 @@ if [[ ! -f "${work}/usr/libexec/unwoke/install-steam.sh" ]]; then
   echo "FAIL: missing install-steam.sh" >&2
   fail=1
 fi
+if [[ ! -f "${work}/usr/libexec/unwoke/install-whonix.sh" ]]; then
+  echo "FAIL: missing install-whonix.sh" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/libexec/unwoke/start-whonix.sh" ]]; then
+  echo "FAIL: missing start-whonix.sh" >&2
+  fail=1
+fi
+if ! python3 - "${work}" <<'PY'
+import json, sys
+from pathlib import Path
+p = Path(sys.argv[1]) / "usr/share/unwoke/whonix-kvm.json"
+d = json.loads(p.read_text(encoding="utf-8"))
+fp = (d.get("fingerprint") or "").replace(" ", "")
+if fp != "916B8D99C38EAF5E8ADC7A2A8D66066A2EEACCDA":
+    print("FAIL: Whonix fingerprint pin drifted", fp, file=sys.stderr)
+    raise SystemExit(1)
+if "download.whonix.org" not in (d.get("archive_url") or ""):
+    print("FAIL: archive_url not download.whonix.org", file=sys.stderr)
+    raise SystemExit(1)
+print("whonix-kvm pin", d.get("version"))
+PY
+then
+  echo "FAIL: whonix-kvm.json pin" >&2
+  fail=1
+fi
 if [[ ! -f "${work}/usr/libexec/unwoke/play-window.sh" ]]; then
   echo "FAIL: missing play-window.sh" >&2
   fail=1

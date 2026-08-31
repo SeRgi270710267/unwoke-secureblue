@@ -30,6 +30,15 @@ play *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/play-window.sh "$@"
 
+# Official Whonix KVM (OpenPGP). Clipboard/USB/mic off. Not VirtualBox.
+install-whonix:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/install-whonix.sh
+
+start-whonix:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/start-whonix.sh
+
 # Steam (stock Flatpak or Distrobox). Asks overlay locks. Nothing silent.
 install-steam:
     #!/usr/bin/bash
