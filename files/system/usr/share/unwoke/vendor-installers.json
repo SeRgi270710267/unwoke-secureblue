@@ -104,6 +104,20 @@
       ],
       "docs": "https://www.ivpn.net/knowledgebase/linux/fedora-silverblue/",
       "strictest": false
+    },
+    "tailscale_repo": {
+      "kind": "yum-repo",
+      "title": "Tailscale official Fedora repo",
+      "group": "tailscale",
+      "tutorial": "vpn-dns",
+      "keywords": "tailscale;vpn;mesh",
+      "url": "https://pkgs.tailscale.com/stable/fedora/tailscale.repo",
+      "require_gpgcheck": true,
+      "packages": [
+        "tailscale"
+      ],
+      "docs": "https://tailscale.com/kb/1049/fedora",
+      "strictest": false
     }
   }
 }

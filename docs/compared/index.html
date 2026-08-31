@@ -511,7 +511,7 @@ RESULT: PASS</code></pre>
           </tr>
           <tr>
             <td>Stock <code>ujust install-steam</code> turns on unfiltered Flathub with no overlay questions; VPN helpers; Bazaar for the rest</td>
-            <td><code>ujust install-steam</code> asks Unwoke locks first (Flathub full, per-app Steam grants, optional tmp/mic/BT). <code>ujust install-proton</code> / Setup → Proton.me: Trivalent first, WireGuard for VPN, official RPM only after SHA512 and an asked userns toggle. No unverified Flathub. <code>ujust install-ivpn</code>: WireGuard first; official IVPN repo only if you need in-app AntiTracker. No Snap.</td>
+            <td><code>ujust install-steam</code> / <code>install-vpn</code> / <code>enable-dangerzone</code> / <code>distrobox-assemble</code> are intercepted so overlay locks are asked first. WireGuard first for VPNs. Tailscale yum-repo is watched. Catalog: <a href="tutorials/stock-installs/">Stock installers</a>.</td>
           </tr>
           <tr>
             <td>Private GHCR packages block anonymous rebase</td>

@@ -106,16 +106,9 @@ official_cli() {
 
 stock_helper() {
   echo
-  echo "=== Stock ujust install-vpn ==="
-  echo "Their wizard may offer IVPN among providers. You still confirm their prompts."
-  if ! ask "Run ujust install-vpn if it exists?" "n"; then
-    return 0
-  fi
-  if command -v ujust >/dev/null && ujust --summary 2>/dev/null | grep -qw install-vpn; then
-    ujust install-vpn || echo "stock install-vpn failed"
-  else
-    echo "No install-vpn on this image. Use WireGuard or official repo options."
-  fi
+  echo "=== Other VPN providers ==="
+  echo "Unwoke intercepts stock ujust install-vpn. Use that menu for Proton/Mullvad/Tailscale."
+  echo "Do not run the stock script; it skips overlay questions."
 }
 
 menu() {

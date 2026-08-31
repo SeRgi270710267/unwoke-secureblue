@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>Stock installers | Tutorials | Unwoke SecureBlue</title>
+  <meta name="description" content="Every stock ujust install-* is intercepted so Unwoke locks are asked first. Nothing silent.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+        <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="../index.html">Unwoke help (offline)</a></li>
+        <li><a href="https://sergi270710267.github.io/unwoke-secureblue/tutorials/">Online tutorials</a></li>
+      </ul>
+    </nav>
+
+  </header>
+  <main id="content">
+    <p class="eyebrow">Apps</p>
+    <h1>Stock installers, asked on Unwoke</h1>
+    <p><span class="chip">Asked, not silent</span> Same command names as stock. Their scripts would skip overlay locks (Flathub off, lockdown, toolbox stubs, temp noexec). We intercept them. Compose renames theirs to <code>NAME-stock</code>. Vendor yum-repos (Proton, IVPN, Mullvad, Tailscale) are watched and healed. Nothing auto-unlocks.</p>
+    <div class="alert tip">
+      <p><strong>Secure default.</strong> If you never install these, leave the locks. Typing the stock command still opens <em>our</em> wizard.</p>
+    </div>
+    <ol class="steps">
+      <li>
+        <h3>Steam</h3>
+        <pre><code>ujust install-steam</code></pre>
+        <p>Flatpak (unfiltered Flathub) or Distrobox steambox. Asks Flathub/lockdown/temp/mic/BT or toolbox+userns. <a href="../steam/index.html">Steam tutorial</a>.</p>
+      </li>
+      <li>
+        <h3>VPN</h3>
+        <pre><code>ujust install-vpn</code></pre>
+        <p>Does <strong>not</strong> run stock’s layerer (that can disable Unbound). Menu: Proton / IVPN / Mullvad (WireGuard first) or Tailscale (asked extra repo). Same as <code>ujust install-proton</code> and friends.</p>
+      </li>
+      <li>
+        <h3>Dangerzone</h3>
+        <pre><code>ujust enable-dangerzone</code></pre>
+        <p>Asks leftover container userns + ptrace, then stock’s helper. Podman is not stubbed.</p>
+      </li>
+      <li>
+        <h3>Distrobox / toolbox assemble</h3>
+        <pre><code>ujust set-toolbox on
+ujust distrobox-assemble</code></pre>
+        <p>Our <code>/usr/bin/distrobox</code> is a stub until the wrapper is on. Assemble asks that first, then leftover container userns.</p>
+      </li>
+      <li>
+        <h3>Unfiltered Flathub</h3>
+        <pre><code>ujust set-flathub full</code></pre>
+        <p>Stock <code>set-flathub-unfiltered on</code> is mapped onto that so the stamp survives reboot. Prefer verified unless you need Steam-class unverified apps.</p>
+      </li>
+    </ol>
+    <p>Not app installers (leave leftover stock): Secure Boot key, kargs, USBGuard, audit, cups, xwayland, ptrace, brew (our <code>ujust set-brew</code>), rebase-secureblue (that leaves Unwoke — do not run it).</p>
+    <nav class="tutorial-nav" aria-label="Adjacent tutorials">
+      <a href="../install-apps/index.html">Previous: Install an app</a>
+      <a href="../index.html">All tutorials</a>
+      <a href="../steam/index.html">Next: Steam</a>
+    </nav>
+  </main>
+  <footer>
+    <a class="brand" href="https://sergi270710267.github.io/unwoke-secureblue/"><img src="../assets/logo.svg" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="../index.html">Tutorials</a></li>
+      <li><a href="https://sergi270710267.github.io/unwoke-secureblue/faq/">FAQ</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

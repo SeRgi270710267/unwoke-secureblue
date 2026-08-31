@@ -33,6 +33,9 @@ HOSTS = frozenset(
         "mullvad.net",
         "www.mullvad.net",
         "repository.mullvad.net",
+        "pkgs.tailscale.com",
+        "tailscale.com",
+        "www.tailscale.com",
     }
 )
 KINDS = frozenset(

@@ -17,9 +17,7 @@
     "set-unconfined-userns",
     "set-ptrace",
     "set-anticheat-support",
-    "install-docker",
     "uninstall-docker",
-    "install-dangerzone",
     "harden-flatpak",
     "override-enable-module",
     "override-reset-module",
@@ -29,12 +27,9 @@
     "update-system",
     "set-bluetooth-modules",
     "set-webcam-modules",
-    "set-flathub-unfiltered",
-    "install-vpn",
     "rebase-secureblue",
     "create-admin",
-    "audit-secureblue",
-    "distrobox-assemble"
+    "audit-secureblue"
   ],
   "cmds": [
     {
@@ -54,9 +49,23 @@
     {
       "id": "vpn",
       "needles": ["ujust install-vpn"],
-      "code": "ujust install-proton\nujust install-ivpn\nujust install-mullvad\nujust install-vendor NAME",
-      "note": "WireGuard import first (no extra daemon). Official RPM/repo only after live SHA512 or <code>gpgcheck=1</code>, and only if you accept the extra origin. No Snap, no unverified Flathub.",
-      "more": ["tutorials/", "Tutorials"]
+      "code": "ujust install-vpn\n# or: ujust install-proton / install-ivpn / install-mullvad",
+      "note": "Stock <code>install-vpn</code> is intercepted. WireGuard first. Tailscale is an asked extra RPM origin. Their script is not run (it skipped overlay questions and could disable Unbound).",
+      "more": ["tutorials/stock-installs/", "Stock installers"]
+    },
+    {
+      "id": "dangerzone",
+      "needles": ["ujust enable-dangerzone", "How do I manage potentially dangerous"],
+      "code": "ujust enable-dangerzone",
+      "note": "Intercepted. Asks leftover container userns + ptrace first. Podman stays; toolbox wrappers are not required.",
+      "more": ["tutorials/stock-installs/", "Stock installers"]
+    },
+    {
+      "id": "assemble",
+      "needles": ["ujust distrobox-assemble", "distrobox-assemble"],
+      "code": "ujust set-toolbox on\nujust distrobox-assemble",
+      "note": "Our <code>toolbox</code>/<code>distrobox</code> binaries are stubs. The intercepted assemble asks <code>set-toolbox on</code> first, then stock’s leftover container-userns prompt.",
+      "more": ["tutorials/toolbox/", "toolbox tutorial"]
     },
     {
       "id": "rebase-stock",

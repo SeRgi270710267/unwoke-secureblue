@@ -349,6 +349,45 @@ if [[ ! -f "${work}/usr/libexec/unwoke/install-steam.sh" ]]; then
   echo "FAIL: missing install-steam.sh" >&2
   fail=1
 fi
+if [[ ! -f "${work}/usr/share/unwoke/stock-installs.json" ]]; then
+  echo "FAIL: missing stock-installs.json" >&2
+  fail=1
+fi
+if ! python3 - "${work}" <<'PY'
+import json, sys
+from pathlib import Path
+root = Path(sys.argv[1])
+p = root / "usr/share/unwoke/stock-installs.json"
+d = json.loads(p.read_text(encoding="utf-8"))
+rc = 0
+for name, spec in (d.get("recipes") or {}).items():
+    script = spec.get("script") or ""
+    if not script or not (root / "usr/libexec/unwoke" / script).is_file():
+        print(f"FAIL: stock-installs {name} missing script {script}", file=sys.stderr)
+        rc = 1
+print("stock-installs", len(d.get("recipes") or {}))
+raise SystemExit(rc)
+PY
+then
+  echo "FAIL: stock-installs.json scripts missing" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/libexec/unwoke/install-vpn.sh" ]]; then
+  echo "FAIL: missing install-vpn.sh" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/libexec/unwoke/install-dangerzone.sh" ]]; then
+  echo "FAIL: missing install-dangerzone.sh" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/libexec/unwoke/wrap-assemble.sh" ]]; then
+  echo "FAIL: missing wrap-assemble.sh" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/libexec/unwoke/wrap-flathub-unfiltered.sh" ]]; then
+  echo "FAIL: missing wrap-flathub-unfiltered.sh" >&2
+  fail=1
+fi
 if [[ ! -f "${work}/usr/libexec/unwoke/install-ivpn.sh" ]]; then
   echo "FAIL: missing install-ivpn.sh" >&2
   fail=1

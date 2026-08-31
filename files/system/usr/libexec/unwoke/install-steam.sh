@@ -51,8 +51,34 @@ echo "  - /tmp /dev/shm /var/tmp noexec (stock does not). Proton/Wine often exec
 echo "  - Camera/mic kernel lock → Steam Voice hardware."
 echo "  - Bluetooth service masked → wireless controllers."
 echo "Xwayland and 32-bit kargs are the same as stock (asked, not silent)."
+echo "Stock also offers Distrobox steambox (SteamVR). That needs toolbox wrappers on."
 echo "Nothing is flipped unless you say yes."
 echo
+echo "  1) Flatpak (unfiltered Flathub) — recommended"
+echo "  2) Distrobox steambox (bazzite-arch) — SteamVR"
+read -r -p "Selection [1]: " method || true
+method="${method:-1}"
+if [[ "${method}" == "2" ]]; then
+  if ! ask "Turn toolbox/distrobox wrappers on (required)?" "y"; then
+    echo "Aborted. Later: ujust set-toolbox on && ujust install-steam"
+    exit 0
+  fi
+  run_toggle toolbox on
+  if ask "Allow container-domain userns (stock leftover; Distrobox needs it)?" "y"; then
+    ujust set-container-userns on || true
+  fi
+  if ask "Enable Xwayland (Steam still wants it)?" "n"; then
+    ujust set-xwayland on || true
+  fi
+  echo "Creating steambox (stock image ghcr.io/ublue-os/steambox)."
+  distrobox-create --unshare-netns --nvidia --image ghcr.io/ublue-os/steambox --name steambox -Y || {
+    echo "distrobox-create failed. Is the wrapper on? ujust set-toolbox on"
+    exit 1
+  }
+  distrobox-enter -n steambox -- distrobox-export --app steam || true
+  echo "Anti-cheat: ujust set-anticheat-support (leftover stock)."
+  exit 0
+fi
 
 if ! ask "Enable unfiltered Flathub (full) so Steam can be installed? Required." "y"; then
   echo "Aborted. Steam is not on verified Flathub. Later: ujust set-flathub full && ujust install-steam"

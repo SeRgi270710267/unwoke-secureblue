@@ -1,0 +1,33 @@
+{
+  "UnwokeShippedFirst": "UNWOKE-SHIPPED-FIRST. MIT License. Copyright (c) 2026 SeRgi270710267. Not affiliated with secureblue.",
+  "comment": "Every stock app installer we intercept. Compose renames their just recipe to NAME-stock. New stock install-* = add a stanza + wrap. Vendor yum-repos are healed by vendor.py.",
+  "recipes": {
+    "install-steam": {
+      "script": "install-steam.sh",
+      "collides": ["flathub-off", "flatpak-lockdown", "flatpak-record", "ramdisk-noexec", "camera-mic", "bluetooth", "toolbox"],
+      "stock_leftover": ["xwayland", "ia32_emulation", "ptrace"]
+    },
+    "install-vpn": {
+      "script": "install-vpn.sh",
+      "collides": ["dns-unbound", "unconfined-userns"],
+      "dispatch": ["install-proton", "install-ivpn", "install-mullvad", "install-vendor tailscale_repo"]
+    },
+    "enable-dangerzone": {
+      "script": "install-dangerzone.sh",
+      "collides": ["container-userns", "ptrace"],
+      "vendor": "dangerzone_repo"
+    },
+    "distrobox-assemble": {
+      "script": "wrap-assemble.sh",
+      "collides": ["toolbox-wrapper", "container-userns"]
+    },
+    "toolbox-assemble": {
+      "script": "wrap-assemble.sh",
+      "collides": ["toolbox-wrapper", "container-userns"]
+    },
+    "set-flathub-unfiltered": {
+      "script": "wrap-flathub-unfiltered.sh",
+      "collides": ["flathub-off-stamp"]
+    }
+  }
+}

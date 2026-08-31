@@ -170,25 +170,43 @@ if command -v glib-compile-schemas >/dev/null && [[ -d /usr/share/glib-2.0/schem
   glib-compile-schemas /usr/share/glib-2.0/schemas || true
 fi
 
-# Stock `ujust install-steam` enables unfiltered Flathub with no overlay questions.
-# Rename their recipe so 60-custom.just `install-steam` is the only one (just forbids dupes).
+# Stock app recipes collide with overlay locks (or duplicate our names).
+# Rename theirs to NAME-stock so 60-custom.just is the only public name.
 python3 - <<'PY'
 from pathlib import Path
 import re
+renames = (
+    "install-steam",
+    "install-vpn",
+    "enable-dangerzone",
+    "distrobox-assemble",
+    "toolbox-assemble",
+    "set-flathub-unfiltered",
+    "set-brew",
+)
 root = Path("/usr/share/ublue-os/just")
 paths = []
 if root.is_dir():
     paths.extend(sorted(root.glob("*.just")))
+    paths.extend(sorted(root.rglob("*.just")))
 jf = Path("/usr/share/ublue-os/justfile")
 if jf.is_file():
     paths.append(jf)
-rx = re.compile(r"(?m)^install-steam(\b)")
+seen = set()
 for p in paths:
-    text = p.read_text(encoding="utf-8", errors="replace")
-    if not rx.search(text):
+    rp = str(p.resolve()) if p.exists() else str(p)
+    if rp in seen:
         continue
-    p.write_text(rx.sub(r"install-steam-stock\1", text, count=1), encoding="utf-8")
-    print(f"renamed stock install-steam -> install-steam-stock in {p}")
+    seen.add(rp)
+    if not p.is_file():
+        continue
+    text = p.read_text(encoding="utf-8", errors="replace")
+    orig = text
+    for name in renames:
+        text = re.sub(rf"(?m)^(@)?{re.escape(name)}\b", rf"\g<1>{name}-stock", text, count=1)
+    if text != orig:
+        p.write_text(text, encoding="utf-8")
+        print(f"renamed stock install recipes in {p}")
 PY
 
 # Stock `ujust harden-flatpak` execs this path. Overlay file must win over the RPM.

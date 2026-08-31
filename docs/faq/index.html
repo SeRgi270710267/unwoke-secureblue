@@ -120,6 +120,9 @@ ujust set-allow-browsers on ALLOW</code></pre>
 <pre><code>ujust install-ivpn</code></pre>
     <p>Default: import their WireGuard file in Network Settings (filename ≤ 15 characters on GNOME). Keep system DNS; no Trivalent DoH. Official <code>ivpn</code> / <code>ivpn-ui</code> from their Fedora repo only if you accept an extra RPM origin. Snap is not used. Long form: <a href="tutorials/ivpn/">IVPN tutorial</a>.</p>
 
+    <h2 id="stock-installs"><a href="#stock-installs">Do stock ujust install-* still work?</a></h2>
+    <p>The <strong>names</strong> work. The stock scripts are intercepted so overlay locks are asked first (Flathub off, lockdown, toolbox stubs, temp noexec). Catalog: <a href="tutorials/stock-installs/">Stock installers</a>. Vendor repos (Proton, IVPN, Mullvad, Tailscale) are watched and healed. Do not run <code>ujust rebase-secureblue</code> — that leaves Unwoke.</p>
+
     <h2 id="steam"><a href="#steam">How do I install Steam?</a></h2>
     <p>Same command as stock, but Unwoke extras that would break games are <strong>asked</strong> first (Flathub is off; Steam is not verified; lockdown, temp noexec, mic, Bluetooth). Nothing silent:</p>
 <pre><code>ujust install-steam</code></pre>

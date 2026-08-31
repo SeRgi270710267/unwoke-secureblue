@@ -361,7 +361,8 @@
       <li>DevTools locked by default on Origin and Trivalent. <code>ujust set-brave-devtools allow</code>.</li>
       <li>Privacy apply-boot: countme masked, no connectivity GET, DHCP anonymity (no hostname, iaid=mac, send-release, no LLMNR/mDNS), thumbnails off.</li>
       <li>Vendor installers (Proton, IVPN, Mullvad, …): JSON list, WireGuard/web first, hashed official RPM only if you insist. <code>ujust install-vendor NAME</code>.</li>
-      <li>Steam: stock Flatpak, but <code>ujust install-steam</code> asks overlay locks first (Flathub off, lockdown, temp noexec, mic, Bluetooth). Nothing silent.</li>
+      <li>Steam: stock Flatpak or Distrobox, but <code>ujust install-steam</code> asks overlay locks first. Nothing silent.</li>
+      <li>Every stock app installer is intercepted: <code>install-vpn</code>, <code>enable-dangerzone</code>, <code>distrobox-assemble</code>, <code>set-flathub-unfiltered</code>. Catalog: <a href="tutorials/stock-installs/">Stock installers</a>. Tailscale yum-repo is watched.</li>
       <li><code>ujust unwoke-test</code> plus <a href="tutorials/see-it/">see each lock yourself</a>. Stock <code>audit-secureblue</code> does not list overlay extras.</li>
       <li>Unwoke wallpaper, lock image, GTK <code>#3b6cff</code>, GNOME named <code>blue</code>, KDE accent, GDM wallpaper. See <a href="brand/">Brand</a>.</li>
       <li>This site. Daily mirror of <em>their</em> markdown under <code>/secureblue/</code> (Apache-2.0). Our FAQ/Features/Install/Brand are never overwritten.</li>
@@ -607,6 +608,8 @@
 <pre><code>ujust unwoke-status
 ujust audit-unwoke
 ujust install-steam
+ujust install-vpn
+ujust enable-dangerzone
 ujust set-flathub verified|full|off
 ujust set-flatpak-lockdown on|off
 ujust set-flatpak-record on|off

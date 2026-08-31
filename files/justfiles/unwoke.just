@@ -24,10 +24,37 @@ loosened:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/first-session.sh --force --loosened
 
-# Steam (stock Flatpak). Asks overlay locks that would break it. Nothing silent.
+# Steam (stock Flatpak or Distrobox). Asks overlay locks. Nothing silent.
 install-steam:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/install-steam.sh
+
+# Stock install-vpn (IVPN/Mullvad/Proton/Tailscale) — WireGuard first, asked extra origin.
+install-vpn:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/install-vpn.sh
+
+# Stock enable-dangerzone. Asks leftover userns/ptrace. Nothing silent.
+enable-dangerzone:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/install-dangerzone.sh
+
+# Stock assemble hits our toolbox stubs. Ask set-toolbox on first.
+[positional-arguments]
+distrobox-assemble *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/wrap-assemble.sh distrobox "$@"
+
+[positional-arguments]
+toolbox-assemble *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/wrap-assemble.sh toolbox "$@"
+
+# Stock unfiltered Flathub fights our stamp. Map onto set-flathub full|off.
+[positional-arguments]
+set-flathub-unfiltered *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/wrap-flathub-unfiltered.sh "$@"
 
 # Proton.me (Mail/Pass/VPN/…). Web first. Official RPM only after SHA512 + asked locks.
 install-proton:
