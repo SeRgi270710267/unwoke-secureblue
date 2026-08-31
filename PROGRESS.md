@@ -34,6 +34,7 @@
 - **Disk traces (forensics leftovers, not Tails):** default volatile journal, hibernate denied, coredumps none, Tracker/LocalSearch masked, GTK recent-files off. Revert: `ujust set-disk-traces on`. Does not make the ostree amnesic.
 - **Whonix:** `ujust install-whonix` — official KVM archive, OpenPGP fingerprint pinned (`916B8D99…2EEACCDA`), `qemu:///session`, XML clipboard/USB/mic off. `ujust start-whonix` Gateway then Workstation; refuse extra Workstation NICs. Not VirtualBox, not baked qcow2, not Qubes. Host stays clearnet.
 - **Anon host (no security cut):** TCP timestamps off by default (`ujust set-anon-net on` = stock timestamps). Optional local hostname `host` (`ujust set-anon-hostname on`). No host Tor, no UTC default, no kloak. Site: https://sergi270710267.github.io/unwoke-secureblue/anonymity/
+- **Usable, no silent unlock:** Unwoke setup is first on the GNOME dash. Whonix KVM layer writes `continue-whonix`; next login resumes the wizard.
 - **Pages:** Factory clock, Compared `#prove`, scorecard gaps filled, see-it tutorial. Site deploys on `main` push.
 
 ### Do not

@@ -3,4 +3,4 @@
 # UNWOKE-SHIPPED-FIRST
 # GNOME dash: stock Trivalent, no Bazaar/store.
 [org.gnome.shell]
-favorite-apps = ['trivalent.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Ptyxis.desktop', 'com.github.tchx84.Flatseal.desktop']
+favorite-apps = ['unwoke-setup.desktop', 'trivalent.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Ptyxis.desktop', 'com.github.tchx84.Flatseal.desktop']

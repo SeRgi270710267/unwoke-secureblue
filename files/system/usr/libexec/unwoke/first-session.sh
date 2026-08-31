@@ -27,8 +27,16 @@ for arg in "$@"; do
     --mullvad) jump+=(--mullvad) ;;
     --steam) jump+=(--steam) ;;
     --gaming|--play) jump+=(--gaming) ;;
+    --whonix) jump+=(--whonix) ;;
   esac
 done
+
+CONTINUE_WHONIX="${XDG_CONFIG_HOME:-$HOME/.config}/unwoke/continue-whonix"
+if [[ -f "${CONTINUE_WHONIX}" ]]; then
+  force=1
+  jump+=(--whonix)
+  notify "Finish Whonix" "KVM is layered. The wizard continues. Locks stay on."
+fi
 
 notify() {
   command -v notify-send >/dev/null || return 0

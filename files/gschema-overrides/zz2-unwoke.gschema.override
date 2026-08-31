@@ -3,4 +3,4 @@
 # UNWOKE-SHIPPED-FIRST
 # Override secureblue's GNOME favorites: Brave Origin instead of Trivalent. No store.
 [org.gnome.shell]
-favorite-apps = ['brave-origin.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Ptyxis.desktop', 'com.github.tchx84.Flatseal.desktop']
+favorite-apps = ['unwoke-setup.desktop', 'brave-origin.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Ptyxis.desktop', 'com.github.tchx84.Flatseal.desktop']

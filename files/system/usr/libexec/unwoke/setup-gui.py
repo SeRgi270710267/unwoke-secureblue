@@ -232,9 +232,12 @@ class SetupWindow(Gtk.Window):
             "mullvad": 9,
             "steam": 10,
             "gaming": 11,
+            "whonix": 0,
         }
         if jump in jump_map:
             nb.set_current_page(jump_map[jump])
+        if jump == "whonix":
+            GLib.idle_add(self.run_whonix)
 
     def _scroll(self, child: Gtk.Widget) -> Gtk.ScrolledWindow:
         s = Gtk.ScrolledWindow()
@@ -785,6 +788,23 @@ class SetupWindow(Gtk.Window):
                 return
         info(self, "No terminal", "Run: ujust install-steam")
 
+    def run_whonix(self) -> bool:
+        cmd = (
+            "bash /usr/libexec/unwoke/install-whonix.sh; echo; "
+            "read -r -p 'Enter to close... ' _ || true"
+        )
+        for term in (
+            ["ptyxis", "--", "bash", "-lc", cmd],
+            ["kgx", "-e", "bash", "-lc", cmd],
+            ["gnome-terminal", "--", "bash", "-lc", cmd],
+            ["konsole", "-e", "bash", "-lc", cmd],
+        ):
+            if subprocess.call(["bash", "-lc", f"command -v {term[0]}"], stdout=subprocess.DEVNULL) == 0:
+                subprocess.Popen(term)
+                return False
+        info(self, "No terminal", "Run: ujust install-whonix")
+        return False
+
     def _page_gaming(self) -> Gtk.Box:
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
         box.set_margin_start(16)
@@ -952,6 +972,7 @@ def main() -> int:
     p.add_argument("--mullvad", action="store_true")
     p.add_argument("--steam", action="store_true")
     p.add_argument("--gaming", action="store_true")
+    p.add_argument("--whonix", action="store_true")
     args = p.parse_args()
     jump = ""
     if args.broken:
@@ -976,6 +997,8 @@ def main() -> int:
         jump = "steam"
     elif args.gaming:
         jump = "gaming"
+    elif args.whonix:
+        jump = "whonix"
     if not os.environ.get("DISPLAY") and not os.environ.get("WAYLAND_DISPLAY"):
         return 2
     win = SetupWindow(jump)
