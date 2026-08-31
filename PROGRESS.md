@@ -49,6 +49,7 @@
 - Cosign “no signatures found” on pin: job-level rerun once if **only** that step failed.
 - Origin inspect sqlite: keep WARN; USB hook is the ISO fix.
 - Origin compose: Brave is **curl** of the Brave repo, not dnf5 (`rpm-files-only.sh`).
+- Inspect `missing ntsync modules-load`: compose already shipped `usr/lib/modules-load.d/unwoke-ntsync.conf`. Crane-export must include that prefix (and `usr/lib/sysctl.d`). Do not drop the file.
 
 **Pickup phrase:** continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.
 

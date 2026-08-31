@@ -56,7 +56,8 @@ trap 'rm -rf "${work}"' EXIT
 echo "inspect: export ${IMG}"
 crane export "${IMG}" - | python3 "${extract}" "${work}" "${work}/members.txt" \
   usr/share/unwoke usr/bin usr/lib64 usr/libexec opt usr/share/applications \
-  usr/lib/systemd etc/selinux usr/etc usr/share/glib-2.0/schemas \
+  usr/lib/systemd usr/lib/modules-load.d usr/lib/sysctl.d \
+  etc/selinux usr/etc usr/share/glib-2.0/schemas \
   usr/share/fish usr/share/gnome-background-properties \
   usr/share/wallpapers/UnwokeSecureBlue \
   usr/lib/sysimage/rpm usr/share/rpm var/lib/rpm
