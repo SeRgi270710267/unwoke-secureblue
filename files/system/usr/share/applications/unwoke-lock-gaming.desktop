@@ -1,0 +1,14 @@
+# Unwoke SecureBlue. Not affiliated with secureblue.
+# MIT License. Copyright (c) 2026 SeRgi270710267.
+# UNWOKE-SHIPPED-FIRST
+[Desktop Entry]
+Type=Application
+Name=Gaming / play window (Unwoke)
+GenericName=Gaming
+Comment=GameMode while you play. Locks restore when the game exits. No kernel swap.
+Exec=/usr/libexec/unwoke/first-session.sh --force --gaming
+Icon=/usr/share/pixmaps/unwoke-logo.svg
+Terminal=false
+Categories=Game;Settings;
+Keywords=game;gaming;steam;play;gamemode;cachyos;
+StartupNotify=true

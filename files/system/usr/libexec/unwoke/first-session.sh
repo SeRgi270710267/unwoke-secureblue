@@ -26,6 +26,7 @@ for arg in "$@"; do
     --vendors) jump+=(--vendors) ;;
     --mullvad) jump+=(--mullvad) ;;
     --steam) jump+=(--steam) ;;
+    --gaming|--play) jump+=(--gaming) ;;
   esac
 done
 

@@ -349,6 +349,18 @@ if [[ ! -f "${work}/usr/libexec/unwoke/install-steam.sh" ]]; then
   echo "FAIL: missing install-steam.sh" >&2
   fail=1
 fi
+if [[ ! -f "${work}/usr/libexec/unwoke/play-window.sh" ]]; then
+  echo "FAIL: missing play-window.sh" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/share/applications/unwoke-lock-gaming.desktop" ]]; then
+  echo "FAIL: missing Gaming tab launcher" >&2
+  fail=1
+fi
+if [[ ! -f "${work}/usr/share/unwoke/help/gaming/index.html" ]]; then
+  echo "FAIL: missing offline help for gaming" >&2
+  fail=1
+fi
 if [[ ! -f "${work}/usr/share/unwoke/stock-installs.json" ]]; then
   echo "FAIL: missing stock-installs.json" >&2
   fail=1

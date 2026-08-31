@@ -164,6 +164,11 @@ RESULT: PASS</code></pre>
         <p>Fedora extra roots blocklisted. Some gov/old CAs fail. <code>ujust set-extra-cas on</code></p>
       </article>
       <article class="win-card">
+        <p class="tag">Games</p>
+        <h3>Play window</h3>
+        <p>GameMode (optional sched-ext) only while the game runs. Stock leaves Xwayland/ptrace on. <code>ujust play steam</code></p>
+      </article>
+      <article class="win-card">
         <p class="tag">Memory</p>
         <h3>noexec RAM disk</h3>
         <p><code>/dev/shm</code>, <code>/tmp</code>, and <code>/var/tmp</code> cannot run payloads. <code>ujust set-ramdisk-exec on</code></p>
@@ -511,7 +516,7 @@ RESULT: PASS</code></pre>
           </tr>
           <tr>
             <td>Stock <code>ujust install-steam</code> turns on unfiltered Flathub with no overlay questions; VPN helpers; Bazaar for the rest</td>
-            <td><code>ujust install-steam</code> / <code>install-vpn</code> / <code>enable-dangerzone</code> / <code>distrobox-assemble</code> are intercepted so overlay locks are asked first. WireGuard first for VPNs. Tailscale yum-repo is watched. Catalog: <a href="tutorials/stock-installs/">Stock installers</a>.</td>
+            <td><code>ujust install-steam</code> / <code>install-vpn</code> / <code>enable-dangerzone</code> / <code>distrobox-assemble</code> are intercepted so overlay locks are asked first. Play window: <code>ujust play steam</code> uses GameMode only while the game runs, then restores (stock leaves Xwayland/ptrace on). Catalog: <a href="tutorials/stock-installs/">Stock installers</a> · <a href="tutorials/gaming/">Play window</a>.</td>
           </tr>
           <tr>
             <td>Private GHCR packages block anonymous rebase</td>

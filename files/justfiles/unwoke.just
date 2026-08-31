@@ -24,6 +24,12 @@ loosened:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/first-session.sh --force --loosened
 
+# Play window: GameMode (+ optional sched-ext) while a game runs. Restores locks after.
+[positional-arguments]
+play *args:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/play-window.sh "$@"
+
 # Steam (stock Flatpak or Distrobox). Asks overlay locks. Nothing silent.
 install-steam:
     #!/usr/bin/bash

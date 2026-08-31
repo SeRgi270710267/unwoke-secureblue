@@ -26,6 +26,8 @@ modules:
         - dialog
         # ISO hook sqlite3 .recover for Origin's malformed RPM sqlite.
         - sqlite
+        # Play window: Feral GameMode (governor/GPU while a game runs, restores after).
+        - gamemode
 
   # Drop Bazaar and any GUI software store. Flavor files drop Trivalent if needed.
   - type: script

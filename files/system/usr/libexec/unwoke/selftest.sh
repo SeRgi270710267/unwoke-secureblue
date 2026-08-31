@@ -114,6 +114,8 @@ need=(
   /usr/libexec/unwoke/selftest.sh
   /usr/libexec/unwoke/nts.sh
   /usr/libexec/unwoke/usbguard-prompt.sh
+  /usr/libexec/unwoke/play-window.sh
+  /usr/libexec/unwoke/install-steam.sh
 )
 for p in "${need[@]}"; do
   if [[ -x "${p}" || -f "${p}" ]]; then
@@ -334,6 +336,34 @@ if [[ -f /etc/NetworkManager/conf.d/90-unwoke-connectivity.conf ]]; then
 elif [[ ! -f /etc/unwoke/allow-connectivity ]]; then
   loose "connectivity drop-in not in /etc yet (apply-boot on next boot writes it)"
   proof "source /usr/share/unwoke/nm-privacy-connectivity.conf"
+fi
+
+section "Play window"
+if [[ -f /etc/unwoke/play-window.active ]]; then
+  if pgrep -x steam >/dev/null 2>&1 || pgrep -f 'com.valvesoftware.Steam' >/dev/null 2>&1; then
+    loose "play window live — restore with ujust play stop when the game exits"
+    proof "/etc/unwoke/play-window.active"
+  else
+    fail "play window stamp leftover with no game (fail-closed; first-boot should restore)"
+    proof "/etc/unwoke/play-window.active"
+  fi
+else
+  pass "no play window (full overlay locks)"
+  proof "no /etc/unwoke/play-window.active"
+fi
+if command -v gamemoderun >/dev/null; then
+  pass "GameMode (gamemoderun) on PATH"
+  proof "$(command -v gamemoderun)"
+else
+  fail "gamemoderun missing (overlay should ship Fedora gamemode)"
+  proof "command -v gamemoderun"
+fi
+if [[ -f /etc/unwoke/play-scx.on ]]; then
+  loose "sched-ext allowed during play windows"
+  proof "/etc/unwoke/play-scx.on"
+else
+  pass "sched-ext during play off (default — no extra BPF scheduler)"
+  proof "no /etc/unwoke/play-scx.on"
 fi
 
 section "Memory / boot / CAs / nags"

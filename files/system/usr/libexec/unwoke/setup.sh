@@ -24,9 +24,10 @@ case "${1:-}" in
   --vendors|vendors) jump="vendors" ;;
   --mullvad|mullvad) jump="mullvad" ;;
   --steam|steam) jump="steam" ;;
+  --gaming|gaming|play) jump="gaming" ;;
   "" ) ;;
   *)
-    echo "usage: setup.sh [--broken|--stock|--hardware|--loosened|--proton|--ivpn|--mullvad|--vendors|--steam]" >&2
+    echo "usage: setup.sh [--broken|--stock|--hardware|--loosened|--proton|--ivpn|--mullvad|--vendors|--steam|--gaming]" >&2
     exit 2
     ;;
 esac
@@ -103,6 +104,7 @@ menu() {
   9) All strict apps (every vendor in the watched list)
   0) Mullvad VPN (WireGuard first)
   g) Steam (stock Flatpak; asks overlay locks)
+  p) Gaming / play window (GameMode; restores locks after)
   i) Fingerprinting vs locks (read only — nothing unlocks)
   s) Show status
   t) Test everything Unwoke added (proof on this disk)
@@ -427,6 +429,7 @@ loop() {
     vendors) bash /usr/libexec/unwoke/install-vendor.sh ;;
     mullvad) bash /usr/libexec/unwoke/install-mullvad.sh ;;
     steam) bash /usr/libexec/unwoke/install-steam.sh ;;
+    gaming) jump="" ;;
   esac
   while true; do
     menu
@@ -448,6 +451,20 @@ loop() {
       9) bash /usr/libexec/unwoke/install-vendor.sh ;;
       0) bash /usr/libexec/unwoke/install-mullvad.sh ;;
       g|G) bash /usr/libexec/unwoke/install-steam.sh ;;
+      p|P)
+        echo
+        echo "Gaming tab. Play window uses GameMode. Close the game → ujust play stop."
+        echo "  1) status   2) start Steam in play window   3) stop   4) allow sched-ext   5) install Steam"
+        read -r -p "Choice: " gans || true
+        case "${gans}" in
+          1) bash /usr/libexec/unwoke/play-window.sh status ;;
+          2) bash /usr/libexec/unwoke/play-window.sh steam ;;
+          3) bash /usr/libexec/unwoke/play-window.sh stop ;;
+          4) bash /usr/libexec/unwoke/play-window.sh scx on ;;
+          5) bash /usr/libexec/unwoke/install-steam.sh ;;
+          *) bash /usr/libexec/unwoke/play-window.sh status ;;
+        esac
+        ;;
       i|I)
         echo "Security first. Extra browser packs make you rarer than stock Trivalent."
         echo "Phone-home off (countme, hostname) does not fingerprint websites. Leave those off."

@@ -33,7 +33,8 @@ grant_steam() {
     --allow=multiarch \
     --filesystem=home --filesystem=xdg-download \
     --filesystem=/run/media --filesystem=/var/mnt \
-    --filesystem=xdg-run/pipewire-0 || true
+    --filesystem=xdg-run/pipewire-0 \
+    --talk-name=com.feralinteractive.GameMode || true
   echo "Per-app grants on ${APP_ID} (user override). Other Flatpaks keep overlay lockdown."
 }
 
@@ -144,6 +145,7 @@ echo "  ujust set-flatpak-record on"
 echo "  ujust set-ramdisk-exec off"
 echo "  ujust set-camera-mic off"
 echo "  ujust set-bluetooth off"
+echo "Play window (GameMode, restores locks when Steam exits): ujust play steam"
 echo "Tutorial: ujust setup, or https://sergi270710267.github.io/unwoke-secureblue/tutorials/steam/"
 if [[ -x /usr/libexec/unwoke/open-tutorial.sh ]]; then
   bash /usr/libexec/unwoke/open-tutorial.sh steam || true

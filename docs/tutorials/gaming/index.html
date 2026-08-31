@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a16">
+  <meta name="color-scheme" content="dark">
+  <title>Gaming / play window | Tutorials | Unwoke SecureBlue</title>
+  <meta name="description" content="Play with GameMode like CachyOS for the session. Close the game, full Unwoke locks return. No kernel swap.">
+  <base href="/unwoke-secureblue/">
+  <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
+  <link rel="stylesheet" href="css/main.css?v=13">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <nav id="site-menu" aria-label="Primary">
+      <ul>
+        <li><a href="./"><img src="assets/logo.svg?v=4" alt="">Unwoke SecureBlue</a></li>
+        <li><a href="features/">Features</a></li>
+        <li><a href="compared/">Compared</a></li>
+        <li><a href="ahead/">Shipped first</a></li>
+        <li><a href="privacy/">Privacy</a></li>
+        <li><a href="factory/">Factory</a></li>
+        <li><a href="brand/">Brand</a></li>
+        <li><a href="changelog/">Changelog</a></li>
+        <li><a href="images/">Images</a></li>
+        <li><a href="install/">Install</a></li>
+        <li><a href="start/">After login</a></li>
+        <li><a href="post-install/">Post-install</a></li>
+        <li aria-current="page"><a href="tutorials/">Tutorials</a></li>
+        <li><a href="faq/">FAQ</a></li>
+        <li><a href="stock-issues/">Workarounds</a></li>
+        <li><a href="contributing/">Contributing</a></li>
+        <li><a href="conduct/">Conduct</a></li>
+        <li><a href="donate/">Donate</a></li>
+        <li><a href="secureblue/">Their docs</a></li>
+        <li><a href="https://github.com/SeRgi270710267/unwoke-secureblue">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main id="content">
+    <p class="eyebrow">Games</p>
+    <h1>Play window: CachyOS for the match, Unwoke after</h1>
+    <p><span class="chip">Restores</span> Stock <code>ujust install-steam</code> turns on Xwayland or ptrace and <strong>leaves them on</strong>. Unwoke asks those once, then a <strong>play window</strong> uses Feral GameMode (and optional sched-ext) only while the game runs. Close Steam → full overlay locks. Crash or reboot: first-boot wipes the play stamp. <code>ujust unwoke-test</code> FAILs if that stamp is leftover with no game.</p>
+    <div class="alert tip">
+      <p><strong>What we will not do.</strong> We do not swap in the CachyOS kernel. That would leave the signed secureblue ostree. SMT and CPU mitigations stay. That is the Spectre story stock already chose.</p>
+    </div>
+    <ol class="steps">
+      <li>
+        <h3>Install Steam (asks locks)</h3>
+        <pre><code>ujust install-steam</code></pre>
+        <p>Same as <a href="tutorials/steam/">Steam</a>. Per-app GameMode D-Bus is granted. Global lockdown stays on other Flatpaks.</p>
+      </li>
+      <li>
+        <h3>Start a play window</h3>
+        <pre><code>ujust play steam</code></pre>
+        <p>Or Setup → Gaming. Host GameMode switches CPU/GPU governors. When Steam exits, a watcher runs <code>ujust play stop</code>. Manual: <code>ujust play stop</code>.</p>
+      </li>
+      <li>
+        <h3>Optional: sched-ext (closest CachyOS switch)</h3>
+        <pre><code>ujust play scx on</code></pre>
+        <p>Fedora’s kernel already has sched-ext. This loads <code>scx_lavd</code> gaming mode <em>for the session</em>. Stop unloads it; CFS/EEVDF returns. Not baked (extra packages). Default off. BPF in kernel only while you play.</p>
+      </li>
+      <li>
+        <h3>Prove you are locked again</h3>
+        <pre><code>ujust play stop
+ujust unwoke-test</code></pre>
+        <p>Healthy: <code>PASS  no play window (full overlay locks)</code> and RAM disks still <code>noexec</code> unless you stamped the Steam loosen.</p>
+      </li>
+    </ol>
+    <p>Vs stock: they have no restore-on-exit. Vs CachyOS: they rebuild the kernel and userspace; we keep the signed image and borrow GameMode + optional sched-ext.</p>
+    <nav class="tutorial-nav" aria-label="Adjacent tutorials">
+      <a href="tutorials/steam/">Previous: Steam</a>
+      <a href="tutorials/">All tutorials</a>
+      <a href="tutorials/stock-installs/">Next: Stock installers</a>
+    </nav>
+  </main>
+  <footer>
+    <a class="brand" href="./"><img src="assets/logo.svg?v=4" width="128" height="128" alt=""><span class="accent">Unwoke</span> <span class="sb">SecureBlue</span></a>
+    <ul id="social">
+      <li><a href="tutorials/">Tutorials</a></li>
+      <li><a href="compared/">Compared</a></li>
+      <li><a href="faq/">FAQ</a></li>
+    </ul>
+    <p>Not affiliated with secureblue.</p>
+  </footer>
+</body>
+</html>

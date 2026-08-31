@@ -218,6 +218,7 @@ class SetupWindow(Gtk.Window):
         nb.append_page(self._scroll(self._page_vendors()), Gtk.Label(label="Strict apps"))
         nb.append_page(self._scroll(self._page_mullvad()), Gtk.Label(label="Mullvad"))
         nb.append_page(self._scroll(self._page_steam()), Gtk.Label(label="Steam"))
+        nb.append_page(self._scroll(self._page_gaming()), Gtk.Label(label="Gaming"))
 
         jump_map = {
             "broken": 2,
@@ -230,6 +231,7 @@ class SetupWindow(Gtk.Window):
             "vendors": 8,
             "mullvad": 9,
             "steam": 10,
+            "gaming": 11,
         }
         if jump in jump_map:
             nb.set_current_page(jump_map[jump])
@@ -783,6 +785,80 @@ class SetupWindow(Gtk.Window):
                 return
         info(self, "No terminal", "Run: ujust install-steam")
 
+    def _page_gaming(self) -> Gtk.Box:
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        box.set_margin_start(16)
+        box.set_margin_end(16)
+        box.set_margin_top(12)
+        box.pack_start(
+            Gtk.Label(
+                label="Better than stock for games: their install-steam leaves Xwayland/ptrace on forever. Our play window uses GameMode (and optional sched-ext) only while the game runs, then restores. We do not swap the signed kernel (that would be CachyOS). Close the game → full locks.",
+                xalign=0,
+                wrap=True,
+            ),
+            False,
+            False,
+            8,
+        )
+        box.pack_start(
+            row("Play window status", "ujust play status", lambda: self.run_play("status"), "gaming"),
+            False,
+            False,
+            0,
+        )
+        box.pack_start(
+            row(
+                "Start Steam in a play window",
+                "GameMode on. sched-ext only if you allowed it. Watcher restores when Steam exits.",
+                lambda: self.run_play("steam"),
+                "gaming",
+            ),
+            False,
+            False,
+            0,
+        )
+        box.pack_start(
+            row("End play window now", "Unload sched-ext. Overlay locks back.", lambda: self.run_play("stop"), "gaming"),
+            False,
+            False,
+            0,
+        )
+        box.pack_start(
+            row(
+                "Allow sched-ext during play (asked)",
+                "Closest CachyOS switch without their kernel. Needs scxctl. Default off.",
+                lambda: self.run_play("scx", "on"),
+                "gaming",
+            ),
+            False,
+            False,
+            0,
+        )
+        box.pack_start(
+            row("Install Steam (asks overlay locks)", "Required before a play window can launch it.", self.run_steam, "steam"),
+            False,
+            False,
+            0,
+        )
+        return box
+
+    def run_play(self, *args: str) -> None:
+        joined = " ".join(args)
+        cmd = (
+            f"bash /usr/libexec/unwoke/play-window.sh {joined}; echo; "
+            "read -r -p 'Enter to close... ' _ || true"
+        )
+        for term in (
+            ["ptyxis", "--", "bash", "-lc", cmd],
+            ["kgx", "-e", "bash", "-lc", cmd],
+            ["gnome-terminal", "--", "bash", "-lc", cmd],
+            ["konsole", "-e", "bash", "-lc", cmd],
+        ):
+            if subprocess.call(["bash", "-lc", f"command -v {term[0]}"], stdout=subprocess.DEVNULL) == 0:
+                subprocess.Popen(term)
+                return
+        info(self, "No terminal", f"Run: ujust play {joined}")
+
     def run_stock(self, recipe: str) -> None:
         cmd = f"ujust {recipe}; echo; read -r -p 'Enter to close... ' _ || true"
         if not confirm(self, "Run stock command?", f"ujust {recipe}\nOverlay locks are unchanged."):
@@ -875,6 +951,7 @@ def main() -> int:
     p.add_argument("--vendors", action="store_true")
     p.add_argument("--mullvad", action="store_true")
     p.add_argument("--steam", action="store_true")
+    p.add_argument("--gaming", action="store_true")
     args = p.parse_args()
     jump = ""
     if args.broken:
@@ -897,6 +974,8 @@ def main() -> int:
         jump = "mullvad"
     elif args.steam:
         jump = "steam"
+    elif args.gaming:
+        jump = "gaming"
     if not os.environ.get("DISPLAY") and not os.environ.get("WAYLAND_DISPLAY"):
         return 2
     win = SetupWindow(jump)

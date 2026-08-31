@@ -401,6 +401,7 @@ for d in j.get("deployments") or []:
   echo "  ujust set-flatpak-record on|off"
   echo "  ujust set-network-fs on|off"
   echo "  ujust set-ramdisk-exec on|off"
+  echo "  ujust play start|steam|stop|status"
   echo "  ujust set-cet on|off"
   echo "  ujust set-boot-perm on|off"
   echo "  ujust set-extra-cas on|off"
@@ -793,6 +794,9 @@ cmd_apply_boot() {
   if [[ -x /usr/libexec/unwoke/ramdisk.sh ]]; then
     /usr/libexec/unwoke/ramdisk.sh apply-boot || true
   fi
+  if [[ -x /usr/libexec/unwoke/play-window.sh ]]; then
+    /usr/libexec/unwoke/play-window.sh restore-boot || true
+  fi
   if [[ -x /usr/libexec/unwoke/cet.sh ]]; then
     /usr/libexec/unwoke/cet.sh apply-boot || true
   fi
@@ -873,6 +877,7 @@ case "${main}" in
   toolbox) exec /usr/libexec/unwoke/toolbox.sh "${1:-status}" ;;
   extra-daemons) exec /usr/libexec/unwoke/extra-daemons.sh "${1:-status}" ;;
   ramdisk-exec) exec /usr/libexec/unwoke/ramdisk.sh "${1:-status}" ;;
+  play) exec /usr/libexec/unwoke/play-window.sh "${1:-status}" "${2:-}" ;;
   cet) exec /usr/libexec/unwoke/cet.sh "${1:-status}" ;;
   boot-perm) exec /usr/libexec/unwoke/boot-perm.sh "${1:-status}" ;;
   extra-cas) exec /usr/libexec/unwoke/ca-trim.sh "${1:-status}" ;;
