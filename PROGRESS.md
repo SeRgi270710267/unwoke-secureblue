@@ -12,7 +12,7 @@
 - Workarounds: https://sergi270710267.github.io/unwoke-secureblue/stock-issues/
 - Fingerprint tutorial: https://sergi270710267.github.io/unwoke-secureblue/tutorials/fingerprint/
 - Changelog: https://sergi270710267.github.io/unwoke-secureblue/changelog/ (generated; gitignored)
-- **Handoff commit:** `/var/tmp` noexec (same revert as RAM disks) **plus this PROGRESS.md save**. After push, `git log -1` is the pickup HEAD.
+- **Handoff commit:** this PROGRESS.md save. After push, `git log -1` is the pickup HEAD (`a228a94` was the last product commit before this file).
 - **GitHub ruleset:** only **`main-strict`**, Active, target `refs/heads/main`. Requires PR + 1 approval + Code Owners + status **`Strict PR gate`** (GitHub Actions). Block force-push + deletion. **Repository admin bypass** so the owner (and this agent) can still `git push` to `main`. No `protect-main`. No auto-merge. Grok cannot merge.
 
 **How to resume:** clone the repo (or open it), say you are continuing Unwoke SecureBlue from `PROGRESS.md`. Do not rebuild images for docs-only work. Do not docker-pull Atomic images (layer depth). Do not auto-accept a new `cosign.pub` or auto-exec live `/usr/libexec/secureblue/*.py`. Do not sit on 35-minute ISO jobs in chat (`iso-alarm` + `receipt` are the signal).
@@ -38,6 +38,9 @@
 - **Usable, no silent unlock:** Unwoke setup first on GNOME dash and Kinoite Kickoff. Any rpm-ostree layer writes `~/.config/unwoke/continue`; next login resumes. Signed image: auto-reboot **once** only if no user session; otherwise nag.
 - **Anaconda live ISO:** dark Adwaita + navy/accent + logo via `anaconda-brand.sh` in `prep_rootfs.sh` after `anaconda-live`. Grid name: Install Unwoke SecureBlue (stock NoDisplay). USBGuard asked in Setup (default No); boot no longer blocks GDM on tty1. Setup Start has Steam/Gaming/Whonix. Compared: first-day vs stock.
 - **Pages:** Factory clock, Compared `#prove`, scorecard gaps filled, see-it tutorial. Site deploys on `main` push.
+- **Factory GitHub map (Pages):** `docs/factory/#github` names every workflow (`bluebuild`, `iso`, `pages`, `verify`, `vendor-watch`, `pr-gate`), Dependabot (no auto-merge), `CODEOWNERS`, ruleset `main-strict`, `receipt`, GHCR. All ten alarm labels including `mirror-cmds` and `stock-feats`.
+- **Recommended USB after overlay:** `iso.yml` `workflow_run` after a green non-PR `bluebuild` wraps only `unwoke-silverblue-trivalent` + `unwoke-kinoite-trivalent`. Still `cosign verify` our `:latest`. Same titanoboa pin. Auto baker queues (`iso-baker`); a human dispatch is its own lane. Sunday 10:00 UTC still all 12. `iso-alarm` still closes only on weekly all-12. Do not add `on: push`. This docs-only push does **not** bake overlay (`iso.yml` + `docs/**` are paths-ignore).
+- **Desktop site menu (`a228a94`, CSS `?v=23`):** top bar = Home, Features, Compared, Privacy, Gaming, Anonymity, Install, After login, Tutorials, FAQ, GitHub (GitHub in the row, not alone on the right). Left rail grouped: Factory (Factory, Shipped first, Changelog, Images) / On the disk (Post-install, Workarounds, Brand) / Project (Contributing, Conduct, Donate, Their docs). Phones still wrap one bar. Wide Features table and Shipped first cards must not shove the rail (`overflow-x` contained; heading ids must not match folder names — `still-ahead`, not `id="ahead"`). Pages `generate-stock-feats.py` must keep `still-ahead` or Shipped first breaks again.
 
 ### Do not
 
@@ -278,8 +281,8 @@ Image-side theme, privacy.sh, Setup fingerprint button, rpmdb restore, and sqlit
 ## Tomorrow / next chat
 
 - Pickup: *continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.* Other PC: `git clone https://github.com/SeRgi270710267/unwoke-secureblue.git` then `git pull`. Phrase: continuing Unwoke SecureBlue from `PROGRESS.md`.
-- Close-chat HEAD after this file is pushed: `git log -1 --oneline`. Product overlay in GHCR `:latest` is bake `852fabe` / [33385762755](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33385762755).
-- USB: after each green non-PR overlay, wrap the two recommended Trivalent sticks (`iso.yml` `workflow_run`). Sunday 10:00 UTC still all 12. Origin USB class of bug is closed (stub rpmdb). Recommended stick: `unwoke-silverblue-trivalent`. Not Ventoy. Enroll **their** Secure Boot key. Do not sit on 35-minute ISO jobs in chat.
+- Close-chat HEAD after this file is pushed: `git log -1 --oneline`. Product overlay in GHCR `:latest` is still bake `852fabe` / [33385762755](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/33385762755) (this save is docs/PROGRESS only; no overlay bake). Site menu + Factory GitHub map + recommended-two USB wrap are on `main`.
+- USB: after each green non-PR overlay, wrap the two recommended Trivalent sticks (`iso.yml` `workflow_run`). Sunday 10:00 UTC still all 12. Origin USB class of bug is closed (stub rpmdb). Recommended stick: `unwoke-silverblue-trivalent`. Not Ventoy. Enroll **their** Secure Boot key. Do not sit on 35-minute ISO jobs in chat. If the user wants a fresh USB before the next overlay, dispatch those two images — do not fire all-12.
 - Public mark is automatic (`mark-check.py --apply` at compose). Do not put `UNWOKE-SHIPPED-FIRST` into live Chromium/Brave/Trivalent `policies/managed`. Do not weaken privacy/security for credit. Do not stamp `.rpmdb-pre-flavor.sqlite`.
 - Confirm on a real USB/rebase **after this overlay bake is green and rebooted:** `ujust unwoke-test` (FAIL-closed on noexec including `/var/tmp`, and CAs), `ujust setup`, `ujust why`. See-it: https://sergi270710267.github.io/unwoke-secureblue/tutorials/see-it/  Shipped first: https://sergi270710267.github.io/unwoke-secureblue/ahead/
 - Remaining overlay-sized table (needs an explicit decision, do not silent-ship): native PipeWire record (do not kill speakers), `hidepid=` (do not fight stock kargs), Thunderbolt/DMA (never silent-enable), silent vendor-RPM userns (keep asking).
