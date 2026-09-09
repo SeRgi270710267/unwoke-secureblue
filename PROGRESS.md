@@ -12,20 +12,31 @@
 - Workarounds: https://sergi270710267.github.io/unwoke-secureblue/stock-issues/
 - Fingerprint tutorial: https://sergi270710267.github.io/unwoke-secureblue/tutorials/fingerprint/
 - Changelog: https://sergi270710267.github.io/unwoke-secureblue/changelog/ (generated; gitignored)
-- **Handoff commit:** this PROGRESS.md save. After push, `git log -1` is the pickup HEAD (`a228a94` was the last product commit before this file).
-- **GitHub ruleset:** only **`main-strict`**, Active, target `refs/heads/main`. Requires PR + 1 approval + Code Owners + status **`Strict PR gate`** (GitHub Actions). Block force-push + deletion. **Repository admin bypass** so the owner (and this agent) can still `git push` to `main`. Factory bot commits also need **GitHub Actions (app 15368)** on that bypass list. No `protect-main`. No auto-merge. Grok cannot merge.
+- **Handoff commit:** this PROGRESS.md save. After push, `git log -1` is the pickup HEAD (`b77ee03` was the last product commit before this file).
+- **GitHub ruleset:** only **`main-strict`**, Active, target `refs/heads/main`. Requires PR + 1 approval + Code Owners + status **`Strict PR gate`**. Block force-push + deletion. **Repository admin bypass** so the owner (and this agent) can still `git push` to `main`. The built-in GitHub Actions runner **does not appear** in the bypass search on this personal repo (only **Dependabot · apps · github** showed — do **not** add it). No `protect-main`. No auto-merge. Grok cannot merge.
 
 **How to resume:** clone the repo (or open it), say you are continuing Unwoke SecureBlue from `PROGRESS.md`. Do not rebuild images for docs-only work. Do not docker-pull Atomic images (layer depth). Do not auto-accept a new `cosign.pub` or auto-exec live `/usr/libexec/secureblue/*.py`. Do not sit on 35-minute ISO jobs in chat (`iso-alarm` + `receipt` are the signal).
 
-## Retake pickup (2026-09-09)
+## Close-chat pickup (2026-09-09)
 
-Left the factory alone after `d27c188`. Overlay, USB wrap, Pages, and verify kept running. **Vendor-watch was red every schedule from 2026-08-31 (run 5) through 2026-09-08 (run 22).**
+**GitHub `main` is the source of truth.** Other PC: `git pull origin main`. Phrase: *continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.*
 
-**What actually broke:** installer contracts (Proton / IVPN / Mullvad / Tailscale / Whonix) still probed fine. `generate-tutorials.py` then committed HTML-only hub drift (Steam/Gaming/Whonix/Tailscale cards) and `git push` hit `GH013`: ruleset `main-strict` requires a PR + `Strict PR gate`. `github-actions[bot]` is not a repo admin, so the owner bypass does not apply. Alarm/clear steps never ran (push failed first), so there was no `vendor-installers` issue. Heartbeat measured the local unpushed commit and thought main was fresh.
+### Factory now (verified this chat)
 
-**Shipped this retake:** tutorial hub files committed by the owner; vendor-watch no longer fails the contracts job on HTML-only drift (Pages still generates the live hub); heal/snapshot/relocate pushes go through `.github/scripts/factory-push.sh`; a blocked heal pages `factory-alarm`; heartbeat ages `GITHUB_SHA` and falls back to a keep-alive issue comment so cron does not die at ~60 days. Overlay bake is unchanged (docs/`vendor-watch.yml` are paths-ignore).
+- **Vendor-watch is green.** Contracts (Proton / IVPN / Mullvad / Tailscale / Whonix) never went dark. The red runs were `GH013`: `generate-tutorials.py` committed HTML hub drift, then `main-strict` rejected `github-actions[bot]`. Proof after the fix: [run 24](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/34360033189) and [run 25](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/34361013717) (dispatched). Last red was run 23 on old SHA `d27c188`.
+- **What shipped (`b77ee03`):** HTML-only tutorial regen no longer fails the contracts job (Pages still generates the live hub). Heal/snapshot/relocate use `.github/scripts/factory-push.sh`. A blocked *heal* opens `factory-alarm`. Heartbeat ages `GITHUB_SHA` and falls back to a keep-alive issue comment so cron does not die at ~60 days. Tutorial hub cards (Steam / Gaming / Whonix / Tailscale) committed by the owner. No overlay code change.
+- **Bypass list:** Repo → Settings → Rules → [`main-strict`](https://github.com/SeRgi270710267/unwoke-secureblue/settings/rules/21810930). Search does **not** list the GitHub Actions runner. **Do not add Dependabot · apps · github.** Repository admin bypass is how this agent pushes `main`. A real vendor URL move still cannot land from the bot until GitHub exposes Actions as a bypass actor (or a human/admin push). That is accepted.
+- **Overlay:** last green non-PR bake [bluebuild 150](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/34353014348) (`d27c188`, schedule 2026-09-09). Accidental bake of `b77ee03` ([151](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/34360018863)) was **cancelled** (`factory-push.sh` is not in `paths-ignore`). Do not sit on a docs-only bake. GHCR `:latest` is still that last green overlay.
+- **USB:** after a green non-PR overlay, wrap the two recommended Trivalent sticks. Sunday all-12. Titanoboa pin `840217d`. Do not bump.
+- **Open issues:** none. Dependabot PRs #20–#24 sit; **do not auto-merge.** `pr-gate` on those PRs is allowed to be red until a human reviews the SHA bump.
+- **Pages:** green for `b77ee03`. Factory map: https://sergi270710267.github.io/unwoke-secureblue/factory/#github
 
-**One Settings click still needed for true hands-off heals:** Repo → Settings → Rules → `main-strict` → Bypass list → **GitHub Actions** (app 15368), mode **always**. Do not auto-merge Dependabot. Do not add a new vendor hostname. Until that click, a real URL heal will stay red and open `factory-alarm`; HTML-only tutorial regen will not.
+### Do not (this close)
+
+- Add Dependabot to `main-strict` bypass. Do not auto-merge Dependabot.
+- Add `on: push` to `iso.yml` / `verify.yml`. Do not wrap Origin/all-12 after every overlay.
+- Auto-merge a canary hit, a new `keys/secureblue.pub`, a new vendor hostname, Flathub, `gpgcheck=0`, or a titanoboa pin bump.
+- `rpm --rebuilddb` / `sqlite3 .recover` a ~90 MiB Origin rpmdb. Do not `docker pull` Atomic images.
 
 ## Close-chat pickup (2026-08-31)
 
@@ -291,7 +302,7 @@ Image-side theme, privacy.sh, Setup fingerprint button, rpmdb restore, and sqlit
 ## Tomorrow / next chat
 
 - Pickup: *continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.* Other PC: `git clone https://github.com/SeRgi270710267/unwoke-secureblue.git` then `git pull`. Phrase: continuing Unwoke SecureBlue from `PROGRESS.md`.
-- Close-chat HEAD after this file is pushed: `git log -1 --oneline`. Product overlay in GHCR `:latest` still tracks the last green `bluebuild` (twice daily). This retake is factory/docs only (`vendor-watch.yml` + `docs/**` are paths-ignore). Add GitHub Actions (app 15368) as a `main-strict` bypass actor so heals land without a human.
+- Close-chat HEAD after this file is pushed: `git log -1 --oneline`. Product overlay in GHCR `:latest` is last green schedule bake [34353014348](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/34353014348). Vendor-watch green on `b77ee03` ([25](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/34361013717)). Do not add Dependabot to `main-strict` bypass. Do not rebuild images for this docs-only save (`PROGRESS.md` is paths-ignore).
 - USB: after each green non-PR overlay, wrap the two recommended Trivalent sticks (`iso.yml` `workflow_run`). Sunday 10:00 UTC still all 12. Origin USB class of bug is closed (stub rpmdb). Recommended stick: `unwoke-silverblue-trivalent`. Not Ventoy. Enroll **their** Secure Boot key. Do not sit on 35-minute ISO jobs in chat. If the user wants a fresh USB before the next overlay, dispatch those two images — do not fire all-12.
 - Public mark is automatic (`mark-check.py --apply` at compose). Do not put `UNWOKE-SHIPPED-FIRST` into live Chromium/Brave/Trivalent `policies/managed`. Do not weaken privacy/security for credit. Do not stamp `.rpmdb-pre-flavor.sqlite`.
 - Confirm on a real USB/rebase **after this overlay bake is green and rebooted:** `ujust unwoke-test` (FAIL-closed on noexec including `/var/tmp`, and CAs), `ujust setup`, `ujust why`. See-it: https://sergi270710267.github.io/unwoke-secureblue/tutorials/see-it/  Shipped first: https://sergi270710267.github.io/unwoke-secureblue/ahead/
