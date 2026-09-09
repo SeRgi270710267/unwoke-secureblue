@@ -31,6 +31,8 @@ jobs:
         run: python3 files/system/usr/libexec/unwoke/vendor.py schema
 
       - name: Relocate 404 stock snapshot URLs
+        id: relocate
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GH_TOKEN: ${{ github.token }}
@@ -51,7 +53,7 @@ jobs:
           Content hash refresh stays on the overlay watch job after a targeting scan.
           EOF
           )"
-          git push origin HEAD
+          bash .github/scripts/factory-push.sh
 
       - name: Check vendor contracts
         id: probe
@@ -65,7 +67,9 @@ jobs:
         run: python3 files/system/usr/libexec/unwoke/vendor.py heal --probe-rpm
 
       - name: Commit healed vendor list
+        id: healcommit
         if: steps.heal.outcome == 'success' && steps.probe.outcome == 'failure'
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -85,7 +89,7 @@ jobs:
           No Flathub. No auto-weakening. Tutorial hub regenerated from the same list.
           EOF
           )"
-          git push origin HEAD
+          bash .github/scripts/factory-push.sh
 
       - name: Recheck
         id: recheck
@@ -113,16 +117,22 @@ jobs:
           Generated pages only. Does not unlock Flathub or add hosts.
           EOF
           )"
-          git push origin HEAD
+          if bash .github/scripts/factory-push.sh; then
+            echo "tutorial hub committed"
+            exit 0
+          fi
+          echo "tutorial HTML could not land on main (main-strict). Pages still generates the live hub. Not a vendor contract fail."
+          git reset --hard HEAD~1
+          exit 0
 
       - name: Alarm
-        if: steps.recheck.outcome == 'failure'
+        if: always() && !cancelled() && steps.recheck.outcome == 'failure'
         env:
           GH_TOKEN: ${{ github.token }}
         run: bash .github/scripts/vendor-alarm.sh open
 
       - name: Clear alarm
-        if: steps.recheck.outcome == 'success'
+        if: always() && !cancelled() && steps.recheck.outcome == 'success' && steps.healcommit.outcome != 'failure'
         env:
           GH_TOKEN: ${{ github.token }}
         run: bash .github/scripts/vendor-alarm.sh close
@@ -133,6 +143,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: bash docs/_tools/factory-heartbeat.sh
 
+      - name: Alarm if a factory commit could not land
+        if: always() && !cancelled() && (steps.relocate.outcome == 'failure' || steps.healcommit.outcome == 'failure')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ALARM_EXTRA: "vendor-watch could not git push to main (ruleset main-strict / GH013). github-actions[bot] is not a repo admin. Add GitHub Actions (app 15368) as a bypass actor on main-strict, mode always. Do not auto-merge Dependabot. Do not add a new vendor hostname."
+        run: bash .github/scripts/issue-alarm.sh factory open
+
       - name: Fail job if still broken
-        if: steps.recheck.outcome == 'failure'
+        if: always() && !cancelled() && (steps.recheck.outcome == 'failure' || steps.relocate.outcome == 'failure' || steps.healcommit.outcome == 'failure')
         run: exit 1

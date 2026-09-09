@@ -126,7 +126,7 @@
           </tr>
           <tr>
             <td><code>vendor-watch</code></td>
-            <td>Allowlisted vendor URL heal, tutorial hub, idle heartbeat so cron stays enabled.</td>
+            <td>Allowlisted vendor URL heal, tutorial hub (Pages still generates the live hub if git HTML cannot land), idle heartbeat so cron stays enabled. A blocked bot push pages <code>factory-alarm</code> for heals; HTML-only drift does not fail the contracts job.</td>
             <td>Actions → <a href="https://github.com/SeRgi270710267/unwoke-secureblue/actions/workflows/vendor-watch.yml">vendor-watch</a></td>
           </tr>
           <tr>
@@ -146,8 +146,8 @@
           </tr>
           <tr>
             <td>Ruleset <code>main-strict</code></td>
-            <td>PRs to <code>main</code> need 1 approval + Code Owners + status <code>Strict PR gate</code>. Blocks force-push and deletion. Repository admin bypass so the owner (and this agent) can still <code>git push</code> <code>main</code>. No auto-merge. Grok cannot merge.</td>
-            <td>Repo → Settings → Rules → <code>main-strict</code>. Only that ruleset; no <code>protect-main</code>.</td>
+            <td>PRs to <code>main</code> need 1 approval + Code Owners + status <code>Strict PR gate</code>. Blocks force-push and deletion. Repository admin bypass so the owner (and this agent) can still <code>git push</code> <code>main</code>. Factory bot commits (vendor heal, snapshot refresh, heartbeat) also need GitHub Actions (app 15368) as a bypass actor — the bot is not an admin. No auto-merge. Grok cannot merge.</td>
+            <td>Repo → Settings → Rules → <code>main-strict</code>. Only that ruleset; no <code>protect-main</code>. Bypass list: Repository admin + GitHub Actions.</td>
           </tr>
           <tr>
             <td>Release <code>receipt</code></td>
@@ -162,7 +162,7 @@
         </tbody>
       </table>
     </div>
-    <p>Stranger path: fork → PR → green <code>pr-gate</code> + canary → the maintainer merges. There is no auto-merge. Owner pushes to <code>main</code> skip the ruleset because of the admin bypass; the overlay bake and inspect still run on that push.</p>
+    <p>Stranger path: fork → PR → green <code>pr-gate</code> + canary → the maintainer merges. There is no auto-merge. Owner pushes to <code>main</code> skip the ruleset because of the admin bypass; the overlay bake and inspect still run on that push. <code>github-actions[bot]</code> does not skip it unless GitHub Actions is on the bypass list — without that, vendor heal and the idle heartbeat file cannot land (HTML-only tutorial regen still happens on Pages; heartbeat falls back to a keep-alive issue comment so cron does not die at ~60 days).</p>
 
     <h2 id="lanes"><a href="#lanes">Four lanes</a></h2>
     <div class="cards">
@@ -449,7 +449,7 @@
       </li>
       <li>
         <time datetime="09:15">09:15 and 21:15</time>
-        <p>Vendor check/heal (allowlisted HTTPS + checksum). If <code>main</code> has had no commits for 10+ days, write the idle heartbeat timestamp so GitHub cron stays enabled.</p>
+        <p>Vendor check/heal (allowlisted HTTPS + checksum). HTML-only tutorial regen is Pages; a blocked heal pages <code>factory-alarm</code>. If <code>main</code> has had no commits for 10+ days, write the idle heartbeat timestamp so GitHub cron stays enabled (issue comment fallback if the bot cannot push).</p>
       </li>
       <li>
         <time datetime="09:30">09:30</time>

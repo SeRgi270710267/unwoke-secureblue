@@ -77,6 +77,17 @@
         <p>A well-packaged VPN uses the existing stack. If a vendor asks you to disable firewalld or SELinux, use another vendor.</p>
       </li>
     </ol>
+<!-- vendor-generated:start -->
+<div class="alert tip">
+<p><strong>From the vendor list</strong> (watched and healed twice a day).
+<code>ujust install-vendor NAME</code> or Setup → Strict apps. Group: <code>vpn-dns</code>.</p>
+<ul>
+<li><strong>Tailscale official Fedora repo</strong> (<code>tailscale_repo</code>, asked) — Official repo after you accept gpgcheck=1. <code>ujust install-vendor tailscale_repo</code></li>
+</ul>
+<p>Probe: <code>ujust check-vendor-installers</code>. New app = stanza in <code>vendor-installers.json</code>, not a one-off tutorial fork.</p>
+</div>
+<!-- vendor-generated:end -->
+
     <p>Canonical write-up: <a href="secureblue/post-install/">their post-install</a> (DNS + VPN warning). Overlay does not replace that.</p>
     <nav class="tutorial-nav" aria-label="Adjacent tutorials">
       <a href="tutorials/sites-broken/">Previous: A site looks broken</a>

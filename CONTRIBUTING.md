@@ -11,7 +11,7 @@ Site version with the same rules: <https://sergi270710267.github.io/unwoke-secur
 1. Fork. Branch from current `main`.
 2. One concern per PR. Reproducible bug or a small, reversible lock beats an essay.
 3. Fill the pull request template. Say what you changed, how to revert it, and that you did not weaken SELinux / USBGuard / Safe Browsing / fwupd / `gpgcheck`.
-4. Wait. Canary + `pr-gate` (job name **Strict PR gate**) must be green. The maintainer (and, if they ask, a review pass with Grok) has the last word. Silence is not consent. GitHub ruleset `main-strict` requires that PR, one approval, Code Owners, and the gate. There is no auto-merge. Owner admin bypass lets the maintainer push `main` so the overlay factory is not blocked on a second account. Map: [Factory → GitHub](https://sergi270710267.github.io/unwoke-secureblue/factory/#github).
+4. Wait. Canary + `pr-gate` (job name **Strict PR gate**) must be green. The maintainer (and, if they ask, a review pass with Grok) has the last word. Silence is not consent. GitHub ruleset `main-strict` requires that PR, one approval, Code Owners, and the gate. There is no auto-merge. Owner admin bypass lets the maintainer push `main` so the overlay factory is not blocked on a second account. Factory bot commits (vendor heal, snapshots, heartbeat) need GitHub Actions (app 15368) on that same bypass list — the bot is not an admin. Map: [Factory → GitHub](https://sergi270710267.github.io/unwoke-secureblue/factory/#github).
 
 ```
 git clone https://github.com/YOUR/unwoke-secureblue

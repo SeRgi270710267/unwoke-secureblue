@@ -54,5 +54,5 @@ git add files/upstream-snapshots .github/scripts/upstream-watch.txt \
 git -c user.name="unwoke-snapshot-bot" \
     -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
     commit -m "chore: refresh stock snapshots (auto)"
-git push
+bash .github/scripts/factory-push.sh
 echo "committed refreshed snapshots"
