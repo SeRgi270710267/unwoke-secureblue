@@ -12,20 +12,22 @@
 - Workarounds: https://sergi270710267.github.io/unwoke-secureblue/stock-issues/
 - Fingerprint tutorial: https://sergi270710267.github.io/unwoke-secureblue/tutorials/fingerprint/
 - Changelog: https://sergi270710267.github.io/unwoke-secureblue/changelog/ (generated; gitignored)
-- **Handoff commit:** this PROGRESS.md save. After push, `git log -1` is the pickup HEAD (`b77ee03` was the last product commit before this file).
+- **Handoff commit:** this PROGRESS.md save. After push, `git log -1` is the pickup HEAD. Factory fix is `3f2fce1` (download-blip retry). Last overlay-product commit before that is still `b77ee03`. This file is paths-ignore, so the save does not start another bake.
 - **GitHub ruleset:** only **`main-strict`**, Active, target `refs/heads/main`. Requires PR + 1 approval + Code Owners + status **`Strict PR gate`**. Block force-push + deletion. **Repository admin bypass** so the owner (and this agent) can still `git push` to `main`. The built-in GitHub Actions runner **does not appear** in the bypass search on this personal repo (only **Dependabot · apps · github** showed — do **not** add it). No `protect-main`. No auto-merge. Grok cannot merge.
 
 **How to resume:** clone the repo (or open it), say you are continuing Unwoke SecureBlue from `PROGRESS.md`. Do not rebuild images for docs-only work. Do not docker-pull Atomic images (layer depth). Do not auto-accept a new `cosign.pub` or auto-exec live `/usr/libexec/secureblue/*.py`. Do not sit on 35-minute ISO jobs in chat (`iso-alarm` + `receipt` are the signal).
 
 ## Close-chat pickup (2026-09-21)
 
-**GitHub `main` is the source of truth.** Phrase: *continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.*
+**GitHub `main` is the source of truth.** Other PC: `git pull origin main`. Phrase: *continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.*
 
-While the tree sat on `d5383fc` (9 Sep), vendor-watch, Pages, and verify stayed green. The 20 Sep evening bake and Sunday all-12 USB were green. What went red was GitHub's download server (504, curl 22/35, cut-off tar, slsa-verifier) on some bakes. The old rerun only matched the pin step, and it called the rerun API while the run was still in progress, so it never fired. That opened factory-alarm ([#33](https://github.com/SeRgi270710267/unwoke-secureblue/issues/33)) and skipped the USB wrap. The overlay code did not break. Dependabot #20–#24 still sit. Do not merge them.
+### Factory now (chat closed while the bake was still running)
 
-**Now:** `flake-rerun.yml` runs after bluebuild finishes. If every failed job is a download blip (pin, Install cosign, Build Custom Image, or a canary export), those jobs rerun once. Attempt 1 does not open `factory-alarm` for that blip. Attempt 2 still alarms. Inspect, a canary needle, and a signing-key mismatch do not rerun. Canary crane export retries five times on its own. Do not add Dependabot or an Actions bypass actor (Actions still does not appear in the `main-strict` search). Heartbeat keep-alive is the issue comment, not a new bypass.
-
-This push edits `build.yml`, so it starts an overlay bake. Do not sit on it. USB wraps only after a green attempt.
+- **Away check:** tree had sat on `d5383fc` since 9 Sep. Vendor-watch, Pages, and verify stayed green. 20 Sep evening bake [35541090827](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/35541090827) was the last full green overlay before the fix. Sunday all-12 USB [35514505968](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/35514505968) was green. Overlay recipes did not break.
+- **What went red:** GitHub download blips (504, curl 22/35, cut-off tar, slsa-verifier). The old rerun only matched the pin step and called the API while the run was still in progress, so it never fired. That opened factory-alarm [#33](https://github.com/SeRgi270710267/unwoke-secureblue/issues/33) and skipped the USB wrap.
+- **What shipped (`3f2fce1`):** `flake-rerun.yml` runs after bluebuild finishes. Download blips (pin, Install cosign, Build Custom Image, canary export) rerun the failed jobs **once**. Attempt 1 does not open `factory-alarm` for that blip. Attempt 2 still alarms. Inspect, a canary needle, and a signing-key mismatch do not rerun. Canary crane export retries five times on its own. Classifier self-test passed, and today's red bake [35615248047](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/35615248047) classifies as four download flakes. No overlay recipe change.
+- **Bake at close:** [35633438836](https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/35633438836) was **still running**. All four canaries were green. The twelve images were building or queued. Do not sit on it. If it goes green, [#33](https://github.com/SeRgi270710267/unwoke-secureblue/issues/33) closes and the two recommended Trivalent USBs wrap. If it is only a download blip, `flake-rerun` retries once; USB waits for that green attempt. If attempt 2 is red, the alarm stays and that is a real stop.
+- **Do not:** add Dependabot or an Actions bypass actor (Actions still does not appear in the `main-strict` search). Do not merge Dependabot #20–#24. Do not bump titanoboa (`840217d`). Heartbeat keep-alive is the issue comment on #31, not a new bypass. Do not rebuild for this docs-only save.
 
 ## Close-chat pickup (2026-09-09)
 
