@@ -147,7 +147,7 @@ jobs:
         if: always() && !cancelled() && (steps.relocate.outcome == 'failure' || steps.healcommit.outcome == 'failure')
         env:
           GH_TOKEN: ${{ github.token }}
-          ALARM_EXTRA: "vendor-watch could not git push to main (ruleset main-strict / GH013). github-actions[bot] is not a repo admin. Add GitHub Actions (app 15368) as a bypass actor on main-strict, mode always. Do not auto-merge Dependabot. Do not add a new vendor hostname."
+          ALARM_EXTRA: "vendor-watch could not git push to main (ruleset main-strict / GH013). github-actions[bot] is not a repo admin. GitHub Actions does not appear in the bypass search — do not add Dependabot in its place. A human push can land the heal. Do not add a new vendor hostname."
         run: bash .github/scripts/issue-alarm.sh factory open
 
       - name: Fail job if still broken

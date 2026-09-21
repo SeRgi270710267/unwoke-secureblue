@@ -1,0 +1,37 @@
+name: flake-rerun
+# After bluebuild has finished. GitHub will not rerun a run that is still
+# going, so this must not be a job inside bluebuild. Attempt 2 is ignored
+# here; if that attempt is still red, bluebuild's factory-alarm opens.
+# Does not rerun a pull request. Does not auto-merge.
+on:
+  workflow_run:
+    workflows: ["bluebuild"]
+    types: [completed]
+permissions: {}
+jobs:
+  rerun:
+    name: Rerun download flake once
+    if: github.event.workflow_run.conclusion == 'failure' && github.event.workflow_run.run_attempt == 1 && github.event.workflow_run.event != 'pull_request' && github.event.workflow_run.actor.login != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+      issues: write
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Rerun failed jobs if this was a download blip
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FLAKE_RUN_ID: ${{ github.event.workflow_run.id }}
+          FLAKE_REPO: ${{ github.repository }}
+        run: bash .github/scripts/rerun-cosign-flake.sh rerun

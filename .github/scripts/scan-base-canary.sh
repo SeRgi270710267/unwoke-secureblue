@@ -49,11 +49,23 @@ echo "canary: exporting ${img} (crane, no run, no docker pull)"
 work="$(mktemp -d)"
 trap 'rm -rf "${work}"' EXIT
 
-crane export "${img}" - | python3 "${extract}" "${work}" "${work}/members.txt" \
-  usr/libexec usr/lib/systemd usr/etc etc usr/share/ublue-os usr/share/just \
-  usr/share/unwoke usr/bin usr/sbin
-
-if [[ ! -s "${work}/members.txt" ]]; then
+# A cut-off crane download is a GitHub blip, not a needle. Retry the export
+# only. A clean export that names this overlay still fails on the first hit.
+export_ok=0
+for n in 1 2 3 4 5; do
+  rm -rf "${work}"
+  mkdir -p "${work}"
+  if crane export "${img}" - | python3 "${extract}" "${work}" "${work}/members.txt" \
+      usr/libexec usr/lib/systemd usr/etc etc usr/share/ublue-os usr/share/just \
+      usr/share/unwoke usr/bin usr/sbin \
+    && [[ -s "${work}/members.txt" ]]; then
+    export_ok=1
+    break
+  fi
+  echo "canary: crane export failed (${n}/5) on ${img}" >&2
+  sleep 20
+done
+if [[ "${export_ok}" -ne 1 ]]; then
   echo "FAIL: export produced no file list from ${img}" >&2
   exit 1
 fi

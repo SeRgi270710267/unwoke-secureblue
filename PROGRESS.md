@@ -17,6 +17,16 @@
 
 **How to resume:** clone the repo (or open it), say you are continuing Unwoke SecureBlue from `PROGRESS.md`. Do not rebuild images for docs-only work. Do not docker-pull Atomic images (layer depth). Do not auto-accept a new `cosign.pub` or auto-exec live `/usr/libexec/secureblue/*.py`. Do not sit on 35-minute ISO jobs in chat (`iso-alarm` + `receipt` are the signal).
 
+## Close-chat pickup (2026-09-21)
+
+**GitHub `main` is the source of truth.** Phrase: *continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.*
+
+While the tree sat on `d5383fc` (9 Sep), vendor-watch, Pages, and verify stayed green. The 20 Sep evening bake and Sunday all-12 USB were green. What went red was GitHub's download server (504, curl 22/35, cut-off tar, slsa-verifier) on some bakes. The old rerun only matched the pin step, and it called the rerun API while the run was still in progress, so it never fired. That opened factory-alarm ([#33](https://github.com/SeRgi270710267/unwoke-secureblue/issues/33)) and skipped the USB wrap. The overlay code did not break. Dependabot #20–#24 still sit. Do not merge them.
+
+**Now:** `flake-rerun.yml` runs after bluebuild finishes. If every failed job is a download blip (pin, Install cosign, Build Custom Image, or a canary export), those jobs rerun once. Attempt 1 does not open `factory-alarm` for that blip. Attempt 2 still alarms. Inspect, a canary needle, and a signing-key mismatch do not rerun. Canary crane export retries five times on its own. Do not add Dependabot or an Actions bypass actor (Actions still does not appear in the `main-strict` search). Heartbeat keep-alive is the issue comment, not a new bypass.
+
+This push edits `build.yml`, so it starts an overlay bake. Do not sit on it. USB wraps only after a green attempt.
+
 ## Close-chat pickup (2026-09-09)
 
 **GitHub `main` is the source of truth.** Other PC: `git pull origin main`. Phrase: *continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.*
@@ -71,7 +81,7 @@
 
 ### If the new overlay bake is red
 
-- Cosign “no signatures found” on pin: job-level rerun once if **only** that step failed.
+- Download blip (504, curl 22/35, cut-off tar, slsa-verifier, or cosign “no signatures” on the pin step): `flake-rerun.yml` reruns those failed jobs **once** after the run finishes. Do not rerun inspect, a canary needle, or a signing-key change. A second red attempt is a real alarm.
 - Origin inspect sqlite: keep WARN; USB hook is the ISO fix.
 - Origin compose: Brave is **curl** of the Brave repo, not dnf5 (`rpm-files-only.sh`).
 - Inspect `missing ntsync modules-load`: compose already shipped `usr/lib/modules-load.d/unwoke-ntsync.conf`. Crane-export must include that prefix (and `usr/lib/sysctl.d`). Do not drop the file.

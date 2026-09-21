@@ -54,9 +54,9 @@ TITLE="Factory heartbeat (cron keep-alive)"
 RUN_URL="${GITHUB_SERVER_URL:-https://github.com}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID:-unknown}"
 BODY="Idle keep-alive so GitHub does not disable scheduled workflows (~60 days of no activity).
 
-The timestamp file could not land on \`main\` (ruleset \`main-strict\` blocks github-actions[bot]). Overlay and vendor contracts are independent.
+The timestamp file could not land on \`main\` (ruleset \`main-strict\` blocks github-actions[bot]). This comment is the keep-alive. Overlay and vendor contracts are independent.
 
-Fix: Repo → Settings → Rules → \`main-strict\` → Bypass → GitHub Actions (app 15368), mode always. Do not auto-merge Dependabot. Do not add a new vendor host here.
+Do not add Dependabot to the bypass list. GitHub Actions does not appear in the bypass search on this personal repo — do not add a stand-in. Do not add a new vendor host here.
 
 - Run: ${RUN_URL}"
 

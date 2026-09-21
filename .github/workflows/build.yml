@@ -25,6 +25,7 @@ on:
       - ".github/scripts/mirror-secureblue-docs.py"
       - ".github/scripts/mirror-template.html"
       - ".github/workflows/pr-gate.yml"
+      - ".github/workflows/flake-rerun.yml"
       - ".github/CODEOWNERS"
       - ".github/ISSUE_TEMPLATE/**"
   pull_request:
@@ -188,30 +189,6 @@ jobs:
           subject-digest: ${{ steps.digest.outputs.digest }}
           push-to-registry: true
 
-  rerun-cosign-flake:
-    name: Rerun stock cosign pin flake once
-    if: always() && !cancelled() && failure() && github.run_attempt == 1 && github.event_name != 'pull_request' && github.actor != 'dependabot[bot]'
-    needs: [canary, bluebuild]
-    runs-on: ubuntu-latest
-    permissions:
-      actions: write
-      contents: read
-    steps:
-      - name: Harden runner
-        uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
-        with:
-          egress-policy: audit
-
-      - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          persist-credentials: false
-
-      - name: Rerun only pin-step failures
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: bash .github/scripts/rerun-cosign-flake.sh
-
   public-packages:
     name: Public GHCR packages
     if: always() && !cancelled() && github.event_name != 'pull_request' && github.actor != 'dependabot[bot]' && needs.bluebuild.result != 'skipped'
@@ -267,10 +244,14 @@ jobs:
 
   factory-alarm:
     name: Factory alarm
+    # A download blip does not open the alarm on attempt 1. flake-rerun.yml
+    # reruns those jobs once after this run has finished. Attempt 2 still alarms.
+    # Inspect, a canary needle, and a signing-key change alarm immediately.
     if: always() && !cancelled() && github.event_name != 'pull_request' && github.actor != 'dependabot[bot]'
-    needs: [canary, upstream-watch, bluebuild]
+    needs: [canary, upstream-watch, bluebuild, receipt]
     runs-on: ubuntu-latest
     permissions:
+      actions: read
       contents: read
       issues: write
     steps:
@@ -284,14 +265,30 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Download flake?
+        id: flake
+        if: github.run_attempt == 1 && (needs.canary.result == 'failure' || needs.upstream-watch.result == 'failure' || needs.bluebuild.result == 'failure' || needs.receipt.result == 'failure')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set +e
+          bash .github/scripts/rerun-cosign-flake.sh classify
+          rc=$?
+          set -e
+          if [[ "${rc}" -eq 0 ]]; then
+            echo "flake=yes" >> "${GITHUB_OUTPUT}"
+          else
+            echo "flake=no" >> "${GITHUB_OUTPUT}"
+          fi
+
       - name: Open or update alarm
-        if: needs.canary.result == 'failure' || needs.upstream-watch.result == 'failure' || needs.bluebuild.result == 'failure'
+        if: (needs.canary.result == 'failure' || needs.upstream-watch.result == 'failure' || needs.bluebuild.result == 'failure' || needs.receipt.result == 'failure') && steps.flake.outputs.flake != 'yes'
         env:
           GH_TOKEN: ${{ github.token }}
         run: bash .github/scripts/factory-alarm.sh open
 
       - name: Close alarm
-        if: needs.canary.result == 'success' && needs.upstream-watch.result == 'success' && needs.bluebuild.result == 'success'
+        if: needs.canary.result == 'success' && needs.upstream-watch.result == 'success' && needs.bluebuild.result == 'success' && (needs.receipt.result == 'success' || needs.receipt.result == 'skipped')
         env:
           GH_TOKEN: ${{ github.token }}
         run: bash .github/scripts/factory-alarm.sh close

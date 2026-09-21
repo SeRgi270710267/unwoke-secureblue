@@ -77,7 +77,7 @@
       <div class="card">
         <p class="eyebrow">Flakes</p>
         <h3>Retry, then one rerun</h3>
-        <p>Stock <code>cosign</code> sometimes says “no signatures found” for a few seconds. The pin step retries. If that was the <em>only</em> failed step, those jobs rerun once. Inspect and canary failures stay red.</p>
+        <p>A GitHub download blip (504, curl, cut-off tar, “no signatures”) retries inside the step, then the failed jobs rerun once. Inspect, a canary that names this overlay, and a signing-key change stay red. A second failure still opens the alarm.</p>
       </div>
       <div class="card">
         <p class="eyebrow">On the box</p>
@@ -108,6 +108,11 @@
             <td><code>bluebuild</code></td>
             <td>Canary → pin → overlay all twelve → inspect → attest → try Public → rewrite <code>receipt</code>. Twice daily and on overlay pushes. Docs / ISO / Pages edits do not start it.</td>
             <td>Actions → <a href="https://github.com/SeRgi270710267/unwoke-secureblue/actions/workflows/build.yml">bluebuild</a></td>
+          </tr>
+          <tr>
+            <td><code>flake-rerun</code></td>
+            <td>After a red overlay, if every failed job is a download blip, rerun those jobs once. Runs only after bluebuild has finished. Does not rerun inspect, a canary needle, or a new signing key. Not a second time.</td>
+            <td>Actions → <a href="https://github.com/SeRgi270710267/unwoke-secureblue/actions/workflows/flake-rerun.yml">flake-rerun</a></td>
           </tr>
           <tr>
             <td><code>iso</code></td>
@@ -146,8 +151,8 @@
           </tr>
           <tr>
             <td>Ruleset <code>main-strict</code></td>
-            <td>PRs to <code>main</code> need 1 approval + Code Owners + status <code>Strict PR gate</code>. Blocks force-push and deletion. Repository admin bypass so the owner (and this agent) can still <code>git push</code> <code>main</code>. Factory bot commits (vendor heal, snapshot refresh, heartbeat) also need GitHub Actions (app 15368) as a bypass actor — the bot is not an admin. No auto-merge. Grok cannot merge.</td>
-            <td>Repo → Settings → Rules → <code>main-strict</code>. Only that ruleset; no <code>protect-main</code>. Bypass list: Repository admin + GitHub Actions.</td>
+            <td>PRs to <code>main</code> need 1 approval + Code Owners + status <code>Strict PR gate</code>. Blocks force-push and deletion. Repository admin bypass so the owner can still <code>git push</code> <code>main</code>. GitHub Actions does not appear in the bypass search on this personal repo. Do not add Dependabot. The bot cannot land heal or heartbeat files; the heartbeat keeps cron alive with an issue comment. No auto-merge.</td>
+            <td>Repo → Settings → Rules → <code>main-strict</code>. Only that ruleset; no <code>protect-main</code>. Bypass list: Repository admin. Do not add Dependabot.</td>
           </tr>
           <tr>
             <td>Release <code>receipt</code></td>
@@ -162,7 +167,7 @@
         </tbody>
       </table>
     </div>
-    <p>Stranger path: fork → PR → green <code>pr-gate</code> + canary → the maintainer merges. There is no auto-merge. Owner pushes to <code>main</code> skip the ruleset because of the admin bypass; the overlay bake and inspect still run on that push. <code>github-actions[bot]</code> does not skip it unless GitHub Actions is on the bypass list — without that, vendor heal and the idle heartbeat file cannot land (HTML-only tutorial regen still happens on Pages; heartbeat falls back to a keep-alive issue comment so cron does not die at ~60 days).</p>
+    <p>Stranger path: fork → PR → green <code>pr-gate</code> + canary → the maintainer merges. There is no auto-merge. Owner pushes to <code>main</code> skip the ruleset because of the admin bypass; the overlay bake and inspect still run on that push. <code>github-actions[bot]</code> is not on that bypass list (it does not appear in the search — do not add Dependabot in its place). Vendor heal and the idle heartbeat file cannot land from the bot. HTML-only tutorial regen still happens on Pages. The heartbeat falls back to a keep-alive issue comment so cron does not die at ~60 days.</p>
 
     <h2 id="lanes"><a href="#lanes">Four lanes</a></h2>
     <div class="cards">
@@ -202,8 +207,8 @@
           </tr>
           <tr>
             <td>Stock cosign says “no signatures found” for a few seconds</td>
-            <td>Pin step retries up to five times. If every failed job died only on that pin step, those jobs rerun <em>once</em></td>
-            <td>Rerun inspect, compose, or canary. Rerun a second time</td>
+            <td>Pin step retries up to five times. A download blip (504, curl, cut-off tar, slsa-verifier, or that pin step) reruns the failed jobs <em>once</em> after the run finishes. Canary export retries five times before that.</td>
+            <td>Rerun inspect. Rerun a canary that names this overlay. Rerun a signing-key change. Rerun a second time</td>
           </tr>
           <tr>
             <td>Stock base names this overlay in the clear</td>
