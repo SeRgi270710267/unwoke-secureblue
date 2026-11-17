@@ -1,0 +1,28 @@
+name: Factory / Actions
+description: A GitHub Actions lane failed or a workflow change needs a look. Not a desktop bug.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Desktop locks and `ujust` bugs use the overlay bug form.
+        Stock kernel / Trivalent / USBGuard-in-stock go to secureblue.
+        A live remote exploit uses a private advisory, not this form.
+  - type: input
+    id: workflow
+    attributes:
+      label: Workflow
+      placeholder: bluebuild, iso, pages, verify, pr-gate
+    validations:
+      required: true
+  - type: input
+    id: run
+    attributes:
+      label: Actions run URL
+      placeholder: https://github.com/SeRgi270710267/unwoke-secureblue/actions/runs/…
+  - type: textarea
+    id: what
+    attributes:
+      label: What failed
+      description: Job name and the error line. Do not paste tokens or signing keys.
+    validations:
+      required: true

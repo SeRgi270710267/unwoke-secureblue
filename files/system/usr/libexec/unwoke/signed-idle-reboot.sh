@@ -19,7 +19,7 @@ fi
 
 # Any session whose user is not the display manager.
 if command -v loginctl >/dev/null; then
-  while read -r _sess uid user _; do
+  while read -r _sess _uid user _; do
     [[ -n "${user}" ]] || continue
     case "${user}" in
       gdm|sddm|lightdm|greeter|gnome-initial-setup) continue ;;

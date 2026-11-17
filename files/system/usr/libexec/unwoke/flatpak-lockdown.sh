@@ -33,6 +33,8 @@ apply_one() {
     device=(all shm kvm input usb)
     feature=(per-app-dev-shm canbus bluetooth multiarch devel)
     filesystem=(home host-etc host)
+    # Tildes are Flatpak path tokens, not shell expansion.
+    # shellcheck disable=SC2088
     dangerous=("~/.bashrc" "~/.bash_profile" /home /var/home /var /media /run/media /run /mnt)
     session=(org.freedesktop.Flatpak)
     system=(org.freedesktop.systemd1)

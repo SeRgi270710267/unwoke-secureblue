@@ -94,7 +94,12 @@
       "tag": "USB install",
       "we": "Chrony NTS (time.cloudflare.com, nts.ntp.se) on the live ISO and the installed OS. Independent of dns-selector.",
       "revert": "ujust set-nts off",
-      "where": "tutorials/see-it/#1185"
+      "where": "tutorials/see-it/#1185",
+      "adopted": {
+        "on": "2026-11-17",
+        "note": "Anaconda still showed the Fedora NTP spoke and can rewrite chrony.conf after install. The live ISO now hides that spoke and a post script puts our NTS drop-in back. Same idea as their PR 2807. Our servers stay time.cloudflare.com and nts.ntp.se. We do not copy their chrony.conf path.",
+        "commit": ""
+      }
     },
     {
       "issue": 1569,

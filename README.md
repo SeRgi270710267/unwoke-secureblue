@@ -17,6 +17,7 @@
 <p align="center">
   <a href="https://sergi270710267.github.io/unwoke-secureblue/"><img src="https://img.shields.io/badge/site-open-3b6cff?style=for-the-badge&amp;labelColor=050a16" alt="Site"></a>
   <a href="https://github.com/SeRgi270710267/unwoke-secureblue/actions/workflows/build.yml"><img src="https://img.shields.io/github/actions/workflow/status/SeRgi270710267/unwoke-secureblue/build.yml?style=for-the-badge&amp;label=images&amp;labelColor=050a16&amp;color=3b6cff" alt="Images"></a>
+  <a href="https://github.com/SeRgi270710267/unwoke-secureblue/actions/workflows/pr-gate.yml"><img src="https://img.shields.io/github/actions/workflow/status/SeRgi270710267/unwoke-secureblue/pr-gate.yml?style=for-the-badge&amp;label=pr-gate&amp;labelColor=050a16&amp;color=3b6cff" alt="PR gate"></a>
   <a href="https://github.com/SeRgi270710267/unwoke-secureblue/pkgs/container/unwoke-silverblue-trivalent"><img src="https://img.shields.io/badge/GHCR-public-3b6cff?style=for-the-badge&amp;labelColor=050a16" alt="GHCR public"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-3b6cff?style=for-the-badge&amp;labelColor=050a16" alt="MIT"></a>
 </p>
@@ -206,6 +207,8 @@ We do **not** use a hardware signing key. `cosign.key` lives only as the GitHub 
 </details>
 
 Stock FAQ/features/install are mirrored daily under the site `/secureblue/` (Apache-2.0, not affiliated). Pickup file for this repo: [`PROGRESS.md`](PROGRESS.md).
+
+The GitHub factory (not the desktop) pins Actions to commit SHAs, starts each workflow at `permissions: {}`, scans for secrets, and ShellChecks the scripts. Dependabot opens one grouped Actions PR and does not move the image-builder pin. Map: [Factory](https://sergi270710267.github.io/unwoke-secureblue/factory/). Agents: [`AGENTS.md`](AGENTS.md). Reports: [`SECURITY.md`](SECURITY.md).
 
 ---
 

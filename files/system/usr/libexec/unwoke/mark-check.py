@@ -79,7 +79,9 @@ def skip(path: Path) -> bool:
         return True
     if "__pycache__" in path.parts or "upstream-snapshots" in path.parts:
         return True
-    if "help" in path.parts and "assets" in path.parts:
+    # Offline tutorials are regenerated from docs/tutorials by sync-offline-help.py.
+    # The copy is not an overlay source. Stamping it would be wiped on the next sync.
+    if "unwoke" in path.parts and "help" in path.parts:
         return True
     return False
 

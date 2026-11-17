@@ -197,6 +197,24 @@ echo -e "$ENROLLMENT_PASSWORD\n$ENROLLMENT_PASSWORD" | mokutil --import "$SECURE
 %end
 EOF
 
+# Anaconda's Time & Date spoke writes the Fedora NTP pool into the installed
+# chrony.conf. Put our NTS drop-in back after that. Adapted from secureblue
+# PR 2807, which copies their chrony.conf. We keep our servers and drop-in.
+tee /usr/share/anaconda/post-scripts/restore-nts.ks <<'EOF'
+%post
+set -euo pipefail
+mkdir -p /etc/chrony.d
+cat > /etc/chrony.d/50-unwoke-nts.conf <<'NTS'
+server time.cloudflare.com iburst nts
+server nts.ntp.se iburst nts
+nocerttimecheck 1
+NTS
+if [[ -f /etc/chrony.conf ]]; then
+  sed -i -E 's/^(pool|server)[[:space:]]/# \1 /' /etc/chrony.conf
+fi
+%end
+EOF
+
 # Encrypt by default (stock Anaconda is opt-in). User can still uncheck.
 if grep -qE '^[[:space:]]*autopart' /usr/share/anaconda/interactive-defaults.ks 2>/dev/null; then
   sed -i -E 's/^[[:space:]]*autopart.*/autopart --encrypted --type=btrfs --luks-version=luks2/' \
@@ -206,6 +224,7 @@ tee -a /usr/share/anaconda/interactive-defaults.ks <<EOF
 ostreecontainer --url=${IMAGE_REF}:${IMAGE_TAG} --transport=containers-storage
 %include /usr/share/anaconda/post-scripts/install-configure-upgrade.ks
 %include /usr/share/anaconda/post-scripts/secureboot-enroll-key.ks
+%include /usr/share/anaconda/post-scripts/restore-nts.ks
 EOF
 if ! grep -qE '^[[:space:]]*autopart --encrypted' /usr/share/anaconda/interactive-defaults.ks; then
   tmp="$(mktemp)"
@@ -237,6 +256,15 @@ if grep -qE '^[[:space:]]*timesource' /usr/share/anaconda/interactive-defaults.k
     /usr/share/anaconda/interactive-defaults.ks
 else
   echo 'timesource --ntp-server=time.cloudflare.com' >> /usr/share/anaconda/interactive-defaults.ks
+fi
+
+# Hide the installer NTP spoke. It offers the Fedora pool in the clear.
+# Same screen secureblue hid in PR 2807. NTS above is the clock.
+if [[ -d /usr/share/cockpit/branding ]]; then
+  while IFS= read -r -d '' css; do
+    grep -q 'anaconda-screen-date-time-configure-ntp' "${css}" && continue
+    printf '\n.anaconda #anaconda-screen-date-time-configure-ntp { display: none; }\n' >> "${css}"
+  done < <(find /usr/share/cockpit/branding -name 'branding.css' -print0 2>/dev/null || true)
 fi
 
 tee /usr/share/anaconda/post-scripts/install-configure-upgrade.ks <<EOF

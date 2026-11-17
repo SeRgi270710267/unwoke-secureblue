@@ -1,3 +1,14 @@
-# Every path needs the maintainer. GitHub will request a review from
-# SeRgi270710267 on pull requests. Merge is still a human click on main.
-* @SeRgi270710267
+# Every path needs the maintainer. This is a personal account, so there is
+# no organization "maintainers" team. GitHub requests a review from
+# SeRgi270710267. Merge is still a human click. Green CI is not permission.
+*                       @SeRgi270710267
+
+# Highest risk: the factory, the image recipes, the overlay, and the signing key.
+# Listed again so a later edit to the wildcard does not drop them.
+/.github/               @SeRgi270710267
+/recipes/               @SeRgi270710267
+/files/                 @SeRgi270710267
+/keys/                  @SeRgi270710267
+/cosign.pub             @SeRgi270710267
+/SECURITY.md            @SeRgi270710267
+/AGENTS.md              @SeRgi270710267
