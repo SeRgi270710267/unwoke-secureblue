@@ -197,9 +197,11 @@ echo -e "$ENROLLMENT_PASSWORD\n$ENROLLMENT_PASSWORD" | mokutil --import "$SECURE
 %end
 EOF
 
-# Anaconda's Time & Date spoke writes the Fedora NTP pool into the installed
-# chrony.conf. Put our NTS drop-in back after that. Adapted from secureblue
-# PR 2807, which copies their chrony.conf. We keep our servers and drop-in.
+# Anaconda's Time & Date spoke can replace chrony.conf with the Fedora pool.
+# Copy the image file back when it exists (secureblue keeps NTS in that file).
+# Then point chrony at /etc/chrony.d. Commenting out every server line left
+# the install with no time source: this chrony.conf does not include that
+# directory unless we add confdir.
 tee /usr/share/anaconda/post-scripts/restore-nts.ks <<'EOF'
 %post
 set -euo pipefail
@@ -209,8 +211,22 @@ server time.cloudflare.com iburst nts
 server nts.ntp.se iburst nts
 nocerttimecheck 1
 NTS
-if [[ -f /etc/chrony.conf ]]; then
-  sed -i -E 's/^(pool|server)[[:space:]]/# \1 /' /etc/chrony.conf
+restored=0
+for src in /usr/etc/chrony.conf /usr/share/secureblue/etc/chrony.conf; do
+  if [[ -f "${src}" ]]; then
+    cp -a "${src}" /etc/chrony.conf
+    restored=1
+    break
+  fi
+done
+if [[ ! -f /etc/chrony.conf ]]; then
+  printf 'confdir /etc/chrony.d\n' > /etc/chrony.conf
+fi
+if [[ "${restored}" -eq 0 ]]; then
+  sed -i -E '/^[[:space:]]*(pool|server)[[:space:]]/ { /[[:space:]]nts([[:space:]]|$)/! s/^/# / }' /etc/chrony.conf
+fi
+if ! grep -qE '^[[:space:]]*confdir[[:space:]]+/etc/chrony\.d([[:space:]]|$)' /etc/chrony.conf; then
+  printf '\nconfdir /etc/chrony.d\n' >> /etc/chrony.conf
 fi
 %end
 EOF
@@ -243,7 +259,14 @@ EOF
 # Unwoke SecureBlue. Not affiliated. UNWOKE-SHIPPED-FIRST. Stock #1185 was a request.
 # Stock #1185: installer NTP is fedora pool in the clear. Use NTS. Clock may be
 # wrong at first contact so chrony is allowed to skip cert time once.
-sed -i -E 's/^(pool|server)[[:space:]]/# \1 /' /etc/chrony.conf 2>/dev/null || true
+# Keep lines that already say nts. Comment only cleartext pool/server.
+# chrony does not read /etc/chrony.d until confdir is set.
+if [[ -f /etc/chrony.conf ]]; then
+  sed -i -E '/^[[:space:]]*(pool|server)[[:space:]]/ { /[[:space:]]nts([[:space:]]|$)/! s/^/# / }' /etc/chrony.conf
+  if ! grep -qE '^[[:space:]]*confdir[[:space:]]+/etc/chrony\.d([[:space:]]|$)' /etc/chrony.conf; then
+    printf '\nconfdir /etc/chrony.d\n' >> /etc/chrony.conf
+  fi
+fi
 mkdir -p /etc/chrony.d
 cat > /etc/chrony.d/50-unwoke-nts.conf <<'EOF'
 # Live ISO. Installed ostree also ships this via nts.sh apply-boot.

@@ -7,6 +7,7 @@ set -euo pipefail
 ALLOW="/etc/unwoke/allow-clear-ntp"
 SRC="/usr/share/unwoke/chrony-nts.conf"
 DST="/etc/chrony.d/50-unwoke-nts.conf"
+CONF="/etc/chrony.conf"
 
 as_root() {
   if [[ "$(id -u)" -eq 0 ]]; then
@@ -19,12 +20,32 @@ as_root() {
 
 wanted_on() { [[ ! -f "${ALLOW}" ]]; }
 
+# Fedora and secureblue chrony.conf do not read /etc/chrony.d unless told.
+# Without this line the drop-in sits on disk and chronyd ignores it.
+ensure_confdir() {
+  if [[ -L "${CONF}" ]]; then
+    local target
+    target="$(readlink -f "${CONF}")"
+    rm -f "${CONF}"
+    cp -a "${target}" "${CONF}"
+  fi
+  if [[ ! -f "${CONF}" ]]; then
+    printf 'confdir /etc/chrony.d\n' > "${CONF}"
+    return 0
+  fi
+  if grep -qE '^[[:space:]]*confdir[[:space:]]+/etc/chrony\.d([[:space:]]|$)' "${CONF}"; then
+    return 0
+  fi
+  printf '\nconfdir /etc/chrony.d\n' >> "${CONF}"
+}
+
 cmd_apply_boot() {
   [[ "$(id -u)" -eq 0 ]] || exit 1
   mkdir -p /etc/chrony.d /etc/unwoke
   if wanted_on; then
     [[ -f "${SRC}" ]] || return 0
     cp -a "${SRC}" "${DST}"
+    ensure_confdir
     systemctl try-reload-or-restart chronyd.service >/dev/null 2>&1 || true
   else
     rm -f "${DST}"
