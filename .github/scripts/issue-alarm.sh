@@ -3,7 +3,7 @@
 # Usage: issue-alarm.sh <iso|pages|factory|vendor> open|close
 set -euo pipefail
 
-preset="${1:?usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds|receipt|stock-feats open|close}"
+preset="${1:?usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds|receipt|stock-feats|rehost|seats|r2 open|close}"
 cmd="${2:-open}"
 RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
@@ -101,22 +101,20 @@ Do **not** auto-bump to \`@main\`. Read the new commit, pin a hash, re-dispatch 
     CLOSE="Titanoboa pin is fetchable again: ${RUN_URL}"
     ;;
   packages)
-    TITLE="GHCR package still private — one Public click"
+    TITLE="GHCR package still public — anonymous pull works"
     LABEL="ghcr-private"
-    COLOR="0E8A16"
-    DESC="An Unwoke GHCR package is still private after the factory tried to publish it"
-    BODY="The factory tried to set Unwoke GHCR packages Public and GitHub still left at least one private. Anonymous rebase/USB fetch needs Public.
+    COLOR="B60205"
+    DESC="An Unwoke GHCR package is still anonymously pullable"
+    BODY="Anonymous GHCR pull returned 200 for at least one Unwoke package. Invite-only means that pull must fail.
 
 - Workflow: \`${GITHUB_WORKFLOW}\`
 - SHA: \`${GITHUB_SHA}\`
 - Run: ${RUN_URL}
 
-The twelve OS images are often already Public. A USB \`-iso\` GHCR package only exists after oras push succeeds. If the package page 404s, there is nothing to make Public — download the Actions ISO artifact instead.
+GitHub does not let a package that is already public be made private again. Do not click Public. Delete the package and let the bake create a new private one, then turn off Inherit access from repository. The repository stays public. Exact order: \`invite/OWNER-STEPS.md\`.
 
-Working pages are \`https://github.com/OWNER/REPO/pkgs/container/NAME\` (linked) or the repo Packages sidebar. \`/users/.../packages/container/NAME/settings\` 404s/500s.
-
-Do not make the bake fail over this. Do not switch the registry."
-    CLOSE="GHCR Unwoke packages are Public: ${RUN_URL}"
+Do not put a pull token in the image or the workflow log. Do not fail the bake for this alarm."
+    CLOSE="Anonymous GHCR pull no longer returns 200: ${RUN_URL}"
     ;;
   mirror-cmds)
     TITLE="Stock docs grew a ujust we do not footnote yet"
@@ -133,18 +131,18 @@ The mirror still injected a \`ujust why\` / \`ujust setup\` box so people are no
     CLOSE="Stock ujust footnotes mapped again: ${RUN_URL}"
     ;;
   receipt)
-    TITLE="Receipt release failed (do not upload the ISO)"
+    TITLE="Public receipt release still exists"
     LABEL="receipt-alarm"
     COLOR="1D76DB"
-    DESC="The moving GitHub Release tag receipt could not be rewritten"
-    BODY="The factory could not rewrite the \`receipt\` GitHub Release (pubkey + verified GHCR digests). Overlay images are independent. This is not a USB host.
+    DESC="The moving receipt release could not be deleted"
+    BODY="The factory could not delete the public \`receipt\` GitHub Release. That release carries a pubkey and image digests.
 
 - Workflow: \`${GITHUB_WORKFLOW}\`
 - SHA: \`${GITHUB_SHA}\`
 - Run: ${RUN_URL}
 
-Do **not** attach the ISO (over 2 GiB). Do not auto-accept a new signing key. Next green full verify rewrites the release and closes this."
-    CLOSE="Receipt release rewritten: ${RUN_URL}"
+Do **not** upload DIGESTS or an ISO. Delete the release and its tag. Steps: \`invite/OWNER-STEPS.md\`."
+    CLOSE="Public receipt release is gone: ${RUN_URL}"
     ;;
   stock-feats)
     TITLE="Stock shipped a FEAT we already shipped (review, do not auto-copy)"
@@ -161,8 +159,50 @@ Do **not** attach the ISO (over 2 GiB). Do not auto-accept a new signing key. Ne
 Read their PR. If theirs is better, copy it on purpose and set \`adopted.on\` / \`adopted.note\` / \`adopted.commit\` in \`docs/_tools/stock-feats.json\`. If ours stays, set \`stock_reviewed\` to \`keep\`. Do **not** auto-merge their patch. Do not drop the ticket from the page."
     CLOSE="Every stock-after-us FEAT is reviewed (keep or adopted): ${RUN_URL}"
     ;;
+  rehost)
+    TITLE="Fork or rehost showed up"
+    LABEL="rehost-watch"
+    COLOR="B60205"
+    DESC="A fork of this repo, or another repo using the name, was detected"
+    BODY="The public repository was forked, or a search found another repository using the project name. Forks keep a public copy of the source. They do not get the private images.
+
+- Workflow: \`${GITHUB_WORKFLOW}\`
+- SHA: \`${GITHUB_SHA}\`
+- Run: ${RUN_URL}
+
+This does not delete anyone else's fork. Read it. If they ship the name or the logo, that is a trademark question in \`TRADEMARK.md\`. Do not force-push their repo."
+    CLOSE="No fork or same-name repository is listed right now: ${RUN_URL}"
+    ;;
+  seats)
+    TITLE="Zero Trust seats reached the free-plan guard"
+    LABEL="zero-trust-seats"
+    COLOR="B60205"
+    DESC="Cloudflare Zero Trust seat use is at or above 45 of 50"
+    BODY="Zero Trust seat use is at the guard. The free plan is 50 seats. This factory stops at 45 so the account does not become a paid plan.
+
+- Workflow: \`${GITHUB_WORKFLOW}\`
+- SHA: \`${GITHUB_SHA}\`
+- Run: ${RUN_URL}
+
+Remove inactive people: Zero Trust → Users. Do not add a paid seat. invite-sync refuses an allowlist larger than 45 and does not call Cloudflare in that case."
+    CLOSE="Zero Trust seats are under 45 again: ${RUN_URL}"
+    ;;
+  r2)
+    TITLE="R2 reached the free-plan guard"
+    LABEL="r2-free-tier"
+    COLOR="B60205"
+    DESC="Cloudflare R2 storage or operations is at the free-plan guard"
+    BODY="R2 must stay on the free plan. Storage guard is 9 GB of the 10 GB-month free line. Class A guard is 800000 of 1000000. Class B guard is 8000000 of 10000000. Egress is free.
+
+- Workflow: \`${GITHUB_WORKFLOW}\`
+- SHA: \`${GITHUB_SHA}\`
+- Run: ${RUN_URL}
+
+The site serves two sticks only: \`unwoke-silverblue-trivalent\` and \`unwoke-kinoite-trivalent\`. Do not buy R2. Do not enable an r2.dev URL."
+    CLOSE="R2 is back under the free-plan guard: ${RUN_URL}"
+    ;;
   *)
-    echo "usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds|receipt|stock-feats open|close" >&2
+    echo "usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds|receipt|stock-feats|rehost|seats|r2 open|close" >&2
     exit 1
     ;;
 esac
@@ -189,6 +229,7 @@ fi
 case "${cmd}" in
   open)
     if [[ -n "${existing}" ]]; then
+      gh issue edit "${existing}" --repo "${GITHUB_REPOSITORY}" --title "${TITLE}" >/dev/null
       gh issue comment "${existing}" --repo "${GITHUB_REPOSITORY}" --body "${BODY}"
       echo "commented on #${existing} (${LABEL})"
     else

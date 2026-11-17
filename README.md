@@ -15,20 +15,7 @@
 </p>
 
 <p align="center">
-  <a href="https://sergi270710267.github.io/unwoke-secureblue/"><img src="https://img.shields.io/badge/site-open-3b6cff?style=for-the-badge&amp;labelColor=050a16" alt="Site"></a>
-  <a href="https://github.com/SeRgi270710267/unwoke-secureblue/actions/workflows/build.yml"><img src="https://img.shields.io/github/actions/workflow/status/SeRgi270710267/unwoke-secureblue/build.yml?style=for-the-badge&amp;label=images&amp;labelColor=050a16&amp;color=3b6cff" alt="Images"></a>
-  <a href="https://github.com/SeRgi270710267/unwoke-secureblue/actions/workflows/pr-gate.yml"><img src="https://img.shields.io/github/actions/workflow/status/SeRgi270710267/unwoke-secureblue/pr-gate.yml?style=for-the-badge&amp;label=pr-gate&amp;labelColor=050a16&amp;color=3b6cff" alt="PR gate"></a>
-  <a href="https://github.com/SeRgi270710267/unwoke-secureblue/pkgs/container/unwoke-silverblue-trivalent"><img src="https://img.shields.io/badge/GHCR-public-3b6cff?style=for-the-badge&amp;labelColor=050a16" alt="GHCR public"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-3b6cff?style=for-the-badge&amp;labelColor=050a16" alt="MIT"></a>
-</p>
-
-<p align="center">
-  <a href="https://sergi270710267.github.io/unwoke-secureblue/install/">Install</a>
-  · <a href="https://sergi270710267.github.io/unwoke-secureblue/features/">Features</a>
-  · <a href="https://sergi270710267.github.io/unwoke-secureblue/privacy/">Privacy</a>
-  · <a href="https://sergi270710267.github.io/unwoke-secureblue/compared/">Compared</a>
-  · <a href="https://sergi270710267.github.io/unwoke-secureblue/brand/">Brand</a>
-  · <a href="https://sergi270710267.github.io/unwoke-secureblue/changelog/">Changelog</a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-source--available-3b6cff?style=for-the-badge&amp;labelColor=050a16" alt="Source-available"></a>
 </p>
 
 <p align="center">
@@ -52,35 +39,13 @@ We strip **Bazaar** and GUI stores on every image.
 
 ---
 
-## Install
+## Distribution
 
-Already on secureblue (or any Fedora Atomic). First switch cannot check our stamp yet. After reboot, first-boot queues the **signed** image — reboot once more when `rpm-ostree status` shows it staged.
+The git repository stays public so the recipes, locks, and signing key can be audited. Prebuilt images, USB images, and the full site are **invite-only**. This page does not contain install commands or registry names. The public site is a notice. The docs site asks for a GitHub login and an invitation.
 
-```bash
-rpm-ostree rebase ostree-unverified-registry:ghcr.io/sergi270710267/unwoke-silverblue-trivalent:latest
-systemctl reboot
-```
+The pull credential is a classic personal access token with only the `read:packages` scope, stored on that machine as `/etc/ostree/auth.json` mode `0600`. It is not baked into the image. An invitee cannot grant anyone else.
 
-If it did not auto-stage (no network on first boot):
-
-```bash
-rpm-ostree rebase ostree-image-signed:docker://ghcr.io/sergi270710267/unwoke-silverblue-trivalent:latest
-systemctl reboot
-```
-
-```bash
-cosign verify --key cosign.pub ghcr.io/sergi270710267/unwoke-silverblue-trivalent
-```
-
-KDE → `unwoke-kinoite-trivalent`. NVIDIA → add `-nvidia-open` before `-trivalent`. Brave Origin → drop `-trivalent`. No browser → `-browserless`.
-
-Empty disk: flash a USB from [Actions](https://github.com/SeRgi270710267/unwoke-secureblue/actions/workflows/iso.yml) (artifact, GitHub login) or a [secureblue ISO](https://secureblue.dev/install) then rebase. Encrypt, wheel, enroll **their** Secure Boot key. Not Ventoy.
-
-After first graphical login: **Unwoke setup** (`ujust setup`). `ujust why` if something looks broken. `ujust unwoke-test` proves every overlay lock on this disk (PASS/LOOSE/FAIL with a path). Nothing unlocks unless you pick it. Everyday tasks: [Tutorials](https://sergi270710267.github.io/unwoke-secureblue/tutorials/). Proton.me: `ujust install-proton`. IVPN: `ujust install-ivpn`. Mullvad: `ujust install-mullvad`.
-
-Published as `ghcr.io/sergi270710267/<name>:latest`. OS images are **public**. No GitHub login to pull.
-
-Current bake **receipt** (pubkey + verified digests, not the OS, not a USB): [Releases / receipt](https://github.com/SeRgi270710267/unwoke-secureblue/releases/tag/receipt). Ignore the source zip GitHub adds. The factory rewrites that tag; it does not attach the ISO.
+People who already have a copy keep the license grants below.
 
 ---
 
@@ -138,38 +103,13 @@ ujust set-allow-browsers off
 
 </details>
 
-<details>
-<summary><strong>Twelve images</strong> (rebuilt 08:00 and 20:00 UTC)</summary>
-
-| Image | Desktop | GPU | Browser |
-| --- | --- | --- | --- |
-| `unwoke-silverblue` | GNOME | Nouveau | Brave Origin |
-| `unwoke-silverblue-nvidia-open` | GNOME | NVIDIA open (GTX 16xx / RTX+) | Brave Origin |
-| `unwoke-kinoite` | KDE Plasma | Nouveau | Brave Origin |
-| `unwoke-kinoite-nvidia-open` | KDE Plasma | NVIDIA open | Brave Origin |
-| `unwoke-silverblue-trivalent` | GNOME | Nouveau | Trivalent |
-| `unwoke-silverblue-nvidia-open-trivalent` | GNOME | NVIDIA open | Trivalent |
-| `unwoke-kinoite-trivalent` | KDE Plasma | Nouveau | Trivalent |
-| `unwoke-kinoite-nvidia-open-trivalent` | KDE Plasma | NVIDIA open | Trivalent |
-| `unwoke-silverblue-browserless` | GNOME | Nouveau | none |
-| `unwoke-silverblue-nvidia-open-browserless` | GNOME | NVIDIA open | none |
-| `unwoke-kinoite-browserless` | KDE Plasma | Nouveau | none |
-| `unwoke-kinoite-nvidia-open-browserless` | KDE Plasma | NVIDIA open | none |
-
-</details>
+Twelve images: GNOME or KDE, Nouveau or NVIDIA open, and Trivalent, Brave Origin, or no browser. Rebuilt 08:00 and 20:00 UTC. Names are not listed here.
 
 ---
 
-## USB ISO (empty disk, no stock first)
+## USB ISO
 
-The OS **is** the GHCR image. A flashable ISO wraps that image.
-
-- After each green overlay bake: the two recommended Trivalent sticks (`unwoke-silverblue-trivalent`, `unwoke-kinoite-trivalent`) to `ghcr.io/sergi270710267/<name>-iso:latest`. Still `cosign verify` of our `:latest`.
-- On demand: Actions → **iso** → pick the image → artifact (90 days, GitHub login).
-- Weekly (Sunday 10:00 UTC): all 12 flavors. Origin and the other ten stay weekly so it does not wrap eight Origin sticks a day.
-- GitHub will not host a 3 GB ISO as a normal release. Not Ventoy. Enroll **your** Secure Boot key. Watch `factory-alarm` / `iso-alarm` issues if you are away. Map: [Factory](https://sergi270710267.github.io/unwoke-secureblue/factory/).
-
-Stock-ISO-then-rebase still works.
+A flashable ISO is built in Actions. It is not uploaded as an artifact or a release. On a public repository those downloads are available to anyone with a GitHub account. An invited machine pulls the ISO from a private package. The installer asks for the invite credential and refuses to finish without it.
 
 ---
 
@@ -177,22 +117,17 @@ Stock-ISO-then-rebase still works.
 
 Not a git fork of `secureblue/secureblue`. Forks rot. We pull their **already-built, already-signed** images.
 
-```yaml
-base-image: ghcr.io/secureblue/silverblue-main-hardened
-image-version: latest
-```
-
 <details>
 <summary><strong>Trust chain and factory</strong></summary>
 
-1. secureblue builds and **cosign-signs** `ghcr.io/secureblue/…-hardened`.
-2. Our CI checks [their public key](https://github.com/secureblue/secureblue/blob/live/cosign.pub) still matches `keys/secureblue.pub`, **`cosign verify`s the base**, then **pins that digest**. A canary inspects that signed base with **crane export** (does not run it, does not docker-pull it) and **fails the overlay** if the stock image names this repo, our GHCR, or `/usr/share/unwoke`. After rebase, your PC follows **our** GHCR, not theirs.
+1. secureblue builds and **cosign-signs** their hardened images.
+2. Our CI checks [their public key](https://github.com/secureblue/secureblue/blob/live/cosign.pub) still matches `keys/secureblue.pub`, **`cosign verify`s the base**, then **pins that digest**. A canary inspects that signed base with **crane export** (does not run it, does not docker-pull it) and **fails the overlay** if the stock image names this repo, our registry, or `/usr/share/unwoke`. After rebase, an invited machine follows **our** registry, not theirs.
 3. We drop Bazaar + GUI stores. Origin also drops Trivalent and layers Brave Origin + `brave_t`. `-trivalent` keeps stock Trivalent and adds extra policies. Browserless drops Trivalent and skips Origin. Then we **cosign-sign our image** with `cosign.pub` in this repo.
-4. Your PC pulls `ghcr.io/sergi270710267/unwoke-…` and, after the signed rebase, verifies **our** signature.
+4. An invited machine pulls our image and, after the signed rebase, verifies **our** signature. The public key is how they check the signature. It is not a pull secret.
 
 We do **not** rebuild their kernel or re-run their SLSA pipeline.
 
-Factory extras (this repo, not the desktop): Harden-Runner; Actions pinned to SHAs; SLSA-style provenance; checksum-pinned crane `v0.20.3`; inspect after each bake and twice daily; one reused issue per alarm label; `pr-gate` + ruleset `main-strict`; stock `ujust harden-flatpak` is a trampoline to Unwoke’s script. Living map: [Factory](https://sergi270710267.github.io/unwoke-secureblue/factory/).
+Factory extras (this repo, not the desktop): Harden-Runner; Actions pinned to SHAs; checksum-pinned crane `v0.20.3`; inspect after each bake and twice daily; one reused issue per alarm label; `pr-gate` + ruleset `main-strict`; stock `ujust harden-flatpak` is a trampoline to Unwoke’s script. Public provenance attestations are not published. The public site is an invitation notice, not the old docs.
 
 We do **not** use a hardware signing key. `cosign.key` lives only as the GitHub secret `SIGNING_SECRET`.
 
@@ -206,12 +141,12 @@ We do **not** use a hardware signing key. `cosign.key` lives only as the GitHub 
 
 </details>
 
-Stock FAQ/features/install are mirrored daily under the site `/secureblue/` (Apache-2.0, not affiliated). Pickup file for this repo: [`PROGRESS.md`](PROGRESS.md).
+Stock FAQ/features/install are still mirrored in-tree by the Pages workflow (Apache-2.0, not affiliated). That mirror is not deployed to the public site. Pickup file for this repo: [`PROGRESS.md`](PROGRESS.md).
 
-The GitHub factory (not the desktop) pins Actions to commit SHAs, starts each workflow at `permissions: {}`, scans for secrets, and ShellChecks the scripts. Dependabot opens one grouped Actions PR and does not move the image-builder pin. Map: [Factory](https://sergi270710267.github.io/unwoke-secureblue/factory/). Agents: [`AGENTS.md`](AGENTS.md). Reports: [`SECURITY.md`](SECURITY.md).
+The GitHub factory (not the desktop) pins Actions to commit SHAs, starts each workflow at `permissions: {}`, scans for secrets, and ShellChecks the scripts. Dependabot opens one grouped Actions PR and does not move the image-builder pin. Agents: [`AGENTS.md`](AGENTS.md). Reports: [`SECURITY.md`](SECURITY.md). Owner steps for the private registry: [`invite/OWNER-STEPS.md`](invite/OWNER-STEPS.md).
 
 ---
 
 ## License
 
-Overlay files: MIT. Fedora, secureblue, BlueBuild, Brave, Trivalent: their licenses. Unaffiliated with secureblue.
+The overlay is the Unwoke Source-Available License 1.0 (`LICENSE`, SPDX `LicenseRef-Unwoke-SA-1.0`). The source stays readable. Redistributing the overlay, or a build that includes it, needs permission. Earlier public versions were MIT. A copy already obtained under that grant keeps it. secureblue, Universal Blue, and the upstream snapshots stay Apache-2.0 (`NOTICE`, `LICENSES/Apache-2.0.txt`). Fedora, BlueBuild, Brave, and Trivalent keep their own licenses. The name and logo are reserved for official signed builds (`TRADEMARK.md`). Unaffiliated with secureblue.

@@ -4,7 +4,7 @@ This overlay is not stock [secureblue](https://secureblue.dev). Do not open over
 
 **Nothing lands on `main` unless [SeRgi270710267](https://github.com/SeRgi270710267) merges it.** There is no auto-merge. There is no committer list. An AI session (including Grok) can help write a patch; it cannot merge.
 
-Site version with the same rules: <https://sergi270710267.github.io/unwoke-secureblue/contributing/>
+The repository stays public. The github.io site is an invitation notice. The full docs site is behind Cloudflare Access. Do not commit invitee logins or a pull token. An invitee cannot grant anyone else.
 
 ## How to send work
 
@@ -59,7 +59,7 @@ Every overlay lock must stay **revertable** with `ujust`. Security-first default
 
 ## Public mark
 
-Every overlay file under `files/` and `recipes/` must carry `UNWOKE-SHIPPED-FIRST` and the MIT copyright line (`Copyright (c) 2026 SeRgi270710267`). Compose runs `mark-check.py --apply` so a forgotten file is stamped in the image. Inspect and this PR gate fail if git is still unmarked. Do not put the token into live Chromium/Brave/Trivalent `policies/managed` JSON (the browser would see an extra unrecognized policy). Do not obfuscate. Do not change the license. Do not weaken a lock to “protect credit.” Ideas on stock’s tracker stay public; copies of *this tree* must keep the notice.
+Every overlay file under `files/` and `recipes/` must carry `UNWOKE-SHIPPED-FIRST`, `SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0`, and `Copyright (c) 2026 SeRgi270710267`. Do not relicense Apache-2.0 paths listed in `NOTICE`. Do not strip secureblue's copyright notices. The name and logo are not part of the source grant. Compose runs `mark-check.py --apply` so a forgotten file is stamped in the image. Inspect and this PR gate fail if git is still unmarked. Do not put the token into live Chromium/Brave/Trivalent `policies/managed` JSON (the browser would see an extra unrecognized policy). Do not obfuscate. Do not weaken a lock to “protect credit.” Ideas on stock’s tracker stay public; copies of *this tree* must keep the notice.
 
 ## People-facing git
 

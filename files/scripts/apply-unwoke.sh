@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Unwoke SecureBlue. Not affiliated with secureblue.
-# MIT License. Copyright (c) 2026 SeRgi270710267.
+# SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267.
 # UNWOKE-SHIPPED-FIRST
 # Shared build-time overlay: hide leftover Bazaar/store/full-Brave launchers.
 # Flavor scripts hide or keep trivalent.desktop. Does not touch harden_userns.
@@ -119,7 +119,7 @@ for name, spec in vendors.items():
     title = spec.get("title") or name
     kw = spec.get("keywords") or name.replace("_", ";")
     body = f"""# Unwoke SecureBlue. Not affiliated with secureblue.
-# MIT License. Copyright (c) 2026 SeRgi270710267.
+# SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267.
 # UNWOKE-SHIPPED-FIRST
 [Desktop Entry]
 Type=Application
@@ -149,7 +149,7 @@ for slug, items in slugs.items():
         lis.append(f"<li><strong>{t}</strong> — <code>ujust install-vendor {html.escape(n)}</code></li>")
     dest.write_text(
         f"""<!DOCTYPE html>
-<!-- Unwoke SecureBlue. Not affiliated with secureblue. MIT License. Copyright (c) 2026 SeRgi270710267. UNWOKE-SHIPPED-FIRST. -->
+<!-- Unwoke SecureBlue. Not affiliated with secureblue. SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267. UNWOKE-SHIPPED-FIRST. -->
 <html lang="en">
 <head>
   <meta charset="utf-8">

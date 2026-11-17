@@ -1,0 +1,10 @@
+# Pages project for the gated docs. ISO bytes stay in private R2.
+# ISOS is the binding name functions/iso/[[path]].js reads.
+# Do not add an r2.dev hostname. The bucket stays private.
+name = "unwoke-secureblue"
+compatibility_date = "2026-11-17"
+pages_build_output_dir = "docs"
+
+[[r2_buckets]]
+binding = "ISOS"
+bucket_name = "unwoke-isos"

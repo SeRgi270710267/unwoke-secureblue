@@ -1,0 +1,38 @@
+name: rehost-watch
+# Public repo. Notice forks and other repositories using the name.
+# Does not delete forks and does not print invitees.
+on:
+  schedule:
+    - cron: "20 09 * * *"
+  workflow_dispatch:
+permissions: {}
+concurrency:
+  group: rehost-watch
+  cancel-in-progress: false
+jobs:
+  watch:
+    name: Forks and rehosts
+    if: github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Look for forks and same-name repositories
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: bash .github/scripts/rehost-watch.sh

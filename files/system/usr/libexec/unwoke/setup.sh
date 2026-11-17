@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Unwoke SecureBlue. Not affiliated with secureblue.
-# MIT License. Copyright (c) 2026 SeRgi270710267.
+# SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267.
 # UNWOKE-SHIPPED-FIRST
 # First-session / ujust setup. Defaults stay locked unless the user turns one off.
 set -euo pipefail
@@ -88,6 +88,13 @@ header() {
   if [[ -f "${STAGED}" ]]; then
     echo
     echo "A signed update is staged. Reboot once to lock updates to our key."
+  fi
+  if [[ -x /usr/libexec/unwoke/invite-login.sh ]]; then
+    if ! /usr/libexec/unwoke/invite-login.sh --status >/dev/null 2>&1; then
+      echo
+      echo "Registry sign-in is missing. Updates stop once the image is private."
+      echo "Command: ujust invite-login"
+    fi
   fi
   echo
 }

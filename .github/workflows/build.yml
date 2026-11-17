@@ -21,6 +21,24 @@ on:
       - ".github/scripts/install-just.sh"
       - ".github/scripts/install-oras.sh"
       - ".github/scripts/public-packages.sh"
+      - ".github/scripts/package-visibility.sh"
+      - ".github/scripts/package-names.txt"
+      - ".github/scripts/invite_sync.py"
+      - ".github/scripts/invite_policy.py"
+      - ".github/scripts/cloudflare_access.py"
+      - ".github/scripts/render_notice.py"
+      - ".github/scripts/publish-iso.sh"
+      - ".github/scripts/r2_iso.py"
+      - ".github/scripts/install-rclone.sh"
+      - "functions/**"
+      - "wrangler.toml"
+      - ".github/scripts/rehost-watch.sh"
+      - ".github/workflows/rehost-watch.yml"
+      - "TRADEMARK.md"
+      - ".github/workflows/invite-sync.yml"
+      - ".github/workflows/iso-purge.yml"
+      - "invite/**"
+      - "site-notice/**"
       - ".github/scripts/write-factory-status.py"
       - ".github/scripts/mirror-secureblue-docs.py"
       - ".github/scripts/mirror-template.html"
@@ -131,8 +149,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-      id-token: write
-      attestations: write
     strategy:
       fail-fast: false
       matrix:
@@ -180,19 +196,28 @@ jobs:
       - name: Read image digest
         if: github.event_name != 'pull_request'
         id: digest
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           NAME="${{ matrix.recipe }}"
           NAME="${NAME%.yml}"
-          # GHCR path for pulling (with tag) vs attest subject (no tag — GitHub rejects :latest)
           REF="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/${NAME}:latest"
-          SUBJECT="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/${NAME}"
-          DIGEST="$(cosign verify --key cosign.pub "${REF}" 2>/dev/null | python3 -c 'import json,sys; print(json.load(sys.stdin)[0]["critical"]["image"]["docker-manifest-digest"])')"
-          [[ "${DIGEST}" == sha256:* ]]
-          echo "name=${NAME}" >> "${GITHUB_OUTPUT}"
-          echo "image=${SUBJECT}" >> "${GITHUB_OUTPUT}"
-          echo "digest=${DIGEST}" >> "${GITHUB_OUTPUT}"
-          echo "Signed digest ${SUBJECT}@${DIGEST}"
+          echo "${GITHUB_TOKEN}" | cosign login ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
+          extra=()
+          if cosign verify --help 2>&1 | grep -q -- '--new-bundle-format'; then
+            extra+=(--new-bundle-format=false)
+          fi
+          ok=0
+          for _n in 1 2 3 4 5; do
+            if COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key cosign.pub "${extra[@]}" "${REF}" >/dev/null; then
+              ok=1
+              break
+            fi
+            sleep 10
+          done
+          [[ "${ok}" -eq 1 ]]
+          echo "signature verified"
 
       - name: Inspect published flavor
         if: github.event_name != 'pull_request'
@@ -204,23 +229,19 @@ jobs:
           NAME="${NAME%.yml}"
           bash .github/scripts/inspect-flavor.sh "${NAME}"
 
-      - name: Attest build provenance
-        if: github.event_name != 'pull_request'
-        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2
-        with:
-          subject-name: ${{ steps.digest.outputs.image }}
-          subject-digest: ${{ steps.digest.outputs.digest }}
-          push-to-registry: true
+      # Public provenance attestation is not published. It put the image
+      # name and digest on a public log. Cosign key signing still runs.
 
   public-packages:
-    name: Public GHCR packages
+    name: GHCR stays private
     if: always() && !cancelled() && github.event_name != 'pull_request' && github.actor != 'dependabot[bot]' && needs.bluebuild.result != 'skipped'
     needs: [bluebuild]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
       contents: read
-      packages: write
+      packages: read
+      issues: write
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
@@ -232,10 +253,11 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Set Unwoke packages public
+      - name: Anonymous pull must fail
         env:
           GH_TOKEN: ${{ github.token }}
-        run: bash .github/scripts/public-packages.sh
+          ALARM: "1"
+        run: bash .github/scripts/package-visibility.sh
 
   receipt:
     name: Receipt release
@@ -258,10 +280,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install cosign
-        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
-
-      - name: Rewrite receipt release
+      - name: Retire public receipt release
         env:
           GH_TOKEN: ${{ github.token }}
           GITHUB_TOKEN: ${{ github.token }}

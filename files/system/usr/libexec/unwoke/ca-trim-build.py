@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Unwoke SecureBlue. Not affiliated with secureblue.
-# MIT License. Copyright (c) 2026 SeRgi270710267.
+# SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267.
 # UNWOKE-SHIPPED-FIRST
 """At compose: write /usr/share/unwoke/ca-blocklist/*.pem for Fedora CAs not in Mozilla website set."""
 from __future__ import annotations
@@ -78,7 +78,7 @@ def main() -> int:
         n += 1
         header = (
             b"# Unwoke SecureBlue. Not affiliated. UNWOKE-SHIPPED-FIRST. "
-            b"MIT Copyright (c) 2026 SeRgi270710267. Stock #1606 was a request.\n"
+            b"SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267. Stock #1606 was a request.\n"
         )
         (OUT / f"{fp[:16]}.pem").write_bytes(header + pem + b"\n")
     print(f"ca-trim-build: blocked {n} extra CAs")

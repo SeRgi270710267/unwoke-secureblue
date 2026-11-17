@@ -1,13 +1,25 @@
 Unwoke SecureBlue
 Not affiliated with secureblue.
+UNWOKE-SHIPPED-FIRST
 
-MIT License. Copyright (c) 2026 SeRgi270710267.
+Copyright (c) 2026 SeRgi270710267.
 
-The copyright notice and permission notice in LICENSE must be included in
-all copies or substantial portions of this overlay. Token UNWOKE-SHIPPED-FIRST
-identifies Unwoke files. Stripping it from a copy of this tree does not make
-the copy original work.
+The overlay is LicenseRef-Unwoke-SA-1.0. The text is
+/usr/share/unwoke/LICENSE. Earlier public versions were published under
+the MIT license. A copy already obtained under that grant keeps it.
+
+Apache License 2.0: secureblue (The Secureblue Authors), Universal Blue
+where named in the ISO hooks, and the upstream snapshots. Their copyright
+notices stay. secureblue publishes no NOTICE file. This project is not
+affiliated with them. Fedora, BlueBuild, Brave, and Trivalent keep their
+own licenses.
+
+Token UNWOKE-SHIPPED-FIRST identifies Unwoke files. Stripping it from a
+copy of this tree does not make the copy original work.
 
 Prior-art ledger: /usr/share/unwoke/SHIPPED-FIRST.txt
-Site: https://sergi270710267.github.io/unwoke-secureblue/ahead/
 Repo: https://github.com/SeRgi270710267/unwoke-secureblue
+
+The name Unwoke SecureBlue and the logo mark official builds signed with
+this project's cosign key. A rebuild that does not verify with that key
+must not use the name or the logo. See TRADEMARK.md in the source tree.

@@ -1,9 +1,9 @@
 # Unwoke SecureBlue. Not affiliated with secureblue.
-# MIT License. Copyright (c) 2026 SeRgi270710267.
+# SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267.
 # UNWOKE-SHIPPED-FIRST
 [Desktop Entry]
 Name=Unwoke SecureBlue
 X-KDE-PluginInfo-Name=UnwokeSecureBlue
 X-KDE-PluginInfo-Author=Unwoke SecureBlue
-X-KDE-PluginInfo-License=MIT
+X-KDE-PluginInfo-License=LicenseRef-Unwoke-SA-1.0
 X-KDE-PluginInfo-EnabledByDefault=true
