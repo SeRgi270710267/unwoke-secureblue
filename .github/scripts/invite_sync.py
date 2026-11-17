@@ -21,6 +21,8 @@ import sys
 
 USER_RE = re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$")
 EMAIL_RE = re.compile(r"^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$")
+# Free Zero Trust plan is 50 seats. Stop at 45 so a sync cannot cross it.
+SEAT_CAP = 45
 
 
 class SyncError(Exception):
@@ -62,17 +64,22 @@ def main(argv: list[str]) -> int:
     except SyncError as exc:
         print(f"invite-sync: {exc}", file=sys.stderr)
         return 1
-    print(f"invite-sync: {len(rows)} entries")
-    if not rows:
-        print("invite-sync: secret empty; Cloudflare policy not changed")
-        return 0
+    count = len(rows)
+    print(f"invite-sync: {count} entries")
+    if count > SEAT_CAP:
+        print(f"invite-sync: refused {count} entries, cap {SEAT_CAP}")
+        return 1
     import cloudflare_access
 
-    try:
-        cloudflare_access.sync_emails([email for _login, email in rows])
-    except cloudflare_access.CfError as exc:
-        print(f"invite-sync: {exc}", file=sys.stderr)
-        return 1
+    if not rows:
+        print("invite-sync: secret empty; Cloudflare policy not changed")
+    else:
+        try:
+            cloudflare_access.sync_emails([email for _login, email in rows])
+        except cloudflare_access.CfError as exc:
+            print(f"invite-sync: {exc}", file=sys.stderr)
+            return 1
+    cloudflare_access.report_seats()
     return 0
 
 
@@ -106,6 +113,13 @@ def selftest() -> int:
         ok = False
     except SyncError:
         pass
+    many = "\n".join(f"user{i} u{i}@example.com" for i in range(SEAT_CAP + 1))
+    if len(parse_allowlist(many)) <= SEAT_CAP:
+        print("selftest FAIL cap fixture")
+        ok = False
+    if SEAT_CAP != 45:
+        print("selftest FAIL cap value")
+        ok = False
     print("invite sync selftest " + ("ok" if ok else "FAILED"))
     return 0 if ok else 1
 

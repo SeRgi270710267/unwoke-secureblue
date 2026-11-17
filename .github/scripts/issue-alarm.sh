@@ -3,7 +3,7 @@
 # Usage: issue-alarm.sh <iso|pages|factory|vendor> open|close
 set -euo pipefail
 
-preset="${1:?usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds|receipt|stock-feats|rehost open|close}"
+preset="${1:?usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds|receipt|stock-feats|rehost|seats open|close}"
 cmd="${2:-open}"
 RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
@@ -173,8 +173,22 @@ Read their PR. If theirs is better, copy it on purpose and set \`adopted.on\` / 
 This does not delete anyone else's fork. Read it. If they ship the name or the logo, that is a trademark question in \`TRADEMARK.md\`. Do not force-push their repo."
     CLOSE="No fork or same-name repository is listed right now: ${RUN_URL}"
     ;;
+  seats)
+    TITLE="Zero Trust seats reached the free-plan guard"
+    LABEL="zero-trust-seats"
+    COLOR="B60205"
+    DESC="Cloudflare Zero Trust seat use is at or above 45 of 50"
+    BODY="Zero Trust seat use is at the guard. The free plan is 50 seats. This factory stops at 45 so the account does not become a paid plan.
+
+- Workflow: \`${GITHUB_WORKFLOW}\`
+- SHA: \`${GITHUB_SHA}\`
+- Run: ${RUN_URL}
+
+Remove inactive people: Zero Trust → Users. Do not add a paid seat. invite-sync refuses an allowlist larger than 45 and does not call Cloudflare in that case."
+    CLOSE="Zero Trust seats are under 45 again: ${RUN_URL}"
+    ;;
   *)
-    echo "usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds|receipt|stock-feats|rehost open|close" >&2
+    echo "usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds|receipt|stock-feats|rehost|seats open|close" >&2
     exit 1
     ;;
 esac

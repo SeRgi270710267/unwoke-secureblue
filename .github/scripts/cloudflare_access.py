@@ -16,8 +16,10 @@ import os
 import sys
 import urllib.error
 import urllib.request
+from pathlib import Path
 
 POLICY_NAME = "unwoke-invite"
+SEAT_CAP = 45
 
 
 class CfError(Exception):
@@ -191,6 +193,80 @@ def sync_emails(emails: list[str]) -> None:
     print(f"cloudflare access policy updated ({len(emails)} emails)")
 
 
+def count_seats(users: list[dict]) -> int | None:
+    """Count Zero Trust seats. A seat is access_seat or gateway_seat.
+
+    Returns None when the payload has no seat flags, so a user total is
+    not treated as a seat total. Does not read emails.
+    """
+    saw = False
+    used = 0
+    for user in users:
+        if not isinstance(user, dict):
+            continue
+        if "access_seat" not in user and "gateway_seat" not in user:
+            continue
+        saw = True
+        if user.get("access_seat") or user.get("gateway_seat"):
+            used += 1
+    return used if saw else None
+
+
+def fetch_seat_count(token: str, account: str) -> int | None:
+    users: list[dict] = []
+    page = 1
+    total_pages = 1
+    while page <= total_pages and page <= 5:
+        payload = _request(
+            "GET",
+            account_url(account, f"/access/users?page={page}&per_page=1000"),
+            token,
+        )
+        users.extend(_result_list(payload))
+        info = payload.get("result_info")
+        if isinstance(info, dict) and isinstance(info.get("total_pages"), int):
+            total_pages = info["total_pages"]
+        page += 1
+    return count_seats(users)
+
+
+def _alarm_seats(count: int) -> None:
+    if not os.environ.get("GITHUB_REPOSITORY"):
+        return
+    alarm = Path(__file__).resolve().parent / "issue-alarm.sh"
+    if not alarm.is_file():
+        return
+    import subprocess
+
+    env = os.environ.copy()
+    env["ALARM_EXTRA"] = (
+        f"Seats in use: {count}. Free plan: 50. Guard: {SEAT_CAP}. "
+        "Zero Trust → Users. Remove inactive seats. Do not buy a paid plan."
+    )
+    env["GH_TOKEN"] = env.get("GH_TOKEN") or env.get("GITHUB_TOKEN", "")
+    cmd = "open" if count >= SEAT_CAP else "close"
+    subprocess.run(["bash", str(alarm), "seats", cmd], check=False, env=env)
+
+
+def report_seats() -> None:
+    """Print seats=N or seats=unknown. Never prints a person."""
+    token = os.environ.get("CLOUDFLARE_API_TOKEN", "")
+    account = os.environ.get("CLOUDFLARE_ACCOUNT_ID", "")
+    if not token or not account:
+        print("seats=unknown")
+        return
+    try:
+        count = fetch_seat_count(token, account)
+    except CfError:
+        print("seats=unknown")
+        return
+    if count is None:
+        print("seats=unknown")
+        return
+    print(f"seats={count}")
+    _alarm_seats(count)
+
+
 def selftest() -> int:
     ok = True
     apps = [
@@ -215,6 +291,22 @@ def selftest() -> int:
     if build_policy(["a@example.com"], "") .get("require"):
         print("selftest FAIL empty idp")
         ok = False
+    seated = count_seats(
+        [
+            {"access_seat": True, "email": "hidden@example.com"},
+            {"gateway_seat": True},
+            {"access_seat": False, "gateway_seat": False},
+        ]
+    )
+    if seated != 2:
+        print("selftest FAIL seat count")
+        ok = False
+    if count_seats([{"email": "hidden@example.com"}]) is not None:
+        print("selftest FAIL seat guess")
+        ok = False
+    if SEAT_CAP != 45:
+        print("selftest FAIL cap")
+        ok = False
     print("cloudflare access selftest " + ("ok" if ok else "FAILED"))
     return 0 if ok else 1
 
@@ -225,7 +317,10 @@ def main(argv: list[str]) -> int:
     cmd = argv[1] if len(argv) > 1 else "check"
     if cmd == "check":
         return check()
-    print("usage: cloudflare_access.py check|--selftest", file=sys.stderr)
+    if cmd == "seats":
+        report_seats()
+        return 0
+    print("usage: cloudflare_access.py check|seats|--selftest", file=sys.stderr)
     return 2
 
 

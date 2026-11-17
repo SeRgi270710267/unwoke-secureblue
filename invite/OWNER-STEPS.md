@@ -18,7 +18,7 @@ GitHub Actions minutes for a public repository are free. Do not make this reposi
 
 GitHub Container Registry storage and bandwidth are currently free. GitHub's billing page says they will give at least one month's notice before that changes.
 
-Cloudflare Pages on a `pages.dev` hostname is free. Cloudflare Access (Zero Trust) is free for up to 50 users. Check the current seat price before you pass 50: <https://www.cloudflare.com/plans/zero-trust/>. A custom domain is optional. GitHub Enterprise is not required. GitHub Pages itself cannot hide a site on a free personal account.
+Cloudflare Pages on a `pages.dev` hostname is free. Cloudflare Access (Zero Trust) is free for 50 seats. This factory never buys a paid plan. The hard stop is 45. `invite-sync` refuses an allowlist with more than 45 people and does not call Cloudflare in that case. It prints only the count. The daily rehost job reads seat use and opens `zero-trust-seats` when that number is 45 or higher. A custom domain is optional. GitHub Enterprise is not required. GitHub Pages itself cannot hide a site on a free personal account.
 
 ## 1. Your own pull token
 
@@ -53,7 +53,7 @@ Secrets:
 
 | Name | What it is |
 | --- | --- |
-| `CLOUDFLARE_API_TOKEN` | API token, not the Global API Key. Permissions: Account → Cloudflare Pages → Edit, and Account → Access: Apps and Policies → Edit. No DNS, no Workers, no other account. |
+| `CLOUDFLARE_API_TOKEN` | API token, not the Global API Key. Permissions: Account → Cloudflare Pages → Edit, Account → Access: Apps and Policies → Edit, and Account → Access: Organizations, Identity Providers, and Groups → Read (so the seat count can be read). No DNS, no Workers, no other account. |
 | `CLOUDFLARE_ACCOUNT_ID` | The account id on the Workers overview. |
 | `INVITE_ALLOWLIST` | One `github-login email` pair per line. The email is one GitHub shows Access after login (a verified address on that GitHub account). `#` starts a comment. This file must not be committed. |
 | `GHCR_PUBLISH_TOKEN` | Classic PAT, 90 days, only `write:packages`, from <https://github.com/settings/tokens/new?scopes=write:packages>. It creates the first unlinked ISO package. It can push every package your user can write, so do not use it anywhere else. |
@@ -108,7 +108,9 @@ There is no supported API to clear inherit or to add a package reader on a perso
 
 ## 7. Invite
 
-Edit the `INVITE_ALLOWLIST` secret. Do not open a pull request with the names. Actions → **invite-sync** → Run workflow. It updates the Cloudflare Allow policy and prints only the count. It does not print logins or emails. A pull request cannot run it.
+Edit the `INVITE_ALLOWLIST` secret. Do not open a pull request with the names. Keep it at 45 people or fewer. Actions → **invite-sync** → Run workflow. Above 45 it stops before Cloudflare and prints only the count. At 45 or below it updates the Allow policy and still prints only the count. It does not print logins or emails. A pull request cannot run it.
+
+If `zero-trust-seats` opens, the account already has 45 or more seats. Zero Trust → Users. Remove inactive people there. Do not add a paid seat. A person who signed in once keeps a seat until you remove them, even after you delete their allowlist line.
 
 Then, for each login, on each package (the twelve images and, after the first ISO, each `-iso` package): Package settings → Invite people → Role **Read**. Read cannot invite anyone else and cannot change inherit. They do not become repository collaborators. The code stays public either way; collaborator status would only advertise who they are.
 

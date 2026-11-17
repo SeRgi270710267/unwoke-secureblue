@@ -46,5 +46,8 @@ if [[ "${forks}" -gt 0 || -n "${names}" ]]; then
 else
   bash "${ALARM}" rehost close || true
 fi
+if [[ -f "${ROOT}/.github/scripts/cloudflare_access.py" ]]; then
+  python3 "${ROOT}/.github/scripts/cloudflare_access.py" seats || echo "rehost-watch: seat check skipped"
+fi
 echo "rehost-watch: done"
 exit "${search_rc}"
