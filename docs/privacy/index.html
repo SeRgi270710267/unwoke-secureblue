@@ -7,12 +7,19 @@
   <meta name="color-scheme" content="dark">
   <title>Privacy vs stock | Unwoke SecureBlue</title>
   <meta name="description" content="Where Unwoke phones home less than stock secureblue — without turning off SELinux, Safe Browsing, or firmware updates. Every extra is a lock with a ujust revert.">
+  <link rel="canonical" href="https://sergi270710267.github.io/unwoke-secureblue/privacy/">
+  <meta property="og:title" content="Privacy vs stock | Unwoke SecureBlue">
+  <meta property="og:description" content="Where Unwoke phones home less than stock secureblue — without turning off SELinux, Safe Browsing, or firmware updates. Every extra is a lock with a ujust revert.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sergi270710267.github.io/unwoke-secureblue/privacy/">
+  <meta property="og:image" content="https://sergi270710267.github.io/unwoke-secureblue/assets/hero.jpg">
+  <meta name="twitter:card" content="summary_large_image">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=5" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css?v=23">
 </head>
 <body>
-  <a class="skip" href="#content">Skip to content</a>
+  <a class="skip" href="privacy/#content">Skip to content</a>
   <header>
     <nav id="site-menu" aria-label="Primary">
       <ul class="nav-top">
@@ -62,7 +69,7 @@
       <p><strong>One sentence.</strong> Same signed secureblue image. Fewer conversations with Fedora, the LAN, and Google. Same firewall, same USBGuard, malware lists still on. Recommended flavor: <code>*-trivalent</code>.</p>
     </div>
 
-    <h2 id="story"><a href="#story">Four quiet rooms</a></h2>
+    <h2 id="story"><a href="privacy/#story">Four quiet rooms</a></h2>
     <div class="cards">
       <div class="card">
         <p class="eyebrow">01 · Fedora</p>
@@ -93,7 +100,7 @@
 
     <p>Anonymity (hide the IP) is <a href="anonymity/">Anonymity</a> — Whonix KVM, not host Tor. This page is phone-home and disk leftovers.</p>
 
-    <h2 id="table"><a href="#table">Stock still does this. We default it off.</a></h2>
+    <h2 id="table"><a href="privacy/#table">Stock still does this. We default it off.</a></h2>
     <div class="table-container">
       <table>
         <thead>
@@ -194,7 +201,7 @@
       </table>
     </div>
 
-    <h2 id="fingerprint"><a href="#fingerprint">The honest fingerprint paragraph</a></h2>
+    <h2 id="fingerprint"><a href="privacy/#fingerprint">The honest fingerprint paragraph</a></h2>
     <p>Quieter Fedora and LAN is <strong>not</strong> a website fingerprint. Extra <strong>browser security packs</strong> (JIT-less, WebGL off, no extensions, site camera blocked) <strong>are</strong>. We still ship those packs: security first. Stock Trivalent is already a small crowd; our packs make it smaller. Best crowd on Unwoke is still <code>*-trivalent</code> (same binary and jail as stock). Origin is a smaller crowd and a fatter SELinux domain.</p>
     <p>If you <em>choose</em> to look closer to stock Trivalent: one pack, then restart the browser. Setup warns. Full text: <a href="tutorials/fingerprint/">Fingerprinting vs locks</a>.</p>
 <pre><code>ujust set-brave-jitless off    # security down for that pack
@@ -204,7 +211,7 @@ ujust set-brave-devices off</code></pre>
       <p>There is no overlay that is both “stricter than stock Trivalent” and “as anonymous as Chrome.” We will not install an anti-detect browser, turn off Safe Browsing, or add extra Cloudflare DoH on top of <code>ujust dns-selector</code> to pretend otherwise.</p>
     </div>
 
-    <h2 id="self-heal"><a href="#self-heal">It stays off</a></h2>
+    <h2 id="self-heal"><a href="privacy/#self-heal">It stays off</a></h2>
     <p>Every boot, <code>privacy.sh apply-boot</code> remasks countme and rewrites NetworkManager / resolved drop-ins unless you stamped <code>/etc/unwoke/allow-*</code>. Inspect fails the image bake if those files vanish. Same pattern as Bluetooth and Avahi.</p>
 
     <p><a class="button" href="install/">Get Unwoke SecureBlue</a> <a href="compared/">Compared</a> · <a href="features/">Features</a> · <a href="tutorials/fingerprint/">Fingerprint tutorial</a></p>

@@ -2,8 +2,8 @@
 # Unwoke SecureBlue. Not affiliated with secureblue.
 # SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267.
 # UNWOKE-SHIPPED-FIRST
-# Stock ujust install-vpn layers IVPN/Mullvad/Proton/Tailscale and may
-# switch DNS off Unbound. We do not call that script. WireGuard first.
+# Unwoke VPN menu. secureblue 4.10 removed ujust install-vpn.
+# WireGuard first. A GUI RPM or a DNS change happens only if you say yes.
 set -euo pipefail
 
 ask() {
@@ -15,10 +15,10 @@ ask() {
 }
 
 echo
-echo "=== VPN (stock ujust install-vpn is intercepted) ==="
-echo "Stock layers a GUI RPM, may disable Unbound, and may ask unconfined userns."
-echo "Unwoke: WireGuard import first. Official repo only if you insist."
-echo "Nothing silent. Tailscale is the one stock provider we did not already wrap."
+echo "=== VPN ==="
+echo "secureblue 4.10 removed ujust install-vpn. This menu is ours."
+echo "WireGuard import first. Official repo only if you insist."
+echo "Nothing silent."
 echo
 cat <<'EOF'
   1) Proton VPN — WireGuard / official (ujust install-proton)
@@ -36,9 +36,8 @@ case "${ans}" in
   4)
     echo
     echo "=== Tailscale (official Fedora repo) ==="
-    echo "Stock install-vpn does this too. Extra origin on an Atomic box."
-    echo "WireGuard users should pick 1–3 instead."
-    echo "DNS: some Tailscale setups fight Unbound. Stock would switch to systemd-resolved."
+    echo "Extra origin on an Atomic box. WireGuard users should pick 1–3 instead."
+    echo "DNS: some Tailscale setups fight Unbound. Switching to systemd-resolved is asked."
     if ! ask "Add Tailscale repo (gpgcheck=1) and layer tailscale?" "n"; then
       echo "Aborted."
       exit 0

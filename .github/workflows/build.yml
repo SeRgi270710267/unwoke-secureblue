@@ -204,6 +204,7 @@ jobs:
           NAME="${NAME%.yml}"
           REF="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/${NAME}:latest"
           echo "${GITHUB_TOKEN}" | cosign login ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
+          # Certificate attestations otherwise win and cosign prints no JSON.
           extra=()
           if cosign verify --help 2>&1 | grep -q -- '--new-bundle-format'; then
             extra+=(--new-bundle-format=false)
