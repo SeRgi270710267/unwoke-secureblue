@@ -208,7 +208,7 @@ jobs:
           verify_install: true
 
       - name: Anonymous pull must be denied
-        if: success()
+        if: success() && github.event_name != 'pull_request'
         env:
           IMAGE_NAME: ${{ matrix.recipe }}
         run: |

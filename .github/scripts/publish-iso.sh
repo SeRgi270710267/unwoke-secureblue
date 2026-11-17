@@ -50,8 +50,12 @@ if [[ -z "${GITHUB_OUTPUT:-}" ]]; then
   GITHUB_OUTPUT="$(mktemp)"
   export GITHUB_OUTPUT
 fi
-IMAGE_NAME="${IMAGE_NAME}-iso" bash "${guard}" preflight
+GHCR_CREATE=skip IMAGE_NAME="${IMAGE_NAME}-iso" bash "${guard}" preflight
 use_publish="$(grep '^use_publish=' "${GITHUB_OUTPUT}" | tail -n 1 | cut -d= -f2-)"
+if [[ "${use_publish}" == "skip" ]]; then
+  echo "publish-iso: GHCR package was not created. The R2 upload does not need it."
+  exit 0
+fi
 if [[ "${use_publish}" == "true" ]]; then
   login "${OWNER}" "${GHCR_PUBLISH_TOKEN}"
 else

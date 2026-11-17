@@ -13,42 +13,68 @@ set -euo pipefail
 OWNER="${GITHUB_REPOSITORY_OWNER:-sergi270710267}"
 OWNER="${OWNER,,}"
 
-anon_http() {
-  local path="$1"
-  local tok code
-  tok="$(curl -fsSL --retry 3 --retry-delay 1 --proto '=https' \
-      "https://ghcr.io/token?service=ghcr.io&scope=repository:${OWNER}/${IMAGE_NAME}:pull" \
-      | python3 -c 'import json,sys; print(json.load(sys.stdin).get("token",""))' \
-      2>/dev/null || true)"
+# 200 = anonymously readable. 401 = exists and asks for a login.
+# 404 = GHCR will not issue a pull token (the name is not a package).
+# A private package returns 401 from the token endpoint. curl -f would hide that.
+anon_code() {
+  local body token_code tok manifest tags bare
+  body="$(mktemp)"
+  token_code="$(curl -sS -o "${body}" -w '%{http_code}' --retry 3 --retry-delay 1 --proto '=https' \
+      "https://ghcr.io/token?service=ghcr.io&scope=repository:${OWNER}/${IMAGE_NAME}:pull" || true)"
+  bare="$(curl -sS -o /dev/null -w '%{http_code}' --proto '=https' \
+      -H "Accept: application/vnd.oci.image.index.v1+json, application/vnd.oci.image.manifest.v1+json" \
+      "https://ghcr.io/v2/${OWNER}/${IMAGE_NAME}/manifests/latest" || true)"
+  if [[ "${bare}" == "200" ]]; then
+    rm -f "${body}"
+    echo 200
+    return 0
+  fi
+  if [[ "${token_code}" == "401" || "${bare}" == "401" || "${bare}" == "403" ]]; then
+    if [[ "${token_code}" == "403" && "${bare}" == "401" ]]; then
+      rm -f "${body}"
+      echo 404
+      return 0
+    fi
+    if [[ "${token_code}" == "401" || "${bare}" == "403" || "${bare}" == "401" ]]; then
+      # A missing name also returns 401 on the manifest with no bearer.
+      # The token endpoint is 403 DENIED only when the package does not exist.
+      if [[ "${token_code}" == "403" ]]; then
+        rm -f "${body}"
+        echo 404
+        return 0
+      fi
+      rm -f "${body}"
+      echo 401
+      return 0
+    fi
+  fi
+  if [[ "${token_code}" != "200" ]]; then
+    rm -f "${body}"
+    echo unknown
+    return 0
+  fi
+  tok="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("token",""))' "${body}" 2>/dev/null || true)"
+  rm -f "${body}"
   if [[ -z "${tok}" ]]; then
     echo unknown
     return 0
   fi
-  code="$(curl -sS -o /dev/null -w '%{http_code}' --proto '=https' \
+  manifest="$(curl -sS -o /dev/null -w '%{http_code}' --proto '=https' \
       -H "Authorization: Bearer ${tok}" \
       -H "Accept: application/vnd.oci.image.index.v1+json, application/vnd.oci.image.manifest.v1+json" \
-      "https://ghcr.io/v2/${OWNER}/${IMAGE_NAME}${path}" || true)"
-  echo "${code}"
-}
-
-# manifest and tag list. 200 on either means the world can read the package.
-anon_code() {
-  local manifest tags
-  manifest="$(anon_http "/manifests/latest")"
-  tags="$(anon_http "/tags/list")"
+      "https://ghcr.io/v2/${OWNER}/${IMAGE_NAME}/manifests/latest" || true)"
+  tags="$(curl -sS -o /dev/null -w '%{http_code}' --proto '=https' \
+      -H "Authorization: Bearer ${tok}" \
+      "https://ghcr.io/v2/${OWNER}/${IMAGE_NAME}/tags/list" || true)"
   if [[ "${manifest}" == "200" || "${tags}" == "200" ]]; then
     echo 200
     return 0
   fi
-  if [[ "${manifest}" == "404" && ( "${tags}" == "404" || "${tags}" == "unknown" ) ]]; then
+  if [[ "${manifest}" == "404" && "${tags}" == "404" ]]; then
     echo 404
     return 0
   fi
-  if [[ "${manifest}" == "unknown" && "${tags}" == "unknown" ]]; then
-    echo unknown
-    return 0
-  fi
-  echo "${manifest}"
+  echo 401
 }
 
 decide() {
@@ -60,6 +86,12 @@ decide() {
   fi
   if [[ "${code}" == "404" || "${code}" == "unknown" ]]; then
     if [[ "${has_publish}" != "yes" ]]; then
+      if [[ "${GHCR_CREATE:-fail}" == "skip" ]]; then
+        echo "ghcr-push-guard: ${IMAGE_NAME} does not exist and GHCR_PUBLISH_TOKEN is unset. Not creating it." >&2
+        echo "::warning title=GHCR package not created::${IMAGE_NAME} is missing and GHCR_PUBLISH_TOKEN is unset. GITHUB_TOKEN will not create it." >&2
+        echo skip
+        return 0
+      fi
       echo "ghcr-push-guard: ${IMAGE_NAME} does not exist and GHCR_PUBLISH_TOKEN is unset." >&2
       echo "ghcr-push-guard: refusing to create it with GITHUB_TOKEN. A GITHUB_TOKEN push from this public repository creates a package the world can pull." >&2
       return 1
@@ -88,6 +120,10 @@ selftest() {
   fi
   if [[ "$(decide 401 yes)" != "false" ]]; then
     echo "selftest FAIL private package" >&2
+    ok=1
+  fi
+  if [[ "$(GHCR_CREATE=skip decide 404 no)" != "skip" ]]; then
+    echo "selftest FAIL iso skip" >&2
     ok=1
   fi
   if [[ "${ok}" -eq 0 ]]; then
