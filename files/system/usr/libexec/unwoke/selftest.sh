@@ -561,12 +561,14 @@ if [[ -f /etc/unwoke/allow-clear-ntp ]]; then
   proof "/etc/unwoke/allow-clear-ntp"
 elif [[ -f /etc/chrony.d/50-unwoke-nts.conf ]] \
   && grep -q 'nts' /etc/chrony.d/50-unwoke-nts.conf \
-  && grep -q 'time.cloudflare.com' /etc/chrony.d/50-unwoke-nts.conf; then
+  && grep -q 'time.cloudflare.com' /etc/chrony.d/50-unwoke-nts.conf \
+  && [[ -f /etc/chrony.conf ]] \
+  && grep -qE '^[[:space:]]*confdir[[:space:]]+/etc/chrony\.d([[:space:]]|$)' /etc/chrony.conf; then
   pass "#1185 chrony uses NTS (Cloudflare + nts.ntp.se)"
   proof "$(grep -E '^server' /etc/chrony.d/50-unwoke-nts.conf | tr '\n' '; ')"
 else
-  fail "#1185 NTS drop-in missing (fail-closed; nts.sh apply-boot)"
-  proof "looked at /etc/chrony.d/50-unwoke-nts.conf"
+  fail "#1185 NTS drop-in missing or chrony.conf does not load /etc/chrony.d"
+  proof "looked at /etc/chrony.d/50-unwoke-nts.conf and confdir in /etc/chrony.conf"
 fi
 
 # #1295 — CET

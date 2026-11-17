@@ -1,0 +1,42 @@
+name: bake-keepalive
+
+# GitHub sometimes stops creating scheduled runs while the repo is active.
+# Hourly, and only when no bluebuild run has started in 16 hours.
+# Does not retry a failed bake. Does not cancel a bake that is running.
+# The 40-hour stale-bake alarm is still the human signal.
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: bake-keepalive
+  cancel-in-progress: false
+
+jobs:
+  keepalive:
+    name: Dispatch bake if the schedule stopped
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Dispatch bluebuild when the last run is stale
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: python3 .github/scripts/bake_keepalive.py

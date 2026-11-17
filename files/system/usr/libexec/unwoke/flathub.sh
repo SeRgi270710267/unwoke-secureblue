@@ -7,10 +7,6 @@ set -euo pipefail
 
 REPO="https://dl.flathub.org/repo/flathub.flatpakrepo"
 STAMP="/etc/unwoke/flathub"
-FLAVOR="brave-origin"
-if [[ -f /usr/share/unwoke/flavor ]]; then
-  FLAVOR="$(tr -d '[:space:]' < /usr/share/unwoke/flavor)"
-fi
 
 as_root() {
   if [[ "$(id -u)" -eq 0 ]]; then

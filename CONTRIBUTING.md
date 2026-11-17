@@ -22,6 +22,29 @@ git clone https://github.com/YOUR/unwoke-secureblue
 
 Do not edit `docs/secureblue/` by hand.
 
+## Checks before you push
+
+```sh
+python3 .github/scripts/secret_scan.py --selftest
+python3 .github/scripts/secret_scan.py
+python3 .github/scripts/action_pin_guard.py
+python3 .github/scripts/workflow_policy.py
+bash .github/scripts/shellcheck-tree.sh
+python3 files/system/usr/libexec/unwoke/mark-check.py --tree .
+```
+
+Install the same secret scan as a pre-commit hook once: `sh .github/scripts/install_git_hooks.sh`.
+
+Use a GitHub noreply address so a personal mailbox is not stored in commit metadata:
+
+```sh
+git config user.email "<id>+<username>@users.noreply.github.com"
+```
+
+Also turn on **Settings → Emails → Keep my email addresses private** and **Block command line pushes that expose my email**.
+
+Workflow edits stay pinned to a full commit SHA, start from `permissions: {}`, and do not add `pull_request_target` or auto-merge. Fork pull requests run without secrets. Do not print `SIGNING_SECRET`.
+
 ## Hard no
 
 - `gpgcheck=0`, `setenforce 0`, unsigned rebase as a default, firewall off

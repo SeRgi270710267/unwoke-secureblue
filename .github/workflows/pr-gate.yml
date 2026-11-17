@@ -10,6 +10,7 @@ jobs:
   gate:
     name: Strict PR gate
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     permissions:
       contents: read
     steps:
@@ -30,7 +31,11 @@ jobs:
       - name: No pull_request_target / auto-merge in workflows
         run: |
           set -euo pipefail
-          if grep -R --include='*.yml' --include='*.yaml' -nE 'pull_request_target|enable-auto-merge' .github/workflows; then
+          # Match a workflow trigger or an auto-merge action input, not this
+          # check's own name. A bare grep matches the line that names the ban.
+          if grep -R --include='*.yml' --include='*.yaml' -nE \
+            '^[[:space:]]*(-\s*)?(pull_request_target|enable-auto-merge):' \
+            .github/workflows; then
             echo "FAIL: pull_request_target or auto-merge is not allowed" >&2
             exit 1
           fi
@@ -74,3 +79,24 @@ jobs:
 
       - name: Public mark on overlay sources
         run: python3 files/system/usr/libexec/unwoke/mark-check.py --tree .
+
+      - name: Secret scan
+        run: |
+          python3 .github/scripts/secret_scan.py --selftest
+          python3 .github/scripts/secret_scan.py
+
+      - name: Action pins and workflow policy
+        run: |
+          python3 .github/scripts/action_pin_guard.py --selftest
+          python3 .github/scripts/action_pin_guard.py
+          python3 .github/scripts/workflow_policy.py --selftest
+          python3 .github/scripts/workflow_policy.py
+          python3 .github/scripts/bake_keepalive.py --selftest
+          python3 .github/scripts/actions_cleanup.py --selftest
+          python3 .github/scripts/health_report.py --selftest
+
+      - name: ShellCheck
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq shellcheck
+          bash .github/scripts/shellcheck-tree.sh

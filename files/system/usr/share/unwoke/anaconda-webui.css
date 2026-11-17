@@ -19,3 +19,8 @@
   --pf-t--global--color--brand--default: var(--brand-default);
   --pf-t--global--color--brand--hover: var(--brand-default-dark);
 }
+
+/* Installer Time & Date spoke offers the Fedora NTP pool in the clear. */
+.anaconda #anaconda-screen-date-time-configure-ntp {
+  display: none;
+}

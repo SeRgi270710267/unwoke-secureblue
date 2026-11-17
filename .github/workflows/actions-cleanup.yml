@@ -1,0 +1,51 @@
+name: actions-cleanup
+
+# Weekly deletion of completed runs older than 120 days (past the 90-day
+# ISO artifact window). A manual run defaults to dry-run.
+# The newest completed run of each workflow is kept.
+
+on:
+  schedule:
+    - cron: "0 4 * * 0"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: dry-run lists runs. delete removes them.
+        required: true
+        type: choice
+        default: dry-run
+        options:
+          - dry-run
+          - delete
+
+permissions: {}
+
+concurrency:
+  group: actions-cleanup
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    name: Delete old completed runs
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Clean completed runs older than 120 days
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          CLEANUP_MODE: ${{ github.event_name == 'schedule' && 'delete' || github.event.inputs.mode }}
+        run: python3 .github/scripts/actions_cleanup.py

@@ -224,9 +224,17 @@ def write_hub(core: dict, grouped: OrderedDict) -> None:
             parts.append(card(c["href"], c["eyebrow"], c["h3"], c["p"]).rstrip())
         parts.append("    </div>")
         parts.append("")
-    parts.append('    <p class="section-label">Strict apps (from the vendor list)</p>')
-    parts.append('    <div class="cards">')
+    seen = set()
+    for sec in core.get("sections") or []:
+        for c in sec.get("cards") or []:
+            href = (c.get("href") or "").strip("/")
+            bits = [p for p in href.split("/") if p]
+            if len(bits) >= 2 and bits[0] == "tutorials":
+                seen.add(bits[1])
+    vendor_cards = []
     for slug, items in grouped.items():
+        if slug in seen:
+            continue
         titles = [s.get("title") or n for n, s in items]
         h3 = titles[0] if len(set(t.split()[0] for t in titles)) == 1 else slug.replace("-", " ").title()
         if slug == "proton":
@@ -239,8 +247,12 @@ def write_hub(core: dict, grouped: OrderedDict) -> None:
             eyebrow = slug.replace("-", " ").title()
             blurb = "Watched and healed. Strictest keys first. No store."
             h3 = h3.split("(")[0].strip()
-        parts.append(card(f"tutorials/{slug}/", eyebrow, h3, blurb).rstrip())
-    parts.append("    </div>")
+        vendor_cards.append(card(f"tutorials/{slug}/", eyebrow, h3, blurb).rstrip())
+    if vendor_cards:
+        parts.append('    <p class="section-label">Strict apps (from the vendor list)</p>')
+        parts.append('    <div class="cards">')
+        parts.extend(vendor_cards)
+        parts.append("    </div>")
     parts += [
         "  </main>",
         "  <footer>",

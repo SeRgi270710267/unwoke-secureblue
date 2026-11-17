@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Private security report
+    url: https://github.com/SeRgi270710267/unwoke-secureblue/security/advisories/new
+    about: Live overlay exploit. Not a public issue. Do not paste keys.
   - name: Stock secureblue bugs
     url: https://github.com/secureblue/secureblue/issues
     about: Kernel, Trivalent-the-browser, USBGuard in stock — not this overlay.

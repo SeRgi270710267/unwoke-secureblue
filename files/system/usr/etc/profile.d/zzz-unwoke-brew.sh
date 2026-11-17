@@ -1,6 +1,7 @@
 # Unwoke SecureBlue. Not affiliated with secureblue.
 # MIT License. Copyright (c) 2026 SeRgi270710267.
 # UNWOKE-SHIPPED-FIRST
+# shellcheck shell=sh
 # Homebrew off until /etc/unwoke/allow-brew exists.
 # ujust set-brew on
 if [ -f /etc/unwoke/allow-brew ]; then
