@@ -3,7 +3,7 @@
 # CI runs the same scan. Re-run this after clone if you want the local check.
 set -eu
 
-root=$(CDPATH= cd -- "$(dirname "$0")/../.." && pwd)
+root=$(CDPATH='' cd -- "$(dirname "$0")/../.." && pwd)
 hook="$root/.git/hooks/pre-commit"
 mkdir -p "$root/.git/hooks"
 cat > "$hook" <<'EOF'
