@@ -1,3 +1,4 @@
+<!-- Unwoke SecureBlue. Not affiliated with secureblue. MIT License. Copyright (c) 2026 SeRgi270710267. UNWOKE-SHIPPED-FIRST. -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +8,13 @@
   <meta name="color-scheme" content="dark">
   <title>Gaming / play window | Tutorials | Unwoke SecureBlue</title>
   <meta name="description" content="Play with GameMode like CachyOS for the session. Close the game, full Unwoke locks return. No kernel swap.">
+  <link rel="canonical" href="https://sergi270710267.github.io/unwoke-secureblue/tutorials/gaming/">
+  <meta property="og:title" content="Gaming / play window | Tutorials | Unwoke SecureBlue">
+  <meta property="og:description" content="Play with GameMode like CachyOS for the session. Close the game, full Unwoke locks return. No kernel swap.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sergi270710267.github.io/unwoke-secureblue/tutorials/gaming/">
+  <meta property="og:image" content="https://sergi270710267.github.io/unwoke-secureblue/assets/hero.jpg">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../css/main.css">
 </head>
@@ -24,7 +32,7 @@
   <main id="content">
     <p class="eyebrow">Games</p>
     <h1>Play window: CachyOS for the match, Unwoke after</h1>
-    <p><span class="chip">Restores</span> Stock <code>ujust install-steam</code> turns on Xwayland or ptrace and <strong>leaves them on</strong>. Unwoke asks those once, then a <strong>play window</strong> uses Feral GameMode (and optional sched-ext) only while the game runs. Close Steam → full overlay locks. Crash or reboot: first-boot wipes the play stamp. <code>ujust unwoke-test</code> FAILs if that stamp is leftover with no game.</p>
+    <p><span class="chip">Restores</span> Stock removed <code>ujust install-steam</code> in 4.10. Their FAQ still tells you to turn on Xwayland or ptrace and <strong>leave them on</strong>. Unwoke’s <code>ujust install-steam</code> asks those once, then a <strong>play window</strong> uses Feral GameMode (and optional sched-ext) only while the game runs. Close Steam → full overlay locks. Crash or reboot: first-boot wipes the play stamp. <code>ujust unwoke-test</code> FAILs if that stamp is leftover with no game.</p>
     <div class="alert tip">
       <p><strong>What we will not do.</strong> We do not swap in the CachyOS kernel. That would leave the signed secureblue ostree. SMT and CPU mitigations stay. That is the Spectre story stock already chose.</p>
     </div>

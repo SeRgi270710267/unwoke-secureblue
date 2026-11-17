@@ -64,6 +64,28 @@ def esc(s: str) -> str:
     return html.escape(s, quote=True)
 
 
+SITE = "https://sergi270710267.github.io/unwoke-secureblue"
+OG_IMAGE = SITE + "/assets/hero.jpg"
+
+
+def head_meta(title: str, description: str, path: str) -> str:
+    """Tags for a page under <base href>. path is site-relative, with a trailing slash."""
+    url = f"{SITE}/{path}"
+    return "\n".join(
+        [
+            f"  <title>{esc(title)}</title>",
+            f'  <meta name="description" content="{esc(description)}">',
+            f'  <link rel="canonical" href="{url}">',
+            f'  <meta property="og:title" content="{esc(title)}">',
+            f'  <meta property="og:description" content="{esc(description)}">',
+            '  <meta property="og:type" content="website">',
+            f'  <meta property="og:url" content="{url}">',
+            f'  <meta property="og:image" content="{OG_IMAGE}">',
+            '  <meta name="twitter:card" content="summary_large_image">',
+        ]
+    )
+
+
 def load_vendors() -> dict:
     return json.loads(VENDORS.read_text(encoding="utf-8")).get("vendors") or {}
 
@@ -148,14 +170,13 @@ def write_missing_page(slug: str, items: list[tuple[str, dict]]) -> None:
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#050a16">
   <meta name="color-scheme" content="dark">
-  <title>{esc(h1)} | Tutorials | Unwoke SecureBlue</title>
-  <meta name="description" content="Strict installer for {esc(slug)}. Generated from vendor-installers.json.">
+{head_meta(h1 + " | Tutorials | Unwoke SecureBlue", "Strict installer for " + slug + ". Generated from vendor-installers.json.", "tutorials/" + slug + "/")}
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css?v=23">
 </head>
 <body>
-  <a class="skip" href="#content">Skip to content</a>
+  <a class="skip" href="tutorials/{esc(slug)}/#content">Skip to content</a>
   <header>
     <nav id="site-menu" aria-label="Primary">
 {NAV}
@@ -192,14 +213,17 @@ def write_hub(core: dict, grouped: OrderedDict) -> None:
         '  <meta name="viewport" content="width=device-width, initial-scale=1">',
         '  <meta name="theme-color" content="#050a16">',
         '  <meta name="color-scheme" content="dark">',
-        "  <title>Tutorials | Unwoke SecureBlue</title>",
-        '  <meta name="description" content="Everyday Unwoke tasks the secure way. Vendor apps are generated from vendor-installers.json.">',
+        head_meta(
+            "Tutorials | Unwoke SecureBlue",
+            "Everyday Unwoke tasks the secure way. Vendor apps are generated from vendor-installers.json.",
+            "tutorials/",
+        ),
         '  <base href="/unwoke-secureblue/">',
         '  <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">',
         '  <link rel="stylesheet" href="css/main.css?v=23">',
         "</head>",
         "<body>",
-        '  <a class="skip" href="#content">Skip to content</a>',
+        '  <a class="skip" href="tutorials/#content">Skip to content</a>',
         "  <header>",
         '    <nav id="site-menu" aria-label="Primary">',
         NAV,

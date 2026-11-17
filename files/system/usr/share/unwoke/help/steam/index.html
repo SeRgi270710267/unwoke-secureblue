@@ -1,3 +1,4 @@
+<!-- Unwoke SecureBlue. Not affiliated with secureblue. MIT License. Copyright (c) 2026 SeRgi270710267. UNWOKE-SHIPPED-FIRST. -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +8,13 @@
   <meta name="color-scheme" content="dark">
   <title>Steam | Tutorials | Unwoke SecureBlue</title>
   <meta name="description" content="Install Steam the stock Flatpak way, but answer Unwoke lock questions first so games can actually run.">
+  <link rel="canonical" href="https://sergi270710267.github.io/unwoke-secureblue/tutorials/steam/">
+  <meta property="og:title" content="Steam | Tutorials | Unwoke SecureBlue">
+  <meta property="og:description" content="Install Steam the stock Flatpak way, but answer Unwoke lock questions first so games can actually run.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sergi270710267.github.io/unwoke-secureblue/tutorials/steam/">
+  <meta property="og:image" content="https://sergi270710267.github.io/unwoke-secureblue/assets/hero.jpg">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../css/main.css">
 </head>
@@ -24,7 +32,7 @@
   <main id="content">
     <p class="eyebrow">Games</p>
     <h1>Steam without skipping the locks</h1>
-    <p><span class="chip">Asked, not silent</span> Same command as stock: <code>ujust install-steam</code>. Same package: Flathub <code>com.valvesoftware.Steam</code> (not verified). On Unwoke that command <strong>asks</strong> before touching overlay locks. Stock’s script would just turn on unfiltered Flathub and leave games broken.</p>
+    <p><span class="chip">Asked, not silent</span> <code>ujust install-steam</code> is an Unwoke wizard. Same package: Flathub <code>com.valvesoftware.Steam</code> (not verified). It <strong>asks</strong> before touching overlay locks. secureblue 4.10 (Fedora 45, 2026-11-08) removed stock <code>ujust install-steam</code>. Their FAQ is now a manual Flatpak. There is no stock script left to intercept.</p>
     <div class="alert tip">
       <p><strong>Secure default.</strong> If you never install Steam, leave Flathub off and lockdown on. Search “Steam” in the app grid to open this wizard. Nothing is flipped unless you say yes.</p>
     </div>
@@ -48,7 +56,7 @@
       </li>
       <li>
         <h3>Leftover stock, not overlay</h3>
-        <p>32-bit games: their <code>kargs-32bit</code>. Anti-cheat / some mods: <code>ujust set-anticheat-support</code>. USB dongle blocked: leftover USBGuard. We do not silent-enable those.</p>
+        <p>32-bit games: stock no longer has <code>ujust kargs-32bit</code>. Their FAQ deletes the kernel arg, then you reboot: <code>rpm-ostree kargs --delete-if-present="ia32_emulation=0"</code>. Anti-cheat is leftover stock <code>ujust set-anticheat-support</code> (alias of <code>set-ptrace</code>). USB dongle blocked: leftover USBGuard. We do not silent-enable those.</p>
       </li>
       <li>
         <h3>Put the locks back</h3>

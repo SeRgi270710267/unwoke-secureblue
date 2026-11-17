@@ -7,12 +7,19 @@
   <meta name="color-scheme" content="dark">
   <title>See each lock yourself | Tutorials | Unwoke SecureBlue</title>
   <meta name="description" content="Do not trust our script. Run these read-only commands yourself and look at the files. Same proofs as ujust unwoke-test.">
+  <link rel="canonical" href="https://sergi270710267.github.io/unwoke-secureblue/tutorials/see-it/">
+  <meta property="og:title" content="See each lock yourself | Tutorials | Unwoke SecureBlue">
+  <meta property="og:description" content="Do not trust our script. Run these read-only commands yourself and look at the files. Same proofs as ujust unwoke-test.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sergi270710267.github.io/unwoke-secureblue/tutorials/see-it/">
+  <meta property="og:image" content="https://sergi270710267.github.io/unwoke-secureblue/assets/hero.jpg">
+  <meta name="twitter:card" content="summary_large_image">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css?v=23">
 </head>
 <body>
-  <a class="skip" href="#content">Skip to content</a>
+  <a class="skip" href="tutorials/see-it/#content">Skip to content</a>
   <header>
     <nav id="site-menu" aria-label="Primary">
       <ul class="nav-top">
@@ -62,28 +69,28 @@
       <p><strong>How to read a result.</strong> You should see the “healthy” output. If a stamp file under <code>/etc/unwoke/</code> exists, <em>you</em> turned that default off — that is LOOSE, not a broken image. Live-ISO-only checks (#1185, #2432) skip on an installed ostree. That is expected.</p>
     </div>
 
-    <h2 id="toc"><a href="#toc">Jump to a check</a></h2>
+    <h2 id="toc"><a href="tutorials/see-it/#toc">Jump to a check</a></h2>
     <ul>
-      <li><a href="#flavor">Flavor + no store</a></li>
-      <li><a href="#391">#391 /boot 700</a></li>
-      <li><a href="#697">#697 RAM noexec</a></li>
-      <li><a href="#887">#887 Flatpak buses</a></li>
-      <li><a href="#1185">#1185 live NTS</a></li>
-      <li><a href="#1295">#1295 CET</a></li>
-      <li><a href="#1569">#1569 DHCP</a></li>
-      <li><a href="#1606">#1606 CA trim</a></li>
-      <li><a href="#1885">#1885 extra Flatpak folders</a></li>
-      <li><a href="#2156">#2156 Flatpak record</a></li>
-      <li><a href="#2354">#2354 NFS/CIFS clients</a></li>
-      <li><a href="#2432">#2432 Anaconda encrypt</a></li>
-      <li><a href="#2508">#2508 Flatpak browsers</a></li>
-      <li><a href="#2526">#2526 Argon2id 2 GiB</a></li>
-      <li><a href="#devtools">DevTools locked</a></li>
-      <li><a href="#usbguard">USBGuard first-boot prompt</a></li>
-      <li><a href="#house">House defaults (BT, Flathub, brew…)</a></li>
+      <li><a href="tutorials/see-it/#flavor">Flavor + no store</a></li>
+      <li><a href="tutorials/see-it/#391">#391 /boot 700</a></li>
+      <li><a href="tutorials/see-it/#697">#697 RAM noexec</a></li>
+      <li><a href="tutorials/see-it/#887">#887 Flatpak buses</a></li>
+      <li><a href="tutorials/see-it/#1185">#1185 live NTS</a></li>
+      <li><a href="tutorials/see-it/#1295">#1295 CET</a></li>
+      <li><a href="tutorials/see-it/#1569">#1569 DHCP</a></li>
+      <li><a href="tutorials/see-it/#1606">#1606 CA trim</a></li>
+      <li><a href="tutorials/see-it/#1885">#1885 extra Flatpak folders</a></li>
+      <li><a href="tutorials/see-it/#2156">#2156 Flatpak record</a></li>
+      <li><a href="tutorials/see-it/#2354">#2354 NFS/CIFS clients</a></li>
+      <li><a href="tutorials/see-it/#2432">#2432 Anaconda encrypt</a></li>
+      <li><a href="tutorials/see-it/#2508">#2508 Flatpak browsers</a></li>
+      <li><a href="tutorials/see-it/#2526">#2526 Argon2id 2 GiB</a></li>
+      <li><a href="tutorials/see-it/#devtools">DevTools locked</a></li>
+      <li><a href="tutorials/see-it/#usbguard">USBGuard first-boot prompt</a></li>
+      <li><a href="tutorials/see-it/#house">House defaults (BT, Flathub, brew…)</a></li>
     </ul>
 
-    <h2 id="flavor"><a href="#flavor">Flavor and no store</a></h2>
+    <h2 id="flavor"><a href="tutorials/see-it/#flavor">Flavor and no store</a></h2>
     <ol class="steps">
       <li>
         <h3>Which overlay is this?</h3>
@@ -98,13 +105,13 @@ ls /usr/share/unwoke/SHIPPED-FIRST.txt /usr/share/unwoke/NOTICE /usr/share/unwok
       </li>
     </ol>
 
-    <h2 id="391"><a href="#391">#391 — /boot is 700</a></h2>
+    <h2 id="391"><a href="tutorials/see-it/#391">#391 — /boot is 700</a></h2>
     <p>Kernel image dir not world-readable. Stock still asks for this. Revert: <code>ujust set-boot-perm off</code>.</p>
 <pre><code>stat -c '%a %n' /boot /usr/src /usr/lib/modules
 ls /etc/unwoke/allow-boot-open 2>/dev/null || echo 'lock wanted (no stamp)'</code></pre>
     <p>Healthy: <code>700</code> on those directories. <code>/boot</code> is runtime; <code>/usr/src</code> and modules are 700 in the image. Stamp only re-opens <code>/boot</code>.</p>
 
-    <h2 id="697"><a href="#697">#697 — RAM disks cannot exec</a></h2>
+    <h2 id="697"><a href="tutorials/see-it/#697">#697 — RAM disks cannot exec</a></h2>
     <p>Payloads in <code>/dev/shm</code>, <code>/tmp</code>, and <code>/var/tmp</code> should not run. Stock asked only for the RAM disks; we also bind-mount <code>/var/tmp</code> noexec so a payload cannot dodge into persistent temp. Revert: <code>ujust set-ramdisk-exec on</code>.</p>
 <pre><code>findmnt -no OPTIONS /dev/shm
 findmnt -no OPTIONS /tmp
@@ -112,85 +119,85 @@ findmnt -no OPTIONS /var/tmp
 ls /etc/unwoke/allow-ramdisk-exec 2>/dev/null || echo 'lock wanted'</code></pre>
     <p>Healthy: all three option lists include <code>noexec</code>. If they do not after first boot and you did not stamp <code>allow-ramdisk-exec</code>, that is a <strong>fail</strong> (fail-closed).</p>
 
-    <h2 id="887"><a href="#887">#887 — Flatpak session bus</a></h2>
+    <h2 id="887"><a href="tutorials/see-it/#887">#887 — Flatpak session bus</a></h2>
     <p>Stock audit does not warn. Overlay lockdown should <em>not</em> grant session-bus, system-bus, or <code>org.freedesktop.Flatpak</code>.</p>
 <pre><code>flatpak override --show
 flatpak override --user --show</code></pre>
     <p>Healthy: you see <code>!session-bus</code> / <code>!system-bus</code> (or those names absent as grants). A bare <code>session-bus</code> without <code>!</code> is a fail. Stamp <code>/etc/unwoke/flatpak-lockdown.off</code> means you turned lockdown off.</p>
 
-    <h2 id="1185"><a href="#1185">#1185 — chrony NTS</a></h2>
+    <h2 id="1185"><a href="tutorials/see-it/#1185">#1185 — chrony NTS</a></h2>
     <p>Live USB and installed OS. Independent of <code>ujust dns-selector</code>. Revert: <code>ujust set-nts off</code>.</p>
 <pre><code>cat /etc/chrony.d/50-unwoke-nts.conf
 ls /etc/unwoke/allow-clear-ntp 2>/dev/null || echo 'NTS wanted'</code></pre>
     <p>Healthy: <code>server time.cloudflare.com iburst nts</code> and <code>server nts.ntp.se iburst nts</code>. Missing after first boot is a <strong>fail</strong> unless you stamped <code>allow-clear-ntp</code>.</p>
 
-    <h2 id="1295"><a href="#1295">#1295 — SHSTK + IBT</a></h2>
+    <h2 id="1295"><a href="tutorials/see-it/#1295">#1295 — SHSTK + IBT</a></h2>
     <p>Intel CET glibc tunables. Revert: <code>ujust set-cet off</code>.</p>
 <pre><code>cat /etc/systemd/system.conf.d/90-unwoke-cet.conf
 cat /usr/share/unwoke/cet-system.conf
 ls /etc/unwoke/cet.off 2>/dev/null || echo 'CET wanted on'</code></pre>
     <p>Healthy: <code>GLIBC_TUNABLES</code> contains <code>x86_shstk=on</code> and <code>x86_ibt=on</code>.</p>
 
-    <h2 id="1569"><a href="#1569">#1569 — DHCP anonymity</a></h2>
+    <h2 id="1569"><a href="tutorials/see-it/#1569">#1569 — DHCP anonymity</a></h2>
     <p>No hostname, IAID=mac, send-release. Revert: <code>ujust set-dhcp-hostname on</code>.</p>
 <pre><code>cat /etc/NetworkManager/conf.d/90-unwoke-dhcp.conf
 cat /usr/share/unwoke/nm-privacy-dhcp.conf</code></pre>
     <p>Healthy: <code>dhcp-send-hostname=false</code>, <code>dhcp-iaid=mac</code>, <code>dhcp-send-release=true</code>. If only the file under <code>/usr/share</code> exists, apply-boot has not copied it to <code>/etc</code> yet — reboot.</p>
 
-    <h2 id="1606"><a href="#1606">#1606 — fewer trusted CAs</a></h2>
+    <h2 id="1606"><a href="tutorials/see-it/#1606">#1606 — fewer trusted CAs</a></h2>
     <p>Fedora roots that are not Mozilla website-trusted. Revert: <code>ujust set-extra-cas on</code>.</p>
 <pre><code>ls /etc/pki/ca-trust/source/blocklist/unwoke-*.pem
 ls /usr/share/unwoke/ca-blocklist 2>/dev/null | head
 ls /etc/unwoke/allow-extra-cas 2>/dev/null || echo 'trim wanted'</code></pre>
     <p>Healthy: one or more <code>unwoke-*.pem</code> in the blocklist after first boot. Empty with no <code>allow-extra-cas</code> stamp is a <strong>fail</strong>.</p>
 
-    <h2 id="1885"><a href="#1885">#1885 — extra Flatpak folders</a></h2>
+    <h2 id="1885"><a href="tutorials/see-it/#1885">#1885 — extra Flatpak folders</a></h2>
     <p>xdg + host-root cuts stock’s lockdown command does not force. Revert: <code>ujust set-flatpak-lockdown off</code>.</p>
 <pre><code>flatpak override --show | grep -E 'host-root|xdg-download|xdg-documents'</code></pre>
     <p>Healthy: those names appear as denied filesystems (often with <code>!</code>). Empty output right after first boot: run <code>ujust set-flatpak-lockdown on</code> only if you already turned it off; otherwise reboot and look again.</p>
 
-    <h2 id="2156"><a href="#2156">#2156 — Flatpak cannot record</a></h2>
+    <h2 id="2156"><a href="tutorials/see-it/#2156">#2156 — Flatpak cannot record</a></h2>
     <p>Pulse + PipeWire capture blocked for Flatpaks. Native speakers stay. Revert: <code>ujust set-flatpak-record off</code>.</p>
 <pre><code>flatpak override --show | grep -Ei 'pulseaudio|pipewire'
 ls /etc/unwoke/flatpak-record.off 2>/dev/null || echo 'record-block wanted'</code></pre>
     <p>Healthy: Pulse socket / PipeWire path denied, no stamp file.</p>
 
-    <h2 id="2354"><a href="#2354">#2354 — NFS/CIFS clients</a></h2>
+    <h2 id="2354"><a href="tutorials/see-it/#2354">#2354 — NFS/CIFS clients</a></h2>
     <p>Stock only masks the NFS <em>server</em>. We also blacklist client modules. Revert: <code>ujust set-network-fs on</code>.</p>
 <pre><code>cat /etc/modprobe.d/unwoke-network-fs.conf
 cat /usr/share/unwoke/modprobe-network-fs.conf
 lsmod | grep -E 'nfs|cifs' || echo 'modules not loaded (good)'</code></pre>
     <p>Healthy: <code>blacklist nfs</code> and <code>blacklist cifs</code> in the conf. <code>lsmod</code> should not show them unless you loosened.</p>
 
-    <h2 id="2432"><a href="#2432">#2432 — Encrypt on in Anaconda</a></h2>
+    <h2 id="2432"><a href="tutorials/see-it/#2432">#2432 — Encrypt on in Anaconda</a></h2>
     <p>Live USB only. After install this file is gone — skip.</p>
 <pre><code>grep -R 'autopart --encrypted' /etc/anaconda /usr/share/anaconda 2>/dev/null | head</code></pre>
     <p>Healthy on the stick: a line with <code>autopart --encrypted</code>. You can still untick Encrypt in the GUI. Stock starts with Encrypt off.</p>
 
-    <h2 id="2508"><a href="#2508">#2508 — Flatpak web browsers</a></h2>
+    <h2 id="2508"><a href="tutorials/see-it/#2508">#2508 — Flatpak web browsers</a></h2>
     <p>Stock audit does not list them. Browserless should have none.</p>
 <pre><code>flatpak list --app --columns=application</code></pre>
     <p>Healthy: no Firefox/Chrome/Brave/Edge/Chromium/Tor/LibreWolf IDs. If one is there on a <code>-browserless</code> image, that is a fail.</p>
 
-    <h2 id="2526"><a href="#2526">#2526 — LUKS Argon2id 2 GiB</a></h2>
+    <h2 id="2526"><a href="tutorials/see-it/#2526">#2526 — LUKS Argon2id 2 GiB</a></h2>
     <p>Default for later LUKS format on the OS (and the live ISO). Weaker only if you format LUKS yourself without this conf.</p>
 <pre><code>cat /etc/cryptsetup.conf
 cat /usr/etc/cryptsetup.conf</code></pre>
     <p>Healthy: <code>pbkdf = argon2id</code> and <code>pbkdf-memory = 2097152</code> (KiB = 2 GiB).</p>
 
-    <h2 id="devtools"><a href="#devtools">DevTools locked</a></h2>
+    <h2 id="devtools"><a href="tutorials/see-it/#devtools">DevTools locked</a></h2>
     <p>Default locked. Revert: <code>ujust set-brave-devtools allow</code>.</p>
 <pre><code>ls /etc/brave-origin/policies/managed/60-unwoke-devtools.json /etc/trivalent/policies/managed/60-unwoke-devtools.json 2>/dev/null
 ls /etc/unwoke/brave-devtools.off 2>/dev/null || echo 'DevTools lock wanted'</code></pre>
     <p>Healthy: the JSON exists on Origin or Trivalent. Stamp means you allowed DevTools. Browserless: skip.</p>
 
-    <h2 id="usbguard"><a href="#usbguard">USBGuard first-boot prompt</a></h2>
+    <h2 id="usbguard"><a href="tutorials/see-it/#usbguard">USBGuard first-boot prompt</a></h2>
     <p>Asked in Unwoke setup after login, default <strong>No</strong>. Never silent-enable. Does not block GDM on tty1.</p>
 <pre><code>ls /etc/unwoke/usbguard-prompt.done 2>/dev/null || echo 'prompt not run yet'
 wc -l /etc/usbguard/rules.conf 2>/dev/null || echo 'no rules yet'</code></pre>
     <p>Healthy: after first boot the done stamp exists. Non-empty rules only if you said Yes. Later: <code>ujust setup-usbguard</code>.</p>
 
-    <h2 id="house"><a href="#house">House defaults (not stock tickets)</a></h2>
+    <h2 id="house"><a href="tutorials/see-it/#house">House defaults (not stock tickets)</a></h2>
     <p>Same idea: look at the stamp. No stamp = lock wanted.</p>
 <pre><code># Bluetooth (Wi-Fi stays)
 systemctl is-enabled bluetooth 2>/dev/null || echo 'masked/disabled (good)'

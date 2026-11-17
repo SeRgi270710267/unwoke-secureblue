@@ -7,12 +7,19 @@
   <meta name="color-scheme" content="dark">
   <title>Factory | Unwoke SecureBlue</title>
   <meta name="description" content="How Unwoke automates overlay bakes, recommended USB wraps, weekly all-12 ISOs, GitHub gates, alarms, and idle keep-alive — and which trust gates still need a human. Nothing here auto-unlocks.">
+  <link rel="canonical" href="https://sergi270710267.github.io/unwoke-secureblue/factory/">
+  <meta property="og:title" content="Factory | Unwoke SecureBlue">
+  <meta property="og:description" content="How Unwoke automates overlay bakes, recommended USB wraps, weekly all-12 ISOs, GitHub gates, alarms, and idle keep-alive — and which trust gates still need a human. Nothing here auto-unlocks.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sergi270710267.github.io/unwoke-secureblue/factory/">
+  <meta property="og:image" content="https://sergi270710267.github.io/unwoke-secureblue/assets/hero.jpg">
+  <meta name="twitter:card" content="summary_large_image">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css?v=23">
 </head>
 <body>
-  <a class="skip" href="#content">Skip to content</a>
+  <a class="skip" href="factory/#content">Skip to content</a>
   <header>
     <nav id="site-menu" aria-label="Primary">
       <ul class="nav-top">
@@ -56,13 +63,13 @@
   <main id="content">
     <h1>Factory</h1>
     <p>This is the living map of how Unwoke keeps itself current. Four lanes stay in sync. Most breakage heals itself. A few gates stay manual <strong>on purpose</strong>. Auto-heal never means “make it green by loosening a lock.”</p>
-    <p>You should not have to refresh Actions. Watch the stamp below and the GitHub issues named in <a href="#alarms">Alarms</a>. That is the pager. Chat is not.</p>
+    <p>You should not have to refresh Actions. Watch the stamp below and the GitHub issues named in <a href="factory/#alarms">Alarms</a>. That is the pager. Chat is not.</p>
     <div class="factory-stamp" data-factory-stamp>Checking last green…</div>
     <div class="alert">
       <p><strong>Security boundary.</strong> The factory will not auto-merge a canary hit, a new <code>keys/secureblue.pub</code>, a new vendor hostname, <code>gpgcheck=0</code>, unverified Flathub, or a titanoboa pin bump. Those need a human because they are trust changes, not URL typos.</p>
     </div>
 
-    <h2 id="easy"><a href="#easy">In easy words</a></h2>
+    <h2 id="easy"><a href="factory/#easy">In easy words</a></h2>
     <div class="cards">
       <div class="card">
         <p class="eyebrow">Images</p>
@@ -91,8 +98,8 @@
       </div>
     </div>
 
-    <h2 id="github"><a href="#github">GitHub map</a></h2>
-    <p>This is the same factory, named as GitHub objects. The pager is still the stamp above and the issues in <a href="#alarms">Alarms</a>. You should not have to live in Actions.</p>
+    <h2 id="github"><a href="factory/#github">GitHub map</a></h2>
+    <p>This is the same factory, named as GitHub objects. The pager is still the stamp above and the issues in <a href="factory/#alarms">Alarms</a>. You should not have to live in Actions.</p>
     <div class="table-container">
       <table>
         <thead>
@@ -189,7 +196,7 @@
     </div>
     <p>Stranger path: fork → PR → green <code>pr-gate</code> + canary → the maintainer merges. There is no auto-merge. <code>main-strict</code> still wants one approval and Code Owners, and the bot is not a bypass actor, so a green check cannot merge itself. Owner pushes to <code>main</code> skip the ruleset because of the admin bypass. Vendor heal and the idle heartbeat file cannot land from the bot; snapshot drift becomes the <code>factory/stock-snapshots</code> pull request instead of a red bake. HTML-only tutorial regen still happens on Pages. The heartbeat falls back to a keep-alive issue comment so cron does not die at ~60 days. Scheduled workflows were still enabled through the quiet stretch; the stall was a failed stock-snapshot job marking an otherwise signed bake red, which skipped the USB wrap.</p>
 
-    <h2 id="lanes"><a href="#lanes">Four lanes</a></h2>
+    <h2 id="lanes"><a href="factory/#lanes">Four lanes</a></h2>
     <div class="cards">
       <div class="card">
         <p class="eyebrow">Overlay</p>
@@ -213,7 +220,7 @@
       </div>
     </div>
 
-    <h2 id="auto"><a href="#auto">What already fixes itself</a></h2>
+    <h2 id="auto"><a href="factory/#auto">What already fixes itself</a></h2>
     <div class="table-container">
       <table>
         <thead>
@@ -349,7 +356,7 @@
       </table>
     </div>
 
-    <h2 id="human"><a href="#human">What stays a human, and why</a></h2>
+    <h2 id="human"><a href="factory/#human">What stays a human, and why</a></h2>
     <div class="table-container">
       <table>
         <thead>
@@ -410,7 +417,7 @@
       </table>
     </div>
 
-    <h2 id="alarms"><a href="#alarms">Alarms (one issue per lane)</a></h2>
+    <h2 id="alarms"><a href="factory/#alarms">Alarms (one issue per lane)</a></h2>
     <p>You should not have to refresh Actions to learn something is red. Each lane reuses a single issue (comment on repeat, close when green):</p>
     <ul>
       <li><code>factory-alarm</code> — canary, snapshot watch, overlay bake, post-publish inspect, or no green bake for ~40 hours</li>
@@ -426,7 +433,7 @@
     </ul>
     <p>A 429 is not a contract break. Heal does not rewrite on transients. Inspect on a schedule does not close <code>factory-alarm</code> by itself (that would hide a failed canary behind a still-signed old image).</p>
 
-    <h2 id="add-app"><a href="#add-app">Add an app (one stanza)</a></h2>
+    <h2 id="add-app"><a href="factory/#add-app">Add an app (one stanza)</a></h2>
     <p>Put a key in <code>files/system/usr/share/unwoke/vendor-installers.json</code>. The rest is generated:</p>
     <ul>
       <li>Twice-daily check + heal (allowlisted HTTPS + checksum / <code>gpgcheck=1</code>)</li>
@@ -438,7 +445,7 @@
     </ul>
     <p>If the official site is a new hostname, that is the human step: add it to <code>HOSTS</code> in <code>vendor.py</code>. Do not add Flathub. Prefer a <code>wireguard-import</code> or <code>https-ok</code> (Trivalent) key marked <code>strictest</code> before any RPM.</p>
 
-    <h2 id="day"><a href="#day">A day in the factory</a></h2>
+    <h2 id="day"><a href="factory/#day">A day in the factory</a></h2>
     <div class="split-2">
       <div>
         <h3>Overlay image (every flavor)</h3>
@@ -462,7 +469,7 @@
       </div>
     </div>
 
-    <h2 id="clock"><a href="#clock">Clock (UTC)</a></h2>
+    <h2 id="clock"><a href="factory/#clock">Clock (UTC)</a></h2>
     <ol class="clock">
       <li>
         <time datetime="08:00">08:00 and 20:00</time>
@@ -487,10 +494,10 @@
     </ol>
     <p>Docs-only and ISO workflow edits do not start an overlay bake (<code>build.yml</code> paths-ignore). Changing the vendor JSON or overlay scripts does.</p>
 
-    <h2 id="away"><a href="#away">If you are away</a></h2>
+    <h2 id="away"><a href="factory/#away">If you are away</a></h2>
     <p>Turn on GitHub email for issues on this repo. The factory will keep overlay images current, wrap the two recommended Trivalent USBs after each green overlay, and wrap all twelve on Sunday. GHCR <code>-iso:latest</code> outlives the Actions zip. Real trust hits (key, canary, titanoboa pin, new vendor host, Dependabot) stay red until a human is back. That is the design.</p>
 
-    <h2 id="not"><a href="#not">What this page is not</a></h2>
+    <h2 id="not"><a href="factory/#not">What this page is not</a></h2>
     <p>Not a store. Not a promise that canary catches a generic backdoor. Not affiliated with secureblue. Kernel, SELinux, <code>hardened_malloc</code>, USBGuard, firewall remain theirs. We overlay. We do not fork.</p>
     <p>Vs stock in easy words: <a href="compared/">Compared</a>. How to install: <a href="install/">Install</a>. Everyday tasks: <a href="tutorials/">Tutorials</a>.</p>
   </main>

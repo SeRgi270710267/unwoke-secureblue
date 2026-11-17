@@ -7,12 +7,19 @@
   <meta name="color-scheme" content="dark">
   <title>Gaming vs stock | Unwoke SecureBlue</title>
   <meta name="description" content="Play a match with GameMode. Close the game, full Unwoke locks return. Stock leaves Xwayland and anti-cheat on. We do not swap the CachyOS kernel.">
+  <link rel="canonical" href="https://sergi270710267.github.io/unwoke-secureblue/gaming/">
+  <meta property="og:title" content="Gaming vs stock | Unwoke SecureBlue">
+  <meta property="og:description" content="Play a match with GameMode. Close the game, full Unwoke locks return. Stock leaves Xwayland and anti-cheat on. We do not swap the CachyOS kernel.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sergi270710267.github.io/unwoke-secureblue/gaming/">
+  <meta property="og:image" content="https://sergi270710267.github.io/unwoke-secureblue/assets/hero.jpg">
+  <meta name="twitter:card" content="summary_large_image">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=5" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css?v=23">
 </head>
 <body>
-  <a class="skip" href="#content">Skip to content</a>
+  <a class="skip" href="gaming/#content">Skip to content</a>
   <header>
     <nav id="site-menu" aria-label="Primary">
       <ul class="nav-top">
@@ -56,13 +63,13 @@
   <main id="content">
     <p class="eyebrow">Vs stock secureblue · vs CachyOS</p>
     <h1>Play the match. Then the box locks itself again.</h1>
-    <p class="lead">Stock will let you game. The problem is what happens <strong>after</strong>. Their Steam install turns on Xwayland or anti-cheat and <strong>leaves those holes open</strong> until you remember to close them. Unwoke asks once, then a <strong>play window</strong> borrows CachyOS’s session trick — GameMode while the title runs — and puts every overlay lock back when you quit. Crash or reboot: the leftover stamp is a <strong>fail</strong>, not a quiet weaker machine.</p>
+    <p class="lead">Stock will let you game. The problem is what happens <strong>after</strong>. Their FAQ (they removed <code>ujust install-steam</code> in 4.10) tells you to turn on Xwayland or anti-cheat and <strong>leave those holes open</strong>. Unwoke asks once, then a <strong>play window</strong> borrows CachyOS’s session trick — GameMode while the title runs — and puts every overlay lock back when you quit. Crash or reboot: the leftover stamp is a <strong>fail</strong>, not a quiet weaker machine.</p>
     <p><span class="chip">Restores</span> <span class="chip">No kernel swap</span> <span class="chip">Nothing silent</span></p>
     <div class="alert tip">
       <p><strong>One sentence.</strong> Same signed secureblue kernel. Faster governors for the match. Full Unwoke the moment Steam exits. We do not become CachyOS. We do not stay as loose as stock.</p>
     </div>
 
-    <h2 id="story"><a href="#story">Three rooms</a></h2>
+    <h2 id="story"><a href="gaming/#story">Three rooms</a></h2>
     <div class="cards">
       <div class="card">
         <p class="eyebrow">01 · Stock</p>
@@ -81,7 +88,7 @@
       </div>
     </div>
 
-    <h2 id="table"><a href="#table">Who wins what</a></h2>
+    <h2 id="table"><a href="gaming/#table">Who wins what</a></h2>
     <div class="table-container">
       <table>
         <thead>
@@ -96,7 +103,7 @@
           </tr>
           <tr>
             <td>Steam install</td>
-            <td>Unfiltered Flathub, no overlay questions</td>
+            <td>Manual Flatpak since 4.10. No <code>ujust install-steam</code>. Xwayland and ptrace stay on if you followed their FAQ</td>
             <td>Their stack, not Atomic</td>
             <td>Asks Flathub, lockdown, temp, mic, BT first</td>
           </tr>
@@ -128,7 +135,7 @@
       </table>
     </div>
 
-    <h2 id="auto"><a href="#auto">What turns on by itself when you click Steam</a></h2>
+    <h2 id="auto"><a href="gaming/#auto">What turns on by itself when you click Steam</a></h2>
     <div class="table-container">
       <table>
         <thead>
@@ -170,14 +177,14 @@
     </div>
     <p>The leftover FPS gap is their kernel and rebuilt packages. Everything else that can be a <em>session</em> is automatic. Click Steam. Close Steam.</p>
 
-    <h2 id="do"><a href="#do">On the machine</a></h2>
+    <h2 id="do"><a href="gaming/#do">On the machine</a></h2>
 <pre><code>ujust install-steam
 # then just click Steam in the app grid
 # play
 # close Steam — restore is automatic</code></pre>
     <p>No extra command to “turn it off.” A login agent sees Steam start and quit. <code>ujust play stop</code> still exists if you want it. Healthy later: <code>ujust unwoke-test</code> says <code>PASS  no play window</code>. How-to: <a href="tutorials/gaming/">Play window tutorial</a>.</p>
 
-    <h2 id="not"><a href="#not">What this page does not claim</a></h2>
+    <h2 id="not"><a href="gaming/#not">What this page does not claim</a></h2>
     <p>We will not beat CachyOS at raw FPS on a weak GPU. Their rebuilt mesa and kernel are real. We will not turn off Spectre mitigations “just for the game.” We will not silent-enable ptrace. The sell is simpler: <strong>you can play, and you do not stay open.</strong></p>
   </main>
   <footer>

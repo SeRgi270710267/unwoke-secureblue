@@ -49,7 +49,7 @@ INSTALL_NOTICE = """
 """
 
 FAQ_NOTICE = """
-<p class="alert note"><strong>Stock FAQ.</strong> They still have Bazaar, verified Flathub, Homebrew, and <code>ujust install-vpn</code> / <code>install-steam</code>. Overlay deltas (no store, extra locks, Proton/IVPN/Mullvad wizards): <a href="faq/">our FAQ</a> and <a href="compared/">Compared</a>.</p>
+<p class="alert note"><strong>Stock FAQ.</strong> They still have Bazaar, verified Flathub, and Homebrew. secureblue 4.10 (Fedora 45) removed <code>ujust install-vpn</code> and <code>install-steam</code>. Overlay deltas (no store, extra locks, our Steam/VPN wizards): <a href="faq/">our FAQ</a> and <a href="compared/">Compared</a>.</p>
 """
 
 FEATURES_NOTICE = """
@@ -671,7 +671,7 @@ def main() -> int:
     index_body = f"""
     <h1>Stock secureblue docs</h1>
     <p>Pulled daily from <a href="https://secureblue.dev">secureblue.dev</a> and wrapped in our chrome. Unwoke FAQ, Features, Images, and Install stay on the main nav — this tree cannot overwrite them.</p>
-    <div class="alert note"><p><strong>These pages describe stock.</strong> They still mention Bazaar, verified Flathub, Homebrew, and their ISO picker. Overlay rules: <a href="compared/">Compared</a>. How to install Unwoke: <a href="install/">Install</a>.</p></div>
+    <div class="alert note"><p><strong>These pages describe stock.</strong> They still mention Bazaar, verified Flathub, Homebrew, and their ISO picker. Their 4.10 release is Fedora 45 and no longer documents <code>ujust install-steam</code> or <code>install-vpn</code>. Overlay rules: <a href="compared/">Compared</a>. How to install Unwoke: <a href="install/">Install</a>.</p></div>
     <div class="cards docs-index">{"".join(sections)}</div>
     <p>Not mirrored on purpose: their homepage and Contributor Covenant. Canonical for everything here is still <a href="https://secureblue.dev">secureblue.dev</a>.</p>
     """
