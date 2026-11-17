@@ -268,12 +268,12 @@ def card(item: dict) -> str:
 def section(title: str, anchor: str, intro: str, items: list[dict], empty: str) -> str:
     if not items:
         return (
-            f'    <h2 id="{esc(anchor)}"><a href="#{esc(anchor)}">{esc(title)}</a></h2>\n'
+            f'    <h2 id="{esc(anchor)}"><a href="ahead/#{esc(anchor)}">{esc(title)}</a></h2>\n'
             f"    <p>{esc(intro)}</p>\n"
             f'    <p class="feat-empty">{esc(empty)}</p>\n'
         )
     parts = [
-        f'    <h2 id="{esc(anchor)}"><a href="#{esc(anchor)}">{esc(title)}</a></h2>\n',
+        f'    <h2 id="{esc(anchor)}"><a href="ahead/#{esc(anchor)}">{esc(title)}</a></h2>\n',
         f"    <p>{esc(intro)}</p>\n",
         '    <div class="feat-grid">\n',
     ]
