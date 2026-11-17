@@ -181,7 +181,7 @@ def list_apps(token: str, account: str) -> list[dict]:
     try:
         payload = _request("GET", url + "?page=1&per_page=50", token)
     except CfError as exc:
-        if "http 400" not in str(exc):
+        if "http 400" not in str(exc) or "9106" in str(exc):
             raise
         payload = _request("GET", url, token)
     return _result_list(payload)
@@ -193,6 +193,43 @@ def find_app(token: str, account: str, domain: str) -> dict:
     if app is None:
         raise CfError("access application does not cover the site and its preview wildcard")
     return app
+
+
+def access_login_host(location: str) -> bool:
+    host = host_of(location)
+    return host == "cloudflareaccess.com" or host.endswith(".cloudflareaccess.com")
+
+
+def token_cannot_read(exc: CfError) -> bool:
+    text = str(exc)
+    return "9106" in text or "http 401" in text or "http 403" in text
+
+
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
+def edge_gated(url: str) -> bool:
+    """True when an anonymous GET is sent to the Access login, not the site."""
+    opener = urllib.request.build_opener(_NoRedirect)
+    req = urllib.request.Request(url, method="GET", headers={"User-Agent": "unwoke-access-check"})
+    try:
+        with opener.open(req, timeout=20):
+            return False
+    except urllib.error.HTTPError as exc:
+        if exc.code not in (301, 302, 303, 307, 308):
+            return False
+        return access_login_host(exc.headers.get("Location") or "")
+    except urllib.error.URLError:
+        return False
+
+
+def edge_covers(domain: str) -> bool:
+    apex = domain.lower().rstrip(".")
+    if not re.fullmatch(r"[a-z0-9.-]+", apex) or apex.startswith("gate-check."):
+        return False
+    return edge_gated(f"https://{apex}/") and edge_gated(f"https://gate-check.{apex}/")
 
 
 def check() -> int:
@@ -214,7 +251,15 @@ def check() -> int:
             )
         )
     except CfError as exc:
-        print(str(exc), file=sys.stderr)
+        if not token_cannot_read(exc):
+            print(str(exc), file=sys.stderr)
+            return 1
+        print("access-api=unavailable", file=sys.stderr)
+        if edge_covers(domain):
+            print("access-edge=gated")
+            print("deploy=go")
+            return 0
+        print("site is not behind Access", file=sys.stderr)
         return 1
     if not policy_protects(policies):
         print("access policy unwoke-invite does not limit the site", file=sys.stderr)
@@ -387,6 +432,15 @@ def selftest() -> int:
     )
     if "7003" not in note or "@" in note:
         print("selftest FAIL error note")
+        ok = False
+    if not access_login_host("https://team.cloudflareaccess.com/cdn-cgi/access/login/x"):
+        print("selftest FAIL access host")
+        ok = False
+    if access_login_host("https://unwoke-secureblue.pages.dev/"):
+        print("selftest FAIL pages host treated as access")
+        ok = False
+    if not token_cannot_read(CfError("cloudflare http 400: 9106 Authentication failed")):
+        print("selftest FAIL auth code")
         ok = False
     seated = count_seats(
         [

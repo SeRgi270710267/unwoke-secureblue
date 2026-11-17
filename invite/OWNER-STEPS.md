@@ -62,7 +62,7 @@ Secrets:
 
 | Name | What it is |
 | --- | --- |
-| `CLOUDFLARE_API_TOKEN` | API token, not the Global API Key. Permissions: Account → Cloudflare Pages → Edit, Account → Access: Apps and Policies → Edit, and Account → Access: Organizations, Identity Providers, and Groups → Read (so the seat count can be read). No DNS, no Workers, no other account. |
+| `CLOUDFLARE_API_TOKEN` | API token, not the Global API Key. Permissions: Account → Cloudflare Pages → Edit, Account → Access: Apps and Policies → Edit, and Account → Access: Organizations, Identity Providers, and Groups → Read (so the seat count can be read). Listing apps with only Edit returned Cloudflare error 9106. Add Access: Apps and Policies → Read on the same account if you want the policy check. Until that read works, the docs deploy still refuses to publish unless both the site and a preview hostname redirect to the Access login. No DNS, no Workers, no other account. |
 | `CLOUDFLARE_ACCOUNT_ID` | The account id on the Workers overview. |
 | `INVITE_ALLOWLIST` | One `github-login email` pair per line. The email is one GitHub shows Access after login (a verified address on that GitHub account). `#` starts a comment. This file must not be committed. |
 | `GHCR_PUBLISH_TOKEN` | Classic PAT, 90 days, only `write:packages`, from <https://github.com/settings/tokens/new?scopes=write:packages>. It creates the first unlinked ISO package. It can push every package your user can write, so do not use it anywhere else. |
