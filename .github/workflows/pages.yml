@@ -142,12 +142,32 @@ jobs:
           grep -q 'binding = "ISOS"' wrangler.toml
           grep -q 'bucket_name = "unwoke-isos"' wrangler.toml
 
+      # Wrangler puts these in HTTP headers. A pasted newline makes
+      # Headers.set reject the value. The Access check already strips them.
+      - name: Trim Cloudflare credentials
+        if: steps.gate.outputs.deploy == 'go'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          out = Path(os.environ["GITHUB_ENV"])
+          for name in ("CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID"):
+              value = "".join(os.environ.get(name, "").split())
+              if not value:
+                  raise SystemExit(f"{name} is empty")
+              if any(ord(ch) < 33 or ord(ch) > 126 for ch in value):
+                  raise SystemExit(f"{name} has a character that cannot go in a header")
+              with out.open("a", encoding="utf-8") as handle:
+                  handle.write(f"{name}<<UNWOKE_CF_EOF\n{value}\nUNWOKE_CF_EOF\n")
+          PY
+
       - name: Deploy docs behind Access
         if: steps.gate.outputs.deploy == 'go'
         uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4.1.3
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy docs --project-name=${{ vars.CLOUDFLARE_PAGES_PROJECT || 'unwoke-secureblue' }} --branch=main --commit-dirty=true
 
   pages-alarm:
