@@ -40,6 +40,10 @@ cmd_apply_user() {
     for u in "${UNITS[@]}"; do
       systemctl --user unmask "$u" >/dev/null 2>&1 || true
     done
+    # The user preset disables these. Unmask alone leaves them disabled.
+    systemctl --user enable --now image-deprecation-notice.service >/dev/null 2>&1 || true
+    systemctl --user enable --now secureblue-update-verification.timer >/dev/null 2>&1 || true
+    systemctl --user enable --now secureblue-flatpak-setup.timer >/dev/null 2>&1 || true
   fi
 }
 

@@ -54,5 +54,41 @@ git add files/upstream-snapshots .github/scripts/upstream-watch.txt \
 git -c user.name="unwoke-snapshot-bot" \
     -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
     commit -m "chore: refresh stock snapshots (auto)"
-bash .github/scripts/factory-push.sh
-echo "committed refreshed snapshots"
+
+if bash .github/scripts/factory-push.sh; then
+  echo "committed refreshed snapshots on main"
+  exit 0
+fi
+
+# main-strict blocks github-actions[bot]. A failed push used to fail this
+# job, which failed the whole bluebuild workflow, which skipped the USB wrap
+# even when all twelve images had just been signed. Open a review PR instead.
+# Do not force-push main. This branch is only the snapshot diff.
+branch="factory/stock-snapshots"
+echo "factory-push declined; updating ${branch} for review"
+git fetch origin "${branch}" 2>/dev/null || true
+if git rev-parse --verify "origin/${branch}" >/dev/null 2>&1; then
+  git push --force-with-lease="refs/heads/${branch}:$(git rev-parse "origin/${branch}")" \
+    origin "HEAD:refs/heads/${branch}"
+else
+  git push origin "HEAD:refs/heads/${branch}"
+fi
+
+command -v gh >/dev/null || { echo "gh missing; branch pushed, no PR" >&2; exit 0; }
+body="Stock files we snapshot changed. This PR refreshes the hashes and regenerates the lockdown list file from their script.
+
+It does not change Unwoke runtime scripts except \`flatpak-lockdown-lists.sh\` when their permission lists changed. Read that diff. Do not merge if a list got weaker.
+
+The bot cannot push \`main\` (ruleset \`main-strict\`, no Actions bypass). The image bake stays green so the USB wrap is not skipped for a snapshot-only drift.
+
+Do not auto-merge. Do not add a bypass actor."
+existing="$(gh pr list --repo "${GITHUB_REPOSITORY}" --head "${branch}" --base main --state open --json number --jq '.[0].number' || true)"
+if [[ -n "${existing}" && "${existing}" != "null" ]]; then
+  gh pr edit "${existing}" --repo "${GITHUB_REPOSITORY}" --body "${body}"
+  echo "updated snapshot PR #${existing}"
+else
+  gh pr create --repo "${GITHUB_REPOSITORY}" --base main --head "${branch}" \
+    --title "Refresh stock snapshots" --body "${body}"
+fi
+echo "snapshot review PR is open; bake is not failed for this drift"
+exit 0

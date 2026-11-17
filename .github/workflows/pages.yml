@@ -13,6 +13,7 @@ jobs:
   deploy:
     name: Deploy GitHub Pages
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     permissions:
       contents: read
       pages: write
@@ -98,6 +99,7 @@ jobs:
     if: always() && !cancelled() && github.actor != 'dependabot[bot]'
     needs: [deploy]
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
       issues: write

@@ -143,13 +143,33 @@
           </tr>
           <tr>
             <td><code>pr-gate</code></td>
-            <td>Pull requests only. Blocks <code>gpgcheck=0</code>, <code>setenforce 0</code>, secrets in the diff, <code>pull_request_target</code>, auto-merge in workflows. Vendor schema, Python compile, public mark. Does not bake or publish.</td>
+            <td>Pull requests only. Secret scan, ShellCheck, action SHA pins, <code>permissions: {}</code>, no <code>pull_request_target</code>, no auto-merge. Blocks <code>gpgcheck=0</code> and <code>setenforce 0</code>. Vendor schema, Python compile, public mark. Does not bake or publish.</td>
             <td>Actions → <a href="https://github.com/SeRgi270710267/unwoke-secureblue/actions/workflows/pr-gate.yml">pr-gate</a>. Job name <code>Strict PR gate</code>.</td>
           </tr>
           <tr>
+            <td><code>bake-keepalive</code></td>
+            <td>Hourly. If no bluebuild run has <em>started</em> in 16 hours, dispatch one. A failed bake is not retried here (<code>flake-rerun</code> does that once). Does not cancel a bake that is already running.</td>
+            <td>Actions → <a href="https://github.com/SeRgi270710267/unwoke-secureblue/actions/workflows/bake-keepalive.yml">bake-keepalive</a></td>
+          </tr>
+          <tr>
+            <td><code>actions-cleanup</code></td>
+            <td>Sunday 04:00 UTC. Deletes completed runs older than 120 days, after the 90-day ISO artifact window. Keeps the newest completed run of each workflow. A manual run is a dry-run unless you pick delete.</td>
+            <td>Actions → <a href="https://github.com/SeRgi270710267/unwoke-secureblue/actions/workflows/actions-cleanup.yml">actions-cleanup</a></td>
+          </tr>
+          <tr>
+            <td><code>health</code></td>
+            <td>Monday 12:00 UTC. One reused issue: last bake, USB, Pages, inspect, vendor-watch, open alarms, and how many Dependabot PRs are waiting. Does not merge and does not close an alarm.</td>
+            <td>Actions → <a href="https://github.com/SeRgi270710267/unwoke-secureblue/actions/workflows/health.yml">health</a></td>
+          </tr>
+          <tr>
+            <td>Stock snapshots</td>
+            <td>If secureblue changes a watched file, the bot opens or updates <code>factory/stock-snapshots</code>. It does not push <code>main</code>. A snapshot-only drift does not fail the image bake, so the USB wrap is not skipped.</td>
+            <td>Pull requests. Read the lockdown list diff before merging.</td>
+          </tr>
+          <tr>
             <td>Dependabot</td>
-            <td>Weekly GitHub Actions SHA bumps. Those PRs are still CI code.</td>
-            <td>Review and merge. Do not auto-merge.</td>
+            <td>One grouped GitHub Actions PR per week, with a cooldown. Does not propose <code>blue-build/github-action</code> (a human moves the image builder). Old ungrouped PRs #20–#24 may be replaced by that one PR.</td>
+            <td>Review and merge. Do not auto-merge. Do not add Dependabot to the <code>main-strict</code> bypass.</td>
           </tr>
           <tr>
             <td><code>CODEOWNERS</code></td>
@@ -174,14 +194,14 @@
         </tbody>
       </table>
     </div>
-    <p>Stranger path: fork → PR → green <code>pr-gate</code> + canary → the maintainer merges. There is no auto-merge. Owner pushes to <code>main</code> skip the ruleset because of the admin bypass; the overlay bake and inspect still run on that push. <code>github-actions[bot]</code> is not on that bypass list (it does not appear in the search — do not add Dependabot in its place). Vendor heal and the idle heartbeat file cannot land from the bot. HTML-only tutorial regen still happens on Pages. The heartbeat falls back to a keep-alive issue comment so cron does not die at ~60 days.</p>
+    <p>Stranger path: fork → PR → green <code>pr-gate</code> + canary → the maintainer merges. There is no auto-merge. <code>main-strict</code> still wants one approval and Code Owners, and the bot is not a bypass actor, so a green check cannot merge itself. Owner pushes to <code>main</code> skip the ruleset because of the admin bypass. Vendor heal and the idle heartbeat file cannot land from the bot; snapshot drift becomes the <code>factory/stock-snapshots</code> pull request instead of a red bake. HTML-only tutorial regen still happens on Pages. The heartbeat falls back to a keep-alive issue comment so cron does not die at ~60 days. Scheduled workflows were still enabled through the quiet stretch; the stall was a failed stock-snapshot job marking an otherwise signed bake red, which skipped the USB wrap.</p>
 
     <h2 id="lanes"><a href="factory/#lanes">Four lanes</a></h2>
     <div class="cards">
       <div class="card">
         <p class="eyebrow">Overlay</p>
         <h3>Images</h3>
-        <p>Twice-daily bake of twelve GHCR images on signed stock. Canary → pin digest → BlueBuild → inspect → attest → try Public → rewrite <code>receipt</code>. A later overlay push <strong>queues</strong>; it does not cancel a bake that is already running. One <code>factory-alarm</code> issue if this lane is red. A bake that never ran also alarms after ~40 hours (stale-bake watch).</p>
+        <p>Twice-daily bake of twelve GHCR images on signed stock. Canary → pin digest → BlueBuild → inspect → attest → try Public → rewrite <code>receipt</code>. A later overlay push on <code>main</code> <strong>queues</strong>; it does not cancel a bake that is already running. A new push to a pull request cancels that PR's older bake. If GitHub stops creating the schedule, <code>bake-keepalive</code> dispatches one after 16 hours. One <code>factory-alarm</code> issue if this lane is red. A bake that never succeeded also alarms after ~40 hours (stale-bake watch).</p>
       </div>
       <div class="card">
         <p class="eyebrow">USB</p>
@@ -380,8 +400,8 @@
           </tr>
           <tr>
             <td>Dependabot GitHub Actions PRs</td>
-            <td>Action SHA bumps are still code in CI</td>
-            <td>Review and merge. Do not auto-merge</td>
+            <td>Action SHA bumps are still code in CI. The image builder is not in that PR.</td>
+            <td>Review the grouped PR and merge it yourself. Do not auto-merge. Do not move <code>blue-build/github-action</code> from Dependabot.</td>
           </tr>
           <tr>
             <td>Origin / NVIDIA / browserless USB mid-week</td>

@@ -12,10 +12,27 @@
 - Workarounds: https://sergi270710267.github.io/unwoke-secureblue/stock-issues/
 - Fingerprint tutorial: https://sergi270710267.github.io/unwoke-secureblue/tutorials/fingerprint/
 - Changelog: https://sergi270710267.github.io/unwoke-secureblue/changelog/ (generated; gitignored)
-- **Handoff commit:** this PROGRESS.md save. After push, `git log -1` is the pickup HEAD. Factory fix is `3f2fce1` (download-blip retry). Last overlay-product commit before that is still `b77ee03`. This file is paths-ignore, so the save does not start another bake.
+- **Handoff commit:** GitHub hygiene branch (secret scan, ShellCheck, action pins, grouped Dependabot, bake keepalive, actions cleanup, installer NTS restore). After that merges, `git log -1` on `main` is the pickup. A push that edits `build.yml` starts one overlay bake. The image recipes did not change. Do not sit on that bake.
 - **GitHub ruleset:** only **`main-strict`**, Active, target `refs/heads/main`. Requires PR + 1 approval + Code Owners + status **`Strict PR gate`**. Block force-push + deletion. **Repository admin bypass** so the owner (and this agent) can still `git push` to `main`. The built-in GitHub Actions runner **does not appear** in the bypass search on this personal repo (only **Dependabot · apps · github** showed — do **not** add it). No `protect-main`. No auto-merge. Grok cannot merge.
 
-**How to resume:** clone the repo (or open it), say you are continuing Unwoke SecureBlue from `PROGRESS.md`. Do not rebuild images for docs-only work. Do not docker-pull Atomic images (layer depth). Do not auto-accept a new `cosign.pub` or auto-exec live `/usr/libexec/secureblue/*.py`. Do not sit on 35-minute ISO jobs in chat (`iso-alarm` + `receipt` are the signal).
+**How to resume:** clone the repo (or open it), say you are continuing Unwoke SecureBlue from `PROGRESS.md`. Do not rebuild images for docs-only work. Do not docker-pull Atomic images (layer depth). Do not auto-accept a new `cosign.pub` or auto-exec live `/usr/libexec/secureblue/*.py`. Do not sit on 35-minute ISO jobs in chat (`iso-alarm` + `receipt` are the signal). Agents read `AGENTS.md` first.
+
+## Close-chat pickup (2026-11-17)
+
+**GitHub `main` is the source of truth** after the hygiene pull request merges. Phrase: *continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.*
+
+### What landed
+
+- **GitHub hygiene from ViktorychApp, adapted.** Secret scan, action SHA pin check, workflow policy (`permissions: {}`, timeouts, concurrency), ShellCheck in `pr-gate`. Dependabot is one grouped Actions PR with a cooldown and does **not** propose `blue-build/github-action`. `bake-keepalive` dispatches a bake only when no run has started in 16 hours. `actions-cleanup` deletes completed runs older than 120 days (manual dispatch is a dry-run). Agent guide: `AGENTS.md`, `.agents/`.
+- **Installer NTS.** Live ISO hides Anaconda's NTP spoke and a post script writes our NTS drop-in back after Anaconda. Adapted from secureblue PR 2807. Our servers stay. `stock-feats.json` marks issue 1185 adopted. Pages closes `#37` when that card is no longer waiting.
+- **ShellCheck** is clean on the tracked scripts (shell directives, dead assignments removed). Offline help under `files/.../unwoke/help/` is generated and is skipped by the public-mark check.
+- **Open and still the owner's:** `#35` factory-alarm and `#38` iso-alarm are operational. Do not close them by editing a pin. Dependabot `#20`–`#24` may be replaced by one grouped PR. Do not auto-merge it. Do not add Dependabot to `main-strict`.
+
+### Do not
+
+- Move `blue-build/github-action` or titanoboa (`840217d`) from this hygiene work.
+- Treat `bake-keepalive` as a retry button. Failures still go through `flake-rerun` once, then the alarm.
+- Add `on: push` to `iso.yml`.
 
 ## Close-chat pickup (2026-09-21)
 

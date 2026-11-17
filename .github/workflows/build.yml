@@ -26,20 +26,37 @@ on:
       - ".github/scripts/mirror-template.html"
       - ".github/workflows/pr-gate.yml"
       - ".github/workflows/flake-rerun.yml"
+      - ".github/workflows/bake-keepalive.yml"
+      - ".github/workflows/actions-cleanup.yml"
+      - ".github/workflows/health.yml"
+      - ".github/scripts/health_report.py"
+      - ".github/scripts/secret_scan.py"
+      - ".github/scripts/action_pin_guard.py"
+      - ".github/scripts/workflow_policy.py"
+      - ".github/scripts/bake_keepalive.py"
+      - ".github/scripts/actions_cleanup.py"
+      - ".github/scripts/shellcheck-tree.sh"
+      - ".github/scripts/install_git_hooks.sh"
       - ".github/CODEOWNERS"
       - ".github/ISSUE_TEMPLATE/**"
+      - ".agents/**"
+      - "AGENTS.md"
+      - "GEMINI.md"
   pull_request:
   workflow_dispatch:
 permissions: {}
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
-  # Do not kill a bake that is already running. A later overlay push queues.
-  cancel-in-progress: false
+  # Pull requests: a new push cancels that PR's older bake.
+  # main and the schedule share github.ref, so a later push queues.
+  # Do not kill a bake that is already running on main.
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   canary:
     name: Canary ${{ matrix.base }}
     if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     permissions:
       contents: read
     strategy:
@@ -71,8 +88,10 @@ jobs:
     name: Watch stock scripts
     if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: write
+      pull-requests: write
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
@@ -86,6 +105,9 @@ jobs:
 
       - name: Auto-refresh snapshots on main
         if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: bash .github/scripts/auto-refresh-snapshots.sh
 
       - name: Compare stock scripts (pull request)
@@ -105,6 +127,7 @@ jobs:
     if: github.actor != 'dependabot[bot]'
     needs: canary
     runs-on: ubuntu-latest
+    timeout-minutes: 360
     permissions:
       contents: read
       packages: write
@@ -194,6 +217,7 @@ jobs:
     if: always() && !cancelled() && github.event_name != 'pull_request' && github.actor != 'dependabot[bot]' && needs.bluebuild.result != 'skipped'
     needs: [bluebuild]
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: read
       packages: write
@@ -218,6 +242,7 @@ jobs:
     if: always() && !cancelled() && github.event_name != 'pull_request' && github.actor != 'dependabot[bot]' && needs.bluebuild.result != 'skipped'
     needs: [bluebuild]
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: write
       issues: write
@@ -250,6 +275,7 @@ jobs:
     if: always() && !cancelled() && github.event_name != 'pull_request' && github.actor != 'dependabot[bot]'
     needs: [canary, upstream-watch, bluebuild, receipt]
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       actions: read
       contents: read

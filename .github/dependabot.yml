@@ -1,6 +1,22 @@
+# Weekly, grouped GitHub Actions updates. One open pull request.
+# Do not auto-merge. The image builder is ignored: a bad release bakes
+# every flavor, so a human moves that pin (blue-build/github-action).
+# Open PRs #20–#24 are the old ungrouped bumps. Dependabot may replace
+# them with one grouped PR. Still review it. Do not add Dependabot to
+# the main-strict bypass list.
 version: 2
 updates:
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: github-actions
+    directory: /
     schedule:
-      interval: "weekly"
+      interval: weekly
+    open-pull-requests-limit: 1
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+    groups:
+      actions:
+        patterns:
+          - "*"
+    ignore:
+      - dependency-name: blue-build/github-action

@@ -197,6 +197,43 @@ echo -e "$ENROLLMENT_PASSWORD\n$ENROLLMENT_PASSWORD" | mokutil --import "$SECURE
 %end
 EOF
 
+# Anaconda's Time & Date spoke can replace chrony.conf with the Fedora pool.
+# Copy the image file back when it exists (secureblue keeps NTS in that file).
+# Then point chrony at /etc/chrony.d. Commenting out every server line left
+# the install with no time source: this chrony.conf does not include that
+# directory unless we add confdir.
+tee /usr/share/anaconda/post-scripts/restore-nts.ks <<'EOF'
+%post
+set -euo pipefail
+mkdir -p /etc/chrony.d
+cat > /etc/chrony.d/50-unwoke-nts.conf <<'NTS'
+server time.cloudflare.com iburst nts
+server nts.ntp.se iburst nts
+nocerttimecheck 1
+NTS
+for src in /usr/etc/chrony.conf /usr/share/secureblue/etc/chrony.conf; do
+  if [[ -f "${src}" ]]; then
+    cp -a "${src}" /etc/chrony.conf
+    break
+  fi
+done
+if [[ ! -f /etc/chrony.conf ]]; then
+  printf 'confdir /etc/chrony.d\n' > /etc/chrony.conf
+fi
+# The image file still has a cleartext NIST server. Comment every pool/server
+# line that is not NTS, whether or not we restored that file. NTS lines stay.
+# Enough NTS servers remain for minsources.
+if [[ -f /etc/chrony.conf ]]; then
+  sed -i -E '/^[[:space:]]*(pool|server)[[:space:]]/ { /[[:space:]]nts([[:space:]]|$)/! s/^/# / }' /etc/chrony.conf
+fi
+# Anaconda writes a cleartext pool into chrony.d. confdir would load it.
+rm -f /etc/chrony.d/*anaconda* /etc/chrony.conf.d/*anaconda*
+if ! grep -qE '^[[:space:]]*confdir[[:space:]]+/etc/chrony\.d([[:space:]]|$)' /etc/chrony.conf; then
+  printf '\nconfdir /etc/chrony.d\n' >> /etc/chrony.conf
+fi
+%end
+EOF
+
 # Encrypt by default (stock Anaconda is opt-in). User can still uncheck.
 if grep -qE '^[[:space:]]*autopart' /usr/share/anaconda/interactive-defaults.ks 2>/dev/null; then
   sed -i -E 's/^[[:space:]]*autopart.*/autopart --encrypted --type=btrfs --luks-version=luks2/' \
@@ -206,6 +243,7 @@ tee -a /usr/share/anaconda/interactive-defaults.ks <<EOF
 ostreecontainer --url=${IMAGE_REF}:${IMAGE_TAG} --transport=containers-storage
 %include /usr/share/anaconda/post-scripts/install-configure-upgrade.ks
 %include /usr/share/anaconda/post-scripts/secureboot-enroll-key.ks
+%include /usr/share/anaconda/post-scripts/restore-nts.ks
 EOF
 if ! grep -qE '^[[:space:]]*autopart --encrypted' /usr/share/anaconda/interactive-defaults.ks; then
   tmp="$(mktemp)"
@@ -224,8 +262,16 @@ EOF
 # Unwoke SecureBlue. Not affiliated. UNWOKE-SHIPPED-FIRST. Stock #1185 was a request.
 # Stock #1185: installer NTP is fedora pool in the clear. Use NTS. Clock may be
 # wrong at first contact so chrony is allowed to skip cert time once.
-sed -i -E 's/^(pool|server)[[:space:]]/# \1 /' /etc/chrony.conf 2>/dev/null || true
+# Keep lines that already say nts. Comment only cleartext pool/server.
+# chrony does not read /etc/chrony.d until confdir is set.
+if [[ -f /etc/chrony.conf ]]; then
+  sed -i -E '/^[[:space:]]*(pool|server)[[:space:]]/ { /[[:space:]]nts([[:space:]]|$)/! s/^/# / }' /etc/chrony.conf
+  if ! grep -qE '^[[:space:]]*confdir[[:space:]]+/etc/chrony\.d([[:space:]]|$)' /etc/chrony.conf; then
+    printf '\nconfdir /etc/chrony.d\n' >> /etc/chrony.conf
+  fi
+fi
 mkdir -p /etc/chrony.d
+rm -f /etc/chrony.d/*anaconda* /etc/chrony.conf.d/*anaconda*
 cat > /etc/chrony.d/50-unwoke-nts.conf <<'EOF'
 # Live ISO. Installed ostree also ships this via nts.sh apply-boot.
 server time.cloudflare.com iburst nts
@@ -237,6 +283,15 @@ if grep -qE '^[[:space:]]*timesource' /usr/share/anaconda/interactive-defaults.k
     /usr/share/anaconda/interactive-defaults.ks
 else
   echo 'timesource --ntp-server=time.cloudflare.com' >> /usr/share/anaconda/interactive-defaults.ks
+fi
+
+# Hide the installer NTP spoke. It offers the Fedora pool in the clear.
+# Same screen secureblue hid in PR 2807. NTS above is the clock.
+if [[ -d /usr/share/cockpit/branding ]]; then
+  while IFS= read -r -d '' css; do
+    grep -q 'anaconda-screen-date-time-configure-ntp' "${css}" && continue
+    printf '\n.anaconda #anaconda-screen-date-time-configure-ntp { display: none; }\n' >> "${css}"
+  done < <(find /usr/share/cockpit/branding -name 'branding.css' -print0 2>/dev/null || true)
 fi
 
 tee /usr/share/anaconda/post-scripts/install-configure-upgrade.ks <<EOF

@@ -31,7 +31,6 @@ if [[ ! -f /etc/unwoke/allow-toolbox ]]; then
   bash /usr/libexec/unwoke/toggles.sh toolbox on || true
 fi
 
-stock="ujust ${kind}-assemble-stock"
 if command -v ujust >/dev/null && ujust --summary 2>/dev/null | grep -qw "${kind}-assemble-stock"; then
   exec ujust "${kind}-assemble-stock" "$@"
 fi

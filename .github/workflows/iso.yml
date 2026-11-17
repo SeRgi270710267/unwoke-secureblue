@@ -45,6 +45,7 @@ jobs:
     name: Pick images
     if: github.actor != 'dependabot[bot]' && (github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event != 'pull_request'))
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
     outputs:
@@ -75,6 +76,7 @@ jobs:
     name: ISO ${{ matrix.image }}
     needs: pick
     runs-on: ubuntu-24.04
+    timeout-minutes: 360
     permissions:
       contents: read
       packages: write
@@ -328,6 +330,7 @@ jobs:
     if: always() && !cancelled() && github.actor != 'dependabot[bot]' && needs.iso.result != 'skipped'
     needs: [iso]
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: write
       issues: write
@@ -366,6 +369,7 @@ jobs:
     if: always() && !cancelled() && github.actor != 'dependabot[bot]' && needs.iso.result != 'skipped'
     needs: [iso]
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: read
       packages: write
@@ -392,6 +396,7 @@ jobs:
     if: always() && !cancelled() && github.actor != 'dependabot[bot]' && needs.iso.result != 'skipped'
     needs: [iso]
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
       issues: write

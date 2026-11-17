@@ -77,7 +77,7 @@
       <li>Secrets / <code>cosign.key</code> in the tree; <code>pull_request_target</code>; auto-merge</li>
       <li>Deleting canary needles to pass CI</li>
     </ul>
-    <p>Every new overlay lock needs a <code>ujust</code> revert. If it weakens a lock, it is opt-in and must warn. Fill the PR template. Use the issue forms (overlay bug vs lock idea). Stock kernel bugs go <a href="https://github.com/secureblue/secureblue/issues">upstream</a>.</p>
+    <p>Every new overlay lock needs a <code>ujust</code> revert. If it weakens a lock, it is opt-in and must warn. Fill the PR template. Use the issue forms (overlay bug, lock idea, or factory). Stock kernel bugs go <a href="https://github.com/secureblue/secureblue/issues">upstream</a>. Before you push: <code>python3 .github/scripts/secret_scan.py</code> and ShellCheck. Optional hook: <code>sh .github/scripts/install_git_hooks.sh</code>.</p>
     <h2 id="mark"><a href="contributing/#mark">Public mark</a></h2>
     <p>Every overlay file under <code>files/</code> and <code>recipes/</code> must carry <code>UNWOKE-SHIPPED-FIRST</code> and the MIT copyright line. Compose stamps a forgotten file in the image. Inspect and the PR gate fail if git is still unmarked. Do not put the token into live Chromium/Brave/Trivalent <code>policies/managed</code> JSON. Do not obfuscate. Do not change the license. Do not weaken a lock to “protect credit.” Ledger: <a href="ahead/">Shipped first</a>.</p>
 <pre><code>git clone https://github.com/SeRgi270710267/unwoke-secureblue

@@ -5,7 +5,6 @@
 # Guided Mullvad VPN. Strictest: WireGuard import. No store, no Snap.
 set -euo pipefail
 VENDOR="/usr/libexec/unwoke/vendor.py"
-REPO_URL="$(python3 "${VENDOR}" url mullvad_repo 2>/dev/null || echo "https://repository.mullvad.net/rpm/stable/mullvad.repo")"
 ACCOUNT_URL="$(python3 "${VENDOR}" url mullvad_account 2>/dev/null || echo "https://mullvad.net/en/account/wireguard-config")"
 DOCS="https://mullvad.net/en/download/vpn/linux"
 
