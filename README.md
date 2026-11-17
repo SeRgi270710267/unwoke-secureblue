@@ -149,4 +149,4 @@ The GitHub factory (not the desktop) pins Actions to commit SHAs, starts each wo
 
 ## License
 
-Overlay files: MIT (`LICENSE`). The copyright and permission notices travel with copies. Fedora, secureblue, BlueBuild, Brave, and Trivalent keep their own licenses. The secureblue documentation mirror and the ISO hook that carries an Apache-2.0 SPDX header are not relicensed by this MIT overlay. Unaffiliated with secureblue.
+Overlay files: MIT (`LICENSE`). The copyright and permission notices travel with copies. Fedora, secureblue, BlueBuild, Brave, and Trivalent keep their own licenses. The secureblue documentation mirror and the ISO hook that carries an Apache-2.0 SPDX header are not relicensed by this MIT overlay. The name and logo are reserved for official signed builds (`TRADEMARK.md`). Unaffiliated with secureblue.

@@ -27,7 +27,7 @@ LEAK_RE = re.compile(r"ghcr\.io/sergi270710267|rpm-ostree rebase", re.I)
 
 def problems_in_text(name: str, text: str) -> list[str]:
     found = []
-    if name in PUBLIC_SURFACES or name.endswith("/site-notice/index.html"):
+    if name in PUBLIC_SURFACES or name.endswith("site-notice/index.html"):
         if LEAK_RE.search(text):
             found.append(f"{name}: public surface still has an install ref")
     if name.endswith("package-visibility.sh") or name.endswith("public-packages.sh"):
@@ -76,7 +76,8 @@ def scan_tree(root: Path) -> list[str]:
         if not path.is_file():
             found.append(f"{path.relative_to(root)}: missing")
             continue
-        found.extend(problems_in_text(path.name, path.read_text(encoding="utf-8")))
+        rel = str(path.relative_to(root)).replace("\\", "/")
+        found.extend(problems_in_text(rel, path.read_text(encoding="utf-8")))
     if (root / "invite" / "allowlist.txt").exists():
         found.append("invite/allowlist.txt must not be committed; logins belong in the INVITE_ALLOWLIST secret")
     for path in root.rglob("auth.json"):
@@ -92,6 +93,9 @@ def selftest() -> int:
         ok = False
     if not problems_in_text("README.md", "rpm-ostree rebase ostree-unverified-registry:ghcr.io/sergi270710267/x"):
         print("selftest: an install line was accepted")
+        ok = False
+    if not problems_in_text("site-notice/index.html", "ghcr.io/sergi270710267/name"):
+        print("selftest: a notice leak was accepted")
         ok = False
     if not problems_in_text("public-packages.sh", "visibility=public"):
         print("selftest: a public flip was accepted")

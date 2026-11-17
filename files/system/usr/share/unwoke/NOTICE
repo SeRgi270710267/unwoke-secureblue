@@ -16,3 +16,7 @@ This MIT notice does not relicense secureblue, Fedora, or the Apache-2.0
 files this project mirrors or hooks. Those notices stay with those files.
 Invite-only distribution does not remove the MIT grant from a copy someone
 already has.
+
+The name Unwoke SecureBlue and the logo mark official builds signed with
+this project's cosign key. A rebuild that does not verify with that key
+must not use the name or the logo. See TRADEMARK.md in the source tree.

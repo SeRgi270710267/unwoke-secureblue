@@ -124,7 +124,27 @@ The checksum file inside the package is signed with cosign (`--tlog-upload=false
 
 The installer still requires `/etc/ostree/auth.json` mode `600` before Anaconda.
 
-## 9. Revoke and rotation
+## 9. Name, logo, and the license choice
+
+`TRADEMARK.md` reserves the name **Unwoke SecureBlue** and the logo for builds that verify with `cosign.pub`. A rebuild must rebrand. The overlay files stay MIT. Replacing `LICENSE` would not revoke the MIT grant already given, and it would not cancel the Apache-2.0 license on secureblue's files inside the image. Do that only if you decide you want a different grant for future overlay files, and say so yourself. Git history is your account, agent commits made for this repository, and Dependabot pin bumps. No other human author showed up.
+
+Official images are the ones `cosign verify --key cosign.pub` accepts. The private key stays the `SIGNING_SECRET`. An unverified rebase can still boot a rebuild. It will not verify as yours.
+
+## 10. Repository settings
+
+These are clicks. The repository stays public.
+
+1. Settings → Code security → Secret scanning: on. Push protection: on. That blocks a commit that contains a token shape.
+2. Settings → Code security → Private vulnerability reporting: on. `SECURITY.md` already points at advisories.
+3. Settings → Actions → General → Fork pull request workflows: require approval for all outside collaborators. A fork pull request must not run with secrets.
+4. Settings → Rules → `main-strict`. CODEOWNERS already covers `.github/`, `LICENSE`, and `TRADEMARK.md`. Do not add a required signed-commit rule while `vendor-watch` pushes unsigned commits as `github-actions[bot]`. Those pushes would start failing. Signed commits are practical for you on your own laptop. They are not practical for that bot unless you give it a signing key, which is a second secret in CI. Leave the rule off until you want that.
+5. Tag rules: after the `receipt` release is deleted, add a ruleset for tags that blocks force-push and deletion except by you. Do not add it before that delete. The retire job deletes the `receipt` tag.
+
+## 11. Forks and rehosts
+
+Actions → **rehost-watch** runs daily. It opens one `rehost-watch` issue if this repository has forks or if GitHub lists another repository with `unwoke-secureblue` in the name. It does not delete the fork. It does not see images someone pushed to another registry under a different name. That limit is in the report.
+
+## 12. Revoke and rotation
 
 1. Remove their line from `INVITE_ALLOWLIST` and run **invite-sync**. The site stops accepting that email.
 2. Package settings → remove their Read on every image and ISO package. The next GHCR token request fails. A bearer already issued lasts minutes. The installed system keeps the deployment it already has.

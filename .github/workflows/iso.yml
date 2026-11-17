@@ -105,10 +105,12 @@ jobs:
       - name: Verify published Unwoke image
         env:
           IMAGE_NAME: ${{ matrix.image }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           OWNER="${GITHUB_REPOSITORY_OWNER,,}"
           REF="ghcr.io/${OWNER}/${IMAGE_NAME}:latest"
+          echo "${GITHUB_TOKEN}" | cosign login ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
           extra=()
           if cosign verify --help 2>&1 | grep -q -- '--new-bundle-format'; then
             extra+=(--new-bundle-format=false)

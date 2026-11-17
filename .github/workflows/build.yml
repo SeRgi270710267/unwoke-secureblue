@@ -28,6 +28,9 @@ on:
       - ".github/scripts/cloudflare_access.py"
       - ".github/scripts/render_notice.py"
       - ".github/scripts/publish-iso.sh"
+      - ".github/scripts/rehost-watch.sh"
+      - ".github/workflows/rehost-watch.yml"
+      - "TRADEMARK.md"
       - ".github/workflows/invite-sync.yml"
       - ".github/workflows/iso-purge.yml"
       - "invite/**"
@@ -189,14 +192,27 @@ jobs:
       - name: Read image digest
         if: github.event_name != 'pull_request'
         id: digest
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           NAME="${{ matrix.recipe }}"
           NAME="${NAME%.yml}"
           REF="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/${NAME}:latest"
-          DIGEST="$(cosign verify --key cosign.pub "${REF}" 2>/dev/null | python3 -c 'import json,sys; print(json.load(sys.stdin)[0]["critical"]["image"]["docker-manifest-digest"])')"
-          [[ "${DIGEST}" == sha256:* ]]
-          echo "name=${NAME}" >> "${GITHUB_OUTPUT}"
+          echo "${GITHUB_TOKEN}" | cosign login ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
+          extra=()
+          if cosign verify --help 2>&1 | grep -q -- '--new-bundle-format'; then
+            extra+=(--new-bundle-format=false)
+          fi
+          ok=0
+          for _n in 1 2 3 4 5; do
+            if COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key cosign.pub "${extra[@]}" "${REF}" >/dev/null; then
+              ok=1
+              break
+            fi
+            sleep 10
+          done
+          [[ "${ok}" -eq 1 ]]
           echo "signature verified"
 
       - name: Inspect published flavor

@@ -3,7 +3,7 @@
 # Usage: issue-alarm.sh <iso|pages|factory|vendor> open|close
 set -euo pipefail
 
-preset="${1:?usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds|receipt|stock-feats open|close}"
+preset="${1:?usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds|receipt|stock-feats|rehost open|close}"
 cmd="${2:-open}"
 RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
@@ -111,7 +111,7 @@ Do **not** auto-bump to \`@main\`. Read the new commit, pin a hash, re-dispatch 
 - SHA: \`${GITHUB_SHA}\`
 - Run: ${RUN_URL}
 
-GitHub does not let a package that is already public be made private again. Do not click Public. After the repository is private, delete the public package and let the bake create a new private one. Exact order: \`invite/OWNER-STEPS.md\`.
+GitHub does not let a package that is already public be made private again. Do not click Public. Delete the package and let the bake create a new private one, then turn off Inherit access from repository. The repository stays public. Exact order: \`invite/OWNER-STEPS.md\`.
 
 Do not put a pull token in the image or the workflow log. Do not fail the bake for this alarm."
     CLOSE="Anonymous GHCR pull no longer returns 200: ${RUN_URL}"
@@ -159,8 +159,22 @@ Do **not** upload DIGESTS or an ISO. Delete the release and its tag. Steps: \`in
 Read their PR. If theirs is better, copy it on purpose and set \`adopted.on\` / \`adopted.note\` / \`adopted.commit\` in \`docs/_tools/stock-feats.json\`. If ours stays, set \`stock_reviewed\` to \`keep\`. Do **not** auto-merge their patch. Do not drop the ticket from the page."
     CLOSE="Every stock-after-us FEAT is reviewed (keep or adopted): ${RUN_URL}"
     ;;
+  rehost)
+    TITLE="Fork or rehost showed up"
+    LABEL="rehost-watch"
+    COLOR="B60205"
+    DESC="A fork of this repo, or another repo using the name, was detected"
+    BODY="The public repository was forked, or a search found another repository using the project name. Forks keep a public copy of the source. They do not get the private images.
+
+- Workflow: \`${GITHUB_WORKFLOW}\`
+- SHA: \`${GITHUB_SHA}\`
+- Run: ${RUN_URL}
+
+This does not delete anyone else's fork. Read it. If they ship the name or the logo, that is a trademark question in \`TRADEMARK.md\`. Do not force-push their repo."
+    CLOSE="No fork or same-name repository is listed right now: ${RUN_URL}"
+    ;;
   *)
-    echo "usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds|receipt|stock-feats open|close" >&2
+    echo "usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds|receipt|stock-feats|rehost open|close" >&2
     exit 1
     ;;
 esac

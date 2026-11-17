@@ -59,7 +59,7 @@ Every overlay lock must stay **revertable** with `ujust`. Security-first default
 
 ## Public mark
 
-Every overlay file under `files/` and `recipes/` must carry `UNWOKE-SHIPPED-FIRST` and the MIT copyright line (`Copyright (c) 2026 SeRgi270710267`). Compose runs `mark-check.py --apply` so a forgotten file is stamped in the image. Inspect and this PR gate fail if git is still unmarked. Do not put the token into live Chromium/Brave/Trivalent `policies/managed` JSON (the browser would see an extra unrecognized policy). Do not obfuscate. Do not change the license. Do not weaken a lock to “protect credit.” Ideas on stock’s tracker stay public; copies of *this tree* must keep the notice.
+Every overlay file under `files/` and `recipes/` must carry `UNWOKE-SHIPPED-FIRST` and the MIT copyright line (`Copyright (c) 2026 SeRgi270710267`). Do not relicense those files in a pull request. A different license is an owner decision recorded in `TRADEMARK.md`. The name and logo are not part of the MIT grant. Compose runs `mark-check.py --apply` so a forgotten file is stamped in the image. Inspect and this PR gate fail if git is still unmarked. Do not put the token into live Chromium/Brave/Trivalent `policies/managed` JSON (the browser would see an extra unrecognized policy). Do not obfuscate. Do not change the license. Do not weaken a lock to “protect credit.” Ideas on stock’s tracker stay public; copies of *this tree* must keep the notice.
 
 ## People-facing git
 
