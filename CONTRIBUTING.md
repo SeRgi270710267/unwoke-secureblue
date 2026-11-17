@@ -4,7 +4,7 @@ This overlay is not stock [secureblue](https://secureblue.dev). Do not open over
 
 **Nothing lands on `main` unless [SeRgi270710267](https://github.com/SeRgi270710267) merges it.** There is no auto-merge. There is no committer list. An AI session (including Grok) can help write a patch; it cannot merge.
 
-Site version with the same rules: <https://sergi270710267.github.io/unwoke-secureblue/contributing/>
+The public site is an invitation notice. It does not carry install instructions. Access to images is granted by the owner from `invite/allowlist.txt`. An invitee cannot grant anyone else.
 
 ## How to send work
 

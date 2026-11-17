@@ -89,6 +89,13 @@ header() {
     echo
     echo "A signed update is staged. Reboot once to lock updates to our key."
   fi
+  if [[ -x /usr/libexec/unwoke/invite-login.sh ]]; then
+    if ! /usr/libexec/unwoke/invite-login.sh --status >/dev/null 2>&1; then
+      echo
+      echo "Registry sign-in is missing. Updates stop once the image is private."
+      echo "Command: ujust invite-login"
+    fi
+  fi
   echo
 }
 

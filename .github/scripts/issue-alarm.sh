@@ -101,22 +101,20 @@ Do **not** auto-bump to \`@main\`. Read the new commit, pin a hash, re-dispatch 
     CLOSE="Titanoboa pin is fetchable again: ${RUN_URL}"
     ;;
   packages)
-    TITLE="GHCR package still private — one Public click"
+    TITLE="GHCR package still public — anonymous pull works"
     LABEL="ghcr-private"
-    COLOR="0E8A16"
-    DESC="An Unwoke GHCR package is still private after the factory tried to publish it"
-    BODY="The factory tried to set Unwoke GHCR packages Public and GitHub still left at least one private. Anonymous rebase/USB fetch needs Public.
+    COLOR="B60205"
+    DESC="An Unwoke GHCR package is still anonymously pullable"
+    BODY="Anonymous GHCR pull returned 200 for at least one Unwoke package. Invite-only means that pull must fail.
 
 - Workflow: \`${GITHUB_WORKFLOW}\`
 - SHA: \`${GITHUB_SHA}\`
 - Run: ${RUN_URL}
 
-The twelve OS images are often already Public. A USB \`-iso\` GHCR package only exists after oras push succeeds. If the package page 404s, there is nothing to make Public — download the Actions ISO artifact instead.
+GitHub does not let a package that is already public be made private again. Do not click Public. After the repository is private, delete the public package and let the bake create a new private one. Exact order: \`invite/OWNER-STEPS.md\`.
 
-Working pages are \`https://github.com/OWNER/REPO/pkgs/container/NAME\` (linked) or the repo Packages sidebar. \`/users/.../packages/container/NAME/settings\` 404s/500s.
-
-Do not make the bake fail over this. Do not switch the registry."
-    CLOSE="GHCR Unwoke packages are Public: ${RUN_URL}"
+Do not put a pull token in the image or the workflow log. Do not fail the bake for this alarm."
+    CLOSE="Anonymous GHCR pull no longer returns 200: ${RUN_URL}"
     ;;
   mirror-cmds)
     TITLE="Stock docs grew a ujust we do not footnote yet"
@@ -133,18 +131,18 @@ The mirror still injected a \`ujust why\` / \`ujust setup\` box so people are no
     CLOSE="Stock ujust footnotes mapped again: ${RUN_URL}"
     ;;
   receipt)
-    TITLE="Receipt release failed (do not upload the ISO)"
+    TITLE="Public receipt release still exists"
     LABEL="receipt-alarm"
     COLOR="1D76DB"
-    DESC="The moving GitHub Release tag receipt could not be rewritten"
-    BODY="The factory could not rewrite the \`receipt\` GitHub Release (pubkey + verified GHCR digests). Overlay images are independent. This is not a USB host.
+    DESC="The moving receipt release could not be deleted"
+    BODY="The factory could not delete the public \`receipt\` GitHub Release. That release carries a pubkey and image digests.
 
 - Workflow: \`${GITHUB_WORKFLOW}\`
 - SHA: \`${GITHUB_SHA}\`
 - Run: ${RUN_URL}
 
-Do **not** attach the ISO (over 2 GiB). Do not auto-accept a new signing key. Next green full verify rewrites the release and closes this."
-    CLOSE="Receipt release rewritten: ${RUN_URL}"
+Do **not** upload DIGESTS or an ISO. Delete the release and its tag. Steps: \`invite/OWNER-STEPS.md\`."
+    CLOSE="Public receipt release is gone: ${RUN_URL}"
     ;;
   stock-feats)
     TITLE="Stock shipped a FEAT we already shipped (review, do not auto-copy)"
@@ -189,6 +187,7 @@ fi
 case "${cmd}" in
   open)
     if [[ -n "${existing}" ]]; then
+      gh issue edit "${existing}" --repo "${GITHUB_REPOSITORY}" --title "${TITLE}" >/dev/null
       gh issue comment "${existing}" --repo "${GITHUB_REPOSITORY}" --body "${BODY}"
       echo "commented on #${existing} (${LABEL})"
     else

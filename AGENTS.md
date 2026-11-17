@@ -2,7 +2,7 @@
 
 Guide for any coding agent working in this repository. Read it before you change anything. If this file and another doc disagree, the stricter rule wins.
 
-The repository is public. Write commits, pull request text, and docs as if a stranger will read them.
+Distribution is invite-only. The repository may still be public until the owner follows `invite/OWNER-STEPS.md`. Write commits, pull request text, and the public README as if a stranger will read them. Do not put install commands, registry paths, digests, or tokens on the public README or `site-notice/`.
 
 ## What this is
 
@@ -67,7 +67,9 @@ Factory-only commits should omit those trailers so the homepage does not pretend
 - `gpgcheck=0`, `setenforce 0`, unsigned rebase as a default, firewall off
 - Default-off Safe Browsing, fwupd, SELinux, or USBGuard
 - A new vendor hostname, Flathub, Snap, or a GUI store to "make it work"
-- Secrets, `cosign.key`, or `SIGNING_SECRET` in the tree, logs, or chat
+- Secrets, `cosign.key`, `SIGNING_SECRET`, or a pull token in the tree, the image, logs, or chat
+- Setting a GHCR package public, uploading an ISO to GHCR, or publishing a digest receipt
+- A workflow that grants access from `pull_request` or from a workflow input instead of `invite/allowlist.txt`
 - Editing `docs/secureblue/` by hand
 - Claiming a stock feature was copied without setting `adopted` in `docs/_tools/stock-feats.json` after a real review
 

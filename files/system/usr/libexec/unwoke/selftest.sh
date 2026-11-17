@@ -747,6 +747,19 @@ else
   skip "GNOME accent (no gschema override and not a GNOME session)"
 fi
 
+section "Invite credential"
+if [[ -x /usr/libexec/unwoke/invite-login.sh && -f /usr/libexec/unwoke/invite_auth.py ]]; then
+  pass "invite login helper is on disk"
+  proof "/usr/libexec/unwoke/invite-login.sh"
+  if /usr/libexec/unwoke/invite-login.sh --status >/dev/null 2>&1; then
+    pass "registry credential file is mode 600"
+  else
+    skip "no registry credential yet (ujust invite-login). Not a failed image."
+  fi
+else
+  fail "invite login helper missing"
+fi
+
 section "Stock audit (theirs, not ours)"
 if command -v ujust >/dev/null; then
   pass "ujust is on PATH — run ujust audit-secureblue for kernel/USBGuard/malloc"

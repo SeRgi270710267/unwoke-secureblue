@@ -362,6 +362,20 @@ set-unwoke-theme *args:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/theme.sh "${1:-apply}"
 
+# Private registry credential for rpm-ostree and bootc. Not stored in the image.
+invite-login:
+    #!/usr/bin/bash
+    exec sudo /usr/libexec/unwoke/invite-login.sh login
+
+# Remove only the local credential. The owner still has to revoke the login.
+invite-logout:
+    #!/usr/bin/bash
+    exec sudo /usr/libexec/unwoke/invite-login.sh logout
+
+invite-status:
+    #!/usr/bin/bash
+    exec /usr/libexec/unwoke/invite-login.sh --status
+
 # Browserless only. Default off. Unlocks Flatpak/rpm-ostree browser installs.
 # Confirm with: ujust set-allow-browsers on ALLOW
 [positional-arguments]

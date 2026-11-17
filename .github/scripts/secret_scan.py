@@ -47,8 +47,9 @@ SECRET_RULES = [
     ("url-credentials", r"\b[a-z][a-z0-9+.-]*://[^\s:/@\"']{1,64}:[^\s:/@\"']{6,}@[A-Za-z0-9.-]+"),
     (
         "assigned-secret",
-        r"\b(?:SIGNING_SECRET|COSIGN_PASSWORD|COSIGN_KEY|GH_TOKEN|GITHUB_TOKEN|XAI_API_KEY|GROQ_API_KEY|UNWOKE_AI_KEY)\s*[=:]\s*[\"'][A-Za-z0-9_\-+/=.]{20,}[\"']",
+        r"\b(?:SIGNING_SECRET|COSIGN_PASSWORD|COSIGN_KEY|GH_TOKEN|GITHUB_TOKEN|INVITE_ADMIN_TOKEN|UNWOKE_INVITE_TOKEN|XAI_API_KEY|GROQ_API_KEY|UNWOKE_AI_KEY)\s*[=:]\s*[\"'][A-Za-z0-9_\-+/=.]{20,}[\"']",
     ),
+    ("registry-auth", r'"auth"\s*:\s*"[A-Za-z0-9+/=]{24,}"'),
 ]
 
 COMPILED = [(name, re.compile(rx)) for name, rx in SECRET_RULES]
@@ -151,6 +152,7 @@ def selftest() -> int:
         "slack-token": j(["xoxb-", "a1" * 12]),
         "url-credentials": j(["https://", "user", ":", "hunter22", "@example.org"]),
         "assigned-secret": j(["SIGNING_SECRET", '="', "q" * 24, '"']),
+        "registry-auth": j(['"auth": "', "A" * 24, '"']),
     }
     ok = True
     for rule, sample in bad.items():
@@ -166,6 +168,8 @@ def selftest() -> int:
         j(["-----BEGIN ", "PUBLIC KEY-----"]),
         j(["SIGNING_SECRET", '="', "q" * 24, '"  # ', ALLOW_MARK, " sample"]),
         "pubkey file stays: keys/secureblue.pub",
+        '"auth": "BASE64"',
+        "INVITE_ADMIN_TOKEN: ${{ secrets.INVITE_ADMIN_TOKEN }}",
     ]
     for line in good:
         if text_findings("t.txt", line):

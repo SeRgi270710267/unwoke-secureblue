@@ -17,6 +17,8 @@
 
 **How to resume:** clone the repo (or open it), say you are continuing Unwoke SecureBlue from `PROGRESS.md`. Do not rebuild images for docs-only work. Do not docker-pull Atomic images (layer depth). Do not auto-accept a new `cosign.pub` or auto-exec live `/usr/libexec/secureblue/*.py`. Do not sit on 35-minute ISO jobs in chat (`iso-alarm` + `receipt` are the signal). Agents read `AGENTS.md` first.
 
+**Invite-only (2026-11-17):** do not turn GHCR packages public again. Do not publish install commands, digests, or an ISO to a public surface. Owner order is `invite/OWNER-STEPS.md`. A public package cannot be made private in place; the owner deletes it after the repository is private. `cosign.pub` stays the verification key. It is not a pull secret.
+
 ## Close-chat pickup (2026-11-17)
 
 **GitHub `main` is the source of truth** after the hygiene pull request merges. Phrase: *continuing Unwoke SecureBlue from `PROGRESS.md` on `main`.*
