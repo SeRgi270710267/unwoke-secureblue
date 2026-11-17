@@ -38,7 +38,7 @@ python3 files/system/usr/libexec/unwoke/mark-check.py --tree .
 
 1. Branch from current `origin/main`. One concern per pull request.
 2. Every new overlay lock has `ujust … on|off` and stays reversible. If it weakens a lock, it is opt-in and it warns.
-3. Overlay files under `files/` and `recipes/` carry `UNWOKE-SHIPPED-FIRST`. Existing files keep the MIT line. New files use `LicenseRef-Unwoke-SA-1.0`. Do not relicense Apache-2.0 paths in `NOTICE`. Do not put the token in live browser `policies/managed` JSON.
+3. Overlay files under `files/` and `recipes/` carry `UNWOKE-SHIPPED-FIRST` and `LicenseRef-Unwoke-SA-1.0`. Do not relicense Apache-2.0 paths in `NOTICE`. Do not put the token in live browser `policies/managed` JSON.
 4. Push and open a pull request against `main`. Fill the template. Maintainer merge only. Green CI is not permission to land. There is no auto-merge.
 5. Do not force-push `main`. Do not add Dependabot or the Actions app to the `main-strict` bypass list.
 

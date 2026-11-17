@@ -10,14 +10,12 @@ This is not a claim on the word "secureblue". That name belongs to the secureblu
 
 ## License
 
-Overlay material through commit `d0dc4d4fd33e91b664a95a83795169fa70b3741a` stays MIT (`LICENSE-MIT`). That grant is not revoked.
+The overlay is the Unwoke Source-Available License 1.0 in `LICENSE`. It is not an OSI license. It allows reading and a private build. It does not allow redistributing the overlay or a build that includes it, or using this name and logo, without permission.
 
-Later overlay changes are the Unwoke Source-Available License 1.0 in `LICENSE`. It is not an OSI license. It allows reading and a private build. It does not allow redistributing the overlay or a build that includes it, or using this name and logo, without permission.
+Earlier public versions were published under the MIT license. A copy already obtained under that grant keeps it.
 
-PolyForm Noncommercial still allows noncommercial redistribution. PolyForm Strict still allows redistribution that is not "competing use." Neither matches "no redistribution of builds without permission," so those texts were not used.
+Apache-2.0 section 4 lets this project set different terms on its own work. It does not cancel Apache-2.0 on secureblue's files. `NOTICE` lists those paths. They stay Apache-2.0, including the right to redistribute those files alone. secureblue's live branch has a LICENSE and no NOTICE file.
 
-Apache-2.0 section 4 lets us set different terms for our own modifications. It does not let us cancel Apache-2.0 on secureblue's files. `NOTICE` lists those paths. They stay Apache-2.0, including the right to redistribute those files alone. secureblue's live branch has a LICENSE and no NOTICE file.
+The copyright holder is the sole human author. Agent commits and Dependabot pin bumps were made on that author's behalf. The Apache-2.0 files were not relicensed.
 
-Git history is this account, agent commits made for it, and Dependabot pin bumps. No other human author showed up. The new license is the owner's terms for later overlay changes. It does not relicense the Apache files or the MIT copies already granted.
-
-GitHub will still serve this public tree, and the Fork button will still work. The license is a limit on what a reader may do with later overlay files. It is not a technical lock.
+GitHub will still serve this public tree, and the Fork button will still work. The license is a limit on what a reader may do. It is not a technical lock.

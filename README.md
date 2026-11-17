@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-3b6cff?style=for-the-badge&amp;labelColor=050a16" alt="MIT"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-source--available-3b6cff?style=for-the-badge&amp;labelColor=050a16" alt="Source-available"></a>
 </p>
 
 <p align="center">
@@ -149,4 +149,4 @@ The GitHub factory (not the desktop) pins Actions to commit SHAs, starts each wo
 
 ## License
 
-Overlay files as of commit `d0dc4d4` stay MIT (`LICENSE-MIT`). Later overlay changes are the Unwoke Source-Available License 1.0 (`LICENSE`, SPDX `LicenseRef-Unwoke-SA-1.0`): the source stays readable, and redistribution of those files or of a build that includes them needs permission. secureblue, Universal Blue, and the upstream snapshots stay Apache-2.0 (`NOTICE`, `LICENSES/Apache-2.0.txt`). Fedora, BlueBuild, Brave, and Trivalent keep their own licenses. The name and logo are reserved for official signed builds (`TRADEMARK.md`). Unaffiliated with secureblue.
+The overlay is the Unwoke Source-Available License 1.0 (`LICENSE`, SPDX `LicenseRef-Unwoke-SA-1.0`). The source stays readable. Redistributing the overlay, or a build that includes it, needs permission. Earlier public versions were MIT. A copy already obtained under that grant keeps it. secureblue, Universal Blue, and the upstream snapshots stay Apache-2.0 (`NOTICE`, `LICENSES/Apache-2.0.txt`). Fedora, BlueBuild, Brave, and Trivalent keep their own licenses. The name and logo are reserved for official signed builds (`TRADEMARK.md`). Unaffiliated with secureblue.

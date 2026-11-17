@@ -1,5 +1,5 @@
 {
-  "UnwokeShippedFirst": "UNWOKE-SHIPPED-FIRST. MIT License. Copyright (c) 2026 SeRgi270710267. Not affiliated with Whonix or secureblue.",
+  "UnwokeShippedFirst": "UNWOKE-SHIPPED-FIRST. SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267. Not affiliated with Whonix or secureblue.",
   "comment": "Official Whonix KVM pin. Bump version + archive_url together after a signed release. Do not bake qcow2.",
   "version": "18.2.1.9",
   "archive_url": "https://download.whonix.org/libvirt/18.2.1.9/Whonix-LXQt-18.2.1.9.Intel_AMD64.qcow2.libvirt.xz",

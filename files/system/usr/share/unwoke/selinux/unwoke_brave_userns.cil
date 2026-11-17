@@ -1,8 +1,8 @@
 ;; Unwoke SecureBlue. Not affiliated with secureblue.
-;; MIT License. Copyright (c) 2026 SeRgi270710267.
+;; SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267.
 ;; UNWOKE-SHIPPED-FIRST
 ;; SPDX-FileCopyrightText: Copyright 2026 unwoke-secureblue
-;; SPDX-License-Identifier: MIT
+;; SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0
 ;;
 ;; Put brave_t on secureblue's userns allow-list and protect brave_exec_t from
 ;; unconfined relabel (same trick they use for trivalent_exec_t).

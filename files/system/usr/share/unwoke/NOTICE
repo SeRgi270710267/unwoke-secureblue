@@ -4,12 +4,9 @@ UNWOKE-SHIPPED-FIRST
 
 Copyright (c) 2026 SeRgi270710267.
 
-Overlay material as of commit d0dc4d4fd33e91b664a95a83795169fa70b3741a
-is MIT. The text is /usr/share/unwoke/LICENSE. That grant is not revoked.
-
-Later overlay changes are LicenseRef-Unwoke-SA-1.0. The text is
-/usr/share/unwoke/LICENSE-UNWOKE-SA. That license does not apply to
-Apache-2.0 files.
+The overlay is LicenseRef-Unwoke-SA-1.0. The text is
+/usr/share/unwoke/LICENSE. Earlier public versions were published under
+the MIT license. A copy already obtained under that grant keeps it.
 
 Apache License 2.0: secureblue (The Secureblue Authors), Universal Blue
 where named in the ISO hooks, and the upstream snapshots. Their copyright

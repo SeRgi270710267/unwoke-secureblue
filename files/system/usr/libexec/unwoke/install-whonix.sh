@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Unwoke SecureBlue. Not affiliated with Whonix or secureblue.
-# MIT License. Copyright (c) 2026 SeRgi270710267.
+# SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267.
 # UNWOKE-SHIPPED-FIRST
 # Official Whonix KVM (not VirtualBox, not Qubes). OpenPGP-required.
 # qemu:///session. Clipboard/USB/mic off. Their Internal/External nets.

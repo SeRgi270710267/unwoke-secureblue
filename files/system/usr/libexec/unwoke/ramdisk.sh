@@ -63,7 +63,7 @@ cmd_apply_boot() {
   if wanted_lock; then
     mkdir -p "${TMP_DROP_DIR}"
     cat > "${TMP_DROP}" <<'EOF'
-# Unwoke SecureBlue. Not affiliated. UNWOKE-SHIPPED-FIRST. MIT Copyright (c) 2026 SeRgi270710267. Stock #697 was a request.
+# Unwoke SecureBlue. Not affiliated. UNWOKE-SHIPPED-FIRST. SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267. Stock #697 was a request.
 [Mount]
 Options=mode=1777,strictatime,nosuid,nodev,noexec,size=50%,nr_inodes=1m
 EOF

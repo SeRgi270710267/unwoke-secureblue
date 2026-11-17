@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Unwoke SecureBlue. Not affiliated with secureblue.
-# MIT License. Copyright (c) 2026 SeRgi270710267.
+# SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267.
 # UNWOKE-SHIPPED-FIRST
 """Write /etc/ostree/auth.json for a private GHCR pull.
 

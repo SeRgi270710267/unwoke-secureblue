@@ -2,24 +2,11 @@ Unwoke SecureBlue
 Copyright (c) 2026 SeRgi270710267
 Not affiliated with secureblue.
 
-License map
------------
+The overlay is the Unwoke Source-Available License 1.0
+(SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0). The text is LICENSE.
 
-Future overlay files, and changes to overlay files after commit
-d0dc4d4fd33e91b664a95a83795169fa70b3741a:
-
-    Unwoke Source-Available License 1.0
-    SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0
-    Text: LICENSE
-
-Overlay material as it existed at that commit:
-
-    MIT License
-    Text: LICENSE-MIT
-    File banners that still say "MIT License" match that commit.
-    A later edit is under LicenseRef-Unwoke-SA-1.0 even if the old
-    banner has not been rewritten yet. New files use
-    SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0.
+Earlier public versions of this overlay were published under the MIT
+license. A copy already obtained under that grant keeps it.
 
 Apache License, Version 2.0
 ----------------------------

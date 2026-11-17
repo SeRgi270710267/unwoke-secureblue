@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Unwoke SecureBlue. Not affiliated with secureblue.
-# MIT License. Copyright (c) 2026 SeRgi270710267.
+# SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267.
 # UNWOKE-SHIPPED-FIRST
 # Extra daemons stock still leaves on: Avahi (.local/mDNS) and ModemManager.
 # cups/geoclue/passim are already masked by secureblue. Bluetooth is set-bluetooth.

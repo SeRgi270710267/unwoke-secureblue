@@ -1,8 +1,8 @@
 # Unwoke SecureBlue. Not affiliated with secureblue.
-# MIT License. Copyright (c) 2026 SeRgi270710267.
+# SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267.
 # UNWOKE-SHIPPED-FIRST
 # SPDX-FileCopyrightText: Copyright 2026 unwoke-secureblue
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0
 #
 # Fat domain: unconfined-like permissions so Brave Origin can actually
 # run, plus a distinct type so harden_userns can stay on. The userns allow-list

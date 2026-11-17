@@ -1,5 +1,5 @@
 {
-  "UnwokeShippedFirst": "UNWOKE-SHIPPED-FIRST. MIT License. Copyright (c) 2026 SeRgi270710267. Not affiliated with secureblue.",
+  "UnwokeShippedFirst": "UNWOKE-SHIPPED-FIRST. SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267. Not affiliated with secureblue.",
   "comment": "THE list. vendor.py check/heal, Setup, ujust install-vendor, and search launchers all iterate every vendors{} key. Add a stanza for a new strict app — do not special-case Proton/IVPN in CI. Live SHA512; heal allowlisted HTTPS only.",
   "vendors": {
     "proton_mail_web": {

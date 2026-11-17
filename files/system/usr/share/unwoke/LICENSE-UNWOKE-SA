@@ -3,10 +3,12 @@ SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0
 
 Copyright (c) 2026 SeRgi270710267
 
-This license is not an Open Source Initiative license. It applies to
-overlay material in this repository published after commit
-d0dc4d4fd33e91b664a95a83795169fa70b3741a, except files that keep another
-license in NOTICE.
+This license is not an Open Source Initiative license. It applies to the
+overlay in this repository, except files that keep another license in
+NOTICE.
+
+Earlier public versions of this overlay were published under the MIT
+license. A copy already obtained under that grant keeps it.
 
 1. You may access and read the source as the copyright holder publishes
    it. You may make a private copy, modify that copy, and run a private
@@ -30,10 +32,7 @@ license in NOTICE.
 4. This license does not apply to, and does not limit:
    (a) the Apache License, Version 2.0, on the secureblue files and the
        other Apache-2.0 files named in NOTICE;
-   (b) the MIT license on overlay material as it existed at commit
-       d0dc4d4fd33e91b664a95a83795169fa70b3741a, which is kept in
-       LICENSE-MIT;
-   (c) Fedora, BlueBuild, Brave, Trivalent, and any other third-party
+   (b) Fedora, BlueBuild, Brave, Trivalent, and any other third-party
        work, which stays under its own license.
    You may remove the overlay and redistribute the secureblue base, and
    the Apache-2.0 files in this tree, under Apache-2.0 alone, with that

@@ -287,7 +287,7 @@ def write_ledger(items: list[dict]) -> None:
     lines = [
         TOKEN,
         "Unwoke SecureBlue — not affiliated with secureblue.",
-        "MIT License. Copyright (c) 2026 SeRgi270710267.",
+        "SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267.",
         "This file is the public prior-art ledger. Dates are when Unwoke shipped",
         "a reversible default while the official ticket was still a request.",
         "If a later tree copies /usr/share/unwoke or this token, that copy came from here.",

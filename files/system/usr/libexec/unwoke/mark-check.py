@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Unwoke SecureBlue. Not affiliated with secureblue.
-# MIT License. Copyright (c) 2026 SeRgi270710267.
+# SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267.
 # UNWOKE-SHIPPED-FIRST
 """Public mark: stamp, check, and keep it out of live browser policies.
 
@@ -11,8 +11,7 @@ Live Chromium/Brave/Trivalent ``policies/managed/*.json`` must *not* contain
 the token or ``UnwokeShippedFirst``. Those files are loaded by the browser.
 An extra unrecognized policy would show in chrome://policy and is a uniqueness
 we do not need. Real lock keys are unchanged. No phone-home.
-Files that already say MIT stay that way. Newly stamped files use
-LicenseRef-Unwoke-SA-1.0. Apache-2.0 snapshots are not stamped.
+New stamps use LicenseRef-Unwoke-SA-1.0. Apache-2.0 snapshots are not stamped.
 """
 from __future__ import annotations
 
