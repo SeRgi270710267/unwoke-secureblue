@@ -42,16 +42,25 @@ cmd_apply_boot() {
   fi
 }
 
+sync_resolved() {
+  # privacy.sh owns resolved.conf. Avahi needs MulticastDNS=yes without a reboot.
+  if [[ -x /usr/libexec/unwoke/privacy.sh ]]; then
+    as_root /usr/bin/bash /usr/libexec/unwoke/privacy.sh apply-boot || true
+  fi
+}
+
 cmd_on() {
   as_root mkdir -p /etc/unwoke
   as_root touch "${ALLOW}"
   as_root /usr/bin/bash /usr/libexec/unwoke/extra-daemons.sh apply-boot
+  sync_resolved
   echo "Avahi + ModemManager ON. Revert: ujust set-extra-daemons off"
 }
 
 cmd_off() {
   as_root rm -f "${ALLOW}"
   as_root /usr/bin/bash /usr/libexec/unwoke/extra-daemons.sh apply-boot
+  sync_resolved
   echo "Avahi + ModemManager OFF (masked). Printers/geoclue are stock's problem. Revert: ujust set-extra-daemons on"
 }
 
