@@ -90,13 +90,13 @@ The Pages workflow deploys the one-page notice to github.io. It deploys the full
 
 ## 5. Delete the public packages
 
-A package that is already public cannot be made private. Deletion is the step that stops anonymous pull.
+A package that is already public cannot be made private. Deletion is the step that stops anonymous pull. Do not restore a deleted package. Restore brings the public package back.
 
 For every name in `.github/scripts/package-names.txt`, and any `unwoke-*-iso` package:
 
 1. Package settings → Danger Zone → Delete this package.
 2. If GitHub cites more than 5,000 downloads on a version, contact Support. You cannot delete that one yourself.
-3. Do not restore it. Restore brings the public package back. If the name is reserved, wait or ask Support. Do not click Public on a new package.
+3. If the name is reserved, wait or ask Support. Do not click Public on a new package.
 
 Also:
 
@@ -106,18 +106,26 @@ gh release delete receipt --repo SeRgi270710267/unwoke-secureblue --cleanup-tag 
 
 Actions → **iso-purge** → type `delete-iso-artifacts`. That removes old public ISO artifacts. New ISOs are not uploaded as artifacts.
 
+Do not run **bluebuild** in this gap. A `GITHUB_TOKEN` push from this public repository creates the package again, and that package is readable by anyone who can read the repository. The last time that happened, the twelve image packages came back public, with inherit on and Actions role Admin. Anonymous pulls returned 200.
+
 ## 6. Recreate the images without inherited access
 
-Container packages can be private while this repository stays public. Visibility is separate from the repository. Access is not, until you turn inheritance off.
+Set `GHCR_PUBLISH_TOKEN` before the first push. It is a classic PAT, 90 days, only `write:packages`, from <https://github.com/settings/tokens/new?scopes=write:packages>. The workflow refuses to create a missing package with `GITHUB_TOKEN`. If that secret is unset, the bake fails before the push. If an anonymous manifest or tag list returns 200, the bake also refuses to push. After a push, the same anonymous check must be denied or that job fails.
 
-A package created by `GITHUB_TOKEN` from this public repository inherits the repository's readers. Everyone who can read a public repository can pull that package, even when the package page says Private. Anonymous `curl` returning 401 does not prove this is closed. Any logged-in GitHub user can still pull while inherit is on.
+GitHub's package docs say two different things, and both matter here:
 
-1. Actions → **bluebuild** → Run workflow. This creates the new packages.
-2. Immediately, for each new package: Package settings → Inherited access → clear **Inherit access from repository**.
-3. Manage Actions access → Add repository → `SeRgi270710267/unwoke-secureblue` → Role **Write**. Do not add any other repository. Adding this public repository under Actions access lets the bake push. It must not be combined with inherit. The docs warn that granting a public repository access to a private package can let forks pull. Keep the repository list to this one repo, role Write, and keep inherit off.
-4. From a second GitHub account that is not invited, `docker pull` or the manifest request must be denied. Your own `read:packages` token must still succeed.
+- The first publish of a package on a personal account defaults to **private** visibility.
+- If the image already carries `org.opencontainers.image.source` pointing at a repository, GitHub links the package **before** that first publish. A package linked that way inherits the repository's access permissions. It does not inherit the repository's visibility setting. Inheritance still lets everyone who can read this public repository pull the package. Anonymous GHCR pulls succeed while that inherit stays on. A PAT does not avoid this. The label is what links the package, not which token pushed it.
 
-There is no supported API to clear inherit or to add a package reader on a personal account. The workflow cannot do step 2 for you.
+Bluebuild adds that source label, and the pinned action has no switch to omit it. A first PAT push can therefore still be anonymously readable. The new post-check fails the job when that happens. Delete that package again. Do not click Public.
+
+The create that stays private is an unlinked push: no `org.opencontainers.image.source` label, so GitHub does not attach this repository. Then, on each new package:
+
+1. Package settings → Inherited access → clear **Inherit access from repository** if it is on.
+2. Manage Actions access → Add repository → `SeRgi270710267/unwoke-secureblue` → Role **Write**. Not Admin. Do not add any other repository. GitHub warns that granting a public repository access to a private package can let forks pull. Keep inherit off.
+3. From a second GitHub account that is not invited, the manifest request must be denied. Your own `read:packages` token must still succeed.
+
+There is no supported API to clear inherit or to add a package reader on a personal account. Later bakes may push with `GITHUB_TOKEN` only after that anonymous check is not 200. Signing uses the same registry token the push used, so a package that only the PAT can see still verifies in that job.
 
 ## 7. Invite
 

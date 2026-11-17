@@ -20,23 +20,6 @@ if [[ -z "${ISO_FILE}" || ! -f "${ISO_FILE}" ]]; then
   exit 1
 fi
 
-anon_code() {
-  local tok code
-  tok="$(curl -fsSL --retry 3 --retry-delay 1 --proto '=https' \
-      "https://ghcr.io/token?service=ghcr.io&scope=repository:${OWNER}/${IMAGE_NAME}-iso:pull" \
-      | python3 -c 'import json,sys; print(json.load(sys.stdin).get("token",""))' \
-      2>/dev/null || true)"
-  if [[ -z "${tok}" ]]; then
-    echo unknown
-    return 0
-  fi
-  code="$(curl -sS -o /dev/null -w '%{http_code}' --proto '=https' \
-      -H "Authorization: Bearer ${tok}" \
-      -H "Accept: application/vnd.oci.image.manifest.v1+json" \
-      "https://ghcr.io/v2/${OWNER}/${IMAGE_NAME}-iso/manifests/latest" || true)"
-  echo "${code}"
-}
-
 login() {
   local user="$1"
   local token="$2"
@@ -62,19 +45,14 @@ push_files() {
 export PATH="${HOME}/.local/bin:${PATH}"
 command -v oras >/dev/null
 
-code="$(anon_code)"
-echo "publish-iso: anonymous manifest ${code}"
-if [[ "${code}" == "200" ]]; then
-  echo "publish-iso: refusing to push; anonymous pull returned 200" >&2
-  echo "publish-iso: the -iso package is anonymously readable. This is not a missing GHCR_PUBLISH_TOKEN." >&2
-  exit 1
+guard="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/ghcr-push-guard.sh"
+if [[ -z "${GITHUB_OUTPUT:-}" ]]; then
+  GITHUB_OUTPUT="$(mktemp)"
+  export GITHUB_OUTPUT
 fi
-
-if [[ "${code}" == "404" || "${code}" == "unknown" ]]; then
-  if [[ -z "${GHCR_PUBLISH_TOKEN:-}" ]]; then
-    echo "::warning title=GHCR ISO not published::GHCR_PUBLISH_TOKEN is unset. The ISO was built and was not published to GHCR. GITHUB_TOKEN is not used to create that package."
-    exit 0
-  fi
+IMAGE_NAME="${IMAGE_NAME}-iso" bash "${guard}" preflight
+use_publish="$(grep '^use_publish=' "${GITHUB_OUTPUT}" | tail -n 1 | cut -d= -f2-)"
+if [[ "${use_publish}" == "true" ]]; then
   login "${OWNER}" "${GHCR_PUBLISH_TOKEN}"
 else
   if [[ -z "${GITHUB_TOKEN:-}" ]]; then
@@ -85,12 +63,7 @@ else
 fi
 
 push_files
-after="$(anon_code)"
-echo "publish-iso: anonymous manifest after push ${after}"
-if [[ "${after}" == "200" ]]; then
-  echo "publish-iso: package is still anonymously readable" >&2
-  exit 1
-fi
+IMAGE_NAME="${IMAGE_NAME}-iso" bash "${guard}" post
 
 if [[ -n "${COSIGN_PRIVATE_KEY:-}" ]]; then
   export KEY="${RUNNER_TEMP:-/tmp}/unwoke-cosign.key"
