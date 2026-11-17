@@ -717,7 +717,10 @@ boot_pack() {
   while IFS= read -r d; do
     [[ -n "${d}" ]] || continue
     mkdir -p "${d}"
-    cp -a "${src}" "${d}/${file}" || true
+    # Share JSON carries UnwokeShippedFirst. The browser loads managed
+    # policy; install-policy strips that key. A plain cp puts it in chrome://policy.
+    python3 /usr/libexec/unwoke/mark-check.py --install-policy \
+      "${src}" "${d}/${file}" || true
   done < <(policy_dirs)
 }
 
