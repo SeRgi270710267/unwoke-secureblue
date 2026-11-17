@@ -28,6 +28,8 @@ on:
       - ".github/workflows/flake-rerun.yml"
       - ".github/workflows/bake-keepalive.yml"
       - ".github/workflows/actions-cleanup.yml"
+      - ".github/workflows/health.yml"
+      - ".github/scripts/health_report.py"
       - ".github/scripts/secret_scan.py"
       - ".github/scripts/action_pin_guard.py"
       - ".github/scripts/workflow_policy.py"
@@ -89,6 +91,7 @@ jobs:
     timeout-minutes: 30
     permissions:
       contents: write
+      pull-requests: write
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
@@ -102,6 +105,9 @@ jobs:
 
       - name: Auto-refresh snapshots on main
         if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: bash .github/scripts/auto-refresh-snapshots.sh
 
       - name: Compare stock scripts (pull request)

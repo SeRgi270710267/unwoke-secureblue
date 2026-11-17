@@ -31,7 +31,11 @@ jobs:
       - name: No pull_request_target / auto-merge in workflows
         run: |
           set -euo pipefail
-          if grep -R --include='*.yml' --include='*.yaml' -nE 'pull_request_target|enable-auto-merge' .github/workflows; then
+          # Match a workflow trigger or an auto-merge action input, not this
+          # check's own name. A bare grep matches the line that names the ban.
+          if grep -R --include='*.yml' --include='*.yaml' -nE \
+            '^[[:space:]]*(-\s*)?(pull_request_target|enable-auto-merge):' \
+            .github/workflows; then
             echo "FAIL: pull_request_target or auto-merge is not allowed" >&2
             exit 1
           fi
@@ -89,6 +93,7 @@ jobs:
           python3 .github/scripts/workflow_policy.py
           python3 .github/scripts/bake_keepalive.py --selftest
           python3 .github/scripts/actions_cleanup.py --selftest
+          python3 .github/scripts/health_report.py --selftest
 
       - name: ShellCheck
         run: |

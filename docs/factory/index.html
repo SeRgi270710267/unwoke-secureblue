@@ -150,6 +150,16 @@
             <td>Actions → <a href="https://github.com/SeRgi270710267/unwoke-secureblue/actions/workflows/actions-cleanup.yml">actions-cleanup</a></td>
           </tr>
           <tr>
+            <td><code>health</code></td>
+            <td>Monday 12:00 UTC. One reused issue: last bake, USB, Pages, inspect, vendor-watch, open alarms, and how many Dependabot PRs are waiting. Does not merge and does not close an alarm.</td>
+            <td>Actions → <a href="https://github.com/SeRgi270710267/unwoke-secureblue/actions/workflows/health.yml">health</a></td>
+          </tr>
+          <tr>
+            <td>Stock snapshots</td>
+            <td>If secureblue changes a watched file, the bot opens or updates <code>factory/stock-snapshots</code>. It does not push <code>main</code>. A snapshot-only drift does not fail the image bake, so the USB wrap is not skipped.</td>
+            <td>Pull requests. Read the lockdown list diff before merging.</td>
+          </tr>
+          <tr>
             <td>Dependabot</td>
             <td>One grouped GitHub Actions PR per week, with a cooldown. Does not propose <code>blue-build/github-action</code> (a human moves the image builder). Old ungrouped PRs #20–#24 may be replaced by that one PR.</td>
             <td>Review and merge. Do not auto-merge. Do not add Dependabot to the <code>main-strict</code> bypass.</td>
@@ -177,7 +187,7 @@
         </tbody>
       </table>
     </div>
-    <p>Stranger path: fork → PR → green <code>pr-gate</code> + canary → the maintainer merges. There is no auto-merge. Owner pushes to <code>main</code> skip the ruleset because of the admin bypass; the overlay bake and inspect still run on that push. <code>github-actions[bot]</code> is not on that bypass list (it does not appear in the search — do not add Dependabot in its place). Vendor heal and the idle heartbeat file cannot land from the bot. HTML-only tutorial regen still happens on Pages. The heartbeat falls back to a keep-alive issue comment so cron does not die at ~60 days.</p>
+    <p>Stranger path: fork → PR → green <code>pr-gate</code> + canary → the maintainer merges. There is no auto-merge. <code>main-strict</code> still wants one approval and Code Owners, and the bot is not a bypass actor, so a green check cannot merge itself. Owner pushes to <code>main</code> skip the ruleset because of the admin bypass. Vendor heal and the idle heartbeat file cannot land from the bot; snapshot drift becomes the <code>factory/stock-snapshots</code> pull request instead of a red bake. HTML-only tutorial regen still happens on Pages. The heartbeat falls back to a keep-alive issue comment so cron does not die at ~60 days. Scheduled workflows were still enabled through the quiet stretch; the stall was a failed stock-snapshot job marking an otherwise signed bake red, which skipped the USB wrap.</p>
 
     <h2 id="lanes"><a href="#lanes">Four lanes</a></h2>
     <div class="cards">
