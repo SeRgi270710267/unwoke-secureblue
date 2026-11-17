@@ -56,11 +56,9 @@ def check_text(name: str, text: str) -> list[str]:
     if not re.search(r"(?m)^permissions:\s*\{\}\s*$", text):
         problems.append(f"{name}: workflow permissions must be {{}}")
     for line in text.splitlines():
-        stripped = line.strip()
-        if stripped.startswith("pull_request_target:") or stripped.startswith("- pull_request_target"):
-            problems.append(f"{name}: pull_request_target is not allowed")
-        if "enable-auto-merge" in line and "grep" not in line:
-            problems.append(f"{name}: auto-merge is not allowed")
+        # A real trigger or input. The ban itself is allowed to name the words.
+        if re.match(r"^\s*(-\s*)?(pull_request_target|enable-auto-merge):", line):
+            problems.append(f"{name}: pull_request_target or auto-merge is not allowed")
     if not re.search(r"(?m)^concurrency:\s*$", text):
         problems.append(f"{name}: concurrency group is missing")
     jobs = job_blocks(text)
@@ -109,6 +107,11 @@ jobs:
         ok = False
     if not check_text("target.yml", good.replace("pull_request:", "pull_request_target:")):
         print("selftest: pull_request_target was accepted")
+        ok = False
+    named = good + "      - name: No pull_request_target / auto-merge\n"
+    if check_text("named.yml", named):
+        print("selftest: naming the ban was refused")
+        print(check_text("named.yml", named))
         ok = False
     print("workflow policy selftest " + ("ok" if ok else "FAILED"))
     return 0 if ok else 1
