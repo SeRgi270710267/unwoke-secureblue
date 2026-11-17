@@ -187,7 +187,19 @@ jobs:
           # GHCR path for pulling (with tag) vs attest subject (no tag — GitHub rejects :latest)
           REF="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/${NAME}:latest"
           SUBJECT="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/${NAME}"
-          DIGEST="$(cosign verify --key cosign.pub "${REF}" 2>/dev/null | python3 -c 'import json,sys; print(json.load(sys.stdin)[0]["critical"]["image"]["docker-manifest-digest"])')"
+          # Same as inspect-flavor.sh: certificate attestations otherwise win
+          # and cosign prints no JSON ("expected key signature, not certificate").
+          extra=()
+          if cosign verify --help 2>&1 | grep -q -- '--new-bundle-format'; then
+            extra+=(--new-bundle-format=false)
+          fi
+          payload="$(COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key cosign.pub "${extra[@]}" "${REF}" 2>/dev/null || true)"
+          if [[ -z "${payload}" ]]; then
+            echo "FAIL: no key signature on ${REF}" >&2
+            COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key cosign.pub "${extra[@]}" "${REF}"
+            exit 1
+          fi
+          DIGEST="$(python3 -c 'import json,sys; print(json.load(sys.stdin)[0]["critical"]["image"]["docker-manifest-digest"])' <<<"${payload}")"
           [[ "${DIGEST}" == sha256:* ]]
           echo "name=${NAME}" >> "${GITHUB_OUTPUT}"
           echo "image=${SUBJECT}" >> "${GITHUB_OUTPUT}"
