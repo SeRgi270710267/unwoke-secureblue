@@ -68,7 +68,9 @@ anon_code() {
     echo 404
     return 0
   fi
-  echo 401
+  # 403, 000, or a mixed pair is not proof the package exists and is private.
+  # Calling that 401 would let GITHUB_TOKEN create a world-readable package.
+  echo unknown
 }
 
 decide() {
@@ -78,15 +80,17 @@ decide() {
     echo "ghcr-push-guard: refusing to push; anonymous pull returned 200" >&2
     return 1
   fi
-  if [[ "${code}" == "404" || "${code}" == "unknown" ]]; then
+  # Only 401 means the package exists and refused an anonymous token.
+  # 403, 000, and unknown are not that proof.
+  if [[ "${code}" != "401" ]]; then
     if [[ "${has_publish}" != "yes" ]]; then
       if [[ "${GHCR_CREATE:-fail}" == "skip" ]]; then
-        echo "ghcr-push-guard: ${IMAGE_NAME} does not exist and GHCR_PUBLISH_TOKEN is unset. Not creating it." >&2
-        echo "::warning title=GHCR package not created::${IMAGE_NAME} is missing and GHCR_PUBLISH_TOKEN is unset. GITHUB_TOKEN will not create it." >&2
+        echo "ghcr-push-guard: ${IMAGE_NAME} is not confirmed private (${code}) and GHCR_PUBLISH_TOKEN is unset. Not creating it." >&2
+        echo "::warning title=GHCR package not created::${IMAGE_NAME} is not confirmed private (${code}) and GHCR_PUBLISH_TOKEN is unset. GITHUB_TOKEN will not create it." >&2
         echo skip
         return 0
       fi
-      echo "ghcr-push-guard: ${IMAGE_NAME} does not exist and GHCR_PUBLISH_TOKEN is unset." >&2
+      echo "ghcr-push-guard: ${IMAGE_NAME} is not confirmed private (${code}) and GHCR_PUBLISH_TOKEN is unset." >&2
       echo "ghcr-push-guard: refusing to create it with GITHUB_TOKEN. A GITHUB_TOKEN push from this public repository creates a package the world can pull." >&2
       return 1
     fi
@@ -114,6 +118,14 @@ selftest() {
   fi
   if [[ "$(decide 401 yes)" != "false" ]]; then
     echo "selftest FAIL private package" >&2
+    ok=1
+  fi
+  if decide 403 no >/dev/null; then
+    echo "selftest FAIL 403 treated as private" >&2
+    ok=1
+  fi
+  if decide 000 no >/dev/null; then
+    echo "selftest FAIL probe failure treated as private" >&2
     ok=1
   fi
   if [[ "$(GHCR_CREATE=skip decide 404 no)" != "skip" ]]; then
@@ -148,15 +160,11 @@ case "${mode}" in
     fi
     ;;
   post)
-    if [[ "${code}" == "200" ]]; then
-      echo "ghcr-push-guard: anonymous pull returned 200 after the push" >&2
+    if [[ "${code}" != "401" ]]; then
+      echo "ghcr-push-guard: could not confirm anonymous pull is denied (${code})" >&2
       exit 1
     fi
-    if [[ "${code}" == "404" || "${code}" == "unknown" ]]; then
-      echo "ghcr-push-guard: could not confirm the push is closed (${code})" >&2
-      exit 1
-    fi
-    echo "ghcr-push-guard: anonymous pull denied (${code})"
+    echo "ghcr-push-guard: anonymous pull denied (401)"
     ;;
   *)
     echo "usage: ghcr-push-guard.sh preflight|post|--selftest" >&2
