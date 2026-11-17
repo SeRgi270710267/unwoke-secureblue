@@ -2,7 +2,7 @@
 
 Guide for any coding agent working in this repository. Read it before you change anything. If this file and another doc disagree, the stricter rule wins.
 
-The repository is public. Write commits, pull request text, and docs as if a stranger will read them.
+The repository stays public. Images, ISOs, and the published docs site are invite-only. Write commits, pull request text, and the public README as if a stranger will read them. Do not put install commands, registry paths, digests, tokens, or invitee logins on the public README, `site-notice/`, or in a committed allowlist. The invite list is the `INVITE_ALLOWLIST` secret. Owner steps are `invite/OWNER-STEPS.md`.
 
 ## What this is
 
@@ -38,7 +38,7 @@ python3 files/system/usr/libexec/unwoke/mark-check.py --tree .
 
 1. Branch from current `origin/main`. One concern per pull request.
 2. Every new overlay lock has `ujust … on|off` and stays reversible. If it weakens a lock, it is opt-in and it warns.
-3. Overlay files under `files/` and `recipes/` carry `UNWOKE-SHIPPED-FIRST` and the MIT line. Do not put that token in live browser `policies/managed` JSON.
+3. Overlay files under `files/` and `recipes/` carry `UNWOKE-SHIPPED-FIRST` and `LicenseRef-Unwoke-SA-1.0`. Do not relicense Apache-2.0 paths in `NOTICE`. Do not put the token in live browser `policies/managed` JSON.
 4. Push and open a pull request against `main`. Fill the template. Maintainer merge only. Green CI is not permission to land. There is no auto-merge.
 5. Do not force-push `main`. Do not add Dependabot or the Actions app to the `main-strict` bypass list.
 
@@ -67,7 +67,9 @@ Factory-only commits should omit those trailers so the homepage does not pretend
 - `gpgcheck=0`, `setenforce 0`, unsigned rebase as a default, firewall off
 - Default-off Safe Browsing, fwupd, SELinux, or USBGuard
 - A new vendor hostname, Flathub, Snap, or a GUI store to "make it work"
-- Secrets, `cosign.key`, or `SIGNING_SECRET` in the tree, logs, or chat
+- Secrets, `cosign.key`, `SIGNING_SECRET`, or a pull token in the tree, the image, logs, or chat
+- Setting a GHCR package public, uploading an ISO to GHCR, or publishing a digest receipt
+- A workflow that grants access from `pull_request` or from a workflow input instead of `invite/allowlist.txt`
 - Editing `docs/secureblue/` by hand
 - Claiming a stock feature was copied without setting `adopted` in `docs/_tools/stock-feats.json` after a real review
 

@@ -8,4 +8,4 @@ Before changing this repository, read these in order:
 
 Skills live in `.agents/skills/` (`ship-a-pr`, `triage-failed-actions`, `add-a-lock`). Workspace rules are in `.agents/rules/`.
 
-Do not print or commit `SIGNING_SECRET` or `cosign.key`. Do not set `gpgcheck=0` or `setenforce 0`. Do not move the image-builder pin or the titanoboa pin unless the maintainer asked. Maintainer merge only.
+Do not print or commit `SIGNING_SECRET`, `cosign.key`, or a pull token. Do not set `gpgcheck=0` or `setenforce 0`. Do not move the image-builder pin or the titanoboa pin unless the maintainer asked. Maintainer merge only.

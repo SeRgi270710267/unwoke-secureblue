@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Unwoke SecureBlue. Not affiliated with secureblue.
-# MIT License. Copyright (c) 2026 SeRgi270710267.
+# SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267.
 # UNWOKE-SHIPPED-FIRST
 # Bluetooth off by default. Wi-Fi is not touched. ujust set-bluetooth on|off|status
 set -euo pipefail

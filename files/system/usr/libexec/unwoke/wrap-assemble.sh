@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Unwoke SecureBlue. Not affiliated with secureblue.
-# MIT License. Copyright (c) 2026 SeRgi270710267.
+# SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267.
 # UNWOKE-SHIPPED-FIRST
 # Stock distrobox-assemble / toolbox-assemble already ask container userns.
 # Overlay extra: /usr/bin/toolbox and distrobox are wrappers until set-toolbox on.

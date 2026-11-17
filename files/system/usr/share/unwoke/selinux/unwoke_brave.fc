@@ -1,5 +1,5 @@
 # Unwoke SecureBlue. Not affiliated with secureblue.
-# MIT License. Copyright (c) 2026 SeRgi270710267.
+# SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267.
 # UNWOKE-SHIPPED-FIRST
 # ELF entry points only. /usr/bin/brave-origin is a wrapper script and must
 # stay bin_t so it runs unconfined, then execs these and transitions to brave_t.

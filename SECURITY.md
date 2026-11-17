@@ -16,9 +16,9 @@ We aim to acknowledge a report within 7 days and to say what we plan to do withi
 
 In scope:
 
-- This repository's overlay (`files/`, `recipes/`), GitHub Actions workflows, and the images we publish at `ghcr.io/sergi270710267/unwoke-*`.
-- The site published from `docs/`.
-- Signing and verification of **our** images (`cosign.pub` in this repo).
+- This repository's overlay (`files/`, `recipes/`), GitHub Actions workflows, and the images published for invited users.
+- The docs site behind the login gate.
+- Signing and verification of **our** images (`cosign.pub` in this repo). The public key is not a secret. A pull token is. Invitee logins are not secret from the owner, and they do not belong in git or in a public log.
 
 Out of scope: stock secureblue kernel, their SELinux policy, Trivalent-the-browser, USBGuard as they ship it, denial of service against GitHub or GHCR, and findings that need a machine that is already compromised.
 
@@ -30,7 +30,7 @@ Out of scope: stock secureblue kernel, their SELinux policy, Trivalent-the-brows
 
 ## Secrets
 
-`SIGNING_SECRET` / `cosign.key` live only as the GitHub Actions secret `SIGNING_SECRET`. Optional model keys (`XAI_API_KEY`, `GROQ_API_KEY`, `UNWOKE_AI_KEY`) are secrets too. They do not belong in the tree, in issues, or in chat.
+`SIGNING_SECRET` / `cosign.key` live only as the GitHub Actions secret `SIGNING_SECRET`. `INVITE_ADMIN_TOKEN` is the owner's allowlist token and is also only a secret. Optional model keys (`XAI_API_KEY`, `GROQ_API_KEY`, `UNWOKE_AI_KEY`) are secrets too. Pull tokens (`read:packages`) belong on the invited machine, not in the tree, in issues, or in chat.
 
 We will not merge a change that sets `gpgcheck=0`, `setenforce 0`, or an unsigned rebase as a default.
 

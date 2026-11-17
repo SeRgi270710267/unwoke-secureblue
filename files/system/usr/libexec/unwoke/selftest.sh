@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Unwoke SecureBlue. Not affiliated with secureblue.
-# MIT License. Copyright (c) 2026 SeRgi270710267.
+# SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267.
 # UNWOKE-SHIPPED-FIRST
 # Prove every overlay addition on this disk. Does not unlock anything.
 # PASS = default lock is in effect. LOOSE = you turned it off (still your choice).
@@ -745,6 +745,19 @@ elif command -v gsettings >/dev/null && gsettings get org.gnome.desktop.interfac
   proof "accent-color=$(gsettings get org.gnome.desktop.interface accent-color 2>/dev/null || echo '?')"
 else
   skip "GNOME accent (no gschema override and not a GNOME session)"
+fi
+
+section "Invite credential"
+if [[ -x /usr/libexec/unwoke/invite-login.sh && -f /usr/libexec/unwoke/invite_auth.py ]]; then
+  pass "invite login helper is on disk"
+  proof "/usr/libexec/unwoke/invite-login.sh"
+  if /usr/libexec/unwoke/invite-login.sh --status >/dev/null 2>&1; then
+    pass "registry credential file is mode 600"
+  else
+    skip "no registry credential yet (ujust invite-login). Not a failed image."
+  fi
+else
+  fail "invite login helper missing"
 fi
 
 section "Stock audit (theirs, not ours)"

@@ -1,5 +1,5 @@
 {
-  "UnwokeShippedFirst": "UNWOKE-SHIPPED-FIRST. MIT License. Copyright (c) 2026 SeRgi270710267. Not affiliated with secureblue.",
+  "UnwokeShippedFirst": "UNWOKE-SHIPPED-FIRST. SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267. Not affiliated with secureblue.",
   "comment": "Every stock app installer we intercept. Compose renames their just recipe to NAME-stock. New stock install-* = add a stanza + wrap. Vendor yum-repos are healed by vendor.py.",
   "recipes": {
     "install-steam": {

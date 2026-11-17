@@ -45,6 +45,7 @@
         </ul>
         <p class="nav-kicker">On the disk</p>
         <ul>
+        <li><a href="iso/">USB downloads</a></li>
         <li><a href="post-install/">Post-install</a></li>
         <li><a href="stock-issues/">Workarounds</a></li>
         <li><a href="brand/">Brand</a></li>
@@ -119,29 +120,18 @@
 
     <div id="path-usb" class="install-path">
     <h2 id="usb"><a href="install/#usb">Empty disk: Unwoke USB ISO</a></h2>
-    <p>This wraps the GHCR image you picked. You do <em>not</em> install stock secureblue first. GitHub will not host a ~4 GB file as a normal release, so the ISO lives as a GHCR package plus a 90-day Actions download. The live <strong>Anaconda</strong> installer is dark Unwoke navy. Search or the dash: <strong>Install Unwoke SecureBlue</strong> (stock hides that icon). The OS rebase path below has no Anaconda. How the baker sits on a clock: <a href="factory/#clock">Factory</a>.</p>
-    <p id="iso-status" class="iso-status">Checking whether a USB ISO was published…</p>
+    <p>This wraps the signed image you picked. You do <em>not</em> install stock secureblue first. After you sign in, the USB file is on <a href="iso/">USB downloads</a>. Only the two recommended Trivalent sticks are there (GNOME and KDE, no NVIDIA). Each one is about 4&nbsp;GB, and the free store stops at 9&nbsp;GB, so the other ten flavors are not offered as ISOs. The live <strong>Anaconda</strong> installer is dark Unwoke navy. Search or the dash: <strong>Install Unwoke SecureBlue</strong> (stock hides that icon). The OS rebase path below has no Anaconda. How the baker sits on a clock: <a href="factory/#clock">Factory</a>.</p>
+    <p id="iso-status" class="iso-status">The two recommended Trivalent sticks are on <a href="iso/">USB downloads</a>.</p>
     <p id="iso-actions" class="iso-actions" hidden>
-      <a class="button" id="iso-download" href="install/#">Download USB (GitHub login)</a>
-      <span id="iso-hint" class="eyebrow">Artifact is the flashable file. GHCR <code>-iso</code> is oras below.</span>
+      <a class="button" id="iso-download" href="iso/">Download USB</a>
+      <span id="iso-hint" class="eyebrow">Save <code>latest.iso</code> next to the checksum. That is the name in <code>SHA256SUMS</code>.</span>
     </p>
     <ol>
-      <li>Get an ISO:
-        <ul>
-          <li><strong>When a wrap is green:</strong> pull <code>ghcr.io/sergi270710267/&lt;name&gt;-iso:latest</code> (box above) or download the Actions artifact (GitHub login, 90 days).</li>
-          <li><strong>Any flavor, on demand:</strong> GitHub → Actions → <strong>iso</strong> → Run workflow → pick the same image as above.</li>
-          <li><strong>Recommended Trivalent sticks</strong> (GNOME + KDE, no NVIDIA): wrapped after each green overlay bake. Same <code>cosign verify</code> of our <code>:latest</code>.</li>
-          <li><strong>All twelve flavors, weekly</strong> (Sunday 10:00 UTC): Trivalent, Origin, and browserless × GNOME/KDE × NVIDIA/not. Origin and the other ten stay weekly on purpose. Clock and alarms: <a href="factory/#clock">Factory</a>.</li>
-        </ul>
-      </li>
-      <li>Pull with <a href="https://oras.land/docs/installation">oras</a> (Linux/macOS) when the package exists:</li>
+      <li>Open <a href="iso/">USB downloads</a> and save <code>latest.iso</code>, <code>SHA256SUMS</code>, and <code>SHA256SUMS.sig</code> for that stick into one folder.</li>
+      <li>Check the signature, then the file. <code>cosign.pub</code> is in the public repository. <code>--insecure-ignore-tlog</code> skips the public log. It does not skip the signature.</li>
     </ol>
-<pre><code id="cmd-iso">curl -fsSL -o cosign.pub https://raw.githubusercontent.com/SeRgi270710267/unwoke-secureblue/main/cosign.pub
-oras pull ghcr.io/sergi270710267/unwoke-silverblue-trivalent-iso:latest
-COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key cosign.pub --new-bundle-format=false --insecure-ignore-tlog ghcr.io/sergi270710267/unwoke-silverblue-trivalent-iso:latest
-cosign verify-blob --key cosign.pub --insecure-ignore-tlog --signature SHA256SUMS.sig SHA256SUMS
+<pre><code id="cmd-iso">cosign verify-blob --key cosign.pub --insecure-ignore-tlog --signature SHA256SUMS.sig SHA256SUMS
 sha256sum -c SHA256SUMS</code></pre>
-    <p>ISO signatures are not in the public Rekor log, so the ISO lines use <code>--insecure-ignore-tlog</code>. The OS image check below does not. <code>COSIGN_OCI_EXPERIMENTAL=0</code> and <code>--new-bundle-format=false</code> force our classic <code>.sig</code> tag. Without them, current cosign can select GitHub’s certificate attestation and fail with “expected key signature, not certificate.” Drop <code>--new-bundle-format=false</code> only if your cosign does not have that flag.</p>
     <ol start="3">
       <li id="flash-step">Flash with <span id="flash-tool">Rufus</span>. <strong>Not Ventoy.</strong></li>
       <li>Boot, install, encrypt the disk, join <code>wheel</code>. Enroll the <strong>secureblue</strong> Secure Boot key when prompted — the kernel is still theirs.</li>
@@ -187,9 +177,8 @@ ujust set-trivalent-network-sandbox off  # if Trivalent clears cookies
 ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
 
     <h2 id="verify"><a href="install/#verify">Verify an image</a></h2>
-    <p><code>cosign.pub</code> in the git repo (and on the <code>receipt</code> release) is <em>our</em> overlay key, not secureblue’s. The same two cosign flags as the USB check:</p>
-<pre><code id="cmd-verify">curl -fsSL -o cosign.pub https://raw.githubusercontent.com/SeRgi270710267/unwoke-secureblue/main/cosign.pub
-COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key cosign.pub --new-bundle-format=false ghcr.io/sergi270710267/unwoke-silverblue-trivalent</code></pre>
+    <p><code>cosign.pub</code> in the public git repository is our overlay key, not secureblue’s. <code>COSIGN_OCI_EXPERIMENTAL=0</code> and <code>--new-bundle-format=false</code> force the classic signature tag. Without them, current cosign can select a certificate attestation and fail with “expected key signature, not certificate.” Drop <code>--new-bundle-format=false</code> only if your cosign does not have that flag.</p>
+<pre><code id="cmd-verify">COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key cosign.pub --new-bundle-format=false ghcr.io/sergi270710267/unwoke-silverblue-trivalent</code></pre>
   </main>
 
   <footer>
@@ -201,8 +190,6 @@ COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key cosign.pub --new-bundle-format=fal
     <p>Not affiliated with secureblue.</p>
   </footer>
   <script>
-    const OWNER = "SeRgi270710267";
-    const OWNER_LC = "sergi270710267";
     const select = document.getElementById("image-select");
     const picked = document.getElementById("picked-name");
     const unverified = document.getElementById("cmd-unverified");
@@ -216,9 +203,10 @@ COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key cosign.pub --new-bundle-format=fal
     const flashTool = document.getElementById("flash-tool");
     const pathUsb = document.getElementById("path-usb");
     const pathRebase = document.getElementById("path-rebase");
-    const isoHtmlCache = {};
-    let isoSeq = 0;
-    let lastGreenIso = undefined;
+    const SERVED = {
+      "unwoke-silverblue-trivalent": true,
+      "unwoke-kinoite-trivalent": true
+    };
     function fromRadios() {
       const desk = document.querySelector('input[name="desk"]:checked').value;
       const gpu = document.querySelector('input[name="gpu"]:checked').value;
@@ -233,12 +221,8 @@ COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key cosign.pub --new-bundle-format=fal
       signed.textContent =
         "rpm-ostree rebase ostree-image-signed:docker://ghcr.io/sergi270710267/" + name + ":latest\nsystemctl reboot";
       verify.textContent =
-        "curl -fsSL -o cosign.pub https://raw.githubusercontent.com/SeRgi270710267/unwoke-secureblue/main/cosign.pub\n" +
         "COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key cosign.pub --new-bundle-format=false ghcr.io/sergi270710267/" + name;
       iso.textContent =
-        "curl -fsSL -o cosign.pub https://raw.githubusercontent.com/SeRgi270710267/unwoke-secureblue/main/cosign.pub\n" +
-        "oras pull ghcr.io/sergi270710267/" + name + "-iso:latest\n" +
-        "COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key cosign.pub --new-bundle-format=false --insecure-ignore-tlog ghcr.io/sergi270710267/" + name + "-iso:latest\n" +
         "cosign verify-blob --key cosign.pub --insecure-ignore-tlog --signature SHA256SUMS.sig SHA256SUMS\n" +
         "sha256sum -c SHA256SUMS";
       checkIso(name);
@@ -246,18 +230,6 @@ COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key cosign.pub --new-bundle-format=fal
       if (originWarn) {
         originWarn.hidden = document.querySelector('input[name="browser"]:checked').value !== "";
       }
-    }
-    function esc(s) {
-      return String(s).replace(/[&<>"']/g, (c) => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-      }[c]));
-    }
-    function ghUrl(u) {
-      try {
-        const x = new URL(u);
-        if (x.protocol === "https:" && x.hostname === "github.com") return x.href;
-      } catch (e) { /* ignore */ }
-      return "";
     }
     function applyOs() {
       const os = document.querySelector('input[name="os"]:checked').value;
@@ -281,82 +253,15 @@ COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key cosign.pub --new-bundle-format=fal
         }
       }
     }
-    async function lastGreenIsoRun() {
-      if (lastGreenIso !== undefined) return lastGreenIso;
-      try {
-        const r = await fetch(
-          "https://api.github.com/repos/" + OWNER + "/unwoke-secureblue/actions/workflows/iso.yml/runs?status=success&per_page=20",
-          { headers: { Accept: "application/vnd.github+json" } }
-        );
-        if (r.ok) {
-          const j = await r.json();
-          lastGreenIso = (j.workflow_runs || []).find((w) => w.conclusion === "success") || null;
-        } else {
-          lastGreenIso = null;
-        }
-      } catch (e) {
-        lastGreenIso = null;
-      }
-      return lastGreenIso;
-    }
-    async function checkIso(name) {
+    function checkIso(name) {
       if (!isoStatus) return;
-      if (isoHtmlCache[name]) {
-        isoStatus.innerHTML = isoHtmlCache[name].html;
-        if (isoActions && isoDownload) {
-          if (isoHtmlCache[name].runHref) {
-            isoDownload.href = isoHtmlCache[name].runHref;
-            isoActions.hidden = false;
-          } else {
-            isoActions.hidden = true;
-          }
-        }
-        return;
-      }
-      const seq = ++isoSeq;
-      isoStatus.textContent = "Checking whether a USB ISO was published…";
-      let pkg = null;
-      try {
-        const r = await fetch(
-          "https://api.github.com/users/" + OWNER + "/packages/container/" + encodeURIComponent(name + "-iso"),
-          { headers: { Accept: "application/vnd.github+json" } }
-        );
-        if (r.ok) pkg = await r.json();
-      } catch (e) { /* offline / rate limit */ }
-      if (seq !== isoSeq) return;
-      let html;
-      let runHref = "";
-      if (pkg && pkg.visibility === "public") {
-        html =
-          "USB ISO package is public for <code>" + name + "</code>. Pull with oras below, then verify with <code>cosign.pub</code>.";
-        const run = await lastGreenIsoRun();
-        if (seq !== isoSeq) return;
-        if (run) runHref = ghUrl(run.html_url);
-      } else if (pkg) {
-        html =
-          "A <code>" + name + "-iso</code> package exists but is still private. Rebase below works. After the baker is green, the package must be Public (factory job tries this).";
+      if (SERVED[name]) {
+        isoStatus.innerHTML = "This stick is on <a href=\"iso/\">USB downloads</a>.";
+        if (isoDownload) isoDownload.href = "/iso/" + name + "/latest.iso";
+        if (isoActions) isoActions.hidden = false;
       } else {
-        const run = await lastGreenIsoRun();
-        if (seq !== isoSeq) return;
-        if (run) {
-          runHref = ghUrl(run.html_url);
-          html = runHref
-            ? "Last green USB bake: <a href=\"" + esc(runHref) + "\">Actions run</a> (GitHub login to download the artifact). The GHCR <code>-iso</code> package for this image is not listed yet — rebase still works."
-            : "Last green USB bake is on GitHub Actions (login to download the artifact). The GHCR <code>-iso</code> package for this image is not listed yet — rebase still works.";
-        } else {
-          html =
-            "No USB ISO published yet. Use rebase below, or a stock secureblue ISO then rebase. The baker is separate and does not block the OS.";
-        }
-      }
-      isoHtmlCache[name] = { html, runHref };
-      isoStatus.innerHTML = html;
-      if (isoActions && isoDownload) {
-        if (runHref) {
-          isoDownload.href = runHref;
-          isoActions.hidden = false;
-        } else {
-          isoActions.hidden = true;
-        }
+        isoStatus.textContent = "This flavor is not on USB downloads. The free store holds the two recommended Trivalent sticks only. Use rebase for this image.";
+        if (isoActions) isoActions.hidden = true;
       }
     }
     function enhanceCopy() {

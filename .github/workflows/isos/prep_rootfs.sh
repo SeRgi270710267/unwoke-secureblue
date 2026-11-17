@@ -4,6 +4,8 @@
 # SPDX-FileCopyrightText: Copyright 2024 Universal Blue
 # SPDX-FileCopyrightText: Copyright 2026 The Secureblue Authors
 # SPDX-License-Identifier: Apache-2.0
+# Modified by SeRgi270710267. The modifications stay Apache-2.0.
+# LicenseRef-Unwoke-SA-1.0 does not apply to this file.
 
 set -euo pipefail
 
@@ -126,7 +128,9 @@ echo 'DefaultDisabled=true' > /usr/share/gnome-shell/search-providers/org.gnome.
 sed -i -e 's/ Fedora/ Unwoke SecureBlue/' /usr/share/anaconda/gnome/fedora-welcome || true
 sed -i -e 's/Fedora/Unwoke SecureBlue/g' /usr/share/anaconda/gnome/org.fedoraproject.welcome-screen.desktop || true
 
-mkdir -p /etc/anaconda/profile.d
+mkdir -p /etc/unwoke /etc/anaconda/profile.d
+printf '%s\n' "${IMAGE_REF}:${IMAGE_TAG}" > /etc/unwoke/image-ref
+chmod 644 /etc/unwoke/image-ref
 cat > /etc/anaconda/profile.d/unwoke-secureblue.conf <<'EOF'
 # Anaconda configuration file for Unwoke SecureBlue (live ISO only)
 
@@ -239,8 +243,36 @@ if grep -qE '^[[:space:]]*autopart' /usr/share/anaconda/interactive-defaults.ks 
   sed -i -E 's/^[[:space:]]*autopart.*/autopart --encrypted --type=btrfs --luks-version=luks2/' \
     /usr/share/anaconda/interactive-defaults.ks
 fi
+# Install fails closed unless the live session stored a mode-600 credential.
+# The file is copied before bootc switch so the registry pull can authenticate.
+tee /usr/share/anaconda/post-scripts/invite-auth.ks <<'EOF'
+%post --nochroot --erroronfail
+set -euo pipefail
+src=/etc/ostree/auth.json
+dst=/mnt/sysimage/etc/ostree/auth.json
+if [[ ! -f "${src}" ]]; then
+  echo "Invite credential missing. Run the invite prompt before install." >&2
+  exit 1
+fi
+mode="$(stat -c '%a' "${src}")"
+if [[ "${mode}" != "600" ]]; then
+  echo "Invite credential mode ${mode} is not 600." >&2
+  exit 1
+fi
+install -d -m 0755 /mnt/sysimage/etc/ostree /mnt/sysimage/etc/unwoke
+install -m 0600 "${src}" "${dst}"
+if [[ -f /etc/unwoke/image-ref ]]; then
+  install -m 0644 /etc/unwoke/image-ref /mnt/sysimage/etc/unwoke/image-ref
+fi
+if command -v restorecon >/dev/null 2>&1; then
+  restorecon -v "${dst}" || true
+fi
+%end
+EOF
+
 tee -a /usr/share/anaconda/interactive-defaults.ks <<EOF
 ostreecontainer --url=${IMAGE_REF}:${IMAGE_TAG} --transport=containers-storage
+%include /usr/share/anaconda/post-scripts/invite-auth.ks
 %include /usr/share/anaconda/post-scripts/install-configure-upgrade.ks
 %include /usr/share/anaconda/post-scripts/secureboot-enroll-key.ks
 %include /usr/share/anaconda/post-scripts/restore-nts.ks

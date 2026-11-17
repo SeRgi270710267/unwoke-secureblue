@@ -1,0 +1,53 @@
+name: invite-sync
+# Owner-only. Reads the INVITE_ALLOWLIST secret and updates Cloudflare
+# Access. It does not print logins or emails. It does not add repository
+# collaborators. A pull request cannot run this.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "15 09 * * 1"
+permissions: {}
+concurrency:
+  group: invite-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    name: Sync Access allowlist
+    if: github.actor == github.repository_owner && (github.event_name == 'schedule' || github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Refuse a non-owner
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_ACTOR}" != "${GITHUB_REPOSITORY_OWNER}" ]]; then
+            echo "refused: only the repository owner may sync invites" >&2
+            exit 1
+          fi
+
+      - name: Update Cloudflare Access
+        env:
+          INVITE_ALLOWLIST: ${{ secrets.INVITE_ALLOWLIST }}
+          GH_TOKEN: ${{ github.token }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_ACCESS_DOMAIN: ${{ vars.CLOUDFLARE_ACCESS_DOMAIN }}
+          CLOUDFLARE_GITHUB_IDP_ID: ${{ vars.CLOUDFLARE_GITHUB_IDP_ID }}
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/invite_sync.py --selftest
+          python3 .github/scripts/cloudflare_access.py --selftest
+          python3 .github/scripts/invite_sync.py sync

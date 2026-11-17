@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Unwoke SecureBlue. Not affiliated with secureblue.
-# MIT License. Copyright (c) 2026 SeRgi270710267.
+# SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267.
 # UNWOKE-SHIPPED-FIRST
 # Unwoke Docker prompt. secureblue live has no ujust install-docker
 # and no ujust uninstall-docker. Prefer podman (already on the image).

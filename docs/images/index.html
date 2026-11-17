@@ -6,10 +6,10 @@
   <meta name="theme-color" content="#050a16">
   <meta name="color-scheme" content="dark">
   <title>Images | Unwoke SecureBlue</title>
-  <meta name="description" content="Twelve public GHCR images: Silverblue and Kinoite, NVIDIA open, Origin / Trivalent / browserless.">
+  <meta name="description" content="Twelve invite-only images: Silverblue and Kinoite, NVIDIA open, Origin / Trivalent / browserless.">
   <link rel="canonical" href="https://sergi270710267.github.io/unwoke-secureblue/images/">
   <meta property="og:title" content="Images | Unwoke SecureBlue">
-  <meta property="og:description" content="Twelve public GHCR images: Silverblue and Kinoite, NVIDIA open, Origin / Trivalent / browserless.">
+  <meta property="og:description" content="Twelve invite-only images: Silverblue and Kinoite, NVIDIA open, Origin / Trivalent / browserless.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://sergi270710267.github.io/unwoke-secureblue/images/">
   <meta property="og:image" content="https://sergi270710267.github.io/unwoke-secureblue/assets/hero.jpg">
@@ -62,7 +62,7 @@
 
   <main id="content">
     <h1>Images</h1>
-    <p>Published as <code>ghcr.io/sergi270710267/&lt;name&gt;:latest</code>. Meant to be public so rebase does not need a GitHub login. The factory tries to flip visibility; if GitHub still leaves a name private, a <code>ghcr-private</code> issue nags until one Packages click. Rebuilt twice a day, 08:00 and 20:00 UTC, plus every recipe push. <strong>Recommended:</strong> names ending in <code>-trivalent</code> (stock Trivalent plus extra policies). No suffix = Brave Origin (pick on purpose). <code>-browserless</code> = no image browser. Every image gets the <a href="brand/">Unwoke wallpaper, lock screen, and blue accent</a>, Flathub/brew/Bluetooth/toolbox off until <code>ujust</code>, and the other overlay locks. Reverts: <a href="post-install/">Post-install</a>.</p>
+    <p>The twelve images are private and invite-only. An invitation is required before a machine can pull. Rebuilt twice a day, 08:00 and 20:00 UTC, plus every recipe push. <strong>Recommended:</strong> names ending in <code>-trivalent</code> (stock Trivalent plus extra policies). No suffix = Brave Origin (pick on purpose). <code>-browserless</code> = no image browser. Every image gets the <a href="brand/">Unwoke wallpaper, lock screen, and blue accent</a>, Flathub/brew/Bluetooth/toolbox off until <code>ujust</code>, and the other overlay locks. Reverts: <a href="post-install/">Post-install</a>.</p>
     <div class="factory-stamp" data-factory-stamp>Checking last green…</div>
 
     <p class="notice"><code>nvidia-open</code> images are for NVIDIA GPUs Turing or newer (GTX 16xx / RTX 20xx and later): proprietary driver with NVIDIA’s open kernel modules, not Nouveau. The non-NVIDIA images use Nouveau and are a poor choice for those GPUs.</p>
@@ -163,7 +163,7 @@
     <h2 id="verify"><a href="images/#verify">Verify</a></h2>
 <pre><code>curl -fsSL -o cosign.pub https://raw.githubusercontent.com/SeRgi270710267/unwoke-secureblue/main/cosign.pub
 COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key cosign.pub --new-bundle-format=false ghcr.io/sergi270710267/unwoke-silverblue</code></pre>
-    <p><code>cosign.pub</code> is our overlay key in the <a href="https://github.com/SeRgi270710267/unwoke-secureblue">git repo</a> (also on the <code>receipt</code> release). It is not secureblue’s key. The two flags force the classic <code>.sig</code> tag so cosign does not pick GitHub’s certificate attestation. Drop <code>--new-bundle-format=false</code> only if your cosign does not have that flag. After the first-boot signed rebase, rpm-ostree checks that stamp on updates. Full picker: <a href="install/#verify">Install</a>.</p>
+    <p><code>cosign.pub</code> is our overlay key in the <a href="https://github.com/SeRgi270710267/unwoke-secureblue">git repo</a>. It is not secureblue’s key. The two flags force the classic <code>.sig</code> tag so cosign does not pick GitHub’s certificate attestation. Drop <code>--new-bundle-format=false</code> only if your cosign does not have that flag. After the first-boot signed rebase, rpm-ostree checks that stamp on updates. Full picker: <a href="install/#verify">Install</a>.</p>
   </main>
 
   <footer>

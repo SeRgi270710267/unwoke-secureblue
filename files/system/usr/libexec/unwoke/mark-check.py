@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Unwoke SecureBlue. Not affiliated with secureblue.
-# MIT License. Copyright (c) 2026 SeRgi270710267.
+# SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267.
 # UNWOKE-SHIPPED-FIRST
 """Public mark: stamp, check, and keep it out of live browser policies.
 
@@ -10,7 +10,8 @@ reminder. Inspect and the PR gate check only (they must not rewrite git).
 Live Chromium/Brave/Trivalent ``policies/managed/*.json`` must *not* contain
 the token or ``UnwokeShippedFirst``. Those files are loaded by the browser.
 An extra unrecognized policy would show in chrome://policy and is a uniqueness
-we do not need. Real lock keys are unchanged. No phone-home. MIT stays MIT.
+we do not need. Real lock keys are unchanged. No phone-home.
+New stamps use LicenseRef-Unwoke-SA-1.0. Apache-2.0 snapshots are not stamped.
 """
 from __future__ import annotations
 
@@ -22,27 +23,31 @@ from pathlib import Path
 TOKEN = "UNWOKE-SHIPPED-FIRST"
 JSON_KEY = "UnwokeShippedFirst"
 JSON_VAL = (
-    "UNWOKE-SHIPPED-FIRST. MIT License. Copyright (c) 2026 SeRgi270710267. "
-    "Not affiliated with secureblue."
+    "UNWOKE-SHIPPED-FIRST. SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. "
+    "Copyright (c) 2026 SeRgi270710267. Not affiliated with secureblue."
 )
 HASH_MARK = (
     "# Unwoke SecureBlue. Not affiliated with secureblue.\n"
-    "# MIT License. Copyright (c) 2026 SeRgi270710267.\n"
+    "# SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0\n"
+    "# Copyright (c) 2026 SeRgi270710267.\n"
     f"# {TOKEN}\n"
 )
 CSS_MARK = (
     "/* Unwoke SecureBlue. Not affiliated with secureblue. "
-    "MIT License. Copyright (c) 2026 SeRgi270710267. "
+    "SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. "
+    "Copyright (c) 2026 SeRgi270710267. "
     f"{TOKEN}. */\n"
 )
 HTML_MARK = (
     "<!-- Unwoke SecureBlue. Not affiliated with secureblue. "
-    "MIT License. Copyright (c) 2026 SeRgi270710267. "
+    "SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. "
+    "Copyright (c) 2026 SeRgi270710267. "
     f"{TOKEN}. -->\n"
 )
 CIL_MARK = (
     ";; Unwoke SecureBlue. Not affiliated with secureblue.\n"
-    ";; MIT License. Copyright (c) 2026 SeRgi270710267.\n"
+    ";; SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0\n"
+    ";; Copyright (c) 2026 SeRgi270710267.\n"
     f";; {TOKEN}\n"
 )
 SKIP_NAMES = {"LICENSE", "flavor"}
@@ -68,7 +73,7 @@ IMAGE_EXTRAS = (
 
 
 def skip(path: Path) -> bool:
-    if path.name in SKIP_NAMES:
+    if path.name in SKIP_NAMES or path.name.startswith("LICENSE"):
         return True
     if path.suffix.lower() in SKIP_SUFFIX:
         return True

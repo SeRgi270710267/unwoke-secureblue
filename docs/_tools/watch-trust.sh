@@ -61,8 +61,8 @@ else
   bash "${ALARM}" pin open
 fi
 
-echo "== GHCR visibility =="
-ALARM=1 bash "${ROOT}/.github/scripts/public-packages.sh"
+echo "== GHCR visibility (anonymous pull must fail) =="
+ALARM=1 bash "${ROOT}/.github/scripts/package-visibility.sh"
 
 echo "== stale overlay bake =="
 bash "${ROOT}/docs/_tools/watch-stale-bake.sh"

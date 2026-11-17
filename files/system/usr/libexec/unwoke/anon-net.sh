@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Unwoke SecureBlue. Not affiliated with secureblue.
-# MIT License. Copyright (c) 2026 SeRgi270710267.
+# SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267.
 # UNWOKE-SHIPPED-FIRST
 # Anonymity-adjacent host net that does not cut SELinux/Safe Browsing/NTS.
 # Default: TCP timestamps off (clock-skew leak). Optional: hostname "host".

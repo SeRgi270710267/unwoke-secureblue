@@ -15,7 +15,8 @@
 
 - [ ] No `gpgcheck=0`, `setenforce 0`, unsigned rebase as default, firewall off.
 - [ ] No new vendor hostname / Flathub / Snap “to make it work.”
-- [ ] No secrets, keys, or `SIGNING_SECRET` in the diff. `python3 .github/scripts/secret_scan.py` is clean.
+- [ ] No secrets, keys, `SIGNING_SECRET`, or pull tokens in the diff. `python3 .github/scripts/secret_scan.py` is clean.
+- [ ] I did not re-enable public GHCR, a public ISO upload, a digest receipt, or install commands on the README or `site-notice/`.
 - [ ] Canary still scans their signed base; I did not delete needles to pass CI.
 - [ ] Third-party Actions stay pinned to a full SHA. No `pull_request_target`. No auto-merge.
 - [ ] I did not move the `blue-build/github-action` pin or the titanoboa pin unless the maintainer asked.

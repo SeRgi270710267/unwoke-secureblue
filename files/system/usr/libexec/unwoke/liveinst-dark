@@ -1,9 +1,33 @@
 #!/usr/bin/env bash
 # Unwoke SecureBlue. Not affiliated. UNWOKE-SHIPPED-FIRST.
 # Dark Adwaita + Unwoke palette for Anaconda on the live USB.
+# The invite prompt must succeed before the installer starts.
+set -euo pipefail
 export GTK_THEME="${GTK_THEME:-Adwaita:dark}"
 export GTK_APPLICATION_PREFER_DARK_THEME=1
 export ADW_DISABLE_PORTAL=1
+# A desktop launcher has no tty. Re-exec in a terminal so the token prompt works.
+if [[ ! -t 0 && -z "${UNWOKE_INVITE_TERM:-}" ]]; then
+  export UNWOKE_INVITE_TERM=1
+  if command -v ptyxis >/dev/null 2>&1; then
+    exec ptyxis -- "$0" "$@"
+  fi
+  if command -v gnome-terminal >/dev/null 2>&1; then
+    exec gnome-terminal -- "$0" "$@"
+  fi
+  if command -v konsole >/dev/null 2>&1; then
+    exec konsole -e "$0" "$@"
+  fi
+  echo "No terminal for the invite prompt." >&2
+  exit 1
+fi
+if [[ -x /usr/libexec/unwoke/invite-login.sh ]]; then
+  if [[ "$(id -u)" -eq 0 ]]; then
+    /usr/libexec/unwoke/invite-login.sh --require
+  else
+    sudo -- /usr/libexec/unwoke/invite-login.sh --require
+  fi
+fi
 if [[ -x /usr/sbin/liveinst ]]; then
   exec /usr/sbin/liveinst "$@"
 fi

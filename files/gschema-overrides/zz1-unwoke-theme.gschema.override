@@ -1,5 +1,5 @@
 # Unwoke SecureBlue. Not affiliated with secureblue.
-# MIT License. Copyright (c) 2026 SeRgi270710267.
+# SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267.
 # UNWOKE-SHIPPED-FIRST
 # Unwoke SecureBlue GNOME defaults. User Settings still win if they change them.
 # accent-color only accepts named values; GTK CSS supplies the exact #3b6cff.
