@@ -31,4 +31,7 @@ fi
 
 mkdir -p /etc/unwoke
 touch "${DONE}"
-systemctl reboot
+if ! systemctl reboot; then
+  rm -f "${DONE}"
+  exit 1
+fi
