@@ -1,4 +1,5 @@
 # sha256  git-raw-url  snapshot-path
 # If CI fails here, stock changed the file. Review, recopy snapshot, update this hash.
-c88624a6744bfaab71b52ffae872eb1fa1d6c755a7ecf3d8ff482792e9f2d1ef https://raw.githubusercontent.com/secureblue/secureblue/live/files/system/desktop/usr/libexec/secureblue/harden_flatpak.py files/upstream-snapshots/secureblue/harden_flatpak.py
-12458d9d519bfdf855cb475b42b46f79a0c458361c407deac2be980b109b5e94 https://raw.githubusercontent.com/secureblue/secureblue/live/files/justfiles/desktop/flatpak.just files/upstream-snapshots/secureblue/flatpak.just
+272408e526c6562145ba6e8619d8fdaa87817cda1a3017fe78f5b1f50f8881b9 https://raw.githubusercontent.com/secureblue/secureblue/live/files/system/desktop/usr/libexec/secureblue/harden_flatpak.py files/upstream-snapshots/secureblue/harden_flatpak.py
+378a9230c8c808018ff9f90e717d79828a91e45708982b4998660fdc03150f24 https://raw.githubusercontent.com/secureblue/secureblue/live/files/justfiles/desktop/flatpak.just files/upstream-snapshots/secureblue/flatpak.just
+e13d8d78ec9332076a7ec642ecaa8c6bed30d0a1b0d3ffb27a79f0b37edba03c https://raw.githubusercontent.com/secureblue/secureblue/live/files/system/desktop/usr/libexec/secureblue/flatpak-permissions-lockdown files/upstream-snapshots/secureblue/flatpak-permissions-lockdown
