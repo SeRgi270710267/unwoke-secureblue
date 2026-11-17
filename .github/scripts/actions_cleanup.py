@@ -30,22 +30,25 @@ def parse_time(value: str):
 
 
 def choose(recent: list, old: list, now: datetime, keep_days: int = KEEP_DAYS, limit: int = MAX_DELETE) -> list[int]:
-    """Pick completed run ids that are old and are not the newest of their workflow."""
-    newest: set[int] = set()
-    seen: set[str] = set()
+    """Pick completed run ids that are old and are not the newest of their workflow.
+
+    `recent` is the newest completed page. A workflow that does not appear
+    there is left alone: its newest run may be the old one, and deleting it
+    would drop the last record of a quiet workflow.
+    """
+    newest: dict[str, int] = {}
     for run in recent:
         path = run.get("path") or run.get("name") or ""
-        if path in seen:
+        if path in newest or run.get("id") is None:
             continue
-        seen.add(path)
-        if run.get("id") is not None:
-            newest.add(int(run["id"]))
+        newest[path] = int(run["id"])
     victims: list[int] = []
     for run in old:
         if run.get("status") != "completed":
             continue
+        path = run.get("path") or run.get("name") or ""
         run_id = run.get("id")
-        if run_id is None or int(run_id) in newest:
+        if run_id is None or path not in newest or int(run_id) == newest[path]:
             continue
         started = parse_time(run.get("created_at") or "")
         if started is None:
@@ -116,7 +119,10 @@ def selftest() -> int:
         _run(6, ".github/workflows/pages.yml", "completed", 130, now),
     ]
     got = choose(recent, old, now)
-    assert got == [9, 6], got
+    assert got == [9], got
+    with_pages = recent + [_run(3, ".github/workflows/pages.yml", "completed", 1, now)]
+    got_pages = choose(with_pages, old, now)
+    assert got_pages == [9, 6], got_pages
     quiet = choose(
         [_run(4, ".github/workflows/build.yml", "completed", 400, now)],
         [_run(4, ".github/workflows/build.yml", "completed", 400, now)],
