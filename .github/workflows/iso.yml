@@ -80,6 +80,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      issues: write
     strategy:
       fail-fast: false
       max-parallel: 2
@@ -211,9 +212,8 @@ jobs:
             echo "FAIL: ISO too small (${bytes} bytes)" >&2
             exit 1
           }
-          # Hash here so the next step cannot lose the path.
-          DATE_SUFFIX="$(date -u +%Y%m%d)"
-          NAMED="${DEST_DIR}/${IMAGE_NAME}-${DATE_SUFFIX}.iso"
+          # Stable name. SHA256SUMS must say latest.iso so the R2 object matches.
+          NAMED="${DEST_DIR}/latest.iso"
           mv -f "${DEST}" "${NAMED}"
           (cd "${DEST_DIR}" && sha256sum "$(basename "${NAMED}")" | tee SHA256SUMS)
           echo "ISO_FILE=${NAMED}" >> "${GITHUB_ENV}"
@@ -267,6 +267,23 @@ jobs:
           IMAGE_NAME: ${{ matrix.image }}
           ISO_FILE: ${{ steps.build.outputs.iso_file }}
         run: bash .github/scripts/publish-iso.sh
+
+      # Private R2, served only through the Access site. Missing credentials
+      # skip. A size over 9 GB skips and opens r2-free-tier. It does not
+      # upload the other ten flavors.
+      - name: Publish ISO to private R2
+        if: steps.build.outcome == 'success'
+        env:
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET: ${{ vars.R2_BUCKET }}
+          R2_ENDPOINT: ${{ vars.R2_ENDPOINT }}
+          IMAGE_NAME: ${{ matrix.image }}
+          ISO_FILE: ${{ steps.build.outputs.iso_file }}
+          GH_TOKEN: ${{ github.token }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: python3 .github/scripts/r2_iso.py upload
 
   receipt:
     name: Receipt ISO checksums

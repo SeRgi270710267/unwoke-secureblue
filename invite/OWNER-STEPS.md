@@ -8,7 +8,7 @@ This file does not change repository visibility, package visibility, or Pages. T
 
 Public: this git repository, the recipes, the overlay locks, `cosign.pub`, and the one-page notice on `github.io`.
 
-Invite-only: the GHCR images after you delete the public packages and turn off inherited access, the ISOs on those private packages, and the full docs site on Cloudflare Access.
+Invite-only: the GHCR images after you delete the public packages and turn off inherited access, the USB ISOs on private R2 behind the same Access login, and the full docs site on Cloudflare Access.
 
 Anyone can still read the recipes and the `docs/` HTML in git and build an image themselves. That is the limit of a public repository. The published site and the prebuilt images are the parts a login can close.
 
@@ -18,7 +18,16 @@ GitHub Actions minutes for a public repository are free. Do not make this reposi
 
 GitHub Container Registry storage and bandwidth are currently free. GitHub's billing page says they will give at least one month's notice before that changes.
 
-Cloudflare Pages on a `pages.dev` hostname is free. Cloudflare Access (Zero Trust) is free for 50 seats. This factory never buys a paid plan. The hard stop is 45. `invite-sync` refuses an allowlist with more than 45 people and does not call Cloudflare in that case. It prints only the count. The daily rehost job reads seat use and opens `zero-trust-seats` when that number is 45 or higher. A custom domain is optional. GitHub Enterprise is not required. GitHub Pages itself cannot hide a site on a free personal account.
+Cloudflare Pages on a `pages.dev` hostname is free. Cloudflare Access (Zero Trust) is free for 50 seats. This factory never buys a paid plan. The hard stop is 45. `invite-sync` refuses an allowlist with more than 45 people and does not call Cloudflare in that case. It prints only the count. The daily rehost job reads seat use and opens `zero-trust-seats` when that number is 45 or higher.
+
+R2 is free for 10 GB-month of storage, 1 million Class A operations, and 10 million Class B operations. Egress is free. This factory never buys R2. The storage stop is 9 GB. Before each upload the job lists the bucket. If the total plus the new files would pass 9 GB, it does not upload and opens `r2-free-tier`. A live ISO is about 4 GB, so all twelve flavors do not fit (about 48 GB). The site serves two sticks only, each capped at 4.5 GB so the two jobs can run together without passing 9 GB:
+
+- `unwoke-silverblue-trivalent` (GNOME, recommended)
+- `unwoke-kinoite-trivalent` (KDE, recommended)
+
+NVIDIA, Origin, and browserless are not uploaded to R2. The daily job reads this month's R2 operations when the token can. It opens the same issue at 800,000 Class A or 8,000,000 Class B. If the log says `r2-ops=unknown`, the token cannot read analytics. A normal month is a few dozen Class A calls for the two sticks, plus one Class B call per download. That is far under the free limits. Do not enable the bucket's r2.dev hostname.
+
+A custom domain is optional. GitHub Enterprise is not required. GitHub Pages itself cannot hide a site on a free personal account. Who signed in: Zero Trust → Logs → Access. That view is free. It shows the login Access saw and the time. It does not show which file they downloaded.
 
 ## 1. Your own pull token
 
@@ -57,6 +66,8 @@ Secrets:
 | `CLOUDFLARE_ACCOUNT_ID` | The account id on the Workers overview. |
 | `INVITE_ALLOWLIST` | One `github-login email` pair per line. The email is one GitHub shows Access after login (a verified address on that GitHub account). `#` starts a comment. This file must not be committed. |
 | `GHCR_PUBLISH_TOKEN` | Classic PAT, 90 days, only `write:packages`, from <https://github.com/settings/tokens/new?scopes=write:packages>. It creates the first unlinked ISO package. It can push every package your user can write, so do not use it anywhere else. |
+| `R2_ACCESS_KEY_ID` | R2 → Manage R2 API tokens → Object Read & Write on the private bucket `unwoke-isos` only. Not the Global API Key. |
+| `R2_SECRET_ACCESS_KEY` | The secret half of that R2 token. |
 
 Variables (these are not secret; the site URL is printed on the public notice):
 
@@ -66,6 +77,8 @@ Variables (these are not secret; the site URL is printed on the public notice):
 | `CLOUDFLARE_ACCESS_DOMAIN` | `unwoke-secureblue.pages.dev` |
 | `CLOUDFLARE_PAGES_PROJECT` | `unwoke-secureblue` |
 | `CLOUDFLARE_GITHUB_IDP_ID` | the identity provider id from step 2 |
+| `R2_BUCKET` | `unwoke-isos` |
+| `R2_ENDPOINT` | `https://<account id>.r2.cloudflarestorage.com` |
 
 Do not create `INVITE_ADMIN_TOKEN`. This repository stays public, so repository Administration is not how images are gated. GitHub has no API for granting Read on a personal-account container package. That click stays in the package UI.
 
@@ -120,9 +133,15 @@ They accept nothing for a package role (access is immediate). They create their 
 
 Do not attach an ISO to a Release or an Actions artifact. On a public repository, an artifact is downloadable by anyone with a GitHub account.
 
-`GHCR_PUBLISH_TOKEN` creates `ghcr.io/sergi270710267/<name>-iso` without the OCI source label, so the package is not linked and starts private. The workflow refuses to create that package with `GITHUB_TOKEN`. After it exists, repeat step 6's inherit-off and Actions Write clicks for the `-iso` package. Later wraps push with `GITHUB_TOKEN` only when an anonymous pull is not 200.
+R2 → Create bucket → name `unwoke-isos`. Leave the r2.dev subdomain off. The bucket stays private. Create an API token with Object Read & Write on that bucket only, and store the two halves as `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY`. Set `R2_BUCKET` and `R2_ENDPOINT` as in the table above.
 
-The checksum file inside the package is signed with cosign (`--tlog-upload=false`). GHCR does not offer an expiring URL. Delete ISO versions you no longer want from the package's versions page. A copy someone already pulled is still theirs.
+The ISO job uploads the signed `latest.iso`, `SHA256SUMS`, and `SHA256SUMS.sig` for the two Trivalent sticks. It deletes older objects for that stick. The other ten flavors are not uploaded. People download from the gated site (`/iso/...`), which is the Pages Function `functions/iso/[[path]].js`. `wrangler.toml` binds that function to the bucket as `ISOS`. The Pages deploy applies the binding when the token can. If the deploy does not attach it, one click: Workers & Pages → `unwoke-secureblue` → Settings → Bindings → Add → R2 bucket → Variable name `ISOS` → bucket `unwoke-isos`, for Production and for Preview. Do not add a public r2.dev URL.
+
+If `r2-free-tier` opens, the bucket was about to pass 9 GB, or this month's operations hit the guard. Delete nothing from the two current sticks unless you mean to. Do not buy storage. The optional analytics permission, only if you want the monthly count instead of `r2-ops=unknown`, is Account → Account Analytics → Read. Do not switch the API token to the Global API Key.
+
+`GHCR_PUBLISH_TOKEN` still creates `ghcr.io/sergi270710267/<name>-iso` without the OCI source label, so the package is not linked and starts private. The workflow refuses to create that package with `GITHUB_TOKEN`. After it exists, repeat step 6's inherit-off and Actions Write clicks for the `-iso` package. Later wraps push with `GITHUB_TOKEN` only when an anonymous pull is not 200. The site download does not need that package. The package remains the pull path in `invite/ACCESS.md` for someone who already has a `read:packages` token.
+
+The checksum is signed with cosign (`--tlog-upload=false`). A copy someone already downloaded is still theirs.
 
 The installer still requires `/etc/ostree/auth.json` mode `600` before Anaconda.
 

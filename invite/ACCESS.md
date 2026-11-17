@@ -76,7 +76,9 @@ Open the URL the owner sent. Sign in with GitHub. The github.io address is only 
 
 ## USB
 
-The ISO is not an Actions artifact. With the same token, pull the private `*-iso` package the owner names (`oras pull` of that reference). Check `SHA256SUMS` against `SHA256SUMS.sig` with `cosign verify-blob --key cosign.pub --insecure-ignore-tlog`. That flag skips the public log. It does not skip the signature.
+Sign in on the site and open USB downloads. The two recommended Trivalent sticks are there. Save `latest.iso`, `SHA256SUMS`, and `SHA256SUMS.sig` into one folder. Check `SHA256SUMS` against `SHA256SUMS.sig` with `cosign verify-blob --key cosign.pub --insecure-ignore-tlog`, then `sha256sum -c SHA256SUMS`. That flag skips the public log. It does not skip the signature.
+
+The ISO is not an Actions artifact. A private `*-iso` package may also exist. With the same `read:packages` token, `oras pull` of the reference the owner names still works. The site is the download that does not need that token.
 
 Boot the ISO and start the installer. It asks for the same username and token before Anaconda. If the file is missing or is not mode `600`, the install stops. The credential is copied onto the new disk. It is not inside the image everyone would share.
 

@@ -135,6 +135,13 @@ jobs:
             exit 1
           fi
 
+      - name: ISO download function is present
+        run: |
+          test -f 'functions/iso/[[path]].js'
+          test -f wrangler.toml
+          grep -q 'binding = "ISOS"' wrangler.toml
+          grep -q 'bucket_name = "unwoke-isos"' wrangler.toml
+
       - name: Deploy docs behind Access
         if: steps.gate.outputs.deploy == 'go'
         uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4.1.3

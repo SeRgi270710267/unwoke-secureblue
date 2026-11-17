@@ -23,6 +23,7 @@ PUBLIC_SURFACES = (
     "site-notice/index.html",
 )
 LEAK_RE = re.compile(r"ghcr\.io/sergi270710267|rpm-ostree rebase", re.I)
+R2_PUBLIC_RE = re.compile(r"https://\S*r2\.dev", re.I)
 
 
 def problems_in_text(name: str, text: str) -> list[str]:
@@ -80,6 +81,14 @@ def scan_tree(root: Path) -> list[str]:
         found.extend(problems_in_text(rel, path.read_text(encoding="utf-8")))
     if (root / "invite" / "allowlist.txt").exists():
         found.append("invite/allowlist.txt must not be committed; logins belong in the INVITE_ALLOWLIST secret")
+    iso_fn = root / "functions" / "iso" / "[[path]].js"
+    if not iso_fn.is_file():
+        found.append("functions/iso/[[path]].js: missing")
+    elif R2_PUBLIC_RE.search(iso_fn.read_text(encoding="utf-8")):
+        found.append("functions/iso: public r2.dev URL")
+    wrangler = root / "wrangler.toml"
+    if wrangler.is_file() and R2_PUBLIC_RE.search(wrangler.read_text(encoding="utf-8")):
+        found.append("wrangler.toml: public r2.dev URL")
     for path in root.rglob("auth.json"):
         if path.is_file() and ".git" not in path.parts:
             found.append(f"{path.relative_to(root)}: a registry credential file must not be tracked")
@@ -125,6 +134,12 @@ def selftest() -> int:
         ok = False
     if not problems_in_text("invite-sync.yml", "on:\n  pull_request:\n"):
         print("selftest: a pull_request grant workflow was accepted")
+        ok = False
+    if not R2_PUBLIC_RE.search("fetch('https://pub-abc.r2.dev/latest.iso')"):
+        print("selftest: a public r2 hostname was accepted")
+        ok = False
+    if R2_PUBLIC_RE.search("Do not add an r2.dev hostname."):
+        print("selftest: a warning was refused")
         ok = False
     print("invite policy selftest " + ("ok" if ok else "FAILED"))
     return 0 if ok else 1

@@ -49,5 +49,8 @@ fi
 if [[ -f "${ROOT}/.github/scripts/cloudflare_access.py" ]]; then
   python3 "${ROOT}/.github/scripts/cloudflare_access.py" seats || echo "rehost-watch: seat check skipped"
 fi
+if [[ -f "${ROOT}/.github/scripts/r2_iso.py" ]]; then
+  python3 "${ROOT}/.github/scripts/r2_iso.py" ops || echo "rehost-watch: r2 ops skipped"
+fi
 echo "rehost-watch: done"
 exit "${search_rc}"

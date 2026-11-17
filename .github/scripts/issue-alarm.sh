@@ -3,7 +3,7 @@
 # Usage: issue-alarm.sh <iso|pages|factory|vendor> open|close
 set -euo pipefail
 
-preset="${1:?usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds|receipt|stock-feats|rehost|seats open|close}"
+preset="${1:?usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds|receipt|stock-feats|rehost|seats|r2 open|close}"
 cmd="${2:-open}"
 RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
@@ -187,8 +187,22 @@ This does not delete anyone else's fork. Read it. If they ship the name or the l
 Remove inactive people: Zero Trust → Users. Do not add a paid seat. invite-sync refuses an allowlist larger than 45 and does not call Cloudflare in that case."
     CLOSE="Zero Trust seats are under 45 again: ${RUN_URL}"
     ;;
+  r2)
+    TITLE="R2 reached the free-plan guard"
+    LABEL="r2-free-tier"
+    COLOR="B60205"
+    DESC="Cloudflare R2 storage or operations is at the free-plan guard"
+    BODY="R2 must stay on the free plan. Storage guard is 9 GB of the 10 GB-month free line. Class A guard is 800000 of 1000000. Class B guard is 8000000 of 10000000. Egress is free.
+
+- Workflow: \`${GITHUB_WORKFLOW}\`
+- SHA: \`${GITHUB_SHA}\`
+- Run: ${RUN_URL}
+
+The site serves two sticks only: \`unwoke-silverblue-trivalent\` and \`unwoke-kinoite-trivalent\`. Do not buy R2. Do not enable an r2.dev URL."
+    CLOSE="R2 is back under the free-plan guard: ${RUN_URL}"
+    ;;
   *)
-    echo "usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds|receipt|stock-feats|rehost|seats open|close" >&2
+    echo "usage: issue-alarm.sh iso|pages|factory|vendor|key|pin|packages|mirror-cmds|receipt|stock-feats|rehost|seats|r2 open|close" >&2
     exit 1
     ;;
 esac
