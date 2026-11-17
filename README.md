@@ -149,4 +149,4 @@ The GitHub factory (not the desktop) pins Actions to commit SHAs, starts each wo
 
 ## License
 
-Overlay files: MIT (`LICENSE`). The copyright and permission notices travel with copies. Fedora, secureblue, BlueBuild, Brave, and Trivalent keep their own licenses. The secureblue documentation mirror and the ISO hook that carries an Apache-2.0 SPDX header are not relicensed by this MIT overlay. The name and logo are reserved for official signed builds (`TRADEMARK.md`). Unaffiliated with secureblue.
+Overlay files as of commit `d0dc4d4` stay MIT (`LICENSE-MIT`). Later overlay changes are the Unwoke Source-Available License 1.0 (`LICENSE`, SPDX `LicenseRef-Unwoke-SA-1.0`): the source stays readable, and redistribution of those files or of a build that includes them needs permission. secureblue, Universal Blue, and the upstream snapshots stay Apache-2.0 (`NOTICE`, `LICENSES/Apache-2.0.txt`). Fedora, BlueBuild, Brave, and Trivalent keep their own licenses. The name and logo are reserved for official signed builds (`TRADEMARK.md`). Unaffiliated with secureblue.

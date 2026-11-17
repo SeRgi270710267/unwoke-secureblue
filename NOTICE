@@ -1,0 +1,62 @@
+Unwoke SecureBlue
+Copyright (c) 2026 SeRgi270710267
+Not affiliated with secureblue.
+
+License map
+-----------
+
+Future overlay files, and changes to overlay files after commit
+d0dc4d4fd33e91b664a95a83795169fa70b3741a:
+
+    Unwoke Source-Available License 1.0
+    SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0
+    Text: LICENSE
+
+Overlay material as it existed at that commit:
+
+    MIT License
+    Text: LICENSE-MIT
+    File banners that still say "MIT License" match that commit.
+    A later edit is under LicenseRef-Unwoke-SA-1.0 even if the old
+    banner has not been rewritten yet. New files use
+    SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0.
+
+Apache License, Version 2.0
+----------------------------
+
+These paths are Apache-2.0. They are not relicensed. The license text
+is LICENSES/Apache-2.0.txt. Copyright notices in the files stay.
+
+    files/upstream-snapshots/secureblue/
+        Copyright 2025-2026 The Secureblue Authors
+        Exact copies for drift checks. Not executed.
+
+    .github/workflows/isos/prep_rootfs.sh
+        Copyright 2024 Universal Blue
+        Copyright 2026 The Secureblue Authors
+        Modified by SeRgi270710267. The modifications stay Apache-2.0.
+
+    .github/workflows/isos/prep_initramfs.sh
+        Copyright 2026 The Secureblue Authors
+
+    docs/secureblue/
+        Generated mirror of secureblue.dev. Not stored in git.
+        Apache-2.0. Not affiliated.
+
+secureblue publishes Apache-2.0 and does not ship a NOTICE file
+(https://github.com/secureblue/secureblue, branch live, checked
+2026-11-17). Apache-2.0 section 4(d) therefore adds no extra NOTICE
+text from them. Section 4(a) and 4(c) still require this license copy
+and their copyright notices when those files are distributed.
+
+Their names and trademarks are not licensed. See Apache-2.0 section 6.
+This project is not affiliated with secureblue.
+
+Other work
+----------
+
+Fedora, BlueBuild, Brave, and Trivalent keep their own licenses.
+They are not in this license grant.
+
+The name Unwoke SecureBlue and the logo are reserved. See TRADEMARK.md.
+A build verifies as official only with cosign.pub in this repository.

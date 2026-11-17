@@ -4,6 +4,8 @@
 # SPDX-FileCopyrightText: Copyright 2024 Universal Blue
 # SPDX-FileCopyrightText: Copyright 2026 The Secureblue Authors
 # SPDX-License-Identifier: Apache-2.0
+# Modified by SeRgi270710267. The modifications stay Apache-2.0.
+# LicenseRef-Unwoke-SA-1.0 does not apply to this file.
 
 set -euo pipefail
 

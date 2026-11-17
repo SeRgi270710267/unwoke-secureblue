@@ -1,21 +1,48 @@
-MIT License
+Unwoke Source-Available License 1.0
+SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0
 
 Copyright (c) 2026 SeRgi270710267
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+This license is not an Open Source Initiative license. It applies to
+overlay material in this repository published after commit
+d0dc4d4fd33e91b664a95a83795169fa70b3741a, except files that keep another
+license in NOTICE.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1. You may access and read the source as the copyright holder publishes
+   it. You may make a private copy, modify that copy, and run a private
+   build on your own machines.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+2. Without prior written permission from the copyright holder, you may
+   not:
+   (a) redistribute the overlay source covered by this license, or publish
+       a fork or mirror of it;
+   (b) distribute, sell, or publish a build, disk image, or ISO that
+       includes the overlay;
+   (c) publish a rebranded or renamed copy of the overlay or of such a
+       build;
+   (d) use the name "Unwoke SecureBlue", the wordmark, or the logo files
+       named in TRADEMARK.md, except to say that your private build is
+       not an official signed build.
+
+3. The copyright holder may give you a build. You may use that build.
+   You may not pass it on.
+
+4. This license does not apply to, and does not limit:
+   (a) the Apache License, Version 2.0, on the secureblue files and the
+       other Apache-2.0 files named in NOTICE;
+   (b) the MIT license on overlay material as it existed at commit
+       d0dc4d4fd33e91b664a95a83795169fa70b3741a, which is kept in
+       LICENSE-MIT;
+   (c) Fedora, BlueBuild, Brave, Trivalent, and any other third-party
+       work, which stays under its own license.
+   You may remove the overlay and redistribute the secureblue base, and
+   the Apache-2.0 files in this tree, under Apache-2.0 alone, with that
+   license and the copyright notices.
+
+5. The copyright holder is not restricted by this license.
+
+6. THE OVERLAY IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND. THE
+   COPYRIGHT HOLDER IS NOT LIABLE FOR ANY CLAIM OR DAMAGES ARISING FROM
+   IT.
+
+A copy of this text is the license. There is no other grant.

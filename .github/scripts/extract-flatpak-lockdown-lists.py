@@ -65,7 +65,9 @@ def main() -> int:
         return 1
     lines = [
         "# Unwoke SecureBlue. Not affiliated with secureblue.",
-        "# MIT License. Copyright (c) 2026 SeRgi270710267.",
+        "# SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0",
+        "# Copyright (c) 2026 SeRgi270710267.",
+        "# List data is copied from the Apache-2.0 secureblue snapshot.",
         "# UNWOKE-SHIPPED-FIRST",
         "# shellcheck shell=bash disable=SC2034,SC2088",
         "# Generated from the stock flatpak lockdown snapshot.",

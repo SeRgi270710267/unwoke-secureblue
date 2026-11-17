@@ -124,11 +124,13 @@ The checksum file inside the package is signed with cosign (`--tlog-upload=false
 
 The installer still requires `/etc/ostree/auth.json` mode `600` before Anaconda.
 
-## 9. Name, logo, and the license choice
+## 9. Name, logo, and the license
 
-`TRADEMARK.md` reserves the name **Unwoke SecureBlue** and the logo for builds that verify with `cosign.pub`. A rebuild must rebrand. The overlay files stay MIT. Replacing `LICENSE` would not revoke the MIT grant already given, and it would not cancel the Apache-2.0 license on secureblue's files inside the image. Do that only if you decide you want a different grant for future overlay files, and say so yourself. Git history is your account, agent commits made for this repository, and Dependabot pin bumps. No other human author showed up.
+`TRADEMARK.md` reserves the name **Unwoke SecureBlue** and the logo for builds that verify with `cosign.pub`. A rebuild must rebrand.
 
-Official images are the ones `cosign verify --key cosign.pub` accepts. The private key stays the `SIGNING_SECRET`. An unverified rebase can still boot a rebuild. It will not verify as yours.
+The license change is already in this branch. Overlay material through commit `d0dc4d4fd33e91b664a95a83795169fa70b3741a` stays MIT (`LICENSE-MIT`). Later overlay changes are `LicenseRef-Unwoke-SA-1.0` (`LICENSE`). Apache-2.0 paths in `NOTICE` were not relicensed. secureblue's live tree has Apache-2.0 and no NOTICE file. PolyForm Noncommercial and PolyForm Strict were not used: both still allow some redistribution.
+
+Official images are the ones `cosign verify --key cosign.pub` accepts. The private key stays `SIGNING_SECRET`. An unverified rebase can still boot a rebuild. It will not verify as yours. GitHub will still let someone fork the public tree. The new license forbids redistributing later overlay files and builds that include them. It does not stop a copy they already received under MIT.
 
 ## 10. Repository settings
 

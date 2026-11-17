@@ -84,4 +84,4 @@ Boot the ISO and start the installer. It asks for the same username and token be
 
 The next update fails. The system you already installed keeps running. The owner cannot remote-wipe it. Delete your classic token at <https://github.com/settings/tokens> so a copy of that token cannot be reused if you are invited again.
 
-Sharing the token, or a copy of an image you already pulled, is outside what GitHub can stop. The MIT license on the overlay also allows redistribution of a copy you received. The Apache-2.0 notices on secureblue's files stay attached to those files. None of that adds people to the allowlist.
+Sharing the token, or a copy of an image you already pulled, is outside what GitHub can stop. Overlay material you already received under MIT stays MIT. Later overlay files are source-available and are not yours to redistribute. The Apache-2.0 notices on secureblue's files stay attached to those files. None of that adds people to the allowlist.
