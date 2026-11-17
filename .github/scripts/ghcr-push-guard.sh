@@ -2,7 +2,7 @@
 # Decide whether a GHCR push is allowed, and with which token.
 # preflight writes use_publish=true|false to GITHUB_OUTPUT.
 #   true  = package is missing; the caller must push with GHCR_PUBLISH_TOKEN.
-#   false = package exists and an anonymous pull is not 200; GITHUB_TOKEN may push.
+#   false = package exists and the anonymous pull token cannot read it; GITHUB_TOKEN may push.
 # Missing token on a create, or anonymous 200, exits 1. Tokens are not printed.
 # post exits 1 if an anonymous pull of :latest is 200 after the push.
 #
@@ -15,7 +15,8 @@ OWNER="${OWNER,,}"
 
 # 200 = anonymously readable. 401 = exists and asks for a login.
 # 404 = GHCR will not issue a pull token (the name is not a package).
-# A private package returns 401 from the token endpoint. curl -f would hide that.
+# A bare manifest 401 is not proof of privacy. Public packages return that
+# challenge, then 200 once the anonymous pull token is sent.
 anon_code() {
   local body token_code tok manifest tags bare
   body="$(mktemp)"
@@ -29,24 +30,17 @@ anon_code() {
     echo 200
     return 0
   fi
-  if [[ "${token_code}" == "401" || "${bare}" == "401" || "${bare}" == "403" ]]; then
-    if [[ "${token_code}" == "403" && "${bare}" == "401" ]]; then
-      rm -f "${body}"
-      echo 404
-      return 0
-    fi
-    if [[ "${token_code}" == "401" || "${bare}" == "403" || "${bare}" == "401" ]]; then
-      # A missing name also returns 401 on the manifest with no bearer.
-      # The token endpoint is 403 DENIED only when the package does not exist.
-      if [[ "${token_code}" == "403" ]]; then
-        rm -f "${body}"
-        echo 404
-        return 0
-      fi
-      rm -f "${body}"
-      echo 401
-      return 0
-    fi
+  # A private package refuses to issue an anonymous pull token.
+  if [[ "${token_code}" == "401" ]]; then
+    rm -f "${body}"
+    echo 401
+    return 0
+  fi
+  # DENIED, with no token, is what GHCR returns when the name is not a package.
+  if [[ "${token_code}" == "403" ]]; then
+    rm -f "${body}"
+    echo 404
+    return 0
   fi
   if [[ "${token_code}" != "200" ]]; then
     rm -f "${body}"
