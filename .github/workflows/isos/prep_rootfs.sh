@@ -225,6 +225,8 @@ fi
 if [[ "${restored}" -eq 0 ]]; then
   sed -i -E '/^[[:space:]]*(pool|server)[[:space:]]/ { /[[:space:]]nts([[:space:]]|$)/! s/^/# / }' /etc/chrony.conf
 fi
+# Anaconda writes a cleartext pool into chrony.d. confdir would load it.
+rm -f /etc/chrony.d/*anaconda* /etc/chrony.conf.d/*anaconda*
 if ! grep -qE '^[[:space:]]*confdir[[:space:]]+/etc/chrony\.d([[:space:]]|$)' /etc/chrony.conf; then
   printf '\nconfdir /etc/chrony.d\n' >> /etc/chrony.conf
 fi
@@ -268,6 +270,7 @@ if [[ -f /etc/chrony.conf ]]; then
   fi
 fi
 mkdir -p /etc/chrony.d
+rm -f /etc/chrony.d/*anaconda* /etc/chrony.conf.d/*anaconda*
 cat > /etc/chrony.d/50-unwoke-nts.conf <<'EOF'
 # Live ISO. Installed ostree also ships this via nts.sh apply-boot.
 server time.cloudflare.com iburst nts
