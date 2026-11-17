@@ -34,15 +34,28 @@ def run_started(run: dict):
     return parse_time(run.get("run_started_at") or run.get("created_at") or "")
 
 
+def on_main(run: dict) -> bool:
+    """Pull-request bakes must not look like the twice-daily main schedule."""
+    if (run.get("event") or "") == "pull_request":
+        return False
+    branch = run.get("head_branch") or ""
+    return not branch or branch == "main"
+
+
 def decide(runs, now: datetime) -> tuple[bool, str]:
     """Return whether to workflow_dispatch build.yml, and why.
 
-    runs is newest first. Any active run, or any run that started inside
-    the stale window, means the schedule is still creating work.
+    runs is newest first. Any active main run, or any main run that
+    started inside the stale window, means the schedule is still creating
+    work. Pull-request runs are ignored.
     """
     newest_age = None
     newest_id = None
+    saw_main = False
     for run in runs:
+        if not on_main(run):
+            continue
+        saw_main = True
         status = run.get("status") or ""
         if status in ACTIVE:
             return False, f"bluebuild {run.get('id')} is {status}"
@@ -56,8 +69,8 @@ def decide(runs, now: datetime) -> tuple[bool, str]:
         if age < STALE_SECONDS:
             hours = int(age // 3600)
             return False, f"bluebuild {run.get('id')} started {hours}h ago"
-    if newest_age is None:
-        return True, "no bluebuild runs in the recent list"
+    if not saw_main or newest_age is None:
+        return True, "no bluebuild runs on main in the recent list"
     hours = int(newest_age // 3600)
     return True, f"last bluebuild {newest_id} started {hours}h ago"
 
@@ -85,7 +98,7 @@ def github_json(url: str, token: str, method: str = "GET", body: dict | None = N
 
 
 def fetch_runs(repo: str, token: str) -> list:
-    url = f"https://api.github.com/repos/{repo}/actions/workflows/{WORKFLOW}/runs?per_page=20"
+    url = f"https://api.github.com/repos/{repo}/actions/workflows/{WORKFLOW}/runs?branch=main&exclude_pull_requests=true&per_page=20"
     data = github_json(url, token)
     return list(data.get("workflow_runs") or [])
 
@@ -124,8 +137,13 @@ def selftest() -> int:
     assert decision is True and "18h" in reason, reason
     decision, reason = decide([], now)
     assert decision is True and "no bluebuild" in reason, reason
-    decision, reason = decide([{"id": 7, "status": "queued"}], now)
+    decision, reason = decide([{"id": 7, "status": "queued", "head_branch": "main"}], now)
     assert decision is False and "queued" in reason, reason
+    pr_run = _run(8, "in_progress", 1, now)
+    pr_run["event"] = "pull_request"
+    pr_run["head_branch"] = "feature"
+    decision, reason = decide([pr_run], now)
+    assert decision is True and "no bluebuild runs on main" in reason, reason
     print("bake keepalive selftest ok")
     return 0
 
