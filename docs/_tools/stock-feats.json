@@ -98,7 +98,7 @@
       "adopted": {
         "on": "2026-11-17",
         "note": "Anaconda still showed the Fedora NTP spoke and can rewrite chrony.conf after install. The live ISO now hides that spoke and a post script puts our NTS drop-in back. Same idea as their PR 2807. Our servers stay time.cloudflare.com and nts.ntp.se. We do not copy their chrony.conf path.",
-        "commit": ""
+        "commit": "d2fa0bd"
       }
     },
     {
