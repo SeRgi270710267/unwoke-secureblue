@@ -41,9 +41,11 @@ We strip **Bazaar** and GUI stores on every image.
 
 ## Distribution
 
-Prebuilt images and USB images are **invite-only**. This page does not contain install commands or registry names. The owner grants Read to a GitHub login. An invitee cannot grant anyone else. The pull credential is a classic personal access token with only the `read:packages` scope, stored on that machine as `/etc/ostree/auth.json` mode `0600`. It is not baked into the image.
+The git repository stays public so the recipes, locks, and signing key can be audited. Prebuilt images, USB images, and the full site are **invite-only**. This page does not contain install commands or registry names. The public site is a notice. The docs site asks for a GitHub login and an invitation.
 
-People who already have a copy keep the license grants below. Making the registry private does not revoke the MIT permission for a copy they already received.
+The pull credential is a classic personal access token with only the `read:packages` scope, stored on that machine as `/etc/ostree/auth.json` mode `0600`. It is not baked into the image. An invitee cannot grant anyone else.
+
+People who already have a copy keep the license grants below.
 
 ---
 
@@ -107,7 +109,7 @@ Twelve images: GNOME or KDE, Nouveau or NVIDIA open, and Trivalent, Brave Origin
 
 ## USB ISO
 
-A flashable ISO is built in Actions and is not pushed to a registry. On a public repository the artifact is not uploaded. After the repository is private, the artifact is kept for 7 days and the checksum file is signed with cosign. The installer asks for the invite credential and refuses to finish without it.
+A flashable ISO is built in Actions. It is not uploaded as an artifact or a release. On a public repository those downloads are available to anyone with a GitHub account. An invited machine pulls the ISO from a private package. The installer asks for the invite credential and refuses to finish without it.
 
 ---
 

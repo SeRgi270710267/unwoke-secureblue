@@ -79,7 +79,7 @@ jobs:
     timeout-minutes: 360
     permissions:
       contents: read
-      packages: read
+      packages: write
     strategy:
       fail-fast: false
       max-parallel: 2
@@ -250,29 +250,21 @@ jobs:
           shred -u "${KEY}" || rm -f "${KEY}"
           ls -lh "${DEST_DIR}"
 
-      # Do not push the ISO to GHCR. A public package cannot be made
-      # private again, and an -iso package would be another anonymous pull.
-      - name: Repository visibility
-        id: vis
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          vis="$(gh api "repos/${GITHUB_REPOSITORY}" --jq .visibility)"
-          echo "visibility=${vis}" >> "${GITHUB_OUTPUT}"
-          if [[ "${vis}" != "private" ]]; then
-            echo "ISO artifact upload skipped. Repository is ${vis}."
-            echo "A public Actions artifact is world-readable. The ISO was built and discarded."
-          fi
+      # No Actions artifact. On a public repository anyone logged in can
+      # download artifacts. The ISO goes to a private GHCR package instead.
+      - name: Install oras
+        if: steps.build.outcome == 'success'
+        run: bash .github/scripts/install-oras.sh
 
-      - name: Upload ISO artifact
-        if: steps.build.outcome == 'success' && steps.vis.outputs.visibility == 'private'
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: ${{ matrix.image }}-iso
-          path: output/
-          if-no-files-found: error
-          retention-days: 7
+      - name: Publish ISO to a private package
+        if: steps.build.outcome == 'success'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GHCR_PUBLISH_TOKEN: ${{ secrets.GHCR_PUBLISH_TOKEN }}
+          COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
+          IMAGE_NAME: ${{ matrix.image }}
+          ISO_FILE: ${{ steps.build.outputs.iso_file }}
+        run: bash .github/scripts/publish-iso.sh
 
   receipt:
     name: Receipt ISO checksums

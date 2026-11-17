@@ -17,7 +17,8 @@ We aim to acknowledge a report within 7 days and to say what we plan to do withi
 In scope:
 
 - This repository's overlay (`files/`, `recipes/`), GitHub Actions workflows, and the images published for invited users.
-- Signing and verification of **our** images (`cosign.pub` in this repo). The public key is not a secret. A pull token is.
+- The docs site behind the login gate.
+- Signing and verification of **our** images (`cosign.pub` in this repo). The public key is not a secret. A pull token is. Invitee logins are not secret from the owner, and they do not belong in git or in a public log.
 
 Out of scope: stock secureblue kernel, their SELinux policy, Trivalent-the-browser, USBGuard as they ship it, denial of service against GitHub or GHCR, and findings that need a machine that is already compromised.
 

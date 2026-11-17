@@ -79,6 +79,7 @@ for n in "${queue[@]}"; do
 done
 
 echo "package-visibility: public=${#public_names[@]} unknown=${#unknown_names[@]}"
+echo "package-visibility: anonymous 401 is not proof inherit is off. A private package that inherits this public repository can still be pulled by any GitHub user."
 if [[ -n "${GITHUB_OUTPUT:-}" ]]; then
   echo "public_count=${#public_names[@]}" >> "${GITHUB_OUTPUT}"
 fi

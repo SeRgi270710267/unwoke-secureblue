@@ -1,6 +1,0 @@
-# Invite allowlist. One GitHub login per line.
-# Blank lines and lines starting with # are ignored.
-# The repository owner is always allowed and must not be listed.
-# A login here is not granted until the owner merges this file to main
-# and the invite-sync workflow runs. Only the owner can run that workflow.
-# Invitees get Read. They cannot edit this file on main and cannot grant anyone else.

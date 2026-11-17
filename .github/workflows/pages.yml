@@ -32,10 +32,15 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Render notice
+        env:
+          UNWOKE_SITE_URL: ${{ vars.UNWOKE_SITE_URL }}
+        run: python3 .github/scripts/render_notice.py site-notice /tmp/notice
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
-          path: site-notice
+          path: /tmp/notice
 
       - name: Deploy to GitHub Pages
         id: deployment
@@ -111,10 +116,37 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: python3 .github/scripts/write-factory-status.py
 
+      - name: Access must cover the site
+        id: gate
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_ACCESS_DOMAIN: ${{ vars.CLOUDFLARE_ACCESS_DOMAIN }}
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/cloudflare_access.py --selftest
+          python3 .github/scripts/cloudflare_access.py check | tee "${RUNNER_TEMP}/gate.txt"
+          if grep -qx 'deploy=go' "${RUNNER_TEMP}/gate.txt"; then
+            echo "deploy=go" >> "${GITHUB_OUTPUT}"
+          elif grep -qx 'deploy=skip' "${RUNNER_TEMP}/gate.txt"; then
+            echo "deploy=skip" >> "${GITHUB_OUTPUT}"
+          else
+            echo "refusing to publish the docs" >&2
+            exit 1
+          fi
+
+      - name: Deploy docs behind Access
+        if: steps.gate.outputs.deploy == 'go'
+        uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4.1.3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy docs --project-name=${{ vars.CLOUDFLARE_PAGES_PROJECT || 'unwoke-secureblue' }} --branch=main --commit-dirty=true
+
   pages-alarm:
     name: Pages alarm
     if: always() && !cancelled() && github.actor != 'dependabot[bot]'
-    needs: [deploy]
+    needs: [deploy, generate]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -132,13 +164,13 @@ jobs:
           persist-credentials: false
 
       - name: Open or update alarm
-        if: needs.deploy.result == 'failure'
+        if: needs.deploy.result == 'failure' || needs.generate.result == 'failure'
         env:
           GH_TOKEN: ${{ github.token }}
         run: bash .github/scripts/issue-alarm.sh pages open
 
       - name: Close alarm
-        if: needs.deploy.result == 'success'
+        if: needs.deploy.result == 'success' && needs.generate.result == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
         run: bash .github/scripts/issue-alarm.sh pages close

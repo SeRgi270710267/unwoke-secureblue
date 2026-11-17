@@ -1,161 +1,139 @@
-# Owner steps: invite-only
+# Owner steps
 
-This file is the order to follow. The code in this branch stops the factory from publishing. It does not change repository visibility, package visibility, or GitHub Pages. Those are clicks only you can make.
+The repository stays public. Recipes, locks, and `cosign.pub` stay in git so the overlay can be audited. Invite-only applies to what people consume: the built images, the ISOs, and the published site.
 
-Do the steps in order. Skipping ahead leaves a public pull path open, or locks the bake out of the registry.
+This file does not change repository visibility, package visibility, or Pages. Those clicks are yours. Do them in this order.
 
-## What this cannot do
+## What is public, and what is not
 
-- A package that is already public cannot be made private again. GitHub's package settings say so. Deleting it and letting the bake create a new one is the path that works.
-- A person who already pulled an image, saved an ISO, or cloned the git tree keeps that copy. Removing their login stops the next update. It does not wipe their disk.
-- The MIT license on this overlay allows a person who received a copy to redistribute that copy. Invite-only is a lock on this registry and this repository. It is not a new license, and it does not cancel the Apache-2.0 notices on secureblue's files.
-- Cosign's public transparency log keeps old signatures. This change does not turn that log off for image builds. Turning it off inside the pinned image builder can make signature checks fail, so it was left as the builder already does it. `cosign.pub` is the verification key. It is not a pull secret. Hiding it does not stop a pull.
-- An invitee can hand someone else the layers they already downloaded, or their classic token, until you remove that login. They cannot add a collaborator. Only you can.
-- GitHub personal accounts do not show who pulled a package. The check we have is: anonymous pull fails, and the collaborator list matches `invite/allowlist.txt`. Your security log is the rest.
-- Container-registry storage and bandwidth are currently free, and GitHub says it will give a month's notice before charging. Actions artifacts are not free on a private repository. One ISO is about 4 GB. The Free plan includes 500 MB of Actions storage. A private ISO upload can fail or bill. Free private repositories also include 2,000 Actions minutes a month. A twelve-image bake can use a large part of that. Public repositories do not spend those minutes.
-- Fine-grained personal access tokens cannot pull GitHub Packages. GitHub's current docs say Packages authentication is a classic token. The pull token is classic, scope `read:packages` only. The admin token is fine-grained and cannot pull images.
+Public: this git repository, the recipes, the overlay locks, `cosign.pub`, and the one-page notice on `github.io`.
 
-## 1. Pull token for your own machines
+Invite-only: the GHCR images after you delete the public packages and turn off inherited access, the ISOs on those private packages, and the full docs site on Cloudflare Access.
 
-Do this before any package is deleted, so your PCs do not lose updates.
+Anyone can still read the recipes and the `docs/` HTML in git and build an image themselves. That is the limit of a public repository. The published site and the prebuilt images are the parts a login can close.
+
+## Cost
+
+GitHub Actions minutes for a public repository are free. Do not make this repository private to save minutes; that would spend the Free plan's private minutes and is not the plan.
+
+GitHub Container Registry storage and bandwidth are currently free. GitHub's billing page says they will give at least one month's notice before that changes.
+
+Cloudflare Pages on a `pages.dev` hostname is free. Cloudflare Access (Zero Trust) is free for up to 50 users. Check the current seat price before you pass 50: <https://www.cloudflare.com/plans/zero-trust/>. A custom domain is optional. GitHub Enterprise is not required. GitHub Pages itself cannot hide a site on a free personal account.
+
+## 1. Your own pull token
+
+Do this before you delete any package.
 
 1. Open <https://github.com/settings/tokens/new?scopes=read:packages&description=unwoke-pull>.
-2. Note: `unwoke-pull`. Expiration: 90 days. Scope: only `read:packages`. Do not check `repo`, `write:packages`, or `delete:packages`.
-3. Generate the token. Store it in a password manager. Do not put it in git, an issue, a workflow, or the image.
-4. On each machine you still want updated, run the helper from a checkout of this branch (root):
+2. Expiration: 90 days. Scope: `read:packages` only. Do not check `repo`, `write:packages`, or `delete:packages`.
+3. On each machine you still update, run `ujust invite-login` once this commit is installed, or run `files/system/usr/libexec/unwoke/invite_auth.py save` from a checkout with `UNWOKE_INVITE_USER` and `UNWOKE_INVITE_TOKEN` set for that one process. Do not pass the token as an argument.
+4. `sudo stat -c '%a %U' /etc/ostree/auth.json` must print `600 root`. `rpm-ostree` and `bootc` read that file. It is not in the image.
 
-   ```sh
-   sudo python3 files/system/usr/libexec/unwoke/invite_auth.py --selftest
-   ```
+## 2. Cloudflare, before any docs deploy
 
-   Then, once that commit is installed in the image, `ujust invite-login`. Until the new image is installed, the same Python file can write `/etc/ostree/auth.json` if you set `UNWOKE_INVITE_USER` and `UNWOKE_INVITE_TOKEN` in the environment for one `save` run and unset them after. Do not pass the token as an argument.
-5. Confirm the file is mode `600` and owned by root: `sudo stat -c '%a %U' /etc/ostree/auth.json`.
-6. `rpm-ostree upgrade` and `bootc upgrade` read `/etc/ostree/auth.json`, then `/run/ostree/auth.json`. No second config file. Do not copy the file into `/usr`.
+1. Create a free Cloudflare account and a Zero Trust team. Settings → Team name and domain. The team name is the `<team>` in `https://<team>.cloudflareaccess.com`.
+2. GitHub → Settings → Developer settings → OAuth Apps → New OAuth app.
+   - Homepage URL: `https://<team>.cloudflareaccess.com`
+   - Callback URL: `https://<team>.cloudflareaccess.com/cdn-cgi/access/callback`
+3. Zero Trust → Integrations → Identity providers → Add → GitHub. Paste the client id and secret. Finish the GitHub authorization. Test the provider.
+4. Zero Trust → Settings → Authentication. Leave GitHub as the only login method. Do not enable one-time PIN. A PIN would let someone in with only an email, without the GitHub account.
+5. Workers & Pages → Create → Pages → Upload. Project name: `unwoke-secureblue` (or another name you will put in `CLOUDFLARE_PAGES_PROJECT`). Do not upload the docs by hand.
+6. Zero Trust → Access → Applications → Add an application → Self-hosted. One application, two public hostnames:
+   - `unwoke-secureblue.pages.dev` (use your project name)
+   - `*.unwoke-secureblue.pages.dev`
+   The wildcard is the preview URL. Without it, a deploy hash can be fetched with no login.
+7. Create an Allow policy named `unwoke-invite`. Include one email you control, for the first test. Session: 24 hours. The Monday workflow replaces this include list from the secret.
+8. Copy the GitHub identity provider id (Zero Trust → Integrations → the GitHub row). That value is `CLOUDFLARE_GITHUB_IDP_ID`.
 
-## 2. Admin token (grants and revokes)
+## 3. Tokens and variables
 
-This token adds and removes Read collaborators. It must not be able to push code or images.
+Repository → Settings → Secrets and variables → Actions.
 
-1. Open <https://github.com/settings/personal-access-tokens/new>.
-2. Resource owner: `SeRgi270710267`. Repository access: only `unwoke-secureblue`.
-3. Repository permissions: Administration, Read and write. Leave Contents, Actions, Secrets, and Packages at No access.
-4. Expiration: 90 days.
-5. Repository → Settings → Secrets and variables → Actions → New repository secret. Name: `INVITE_ADMIN_TOKEN`. Value: the token. Nothing else.
+Secrets:
 
-The first run of `invite-sync` on `main` does nothing useful until this secret exists and `invite/allowlist.txt` has a login. An empty allowlist with no secret is a no-op.
+| Name | What it is |
+| --- | --- |
+| `CLOUDFLARE_API_TOKEN` | API token, not the Global API Key. Permissions: Account → Cloudflare Pages → Edit, and Account → Access: Apps and Policies → Edit. No DNS, no Workers, no other account. |
+| `CLOUDFLARE_ACCOUNT_ID` | The account id on the Workers overview. |
+| `INVITE_ALLOWLIST` | One `github-login email` pair per line. The email is one GitHub shows Access after login (a verified address on that GitHub account). `#` starts a comment. This file must not be committed. |
+| `GHCR_PUBLISH_TOKEN` | Classic PAT, 90 days, only `write:packages`, from <https://github.com/settings/tokens/new?scopes=write:packages>. It creates the first unlinked ISO package. It can push every package your user can write, so do not use it anywhere else. |
 
-## 3. Merge
+Variables (these are not secret; the site URL is printed on the public notice):
 
-Merge pull request 39 first if it is still open. Then merge the invite-only pull request.
+| Name | Example |
+| --- | --- |
+| `UNWOKE_SITE_URL` | `https://unwoke-secureblue.pages.dev` |
+| `CLOUDFLARE_ACCESS_DOMAIN` | `unwoke-secureblue.pages.dev` |
+| `CLOUDFLARE_PAGES_PROJECT` | `unwoke-secureblue` |
+| `CLOUDFLARE_GITHUB_IDP_ID` | the identity provider id from step 2 |
 
-That merge starts one image bake, because `build.yml` changed. Let it finish. It pushes onto the **existing public** packages. That is the last public push. Do not click Public anywhere. The factory no longer does that for you.
+Do not create `INVITE_ADMIN_TOKEN`. This repository stays public, so repository Administration is not how images are gated. GitHub has no API for granting Read on a personal-account container package. That click stays in the package UI.
 
-The Pages workflow deploys `site-notice/` only. Wait until that run is green. Open the site and confirm it says invitation only and has no install instructions.
+## 4. Merge
 
-## 4. Unpublish Pages
+Merge pull request 39 if it is still open, then this one. The merge starts one image bake because `build.yml` changed. Let it finish. It pushes onto the **existing public** packages. That is the last public push.
 
-GitHub Free cannot serve Pages from a private repository. Do this while the repository is still public, after the notice is what the site shows.
+The Pages workflow deploys the one-page notice to github.io. It deploys the full docs to Cloudflare only after the Access application covers both hostnames. If the token is unset, the docs are not deployed.
 
-Settings → Pages → Build and deployment → Source: None. Confirm `https://sergi270710267.github.io/unwoke-secureblue/` no longer serves the old docs. Search caches may keep old text. That is outside this repository.
+## 5. Delete the public packages
 
-## 5. Forks, wiki
+A package that is already public cannot be made private. Deletion is the step that stops anonymous pull.
 
-```sh
-gh api repos/SeRgi270710267/unwoke-secureblue/forks --jq 'length'
-```
+For every name in `.github/scripts/package-names.txt`, and any `unwoke-*-iso` package:
 
-That number must be `0`. A public fork keeps a public copy of the source. You cannot delete someone else's fork.
+1. Package settings → Danger Zone → Delete this package.
+2. If GitHub cites more than 5,000 downloads on a version, contact Support. You cannot delete that one yourself.
+3. Do not restore it. Restore brings the public package back. If the name is reserved, wait or ask Support. Do not click Public on a new package.
 
-Settings → General → Features: turn Wikis off if they are on.
-
-## 6. Make the repository private
-
-Settings → General → Danger Zone → Change repository visibility → Private.
-
-This hides the git tree, Actions logs, and artifacts from the public. It does **not** make an already-public package private. It does start spending Actions minutes.
-
-## 7. Delete the public packages
-
-For every name in `.github/scripts/package-names.txt`, and for any `unwoke-*-iso` package that exists:
-
-1. Open the package → Package settings → Danger Zone → Delete this package.
-2. If GitHub refuses because a version has more than 5,000 downloads, open a support request and ask them to delete it. You cannot do that one yourself.
-3. Do not restore a deleted package. Restore brings the public package back.
-
-Try Change visibility → Private first only if you want to see the refusal. The documented result is that a public package stays public. Deletion is the step that stops anonymous pull.
-
-Confirm, with no login:
-
-```sh
-curl -sS -o /dev/null -w '%{http_code}\n' \
-  -H 'Accept: application/vnd.oci.image.index.v1+json' \
-  https://ghcr.io/v2/sergi270710267/unwoke-silverblue-trivalent/manifests/latest
-```
-
-You want `401` or `404`, not `200`. Repeat for the other names. The factory job "GHCR stays private" opens the `ghcr-private` issue while any of them still return 200.
-
-## 8. Delete the public receipt and old ISO artifacts
-
-If the retire job did not:
+Also:
 
 ```sh
 gh release delete receipt --repo SeRgi270710267/unwoke-secureblue --cleanup-tag --yes
 ```
 
-Actions → **iso-purge** → Run workflow → confirm text `delete-iso-artifacts`. That deletes artifacts whose names contain `iso`. It does not delete the repository or Pages.
+Actions → **iso-purge** → type `delete-iso-artifacts`. That removes old public ISO artifacts. New ISOs are not uploaded as artifacts.
 
-## 9. Bake the private packages
+## 6. Recreate the images without inherited access
 
-Actions → **bluebuild** → Run workflow. The new packages are private by default and, because the repository is now private, they inherit that repository's access. The workflow's `GITHUB_TOKEN` can push.
+Container packages can be private while this repository stays public. Visibility is separate from the repository. Access is not, until you turn inheritance off.
 
-If the push is denied: on that package, Package settings → Manage Actions access → Add repository → `SeRgi270710267/unwoke-secureblue` → Role **Write**. Do not add any other repository. Do not turn "Inherit access from repository" on while the repository is public. A public repository's readers would be able to pull.
+A package created by `GITHUB_TOKEN` from this public repository inherits the repository's readers. Everyone who can read a public repository can pull that package, even when the package page says Private. Anonymous `curl` returning 401 does not prove this is closed. Any logged-in GitHub user can still pull while inherit is on.
 
-After the bake, the anonymous `curl` above must not return 200.
+1. Actions → **bluebuild** → Run workflow. This creates the new packages.
+2. Immediately, for each new package: Package settings → Inherited access → clear **Inherit access from repository**.
+3. Manage Actions access → Add repository → `SeRgi270710267/unwoke-secureblue` → Role **Write**. Do not add any other repository. Adding this public repository under Actions access lets the bake push. It must not be combined with inherit. The docs warn that granting a public repository access to a private package can let forks pull. Keep the repository list to this one repo, role Write, and keep inherit off.
+4. From a second GitHub account that is not invited, `docker pull` or the manifest request must be denied. Your own `read:packages` token must still succeed.
 
-## 10. Invite
+There is no supported API to clear inherit or to add a package reader on a personal account. The workflow cannot do step 2 for you.
 
-Edit `invite/allowlist.txt`. One GitHub login per line. Do not list yourself. Open a pull request and merge it yourself. `invite-sync` runs on that push to `main`, or you run it by hand: Actions → **invite-sync** → `sync`.
+## 7. Invite
 
-What it does:
+Edit the `INVITE_ALLOWLIST` secret. Do not open a pull request with the names. Actions → **invite-sync** → Run workflow. It updates the Cloudflare Allow policy and prints only the count. It does not print logins or emails. A pull request cannot run it.
 
-- Adds each login as a repository collaborator with permission `pull` (Read).
-- Downgrades a listed person who has Write or Admin back to Read.
-- Removes anyone who is not you, not a bot, and not on the list.
+Then, for each login, on each package (the twelve images and, after the first ISO, each `-iso` package): Package settings → Invite people → Role **Read**. Read cannot invite anyone else and cannot change inherit. They do not become repository collaborators. The code stays public either way; collaborator status would only advertise who they are.
 
-A pull request cannot run it. The workflow input cannot name a new login. The list is the file on `main`. An invitee with Read cannot merge that file and cannot pass the owner check.
+They accept nothing for a package role (access is immediate). They create their own classic `read:packages` token and run `ujust invite-login`. Send them `invite/ACCESS.md`. The gated site is the URL in `UNWOKE_SITE_URL`.
 
-The person must accept the repository invitation. Until they do, their token cannot pull.
+## 8. ISO
 
-They create their own classic token with only `read:packages` (the same URL as step 1, on **their** account) and run `ujust invite-login` on the installed system, or type it into the ISO prompt. Give them `invite/ACCESS.md` after the repository is private. Do not send them `INVITE_ADMIN_TOKEN`.
+Do not attach an ISO to a Release or an Actions artifact. On a public repository, an artifact is downloadable by anyone with a GitHub account.
 
-## 11. ISO
+`GHCR_PUBLISH_TOKEN` creates `ghcr.io/sergi270710267/<name>-iso` without the OCI source label, so the package is not linked and starts private. The workflow refuses to create that package with `GITHUB_TOKEN`. After it exists, repeat step 6's inherit-off and Actions Write clicks for the `-iso` package. Later wraps push with `GITHUB_TOKEN` only when an anonymous pull is not 200.
 
-Dispatch **iso** only after the private bake is the image you want to wrap, and only after the repository is private. While the repository is public the workflow builds the ISO and does not upload it. After it is private, the artifact is kept for 7 days. `output/SHA256SUMS.sig` is a cosign blob signature (`--tlog-upload=false`). An invitee with Read downloads it with `gh run download`. That is the authenticated, expiring link GitHub can actually issue. GitHub does not offer an S3-style presigned URL.
+The checksum file inside the package is signed with cosign (`--tlog-upload=false`). GHCR does not offer an expiring URL. Delete ISO versions you no longer want from the package's versions page. A copy someone already pulled is still theirs.
 
-The live installer runs `invite-login` before Anaconda. The install fails if `/etc/ostree/auth.json` is missing or is not mode `600`. The credential is copied into the installed system. It is not written into the image in git.
+The installer still requires `/etc/ostree/auth.json` mode `600` before Anaconda.
 
-## 12. Revoke
+## 9. Revoke and rotation
 
-1. Delete the login from `invite/allowlist.txt` and merge.
-2. `invite-sync` removes the collaborator. If you cannot wait for Actions: `gh api --method DELETE repos/SeRgi270710267/unwoke-secureblue/collaborators/THEIR_LOGIN` using your admin token.
-3. Their next GHCR token request fails. A bearer they already hold lasts until its `expires_in`, which is minutes, and then `rpm-ostree` / `bootc` updates fail. The deployment already on disk keeps booting.
-4. You cannot revoke their personal access token yourself. Tell them to delete it at <https://github.com/settings/tokens>. Removing their access is what stops a copied token. If you invite them again, an old token they did not revoke would work again.
-5. Run **invite-sync** → `audit`. It fails if GitHub has a collaborator the file does not list, or if someone on the list is not Read.
+1. Remove their line from `INVITE_ALLOWLIST` and run **invite-sync**. The site stops accepting that email.
+2. Package settings → remove their Read on every image and ISO package. The next GHCR token request fails. A bearer already issued lasts minutes. The installed system keeps the deployment it already has.
+3. Tell them to delete the PAT at <https://github.com/settings/tokens>. You cannot delete their token. If you add them again, an old token they kept would work.
 
-There is no per-pull counter on a personal account. After a revoke, look at <https://github.com/settings/security-log> for `repo.remove_member` and unexpected `personal_access_token` use. A collaborator count above the allowlist is the anomaly the workflow prints.
+Rotate every 90 days: new `GHCR_PUBLISH_TOKEN` and a new Cloudflare API token, update the secrets, delete the old tokens the same day. Invitees replace their own `read:packages` token and run `ujust invite-login`.
 
-## 13. Rotation
-
-- Every 90 days, or the day you think `INVITE_ADMIN_TOKEN` leaked: create a new fine-grained token (step 2), update the Actions secret, then revoke the old token on the same day. Run `audit`.
-- Invitees do the same with their `read:packages` token and run `ujust invite-login` again. The helper refuses a token whose `X-OAuth-Scopes` is anything except `read:packages`, and it refuses a `github_pat_` token.
-- If a pull token appears in a log, an issue, or a commit: remove that login (step 12), revoke the token, and do not push the value. `secret_scan` fails the pull request if a token shape is in the diff.
+If a token or the allowlist appears in a log or a commit, revoke it. `secret_scan` fails a pull request that contains a token shape. Do not print `INVITE_ALLOWLIST`.
 
 ## Signing
 
-Keep cosign. Invitees verify with `cosign.pub` from the private repository:
-
-```sh
-cosign verify --key cosign.pub ghcr.io/sergi270710267/<name>
-```
-
-That proves the signature matches the key. It does not grant a pull. The key stays in the repository so invitees can check it. It is not published on the public site or the receipt release. Old Rekor entries and old GitHub attestations, if any were already public, stay public. New builds do not run `actions/attest-build-provenance`.
+Keep cosign. `cosign.pub` stays in the public repository. Invitees check the signature with it. The key is not a pull secret. Old Rekor entries stay public. New builds do not publish `actions/attest-build-provenance`. The image builder's own transparency upload is unchanged, because turning it off can fail signature checks.

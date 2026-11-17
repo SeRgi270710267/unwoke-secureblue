@@ -1,14 +1,14 @@
 # Invitee access
 
-The owner sends you this after the repository is private. You cannot invite anyone else. Read on the repository does not include Administration, and the sync workflow refuses every actor except the owner.
+The git repository is public. The prebuilt images, the ISOs, and the docs site are not. You cannot invite anyone else. Package Read cannot change who else can pull, and the sync workflow refuses every actor except the owner.
 
 ## What you get
 
-- Read access to this repository, after you accept the invitation email.
-- Pull access to the private images, because the packages inherit that Read access.
+- Pull access to the private images. The owner adds your GitHub login on each package. You are not a repository collaborator.
 - A classic personal access token that only you create, with only the `read:packages` scope.
+- The docs site, after you sign in with GitHub using an email the owner listed.
 
-You do not get the signing private key, the admin token, or a way to add a collaborator.
+You do not get the signing private key or a way to add a collaborator.
 
 ## Token
 
@@ -55,7 +55,7 @@ The file looks like this. The value is base64 of `login:token`. Do not invent a 
 
 ## First switch
 
-The owner tells you which image to rebase to. The names live in `.github/scripts/package-names.txt` in the private repository. After the credential file exists:
+The owner tells you which image to rebase to. The names are in `.github/scripts/package-names.txt`. After the credential file exists:
 
 ```sh
 sudo rpm-ostree rebase ostree-image-signed:docker://ghcr.io/sergi270710267/IMAGE:latest
@@ -70,9 +70,13 @@ cosign verify --key cosign.pub ghcr.io/sergi270710267/IMAGE
 
 `cosign.pub` in this repository is the public key. It lets you check the signature. It does not let you pull. Old signatures may also exist on the public transparency log. The key check is the one that matters.
 
+## Site
+
+Open the URL the owner sent. Sign in with GitHub. The github.io address is only a notice. It does not contain the docs.
+
 ## USB
 
-Download the Actions artifact with `gh` while you still have Read. Artifacts are deleted after 7 days. Check `SHA256SUMS` against `SHA256SUMS.sig` with `cosign verify-blob --key cosign.pub --insecure-ignore-tlog`. That flag skips the public log. It does not skip the signature.
+The ISO is not an Actions artifact. With the same token, pull the private `*-iso` package the owner names (`oras pull` of that reference). Check `SHA256SUMS` against `SHA256SUMS.sig` with `cosign verify-blob --key cosign.pub --insecure-ignore-tlog`. That flag skips the public log. It does not skip the signature.
 
 Boot the ISO and start the installer. It asks for the same username and token before Anaconda. If the file is missing or is not mode `600`, the install stops. The credential is copied onto the new disk. It is not inside the image everyone would share.
 

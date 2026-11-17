@@ -47,7 +47,7 @@ SECRET_RULES = [
     ("url-credentials", r"\b[a-z][a-z0-9+.-]*://[^\s:/@\"']{1,64}:[^\s:/@\"']{6,}@[A-Za-z0-9.-]+"),
     (
         "assigned-secret",
-        r"\b(?:SIGNING_SECRET|COSIGN_PASSWORD|COSIGN_KEY|GH_TOKEN|GITHUB_TOKEN|INVITE_ADMIN_TOKEN|UNWOKE_INVITE_TOKEN|XAI_API_KEY|GROQ_API_KEY|UNWOKE_AI_KEY)\s*[=:]\s*[\"'][A-Za-z0-9_\-+/=.]{20,}[\"']",
+        r"\b(?:SIGNING_SECRET|COSIGN_PASSWORD|COSIGN_KEY|GH_TOKEN|GITHUB_TOKEN|INVITE_ADMIN_TOKEN|INVITE_ALLOWLIST|GHCR_PUBLISH_TOKEN|CLOUDFLARE_API_TOKEN|UNWOKE_INVITE_TOKEN|XAI_API_KEY|GROQ_API_KEY|UNWOKE_AI_KEY)\s*[=:]\s*[\"'][A-Za-z0-9_\-+/=.]{20,}[\"']",
     ),
     ("registry-auth", r'"auth"\s*:\s*"[A-Za-z0-9+/=]{24,}"'),
 ]

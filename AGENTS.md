@@ -2,7 +2,7 @@
 
 Guide for any coding agent working in this repository. Read it before you change anything. If this file and another doc disagree, the stricter rule wins.
 
-Distribution is invite-only. The repository may still be public until the owner follows `invite/OWNER-STEPS.md`. Write commits, pull request text, and the public README as if a stranger will read them. Do not put install commands, registry paths, digests, or tokens on the public README or `site-notice/`.
+The repository stays public. Images, ISOs, and the published docs site are invite-only. Write commits, pull request text, and the public README as if a stranger will read them. Do not put install commands, registry paths, digests, tokens, or invitee logins on the public README, `site-notice/`, or in a committed allowlist. The invite list is the `INVITE_ALLOWLIST` secret. Owner steps are `invite/OWNER-STEPS.md`.
 
 ## What this is
 

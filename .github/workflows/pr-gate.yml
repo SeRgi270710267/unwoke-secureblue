@@ -74,6 +74,8 @@ jobs:
           python3 -m py_compile files/system/usr/libexec/unwoke/invite_auth.py
           python3 -m py_compile .github/scripts/invite_sync.py
           python3 -m py_compile .github/scripts/invite_policy.py
+          python3 -m py_compile .github/scripts/cloudflare_access.py
+          python3 -m py_compile .github/scripts/render_notice.py
           python3 -m py_compile docs/_tools/generate-progress.py
           python3 -m py_compile docs/_tools/generate-stock-issues.py
           python3 -m py_compile docs/_tools/generate-stock-feats.py
@@ -101,6 +103,8 @@ jobs:
           python3 .github/scripts/invite_policy.py
           python3 .github/scripts/invite_sync.py --selftest
           python3 files/system/usr/libexec/unwoke/invite_auth.py --selftest
+          python3 .github/scripts/cloudflare_access.py --selftest
+          python3 .github/scripts/render_notice.py --selftest
 
       - name: ShellCheck
         run: |

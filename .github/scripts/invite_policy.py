@@ -37,25 +37,23 @@ def problems_in_text(name: str, text: str) -> list[str]:
         if "gh release upload" in text or "DIGESTS.txt" in text:
             found.append(f"{name}: still publishes a digest receipt")
     if name.endswith("iso.yml"):
-        if "oras push" in text:
-            found.append(f"{name}: still pushes an ISO to GHCR")
-        for match in re.finditer(r"retention-days:\s*(\d+)", text):
-            days = int(match.group(1))
-            if days > 7:
-                found.append(f"{name}: ISO artifact retention {days} days is too long")
+        if "upload-artifact" in text:
+            found.append(f"{name}: ISO must not be an Actions artifact")
     if name.endswith("pages.yml"):
         if re.search(r"(?m)^\s*path:\s*docs\s*$", text):
             found.append(f"{name}: Pages still uploads docs/")
         if "site-notice" not in text:
             found.append(f"{name}: Pages does not deploy the notice")
+        if "cloudflare/wrangler-action" not in text:
+            found.append(f"{name}: gated site deploy is missing")
     if name.endswith("build.yml"):
         if "attest-build-provenance" in text:
             found.append(f"{name}: still publishes public build provenance")
     if name.endswith("invite-sync.yml"):
         if re.search(r"(?m)^[\s-]*(pull_request|pull_request_target):", text):
             found.append(f"{name}: invite-sync must not run on pull requests")
-        if "permission=push" in text or "permission=admin" in text:
-            found.append(f"{name}: invite-sync grants more than read")
+        if "permission=push" in text or "permission=admin" in text or "collaborators/" in text:
+            found.append(f"{name}: invite-sync must not grant repository access")
     if name.endswith("auth.json"):
         found.append(f"{name}: a registry credential file must not be tracked")
     return found
@@ -79,6 +77,8 @@ def scan_tree(root: Path) -> list[str]:
             found.append(f"{path.relative_to(root)}: missing")
             continue
         found.extend(problems_in_text(path.name, path.read_text(encoding="utf-8")))
+    if (root / "invite" / "allowlist.txt").exists():
+        found.append("invite/allowlist.txt must not be committed; logins belong in the INVITE_ALLOWLIST secret")
     for path in root.rglob("auth.json"):
         if path.is_file() and ".git" not in path.parts:
             found.append(f"{path.relative_to(root)}: a registry credential file must not be tracked")
@@ -99,17 +99,19 @@ def selftest() -> int:
     if problems_in_text("package-visibility.sh", "never set visibility to private from CI"):
         print("selftest: a comment was refused")
         ok = False
-    if not problems_in_text("iso.yml", "oras push ghcr.io/example/iso:latest\nretention-days: 90\n"):
-        print("selftest: a public ISO publish was accepted")
+    if not problems_in_text("iso.yml", "uses: actions/upload-artifact@abc # v4\n"):
+        print("selftest: a public ISO artifact was accepted")
         ok = False
-    if problems_in_text("iso.yml", "retention-days: 7\n"):
-        print("selftest: a 7-day retention was refused")
+    if problems_in_text("iso.yml", "run: bash .github/scripts/publish-iso.sh\n"):
+        print("selftest: a private ISO publish was refused")
         ok = False
     if not problems_in_text("pages.yml", "path: docs\n"):
         print("selftest: a docs upload was accepted")
         ok = False
-    if problems_in_text("pages.yml", "path: site-notice\n"):
+    notice = "path: site-notice\nuses: cloudflare/wrangler-action@abc # v4.1.3\n"
+    if problems_in_text("pages.yml", notice):
         print("selftest: the notice upload was refused")
+        print(problems_in_text("pages.yml", notice))
         ok = False
     if not problems_in_text("publish-receipt.sh", "gh release upload receipt DIGESTS.txt\n"):
         print("selftest: a receipt upload was accepted")
