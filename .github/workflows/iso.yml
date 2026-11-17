@@ -268,11 +268,12 @@ jobs:
           ISO_FILE: ${{ steps.build.outputs.iso_file }}
         run: bash .github/scripts/publish-iso.sh
 
-      # Private R2, served only through the Access site. Missing credentials
-      # skip. A size over 9 GB skips and opens r2-free-tier. It does not
-      # upload the other ten flavors.
+      # Private R2, served only through the Access site. This does not
+      # depend on the GHCR publish step. Missing credentials skip. A size
+      # over 9 GB skips and opens r2-free-tier. Each served stick may use
+      # at most 4.5 GB. The other ten flavors are not uploaded.
       - name: Publish ISO to private R2
-        if: steps.build.outcome == 'success'
+        if: ${{ (success() || failure()) && steps.build.outcome == 'success' }}
         env:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
