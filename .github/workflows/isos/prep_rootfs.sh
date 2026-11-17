@@ -215,18 +215,19 @@ server time.cloudflare.com iburst nts
 server nts.ntp.se iburst nts
 nocerttimecheck 1
 NTS
-restored=0
 for src in /usr/etc/chrony.conf /usr/share/secureblue/etc/chrony.conf; do
   if [[ -f "${src}" ]]; then
     cp -a "${src}" /etc/chrony.conf
-    restored=1
     break
   fi
 done
 if [[ ! -f /etc/chrony.conf ]]; then
   printf 'confdir /etc/chrony.d\n' > /etc/chrony.conf
 fi
-if [[ "${restored}" -eq 0 ]]; then
+# The image file still has a cleartext NIST server. Comment every pool/server
+# line that is not NTS, whether or not we restored that file. NTS lines stay.
+# Enough NTS servers remain for minsources.
+if [[ -f /etc/chrony.conf ]]; then
   sed -i -E '/^[[:space:]]*(pool|server)[[:space:]]/ { /[[:space:]]nts([[:space:]]|$)/! s/^/# / }' /etc/chrony.conf
 fi
 # Anaconda writes a cleartext pool into chrony.d. confdir would load it.
