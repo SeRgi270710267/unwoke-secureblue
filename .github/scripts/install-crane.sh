@@ -16,7 +16,7 @@ fi
 
 ghcr_login() {
   if [[ -n "${GITHUB_TOKEN:-}" ]] && command -v crane >/dev/null; then
-    echo "${GITHUB_TOKEN}" | crane auth login ghcr.io -u "${GITHUB_ACTOR:-unwoke}" --password-stdin >/dev/null
+    echo "${GITHUB_TOKEN}" | crane auth login ghcr.io -u "${GHCR_LOGIN_USER:-${GITHUB_ACTOR:-unwoke}}" --password-stdin >/dev/null
   fi
 }
 

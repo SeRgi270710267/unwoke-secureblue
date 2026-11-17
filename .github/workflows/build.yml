@@ -28,6 +28,7 @@ on:
       - ".github/scripts/cloudflare_access.py"
       - ".github/scripts/render_notice.py"
       - ".github/scripts/publish-iso.sh"
+      - ".github/scripts/ghcr-push-guard.sh"
       - ".github/scripts/r2_iso.py"
       - ".github/scripts/install-rclone.sh"
       - "functions/**"
@@ -182,28 +183,55 @@ jobs:
       - name: Verify and pin official secureblue base
         run: bash .github/scripts/verify-pin-base.sh "recipes/${{ matrix.recipe }}"
 
+      # A missing package must be created with the classic PAT. GITHUB_TOKEN
+      # from this public repository publishes a package the world can pull.
+      - name: Choose registry token
+        id: ghcr
+        env:
+          GHCR_PUBLISH_TOKEN: ${{ secrets.GHCR_PUBLISH_TOKEN }}
+          IMAGE_NAME: ${{ matrix.recipe }}
+        run: |
+          set -euo pipefail
+          IMAGE_NAME="${IMAGE_NAME%.yml}"
+          export IMAGE_NAME
+          bash .github/scripts/ghcr-push-guard.sh preflight
+
       - name: Build Custom Image
         uses: blue-build/github-action@24d146df25adc2cf579e918efe2d9bff6adea408 # v1.11
         with:
           recipe: ${{ matrix.recipe }}
           cosign_private_key: ${{ secrets.SIGNING_SECRET }}
-          registry_token: ${{ github.token }}
+          registry_token: ${{ steps.ghcr.outputs.use_publish == 'true' && secrets.GHCR_PUBLISH_TOKEN || github.token }}
           pr_event_number: ${{ github.event.number }}
           maximize_build_space: true
           skip_checkout: true
           verify_install: true
 
+      - name: Anonymous pull must be denied
+        if: success() && github.event_name != 'pull_request'
+        env:
+          IMAGE_NAME: ${{ matrix.recipe }}
+        run: |
+          set -euo pipefail
+          IMAGE_NAME="${IMAGE_NAME%.yml}"
+          export IMAGE_NAME
+          bash .github/scripts/ghcr-push-guard.sh post
+
       - name: Read image digest
-        if: github.event_name != 'pull_request'
+        if: success() && github.event_name != 'pull_request'
         id: digest
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          REGISTRY_TOKEN: ${{ steps.ghcr.outputs.use_publish == 'true' && secrets.GHCR_PUBLISH_TOKEN || github.token }}
         run: |
           set -euo pipefail
           NAME="${{ matrix.recipe }}"
           NAME="${NAME%.yml}"
           REF="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/${NAME}:latest"
-          echo "${GITHUB_TOKEN}" | cosign login ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
+          login_user="${GITHUB_ACTOR}"
+          if [[ "${{ steps.ghcr.outputs.use_publish }}" == "true" ]]; then
+            login_user="${GITHUB_REPOSITORY_OWNER}"
+          fi
+          echo "${REGISTRY_TOKEN}" | cosign login ghcr.io -u "${login_user}" --password-stdin
           # Certificate attestations otherwise win and cosign prints no JSON.
           extra=()
           if cosign verify --help 2>&1 | grep -q -- '--new-bundle-format'; then
@@ -221,9 +249,10 @@ jobs:
           echo "signature verified"
 
       - name: Inspect published flavor
-        if: github.event_name != 'pull_request'
+        if: success() && github.event_name != 'pull_request'
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ steps.ghcr.outputs.use_publish == 'true' && secrets.GHCR_PUBLISH_TOKEN || github.token }}
+          GHCR_LOGIN_USER: ${{ steps.ghcr.outputs.use_publish == 'true' && github.repository_owner || github.actor }}
         run: |
           set -euo pipefail
           NAME="${{ matrix.recipe }}"
