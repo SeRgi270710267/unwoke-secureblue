@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 import urllib.error
 import urllib.request
@@ -33,7 +34,7 @@ def domains_of(app: dict) -> list[str]:
         if isinstance(value, str) and value.strip():
             found.append(value.strip())
         elif isinstance(value, dict):
-            for key in ("domain", "hostname", "uri"):
+            for key in ("domain", "hostname", "uri", "public_hostname"):
                 if isinstance(value.get(key), str):
                     add(value[key])
 
@@ -71,25 +72,44 @@ def build_policy(emails: list[str], idp_id: str) -> dict:
     return body
 
 
+def _error_note(raw: bytes) -> str:
+    """Cloudflare error code and a short message. Emails are not printed."""
+    try:
+        parsed = json.loads(raw.decode("utf-8", "replace"))
+    except json.JSONDecodeError:
+        return ""
+    errors = parsed.get("errors") if isinstance(parsed, dict) else None
+    if not isinstance(errors, list) or not errors or not isinstance(errors[0], dict):
+        return ""
+    code = errors[0].get("code")
+    message = re.sub(r"\S+@\S+", "[email]", str(errors[0].get("message") or ""))
+    message = " ".join(message.split())[:160]
+    if code is None:
+        return message
+    return f"{code} {message}".strip()
+
+
 def _request(method: str, url: str, token: str, body: dict | None = None) -> dict:
     data = None if body is None else json.dumps(body).encode()
-    req = urllib.request.Request(
-        url,
-        data=data,
-        method=method,
-        headers={
-            "Authorization": f"Bearer {token}",
-            "Content-Type": "application/json",
-            "User-Agent": "unwoke-invite",
-        },
-    )
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/json",
+        "User-Agent": "unwoke-invite",
+    }
+    # A GET with Content-Type: application/json and no body is HTTP 400.
+    if data is not None:
+        headers["Content-Type"] = "application/json"
+    req = urllib.request.Request(url, data=data, method=method, headers=headers)
     try:
         with urllib.request.urlopen(req, timeout=30) as resp:
             raw = resp.read()
             code = resp.status
     except urllib.error.HTTPError as exc:
-        exc.read()
-        raise CfError(f"cloudflare http {exc.code}") from None
+        note = _error_note(exc.read())
+        detail = f"cloudflare http {exc.code}"
+        if note:
+            detail = f"{detail}: {note}"
+        raise CfError(detail) from None
     except urllib.error.URLError:
         raise CfError("cloudflare unreachable") from None
     if code not in (200, 201):
@@ -115,32 +135,64 @@ def account_url(account: str, path: str) -> str:
 
 
 def require_env() -> tuple[str, str, str]:
-    token = os.environ.get("CLOUDFLARE_API_TOKEN", "")
-    account = os.environ.get("CLOUDFLARE_ACCOUNT_ID", "")
-    domain = os.environ.get("CLOUDFLARE_ACCESS_DOMAIN", "")
+    token = os.environ.get("CLOUDFLARE_API_TOKEN", "").strip()
+    account = os.environ.get("CLOUDFLARE_ACCOUNT_ID", "").strip()
+    domain = os.environ.get("CLOUDFLARE_ACCESS_DOMAIN", "").strip()
     if not token:
         raise CfError("skip")
     if not account or not domain:
         raise CfError("cloudflare account or domain is unset")
+    if not re.fullmatch(r"[a-f0-9]{32}", account):
+        raise CfError("cloudflare account id is not a 32-character id")
     return token, account, domain
 
 
+def app_hosts(app: dict) -> set[str]:
+    return {host_of(name) for name in domains_of(app)}
+
+
+def select_app(apps: list[dict], domain: str) -> dict | None:
+    """One application must list both the hostname and the preview wildcard."""
+    apex = domain.lower().rstrip(".")
+    want = {apex, f"*.{apex}"}
+    for app in apps:
+        if want <= app_hosts(app) and app.get("id"):
+            return app
+    return None
+
+
+def policy_protects(policies: list[dict]) -> bool:
+    """True only for the named Allow policy that names emails and not everyone."""
+    for item in policies:
+        if item.get("name") != POLICY_NAME or item.get("decision") != "allow":
+            continue
+        include = item.get("include")
+        if not isinstance(include, list) or not include:
+            continue
+        if any(isinstance(rule, dict) and "everyone" in rule for rule in include):
+            return False
+        if any(isinstance(rule, dict) and isinstance(rule.get("email"), dict) for rule in include):
+            return True
+    return False
+
+
+def list_apps(token: str, account: str) -> list[dict]:
+    url = account_url(account, "/access/apps")
+    try:
+        payload = _request("GET", url + "?page=1&per_page=50", token)
+    except CfError as exc:
+        if "http 400" not in str(exc):
+            raise
+        payload = _request("GET", url, token)
+    return _result_list(payload)
+
+
 def find_app(token: str, account: str, domain: str) -> dict:
-    payload = _request("GET", account_url(account, "/access/apps?per_page=100"), token)
-    apps = _result_list(payload)
-    apex, wild = coverage(apps, domain)
-    if not apex or not wild:
+    apps = list_apps(token, account)
+    app = select_app(apps, domain)
+    if app is None:
         raise CfError("access application does not cover the site and its preview wildcard")
-    want = {domain.lower().rstrip("."), f"*.{domain.lower().rstrip('.')}"}
-    for app in apps:
-        hosts = {host_of(name) for name in domains_of(app)}
-        if want <= hosts and app.get("id"):
-            return app
-    for app in apps:
-        hosts = {host_of(name) for name in domains_of(app)}
-        if domain.lower().rstrip(".") in hosts and app.get("id"):
-            return app
-    raise CfError("access application id missing")
+    return app
 
 
 def check() -> int:
@@ -153,9 +205,19 @@ def check() -> int:
         print(str(exc), file=sys.stderr)
         return 1
     try:
-        find_app(token, account, domain)
+        app = find_app(token, account, domain)
+        policies = _result_list(
+            _request(
+                "GET",
+                account_url(account, f"/access/apps/{app['id']}/policies"),
+                token,
+            )
+        )
     except CfError as exc:
         print(str(exc), file=sys.stderr)
+        return 1
+    if not policy_protects(policies):
+        print("access policy unwoke-invite does not limit the site", file=sys.stderr)
         return 1
     print("deploy=go")
     return 0
@@ -250,8 +312,8 @@ def _alarm_seats(count: int) -> None:
 
 def report_seats() -> None:
     """Print seats=N or seats=unknown. Never prints a person."""
-    token = os.environ.get("CLOUDFLARE_API_TOKEN", "")
-    account = os.environ.get("CLOUDFLARE_ACCOUNT_ID", "")
+    token = os.environ.get("CLOUDFLARE_API_TOKEN", "").strip()
+    account = os.environ.get("CLOUDFLARE_ACCOUNT_ID", "").strip()
     if not token or not account:
         print("seats=unknown")
         return
@@ -290,6 +352,41 @@ def selftest() -> int:
         ok = False
     if build_policy(["a@example.com"], "") .get("require"):
         print("selftest FAIL empty idp")
+        ok = False
+    dest = [
+        {
+            "id": "dest",
+            "destinations": [
+                {"type": "public", "uri": "https://unwoke.pages.dev"},
+                {"type": "public", "uri": "*.unwoke.pages.dev"},
+            ],
+        }
+    ]
+    if select_app(dest, "unwoke.pages.dev") is None:
+        print("selftest FAIL destination coverage")
+        ok = False
+    split = [
+        {"id": "apex", "domain": "unwoke.pages.dev"},
+        {"id": "wild", "self_hosted_domains": ["*.unwoke.pages.dev"]},
+    ]
+    if select_app(split, "unwoke.pages.dev") is not None:
+        print("selftest FAIL split apps")
+        ok = False
+    if not policy_protects(
+        [{"name": POLICY_NAME, "decision": "allow", "include": [{"email": {"email": "a@example.com"}}]}]
+    ):
+        print("selftest FAIL protected policy")
+        ok = False
+    if policy_protects(
+        [{"name": POLICY_NAME, "decision": "allow", "include": [{"everyone": {}}]}]
+    ):
+        print("selftest FAIL everyone policy")
+        ok = False
+    note = _error_note(
+        b'{"errors":[{"code":7003,"message":"bad id for a@example.com"}]}'
+    )
+    if "7003" not in note or "@" in note:
+        print("selftest FAIL error note")
         ok = False
     seated = count_seats(
         [

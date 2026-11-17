@@ -66,13 +66,13 @@ code="$(anon_code)"
 echo "publish-iso: anonymous manifest ${code}"
 if [[ "${code}" == "200" ]]; then
   echo "publish-iso: refusing to push; anonymous pull returned 200" >&2
+  echo "publish-iso: the -iso package is anonymously readable. This is not a missing GHCR_PUBLISH_TOKEN." >&2
   exit 1
 fi
 
 if [[ "${code}" == "404" || "${code}" == "unknown" ]]; then
   if [[ -z "${GHCR_PUBLISH_TOKEN:-}" ]]; then
-    echo "publish-iso: ISO was built and not published."
-    echo "publish-iso: GITHUB_TOKEN would link a new package to this public repository and inherit pull access."
+    echo "::warning title=GHCR ISO not published::GHCR_PUBLISH_TOKEN is unset. The ISO was built and was not published to GHCR. GITHUB_TOKEN is not used to create that package."
     exit 0
   fi
   login "${OWNER}" "${GHCR_PUBLISH_TOKEN}"
