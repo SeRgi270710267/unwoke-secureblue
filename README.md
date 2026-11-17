@@ -68,8 +68,11 @@ systemctl reboot
 ```
 
 ```bash
-cosign verify --key cosign.pub ghcr.io/sergi270710267/unwoke-silverblue-trivalent
+curl -fsSL -o cosign.pub https://raw.githubusercontent.com/SeRgi270710267/unwoke-secureblue/main/cosign.pub
+COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key cosign.pub --new-bundle-format=false ghcr.io/sergi270710267/unwoke-silverblue-trivalent
 ```
+
+`cosign.pub` is our overlay key, not secureblue’s. The two flags force the classic `.sig` tag. Drop `--new-bundle-format=false` only if your cosign does not have that flag. The base is secureblue `:latest` (Fedora 45 as of their 4.10 release, 2026-11-08). Stay on these `rpm-ostree` commands: first-boot looks for `ostree-unverified-registry:` and then stages `ostree-image-signed`. `bootc switch` does not do that.
 
 KDE → `unwoke-kinoite-trivalent`. NVIDIA → add `-nvidia-open` before `-trivalent`. Brave Origin → drop `-trivalent`. No browser → `-browserless`.
 
@@ -95,7 +98,7 @@ Stock secureblue is a serious hardened Fedora Atomic. It also ships a house brow
 
 Browserless is safer than Origin **until you install a browser**. Easy host installs are blocked until `ujust set-allow-browsers on ALLOW` (Flatpak mask + rpm-ostree exclude). Seatbelt only: toolbox, brew, AppImage, and `rpm-ostree --disableexcludes` still work.
 
-Stock `ujust` still works (`ujust set-unconfined-userns`, `ujust set-kargs-hardening`, `ujust audit-secureblue`, …). We did **not** gut SELinux, kernel args, `hardened_malloc`, disk encryption, or Secure Boot enrollment.
+Stock `ujust` still works (`ujust set-unconfined-userns`, `ujust set-kargs-hardening`, `ujust audit-secureblue`, …). secureblue 4.10 removed `ujust install-steam` and `ujust install-vpn`; those two names on Unwoke are our wizards. We did **not** gut SELinux, kernel args, `hardened_malloc`, disk encryption, or Secure Boot enrollment.
 
 <details>
 <summary><strong>Overlay ujust extras</strong></summary>
@@ -113,7 +116,7 @@ ujust set-brave-jitless on|off       # no JS JIT; breaks some sites (default on)
 ujust set-brave-extensions block|allow
 ujust set-brave-isolation on|off     # no WebGL/WebGPU; SitePerProcess (default on)
 ujust set-brave-sandbox on|off       # audio sandbox, no screen capture, no JS optimizer
-ujust set-brave-devtools lock|allow  # default allow (opt-in)
+ujust set-brave-devtools lock|allow  # default lock
 ujust set-brave-bubblejail on|off    # Origin only; default on; GPU may break
 ujust set-trivalent-network-sandbox on|off  # Trivalent only; may clear cookies
 ujust set-trivalent-referrers on|off        # Trivalent only; punycode + strip referrers

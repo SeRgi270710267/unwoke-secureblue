@@ -7,12 +7,19 @@
   <meta name="color-scheme" content="dark">
   <title>Features | Unwoke SecureBlue</title>
   <meta name="description" content="Overlay delta: Brave Origin, stock Trivalent, or browserless; no store; extra reversible Chromium policies; Unwoke theme.">
+  <link rel="canonical" href="https://sergi270710267.github.io/unwoke-secureblue/features/">
+  <meta property="og:title" content="Features | Unwoke SecureBlue">
+  <meta property="og:description" content="Overlay delta: Brave Origin, stock Trivalent, or browserless; no store; extra reversible Chromium policies; Unwoke theme.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sergi270710267.github.io/unwoke-secureblue/features/">
+  <meta property="og:image" content="https://sergi270710267.github.io/unwoke-secureblue/assets/hero.jpg">
+  <meta name="twitter:card" content="summary_large_image">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=5" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css?v=23">
 </head>
 <body>
-  <a class="skip" href="#content">Skip to content</a>
+  <a class="skip" href="features/#content">Skip to content</a>
   <header>
     <nav id="site-menu" aria-label="Primary">
       <ul class="nav-top">
@@ -57,7 +64,7 @@
     <h1>Features</h1>
     <p>Most of the security story is still <a href="https://secureblue.dev/features">secureblue’s</a> (also <a href="secureblue/features/">mirrored here</a>, updates daily). This page is everything <strong>this overlay</strong> adds or changes. Easy words + a living score vs stock: <a href="compared/">Compared</a> — including <a href="compared/#prove">prove it on the disk</a>. Look is on <a href="brand/">Brand</a>. What changed, day by day: <a href="changelog/">Changelog</a>. After login, <strong>Unwoke setup</strong> (app grid) explains the locks; <code>ujust why</code> maps “broken” to the matching toggle. <code>ujust unwoke-test</code> prints PASS/LOOSE/FAIL with a proof path for every overlay lock and <a href="ahead/">shipped-first</a> ticket (stock <code>audit-secureblue</code> does not). Strict apps: <code>ujust install-proton</code>, <code>install-ivpn</code>, <code>install-mullvad</code> (WireGuard first). Nothing unlocks unless you pick it.</p>
 
-    <h2 id="inherited"><a href="#inherited">Inherited from secureblue</a></h2>
+    <h2 id="inherited"><a href="features/#inherited">Inherited from secureblue</a></h2>
     <p>We layer on their already-built, already-signed images. We do not reimplement these:</p>
     <ul>
       <li><code>hardened_malloc</code> globally, including Flatpaks.</li>
@@ -71,8 +78,8 @@
     </ul>
     <p>Read their list if you want the complete inventory. We did not gut SELinux, kernel args, disk encryption, or Secure Boot enrollment.</p>
 
-    <h2 id="changed"><a href="#changed">What this overlay changes</a></h2>
-    <p>Four columns, left to right: stock secureblue, Unwoke Origin, Unwoke Trivalent (<code>*-trivalent</code>, the recommended default), Unwoke browserless. Trivalent is the same house browser as stock, then extra reversible policies stock does not force. Scroll sideways on a phone. Reverts: <a href="#toggles">toggles</a>.</p>
+    <h2 id="changed"><a href="features/#changed">What this overlay changes</a></h2>
+    <p>Four columns, left to right: stock secureblue, Unwoke Origin, Unwoke Trivalent (<code>*-trivalent</code>, the recommended default), Unwoke browserless. Trivalent is the same house browser as stock, then extra reversible policies stock does not force. Scroll sideways on a phone. Reverts: <a href="features/#toggles">toggles</a>.</p>
     <div class="table-container compare">
       <table>
         <thead>
@@ -362,7 +369,7 @@
       </table>
     </div>
 
-    <h2 id="overlay-list"><a href="#overlay-list">Everything we add on top</a></h2>
+    <h2 id="overlay-list"><a href="features/#overlay-list">Everything we add on top</a></h2>
     <ul>
       <li>Strip Bazaar, GNOME Software, Plasma Discover. Hide leftover store launchers. Origin and browserless also strip Trivalent.</li>
       <li><strong>Origin flavor (unsuffixed names):</strong> standalone <code>brave-origin</code> RPM (not <code>brave-browser</code>). Binary <code>/opt/brave.com/brave-origin/brave</code>. House browser for that flavor only — not the recommended default. Leo/Rewards/Wallet/VPN/Tor compiled out by Brave.</li>
@@ -381,27 +388,27 @@
       <li>DevTools locked by default on Origin and Trivalent. <code>ujust set-brave-devtools allow</code>.</li>
       <li>Privacy apply-boot: countme masked, no connectivity GET, DHCP anonymity (no hostname, iaid=mac, send-release, no LLMNR/mDNS), thumbnails off.</li>
       <li>Vendor installers (Proton, IVPN, Mullvad, …): JSON list, WireGuard/web first, hashed official RPM only if you insist. <code>ujust install-vendor NAME</code>.</li>
-      <li>Steam: stock Flatpak or Distrobox, but <code>ujust install-steam</code> asks overlay locks first. Nothing silent.</li>
+      <li>Steam: <code>ujust install-steam</code> is ours (stock removed that name in 4.10). Flatpak or Distrobox, and it asks overlay locks first. Nothing silent.</li>
       <li>Whonix: official KVM, OpenPGP-required, clipboard/USB/mic off. <code>ujust install-whonix</code> / <code>ujust start-whonix</code>. Not VirtualBox, not Qubes.</li>
       <li>First day: setup on the dash, USBGuard in the GUI (default No), live Install icon named Unwoke, Steam/Gaming/Whonix on Start. <a href="compared/#first-day">Compared</a>.</li>
       <li>Play window: <code>ujust play steam</code> — Fedora GameMode while the game runs, restore on exit/crash/reboot. Optional asked sched-ext. No CachyOS kernel. Setup → Gaming.</li>
-      <li>Every stock app installer is intercepted: <code>install-vpn</code>, <code>install-docker</code>, <code>enable-dangerzone</code>, <code>distrobox-assemble</code>, <code>set-flathub-unfiltered</code>. Catalog: <a href="tutorials/stock-installs/">Stock installers</a>. Tailscale yum-repo is watched.</li>
+      <li>App wizards: <code>install-vpn</code> is ours (stock removed it). <code>enable-dangerzone</code>, <code>distrobox-assemble</code>, and <code>set-flathub-unfiltered</code> still exist upstream and are asked first. <code>install-docker</code> prefers podman and does not install Docker CE unless a stock helper is present — current stock has none, and there is no <code>uninstall-docker</code>. Catalog: <a href="tutorials/stock-installs/">Stock installers</a>. Tailscale yum-repo is watched.</li>
       <li><code>ujust unwoke-test</code> plus <a href="tutorials/see-it/">see each lock yourself</a>. Stock <code>audit-secureblue</code> does not list overlay extras.</li>
       <li>Unwoke wallpaper, lock image, GTK <code>#3b6cff</code>, GNOME named <code>blue</code>, KDE accent, GDM wallpaper. See <a href="brand/">Brand</a>.</li>
       <li>This site. Daily mirror of <em>their</em> markdown under <code>/secureblue/</code> (Apache-2.0). Our FAQ/Features/Install/Brand are never overwritten.</li>
       <li>Conduct, donate, contributing, post-install pages that are Unwoke’s, not theirs.</li>
     </ul>
 
-    <h2 id="brave-origin"><a href="#brave-origin">Brave Origin</a></h2>
+    <h2 id="brave-origin"><a href="features/#brave-origin">Brave Origin</a></h2>
     <p>Not full <code>brave-browser</code>. Policies live in <code>/etc/brave-origin/policies/managed/</code>. Restart the browser after a toggle. <code>brave_t</code> is unconfined-like on purpose. You do not get Trivalent’s Chromium patches or tight SELinux. For that, rebase to a <code>*-trivalent</code> image.</p>
     <p>Origin compiled out Leo, Rewards, Wallet, VPN, Tor, Talk, News, P3A. What we add on top is enterprise policy, not a new browser.</p>
 
-    <h2 id="trivalent"><a href="#trivalent">Trivalent flavor</a></h2>
+    <h2 id="trivalent"><a href="features/#trivalent">Trivalent flavor</a></h2>
     <p>Same house browser as stock: Vanadium-derived patches, <code>trivalent_t</code> SELinux, their userns allow-list. We do not rebuild Trivalent. We add Chromium enterprise JSON stock does not ship, plus flags their README lists as optional extra hardening. All of it reverts with <code>ujust</code>.</p>
     <p>Policies: <code>/etc/trivalent/policies/managed/</code> (and a copy under <code>/etc/chromium/policies/managed/</code>). Extra flags: <code>/etc/trivalent/trivalent.conf.d/</code>. <code>set-brave-*</code> and <code>set-trivalent-*</code> are the same packs. We do <em>not</em> wrap Trivalent in Bubblejail — <a href="https://secureblue.dev/faq">their FAQ</a> says that pairing is broken.</p>
     <p>What this does <em>not</em> add: new compiler/seccomp patches. If a policy already matches something Trivalent compiled in, the JSON is a no-op. The extras that stock does not force are JIT-less, WebGL/WebGPU off, extension blocklist, device/API guards, HTTPS-only, extra sandbox (audio sandbox, no screen capture, JS optimizer off), Network Service Sandbox, and punycode + clear-cross-origin-referrers.</p>
 
-    <h2 id="toggles"><a href="#toggles">Overlay ujust extras</a></h2>
+    <h2 id="toggles"><a href="features/#toggles">Overlay ujust extras</a></h2>
     <p>Stock secureblue commands still work. Every overlay switch reverts. Defaults apply on each boot unless you stamped them off.</p>
     <div class="table-container">
       <table>
@@ -684,7 +691,7 @@ ujust set-stock-nags on|off
 ujust set-unwoke-theme apply
 ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
 
-    <h2 id="limits"><a href="#limits">Honest limits</a></h2>
+    <h2 id="limits"><a href="features/#limits">Honest limits</a></h2>
     <div class="alert">
       <p>Calling this “insecure Fedora” is false. Calling it “identical to secureblue” is also false. Origin is weaker than stock + Trivalent. <code>-trivalent</code> equals stock on the house browser and is stricter on extra policies + house locks. Browserless is tighter than Origin until a browser is installed. Policies are not Vanadium patches.</p>
     </div>

@@ -7,12 +7,19 @@
   <meta name="color-scheme" content="dark">
   <title>FAQ | Unwoke SecureBlue</title>
   <meta name="description" content="Affiliation, Origin vs Trivalent vs browserless, toggles, Flathub, Flatpak lockdown, theme, signing.">
+  <link rel="canonical" href="https://sergi270710267.github.io/unwoke-secureblue/faq/">
+  <meta property="og:title" content="FAQ | Unwoke SecureBlue">
+  <meta property="og:description" content="Affiliation, Origin vs Trivalent vs browserless, toggles, Flathub, Flatpak lockdown, theme, signing.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sergi270710267.github.io/unwoke-secureblue/faq/">
+  <meta property="og:image" content="https://sergi270710267.github.io/unwoke-secureblue/assets/hero.jpg">
+  <meta name="twitter:card" content="summary_large_image">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css?v=23">
 </head>
 <body>
-  <a class="skip" href="#content">Skip to content</a>
+  <a class="skip" href="faq/#content">Skip to content</a>
   <header>
     <nav id="site-menu" aria-label="Primary">
       <ul class="nav-top">
@@ -57,34 +64,34 @@
     <h1>FAQ</h1>
     <p>This page is only Unwoke SecureBlue. Stock secureblue questions (rollback, USBGuard, kargs, Trivalent, …) live in the <a href="secureblue/faq/">mirrored secureblue FAQ</a>, which updates daily from their repo.</p>
 
-    <h2 id="shipped-first"><a href="#shipped-first">Did you ship stock feature requests faster than they did?</a></h2>
+    <h2 id="shipped-first"><a href="faq/#shipped-first">Did you ship stock feature requests faster than they did?</a></h2>
     <p>Some. We watch official secureblue GitHub. Those tickets stay on <a href="ahead/">Shipped first</a> until they ship, then the card says they shipped after us. If we later copy their better patch, that is written on the same page. We do not auto-copy. We do not claim kernel/UKI/ARM work an overlay cannot do.</p>
 
-    <h2 id="now-what"><a href="#now-what">I installed it. I logged in. Now what?</a></h2>
+    <h2 id="now-what"><a href="faq/#now-what">I installed it. I logged in. Now what?</a></h2>
     <p>Do not open GNOME Software or Settings looking for a store. Open <strong>Unwoke setup</strong> (app grid, or <code>ujust setup</code>). Ordered walkthrough: <a href="start/">After you log in</a>. Keep defaults unless you have a named need. If something looks broken, it is usually a lock: <code>ujust why</code>.</p>
 
-    <h2 id="affiliated"><a href="#affiliated">Are you affiliated with secureblue?</a></h2>
+    <h2 id="affiliated"><a href="faq/#affiliated">Are you affiliated with secureblue?</a></h2>
     <p>No. Personal overlay. Their project is <a href="https://secureblue.dev">secureblue.dev</a>. Use that if you want the official images, Trivalent, Bazaar, and the <a href="https://secureblue.dev/code-of-conduct">Contributor Covenant</a>. Our <a href="conduct/">conduct</a> is the opposite of that document.</p>
 
-    <h2 id="safer"><a href="#safer">Is this more secure than stock secureblue?</a></h2>
+    <h2 id="safer"><a href="faq/#safer">Is this more secure than stock secureblue?</a></h2>
     <p>Origin images: no. Stock + Trivalent is tighter on the browser. <code>-trivalent</code> images: equal on the house browser (same binary, patches, SELinux), stricter on extra policies and house locks (no store, Flathub/brew/Bluetooth/toolbox off, camera lock, …). Browserless: tighter than Origin because there is no fat <code>brave_t</code> and no Chromium in the image. That only lasts until you install a browser. It is not “safer than Trivalent while browsing.” Living list (easy words + every lock): <a href="compared/">Compared to stock</a>.</p>
 
-    <h2 id="trivalent"><a href="#trivalent">What is the Trivalent flavor?</a></h2>
+    <h2 id="trivalent"><a href="faq/#trivalent">What is the Trivalent flavor?</a></h2>
     <p>Rebase to <code>unwoke-silverblue-trivalent</code> (or kinoite / nvidia-open). We keep stock Trivalent and <code>trivalent-selinux</code>. We do not load <code>brave_t</code>. Extra Chromium managed policies (JIT-less, no WebGL, extension block, device guards, extra sandbox) and two flag packs (Network Service Sandbox, punycode/referrers) default on and revert with <code>ujust set-trivalent-*</code> (same packs as <code>set-brave-*</code>). This does not add Vanadium compiler patches on top of what Trivalent already ships. Do not Bubblejail it.</p>
 
-    <h2 id="browserless"><a href="#browserless">What is the browserless flavor?</a></h2>
+    <h2 id="browserless"><a href="faq/#browserless">What is the browserless flavor?</a></h2>
     <p>Same overlay: Trivalent, Bazaar, and GUI stores are gone. Unlike Origin (unsuffixed) images, we do <em>not</em> install Brave Origin, do not load <code>brave_t</code>, and do not add Flathub. Rebase to <code>unwoke-silverblue-browserless</code> (or kinoite / nvidia-open variants). The recommended default with a house browser is still <code>*-trivalent</code>.</p>
     <p>Easy host browser installs are blocked until you opt in:</p>
 <pre><code>ujust set-allow-browsers on ALLOW</code></pre>
     <p>That unmasks common Flatpak browsers and drops the rpm-ostree exclude list. Flathub stays off until <code>ujust set-flathub verified</code>. A random Firefox is usually worse than stock Trivalent. AppImage and <code>rpm-ostree --disableexcludes</code> are not blocked. toolbox/distrobox stay off until <code>ujust set-toolbox on</code>.</p>
 
-    <h2 id="origin"><a href="#origin">What is Brave Origin, and is it “full Brave”?</a></h2>
+    <h2 id="origin"><a href="faq/#origin">What is Brave Origin, and is it “full Brave”?</a></h2>
     <p>Brave Origin is a separate Linux package (<code>brave-origin</code>) with extras compiled out. Binary path: <code>/opt/brave.com/brave-origin/brave</code>. We do not install <code>brave-browser</code>. It is still Chromium-family software, not Trivalent.</p>
 
-    <h2 id="store"><a href="#store">Where is the software store?</a></h2>
+    <h2 id="store"><a href="faq/#store">Where is the software store?</a></h2>
     <p>There isn’t one. Bazaar, GNOME Software, and Plasma Discover are removed. Flathub is <strong>off</strong> on every flavor until <code>ujust set-flathub verified</code> (stock-like) or <code>full</code>.</p>
 
-    <h2 id="toggles"><a href="#toggles">What ujust commands did you add?</a></h2>
+    <h2 id="toggles"><a href="faq/#toggles">What ujust commands did you add?</a></h2>
     <p>Stock secureblue commands stay. Overlay extras, all reversible, are listed on <a href="features/#toggles">Features</a>. Short list:</p>
 <pre><code>ujust setup
 ujust why
@@ -98,7 +105,7 @@ ujust set-brave-jitless on|off
 ujust set-brave-extensions block|allow
 ujust set-brave-isolation on|off
 ujust set-brave-sandbox on|off
-ujust set-brave-devtools lock|allow
+ujust set-brave-devtools lock|allow   # default lock
 ujust set-brave-bubblejail on|off
 ujust set-trivalent-network-sandbox on|off
 ujust set-trivalent-referrers on|off
@@ -111,116 +118,116 @@ ujust set-extra-daemons on|off
 ujust set-unwoke-theme apply
 ujust set-allow-browsers on ALLOW</code></pre>
 
-    <h2 id="setup"><a href="#setup">What is ujust setup / ujust why?</a></h2>
+    <h2 id="setup"><a href="faq/#setup">What is ujust setup / ujust why?</a></h2>
     <p>First graphical login opens a window that <em>explains</em> the locks. Nothing turns off unless you pick it. Same later: app grid → <strong>Unwoke setup</strong>, or <code>ujust setup</code>. Search GNOME/KDE for Bluetooth, camera, Flathub, or “websites broken.” <code>ujust why</code> / Setup → You loosened puts locks back. <code>ujust unwoke-test</code> prints PASS/LOOSE/FAIL with a proof line for every overlay addition (Setup has the same button). Tutorial buttons open offline help on the disk, then the site. Leftover stock steps (their Secure Boot key, kargs, USBGuard) are theirs, not overlay unlocks. The daily-user screen before the greeter is supposed to be there — not a hung install.</p>
 
-    <h2 id="tutorials-gen"><a href="#tutorials-gen">Do tutorials go stale?</a></h2>
+    <h2 id="tutorials-gen"><a href="faq/#tutorials-gen">Do tutorials go stale?</a></h2>
     <p>The hub and the vendor blocks on Proton/IVPN/Mullvad (and any new <code>tutorial</code> slug) are rebuilt at Pages deploy from <code>vendor-installers.json</code> plus <code>docs/_tools/tutorials-core.json</code>. A new vendor stanza with <code>"tutorial": "foo"</code> gets a card and a page. Hand-written steps stay; the live command list is injected. Offline copies on the image follow the next overlay bake (<code>sync-offline-help</code>).</p>
 
-    <h2 id="add-vendor"><a href="#add-vendor">How do we add another strict app?</a></h2>
+    <h2 id="add-vendor"><a href="faq/#add-vendor">How do we add another strict app?</a></h2>
     <p>One stanza in <code>files/system/usr/share/unwoke/vendor-installers.json</code> (kind, URLs, title). That is the only list. <code>vendor.py check/heal</code>, Setup → Strict apps, <code>ujust install-vendor NAME</code>, search launchers, and twice-daily CI all iterate <em>every</em> key. Do not add a Proton/IVPN-only special case. Curated menus can stay as shortcuts.</p>
 
-    <h2 id="vendor-watch"><a href="#vendor-watch">Will Proton/IVPN installers break when they change their site?</a></h2>
+    <h2 id="vendor-watch"><a href="faq/#vendor-watch">Will Proton/IVPN installers break when they change their site?</a></h2>
     <p>Usual vendor-side breakage is handled without you: new version/SHA, redirects, www vs bare host, renamed JSON fields, checksum in a sidecar file, repo path change, short outages (retried). CI heals the list when the new location is still HTTPS on their host with SHA512/SHA256 or <code>gpgcheck=1</code>. 5xx/timeouts are retried, not rewritten. Flathub, HTTP, or no checksum still opens an issue. On the image: <code>ujust check-vendor-installers</code>.</p>
 
-    <h2 id="mullvad"><a href="#mullvad">How do I install Mullvad VPN?</a></h2>
+    <h2 id="mullvad"><a href="faq/#mullvad">How do I install Mullvad VPN?</a></h2>
     <p>VPN only, not Mullvad Browser. Same list as Proton/IVPN (watched + healed):</p>
 <pre><code>ujust install-mullvad</code></pre>
     <p>Default: WireGuard import from their account (filename ≤ 15 characters on GNOME). Official <code>mullvad-vpn</code> repo only if you accept an extra RPM origin. <a href="tutorials/mullvad/">Tutorial</a>.</p>
 
-    <h2 id="ivpn"><a href="#ivpn">How do I install IVPN?</a></h2>
+    <h2 id="ivpn"><a href="faq/#ivpn">How do I install IVPN?</a></h2>
     <p>IVPN is a VPN (AntiTracker is inside their official app — not a Mail/Pass suite). No store:</p>
 <pre><code>ujust install-ivpn</code></pre>
     <p>Default: import their WireGuard file in Network Settings (filename ≤ 15 characters on GNOME). Keep system DNS; no Trivalent DoH. Official <code>ivpn</code> / <code>ivpn-ui</code> from their Fedora repo only if you accept an extra RPM origin. Snap is not used. Long form: <a href="tutorials/ivpn/">IVPN tutorial</a>.</p>
 
-    <h2 id="anonymity"><a href="#anonymity">Does Unwoke hide my IP?</a></h2>
+    <h2 id="anonymity"><a href="faq/#anonymity">Does Unwoke hide my IP?</a></h2>
     <p>No. The host is still your ISP. Hide the IP with <a href="tutorials/whonix/">Whonix KVM</a>. Host extras that do <strong>not</strong> turn off Safe Browsing or NTS: TCP timestamps off (<code>ujust set-anon-net on</code> puts stock timestamps back); optional <code>ujust set-anon-hostname on</code>. Long form: <a href="anonymity/">Anonymity</a>.</p>
 
-    <h2 id="whonix"><a href="#whonix">How do I run Whonix?</a></h2>
+    <h2 id="whonix"><a href="faq/#whonix">How do I run Whonix?</a></h2>
     <p>Official KVM, not VirtualBox. OpenPGP is required. Clipboard/USB/mic stay off:</p>
 <pre><code>ujust install-whonix
 ujust start-whonix</code></pre>
     <p>Not Qubes. Not Tails. Host stays Unwoke. Long form: <a href="tutorials/whonix/">Whonix tutorial</a>.</p>
 
-    <h2 id="disk-traces"><a href="#disk-traces">Where did last boot’s logs / hibernate go?</a></h2>
+    <h2 id="disk-traces"><a href="faq/#disk-traces">Where did last boot’s logs / hibernate go?</a></h2>
     <p>Default: journal stays in RAM only, hibernate-to-disk is denied, crash dumps are not saved, the file indexer is off. That cuts forensic leftovers. It is not Tails (your ostree is still on disk). Need <code>journalctl -b -1</code> or hibernate:</p>
 <pre><code>ujust set-disk-traces on</code></pre>
 
-    <h2 id="stock-installs"><a href="#stock-installs">Do stock ujust install-* still work?</a></h2>
-    <p>The <strong>names</strong> work. The stock scripts are intercepted so overlay locks are asked first (Flathub off, lockdown, toolbox stubs, temp noexec, Docker vs podman). Catalog: <a href="tutorials/stock-installs/">Stock installers</a>. Vendor repos (Proton, IVPN, Mullvad, Tailscale) are watched and healed. Do not run <code>ujust rebase-secureblue</code> — that leaves Unwoke.</p>
+    <h2 id="stock-installs"><a href="faq/#stock-installs">Do stock ujust install-* still work?</a></h2>
+    <p><code>ujust install-steam</code> and <code>ujust install-vpn</code> are Unwoke commands. secureblue 4.10 removed those two names; their Steam FAQ is now a manual Flatpak. Commands stock still ships (<code>enable-dangerzone</code>, <code>distrobox-assemble</code>, <code>set-flathub-unfiltered</code>) are asked here before locks move. There is no <code>ujust install-docker</code> or <code>ujust uninstall-docker</code> on current stock. Catalog: <a href="tutorials/stock-installs/">Stock installers</a>. Vendor repos (Proton, IVPN, Mullvad, Tailscale) are watched and healed. Do not run <code>ujust rebase-secureblue</code> — that leaves Unwoke.</p>
 
-    <h2 id="gaming"><a href="#gaming">How do I game without leaving locks off?</a></h2>
+    <h2 id="gaming"><a href="faq/#gaming">How do I game without leaving locks off?</a></h2>
     <p>Setup → Gaming, or:</p>
 <pre><code>ujust install-steam
 # click Steam, play, close Steam</code></pre>
     <p>Restore is automatic. Optional: <code>ujust play stop</code>. Optional asked sched-ext. We do not ship the CachyOS kernel. Long form: <a href="tutorials/gaming/">Play window</a>.</p>
 
-    <h2 id="steam"><a href="#steam">How do I install Steam?</a></h2>
-    <p>Same command as stock, but Unwoke extras that would break games are <strong>asked</strong> first (Flathub is off; Steam is not verified; lockdown, temp noexec, mic, Bluetooth). Nothing silent:</p>
+    <h2 id="steam"><a href="faq/#steam">How do I install Steam?</a></h2>
+    <p>Unwoke’s wizard. Extras that would break games are <strong>asked</strong> first (Flathub is off; Steam is not verified; lockdown, temp noexec, mic, Bluetooth). Stock no longer has this command. Nothing silent:</p>
 <pre><code>ujust install-steam</code></pre>
     <p>Required: unfiltered Flathub. Optional per-app Steam grants (keep lockdown on other Flatpaks). Xwayland and anti-cheat stay leftover stock. Long form: <a href="tutorials/steam/">Steam tutorial</a>.</p>
 
-    <h2 id="proton"><a href="#proton">How do I install Proton Mail / Pass / VPN?</a></h2>
-    <p>No store. Same pattern as their <code>ujust install-steam</code>, stricter path:</p>
+    <h2 id="proton"><a href="faq/#proton">How do I install Proton Mail / Pass / VPN?</a></h2>
+    <p>No store. A wizard, not Bazaar:</p>
 <pre><code>ujust install-proton</code></pre>
     <p>Default: open proton.me in Trivalent (Mail, Pass, Calendar, Drive). VPN: import WireGuard, keep system DNS. Desktop Mail/Pass: official RPM from proton.me, SHA512 from their JSON, then you must accept unconfined userns or we abort. Unverified Flathub packages are not used. Long form: <a href="tutorials/proton/">Proton tutorial</a>.</p>
 
-    <h2 id="jitless"><a href="#jitless">A site broke after install</a></h2>
+    <h2 id="jitless"><a href="faq/#jitless">A site broke after install</a></h2>
     <p>Same menu: <code>ujust why</code>. JIT-less is <strong>on</strong> by default on Origin and Trivalent. Turn it off and restart the browser:</p>
 <pre><code>ujust set-brave-jitless off</code></pre>
     <p>Camera/mic/USB in the browser: <code>ujust set-brave-devices off</code> and if the kernel lock is on, <code>ujust set-camera-mic on</code>. WebGL/WebGPU: <code>ujust set-brave-isolation off</code>. Passwords/autofill: <code>ujust set-brave-hardening off</code>. Extensions: <code>ujust set-brave-extensions allow</code>. Trivalent cookie wipes: <code>ujust set-trivalent-network-sandbox off</code>.</p>
 
-    <h2 id="lockdown"><a href="#lockdown">Flatpaks do nothing / need a million permissions</a></h2>
+    <h2 id="lockdown"><a href="faq/#lockdown">Flatpaks do nothing / need a million permissions</a></h2>
     <p>Permission lockdown is <strong>on</strong> by default (stock ships it as opt-in). Grant per-app in Flatseal, or:</p>
 <pre><code>ujust set-flatpak-lockdown off</code></pre>
 
-    <h2 id="bluetooth"><a href="#bluetooth">Bluetooth does not work</a></h2>
+    <h2 id="bluetooth"><a href="faq/#bluetooth">Bluetooth does not work</a></h2>
     <p>Off by default (service masked + <code>rfkill block bluetooth</code>). Wi-Fi is not touched. <code>ujust set-bluetooth on</code>.</p>
 
-    <h2 id="toolbox"><a href="#toolbox">toolbox / distrobox: command not allowed</a></h2>
+    <h2 id="toolbox"><a href="faq/#toolbox">toolbox / distrobox: command not allowed</a></h2>
     <p>Off by default. <code>/usr/bin/toolbox</code> and <code>distrobox*</code> are wrappers until <code>ujust set-toolbox on</code>. <code>podman</code> stays so Flatpak is not wrecked.</p>
 
-    <h2 id="daemons"><a href="#daemons">.local names / mobile broadband gone</a></h2>
+    <h2 id="daemons"><a href="faq/#daemons">.local names / mobile broadband gone</a></h2>
     <p>Avahi and ModemManager are masked (stock still leaves those on; they already mask cups/geoclue). <code>ujust set-extra-daemons on</code>.</p>
 
-    <h2 id="fingerprint"><a href="#fingerprint">Does Unwoke make me easier to fingerprint?</a></h2>
+    <h2 id="fingerprint"><a href="faq/#fingerprint">Does Unwoke make me easier to fingerprint?</a></h2>
     <p>Two different things. <strong>Phone-home off</strong> (countme, connectivity-check, DHCP hostname, thumbnails) does not fingerprint websites — leave those off. <strong>Extra browser packs</strong> (JIT-less, WebGL off, no extensions, devices blocked) make you rarer than stock Trivalent. We still ship those packs: security first. Best crowd on Unwoke is <code>*-trivalent</code>. If you choose to look closer to stock Trivalent, turn <em>one</em> pack off, then restart the browser. Full text: <a href="tutorials/fingerprint/">Fingerprinting vs locks</a>. Setup has a read-only button; nothing auto-unlocks.</p>
 
-    <h2 id="privacy"><a href="#privacy">Countme, hotel Wi-Fi, hostname, no previews</a></h2>
+    <h2 id="privacy"><a href="faq/#privacy">Countme, hotel Wi-Fi, hostname, no previews</a></h2>
     <p>We phone home less than stock. Fedora <code>countme</code> is masked, NetworkManager connectivity-check is off, DHCP does not send your hostname (IPv6 stable-privacy, no LLMNR/mDNS registration), GNOME/Dolphin thumbnails are off, Chromium Privacy Sandbox / Cast / Google time-query are off. Hyperlink <code>ping</code> is off in the hardening pack. Safe Browsing stays on. None of that turns off SELinux or USBGuard. Chromecast: <code>ujust set-brave-hardening off</code> (warned loosen). Hotel portal: <code>ujust set-connectivity-check on</code>.</p>
 <pre><code>ujust set-countme on
 ujust set-connectivity-check on
 ujust set-dhcp-hostname on
 ujust set-thumbnails on</code></pre>
 
-    <h2 id="brew"><a href="#brew">Where is brew?</a></h2>
+    <h2 id="brew"><a href="faq/#brew">Where is brew?</a></h2>
     <p>Off by default — stock secureblue ships Homebrew. Enable: <code>ujust set-brew on</code> then a new shell.</p>
 
-    <h2 id="camera"><a href="#camera">Webcam and microphone are dead</a></h2>
+    <h2 id="camera"><a href="faq/#camera">Webcam and microphone are dead</a></h2>
     <p>Default lock: <code>uvcvideo</code> (and a few Intel IPU modules) blacklisted, V4L nodes and ALSA <em>capture</em> devices mode 000. Speakers and USB headsets (playback) stay. <code>ujust set-camera-mic on</code> then replug or <code>run0 modprobe uvcvideo</code>.</p>
 
-    <h2 id="admin"><a href="#admin">Can wheel log into GNOME/KDE?</a></h2>
+    <h2 id="admin"><a href="faq/#admin">Can wheel log into GNOME/KDE?</a></h2>
     <p>On first boot a tty1 prompt asks for a daily (non-wheel) username and password before GDM/SDDM. After that, wheel is blocked from the greeter. TTY and <code>run0</code> still work. Empty name or 5-minute timeout skips (lock stays pending). Skip forever: <code>ujust set-admin-split off</code>. Later: <code>ujust set-admin-split add NAME</code>.</p>
 
-    <h2 id="theme"><a href="#theme">Wallpaper, lock screen, accent</a></h2>
+    <h2 id="theme"><a href="faq/#theme">Wallpaper, lock screen, accent</a></h2>
     <p>Default Unwoke navy wallpaper, a darker lock image, dark style, GNOME named accent <code>blue</code>, GTK/KDE <code>#3b6cff</code>. Gallery: <a href="brand/">Brand</a>. GNOME has no classic screensaver; the lock screen is that image. Re-apply: <code>ujust set-unwoke-theme apply</code>.</p>
 
-    <h2 id="bubblejail"><a href="#bubblejail">What is set-brave-bubblejail?</a></h2>
+    <h2 id="bubblejail"><a href="faq/#bubblejail">What is set-brave-bubblejail?</a></h2>
     <p>Extra sandbox around Origin’s desktop launcher. Default <strong>on</strong>. GPU, PipeWire, and portals may break. <code>ujust set-brave-bubblejail off</code> if the window will not start. On <code>-trivalent</code> this command is refused: stock already jails Trivalent, and their FAQ says Bubblejail on Trivalent is broken.</p>
 
-    <h2 id="userns"><a href="#userns">Did you turn user namespaces back on?</a></h2>
+    <h2 id="userns"><a href="faq/#userns">Did you turn user namespaces back on?</a></h2>
     <p>Not globally. <code>harden_userns</code> stays on. On Origin images, Brave Origin is labeled <code>brave_t</code> and that domain is on secureblue’s userns allow-list. Trivalent images keep stock <code>trivalent_t</code> only. Browserless images do not add an extra domain — same as stock with Trivalent removed. Unconfined apps still cannot create user namespaces.</p>
 
-    <h2 id="name"><a href="#name">Why Unwoke SecureBlue that way?</a></h2>
+    <h2 id="name"><a href="faq/#name">Why Unwoke SecureBlue that way?</a></h2>
     <p><em>Unwoke</em> is the adjective/verb modifier. <em>SecureBlue</em> is one proper name (S and B capped), not “Secure Blue”. Repo and GHCR slugs stay lowercase because registries do.</p>
 
-    <h2 id="where-changelog"><a href="#where-changelog">Where is the changelog?</a></h2>
+    <h2 id="where-changelog"><a href="faq/#where-changelog">Where is the changelog?</a></h2>
     <p><a href="changelog/">Changelog</a> is rebuilt with the site from public git subjects (title + date + short hash). The top of that page, Home “What’s new”, and the Compared ledger are the people-facing cut (overlay, install, tutorials). Factory-only commits stay off those lists. Optional <code>People:</code> / <code>Vs:</code> / <code>Where:</code> in a commit body write the Compared row in easy words. No commit bodies, diffs, or file lists in the public log. Subjects that look like secrets are dropped.</p>
 
-    <h2 id="updates"><a href="#updates">How do updates work?</a></h2>
-    <p>Not a git fork. CI pulls their signed image, verifies it with their public key, pins the digest, layers this overlay, and cosign-signs the result. Your machine follows <code>ghcr.io/sergi270710267/…</code> with rpm-ostree after the signed rebase. Rebuilds at 08:00 and 20:00 UTC. CI refuses to overlay if the stock image names this overlay (see <a href="#hostile-base">Could stock target this overlay?</a>).</p>
+    <h2 id="updates"><a href="faq/#updates">How do updates work?</a></h2>
+    <p>Not a git fork. CI pulls their signed image, verifies it with their public key, pins the digest, layers this overlay, and cosign-signs the result. Your machine follows <code>ghcr.io/sergi270710267/…</code> with rpm-ostree after the signed rebase. Rebuilds at 08:00 and 20:00 UTC. CI refuses to overlay if the stock image names this overlay (see <a href="faq/#hostile-base">Could stock target this overlay?</a>).</p>
 
-    <h2 id="hostile-base"><a href="#hostile-base">Could stock target this overlay?</a></h2>
+    <h2 id="hostile-base"><a href="faq/#hostile-base">Could stock target this overlay?</a></h2>
     <p>They cannot push to this GitHub repo or to <code>ghcr.io/sergi270710267</code>. After the signed rebase, your PC does <em>not</em> pull <code>ghcr.io/secureblue/…</code> anymore; it pulls Unwoke. Cosign on their base only proves <em>they</em> signed it — it does not prove the next image is friendly.</p>
     <p>What they <em>could</em> do is ship a <strong>public</strong> signed base that stays quiet on stock and only acts if Unwoke files exist, then wait for our twice-daily overlay to republish it. They cannot give our CI different bits than everyone else for the same digest. A generic backdoor in the kernel that hits every secureblue user is the same trust you already accept by using their images; overlaying does not add a second magic seal against that.</p>
     <p>What we do: before every image build, CI <code>cosign verify</code>s each official base, then <em>inspects</em> it with crane export (never docker-pull, never run) for this repo’s name, GHCR, and overlay paths. A hit fails the build — no new Unwoke image. Their key is vendored; if <code>cosign.pub</code> on their <code>live</code> branch moves, CI stops until a human updates <code>keys/secureblue.pub</code>. This does not catch obfuscated payloads or a backdoor aimed at everyone.</p>
@@ -229,13 +236,13 @@ ujust set-thumbnails on</code></pre>
     <p>Automatic split: their <strong>signed image</strong> (kernel, SELinux, Trivalent) is overlaid on a schedule. Copied helpers are <strong>not</strong> executed from stock <code>/usr/libexec/secureblue/*.py</code>. Stock <code>ujust harden-flatpak</code> still calls that path; the file in the image is an Unwoke trampoline that execs <code>/usr/libexec/unwoke/harden-flatpak.sh</code>. CI watches their <code>harden_flatpak.py</code> and <code>flatpak.just</code>. If they change and the new file does not name this overlay, Actions <em>commits the snapshot</em> and regenerates our Flatpak lockdown lists. Your PC still runs Unwoke scripts. A file that mentions Unwoke / our GHCR is refused (no auto-copy). Malloc preload stays our shell script so we do not exec their Python on the box.</p>
     <p>Login MOTD is Unwoke’s, not their “welcome / donate / rebase” banner. Their deprecation notice, update-verification, and flatpak-setup user units are masked (they can re-add Flathub or tell you to rebase to stock). Bring them back with <code>ujust set-stock-nags on</code>. Their Secure Boot key check stays. Mirrored docs strip script-like HTML.</p>
 
-    <h2 id="key"><a href="#key">Can I trust the signing key?</a></h2>
+    <h2 id="key"><a href="faq/#key">Can I trust the signing key?</a></h2>
     <p>You can verify with <code>cosign.pub</code> in the repo. The private key is a GitHub Actions secret, not a YubiKey. That is weaker than a hardware key. It is stated on the home page on purpose.</p>
 
-    <h2 id="contribute"><a href="#contribute">How do I contribute?</a></h2>
+    <h2 id="contribute"><a href="faq/#contribute">How do I contribute?</a></h2>
     <p>This overlay: <a href="https://github.com/SeRgi270710267/unwoke-secureblue">our GitHub</a>, <a href="contributing/">Contributing</a>, and <a href="conduct/">our conduct</a>. Fork → PR → green <code>pr-gate</code> + canary → the maintainer merges. No auto-merge. Workflows and alarms: <a href="factory/#github">Factory → GitHub map</a>. Stock secureblue (Trivalent, their image recipes, their CoC): their <a href="secureblue/contributing/">mirrored contributing page</a>. Do not send Unwoke patches to their repo or the other way around.</p>
 
-    <h2 id="iso"><a href="#iso">Can I install without stock secureblue first?</a></h2>
+    <h2 id="iso"><a href="faq/#iso">Can I install without stock secureblue first?</a></h2>
     <p>Yes. Actions → <strong>iso</strong> wraps the Unwoke GHCR image in a live/installer USB (Titanoboa). You flash that, not their ISO. GitHub will not host a ~4 GB file as a normal release, so the ISO is an Actions artifact (90 days) and a <code>ghcr.io/sergi270710267/&lt;name&gt;-iso:latest</code> package you pull with <code>oras</code>. The two recommended Trivalent sticks wrap after each green overlay; all twelve wrap on Sunday. Verify the package with <code>cosign.pub</code>, then the <code>SHA256SUMS</code> blob, then the file hash. Not Ventoy. Enroll <em>your</em> Secure Boot key from their post-install — the kernel is still stock. Stock-ISO-then-rebase remains valid. GitHub map, clock, and alarms: <a href="factory/#github">Factory</a>.</p>
   </main>
 

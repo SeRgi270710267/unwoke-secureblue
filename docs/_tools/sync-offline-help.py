@@ -12,15 +12,26 @@ LOGO = ROOT / "docs" / "assets" / "logo.svg"
 SITE = "https://sergi270710267.github.io/unwoke-secureblue"
 
 
-def rewrite(html: str, depth: int) -> str:
+def rewrite(html: str, depth: int, rel: Path) -> str:
     prefix = "../" * depth if depth else ""
     html = re.sub(r'<base href="[^"]*">\s*', "", html)
     html = re.sub(r'href="css/main\.css[^"]*"', f'href="{prefix}css/main.css"', html)
     html = re.sub(r'href="assets/logo\.svg[^"]*"', f'href="{prefix}assets/logo.svg"', html)
     html = re.sub(r'src="assets/logo\.svg[^"]*"', f'src="{prefix}assets/logo.svg"', html)
+    # Same-page fragments are qualified for <base href>. Offline pages have no base.
+    if rel == Path("index.html"):
+        html = html.replace('href="tutorials/#', 'href="#')
+    else:
+        slug = rel.parent.as_posix()
+        html = html.replace(f'href="tutorials/{slug}/#', 'href="#')
     html = re.sub(
         r'href="tutorials/([a-z0-9-]+)/"',
         lambda m: f'href="{prefix}{m.group(1)}/index.html"',
+        html,
+    )
+    html = re.sub(
+        r'href="tutorials/([a-z0-9-]+)/#',
+        lambda m: f'href="{prefix}{m.group(1)}/index.html#',
         html,
     )
     html = html.replace('href="tutorials/"', f'href="{prefix}index.html"')
@@ -70,6 +81,25 @@ def main() -> None:
     (DST / "css").mkdir(parents=True)
     (DST / "assets").mkdir(parents=True)
     shutil.copy2(CSS, DST / "css" / "main.css")
+    # Site CSS at desktop width builds a left rail. Offline help only has two links.
+    override = """
+/* Offline help: two-link bar, not the site left rail. */
+@media (min-width: 64rem) {
+  body {
+    display: flex;
+    flex-direction: column;
+  }
+  body::before {
+    display: none;
+  }
+  header,
+  #site-menu {
+    display: flex;
+  }
+}
+"""
+    css_path = DST / "css" / "main.css"
+    css_path.write_text(css_path.read_text(encoding="utf-8") + override, encoding="utf-8", newline="\n")
     if LOGO.exists():
         shutil.copy2(LOGO, DST / "assets" / "logo.svg")
     for src in SRC.rglob("index.html"):
@@ -77,7 +107,7 @@ def main() -> None:
         dest = DST / rel
         dest.parent.mkdir(parents=True, exist_ok=True)
         depth = 0 if rel.parent == Path(".") else 1
-        dest.write_text(rewrite(src.read_text(encoding="utf-8"), depth), encoding="utf-8", newline="\n")
+        dest.write_text(rewrite(src.read_text(encoding="utf-8"), depth, rel), encoding="utf-8", newline="\n")
         print(dest.relative_to(ROOT))
 
 

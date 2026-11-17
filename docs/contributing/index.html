@@ -7,12 +7,19 @@
   <meta name="color-scheme" content="dark">
   <title>Contributing | Unwoke SecureBlue</title>
   <meta name="description" content="How to contribute to this overlay. Stock secureblue’s contributing guide is mirrored separately.">
+  <link rel="canonical" href="https://sergi270710267.github.io/unwoke-secureblue/contributing/">
+  <meta property="og:title" content="Contributing | Unwoke SecureBlue">
+  <meta property="og:description" content="How to contribute to this overlay. Stock secureblue’s contributing guide is mirrored separately.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sergi270710267.github.io/unwoke-secureblue/contributing/">
+  <meta property="og:image" content="https://sergi270710267.github.io/unwoke-secureblue/assets/hero.jpg">
+  <meta name="twitter:card" content="summary_large_image">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css?v=23">
 </head>
 <body>
-  <a class="skip" href="#content">Skip to content</a>
+  <a class="skip" href="contributing/#content">Skip to content</a>
   <header>
     <nav id="site-menu" aria-label="Primary">
       <ul class="nav-top">
@@ -57,12 +64,12 @@
     <h1>Contributing</h1>
     <p>Same slot as on <a href="https://secureblue.dev/contributing">secureblue.dev</a>. Two different projects. Do not mix the repos.</p>
 
-    <h2 id="overlay"><a href="#overlay">Unwoke SecureBlue</a></h2>
+    <h2 id="overlay"><a href="contributing/#overlay">Unwoke SecureBlue</a></h2>
     <p>Issues and pull requests: <a href="https://github.com/SeRgi270710267/unwoke-secureblue">github.com/SeRgi270710267/unwoke-secureblue</a>. <a href="conduct/">Our conduct</a>, not their Covenant. No donate wallet. Useful patches and reproducible bugs beat essays. What the factory already auto-heals vs what must stay a human: <a href="factory/">Factory</a>.</p>
     <div class="alert caution">
       <p><strong>Maintainer merge only.</strong> Fork, PR, wait. <code>pr-gate</code> (job name <code>Strict PR gate</code>) + canary must be green. <a href="https://github.com/SeRgi270710267">SeRgi270710267</a> has the last word (often after a pass with Grok). There is no auto-merge. Green CI is not permission to land. <code>CODEOWNERS</code> is <code>@SeRgi270710267</code> on every path. GitHub ruleset <code>main-strict</code> requires that PR, one approval, Code Owners, and the gate; it also blocks force-push. The owner can still push <code>main</code> (admin bypass) so the overlay factory does not wait on a second account. Factory bot commits also need GitHub Actions (app 15368) on that bypass list. Workflows, receipt, GHCR, and alarms: <a href="factory/#github">Factory → GitHub map</a>.</p>
     </div>
-    <h2 id="rules"><a href="#rules">Hard no</a></h2>
+    <h2 id="rules"><a href="contributing/#rules">Hard no</a></h2>
     <ul>
       <li><code>gpgcheck=0</code>, <code>setenforce 0</code>, unsigned rebase as a default, firewall off</li>
       <li>New vendor hostname, Flathub/Snap, or a store “to make it work”</li>
@@ -71,14 +78,14 @@
       <li>Deleting canary needles to pass CI</li>
     </ul>
     <p>Every new overlay lock needs a <code>ujust</code> revert. If it weakens a lock, it is opt-in and must warn. Fill the PR template. Use the issue forms (overlay bug vs lock idea). Stock kernel bugs go <a href="https://github.com/secureblue/secureblue/issues">upstream</a>.</p>
-    <h2 id="mark"><a href="#mark">Public mark</a></h2>
+    <h2 id="mark"><a href="contributing/#mark">Public mark</a></h2>
     <p>Every overlay file under <code>files/</code> and <code>recipes/</code> must carry <code>UNWOKE-SHIPPED-FIRST</code> and the MIT copyright line. Compose stamps a forgotten file in the image. Inspect and the PR gate fail if git is still unmarked. Do not put the token into live Chromium/Brave/Trivalent <code>policies/managed</code> JSON. Do not obfuscate. Do not change the license. Do not weaken a lock to “protect credit.” Ledger: <a href="ahead/">Shipped first</a>.</p>
 <pre><code>git clone https://github.com/SeRgi270710267/unwoke-secureblue
 # recipes/  overlay modules
 # files/    scripts, SELinux, policies, just
 # docs/     this site (not the mirrored tree)</code></pre>
     <p><code>docs/secureblue/</code> is generated in CI from their markdown. Do not edit it by hand.</p>
-    <h2 id="site-progress"><a href="#site-progress">Tell people automatically</a></h2>
+    <h2 id="site-progress"><a href="contributing/#site-progress">Tell people automatically</a></h2>
     <p>Pages rebuilds Home “What’s new”, the Compared ledger, and Changelog highlights from <code>main</code>. You do not edit those tables by hand for ordinary work. Factory-only commits (CI pins, snapshot hashes) stay off the human lists.</p>
     <p>If the git subject is not enough, add three lines to the commit body. They become the Compared row:</p>
 <pre><code>People: Easy sentence a daily user should read.
@@ -86,7 +93,7 @@ Vs: How this is stricter or easier than stock.
 Where: Pages now / Next overlay bake / USB ISO</code></pre>
     <p>Seed for older history: <code>docs/_tools/people-seed.json</code>. Toggles on <a href="features/">Features</a> stay a written spec (wrong automation would lie). Stock GitHub issues that map to a revertable overlay <code>ujust</code> are listed on <a href="stock-issues/">Workarounds</a> at Pages deploy — never applied to a bake. A free public text model (Pollinations) writes a short Unwoke note unless you set <code>GROQ_API_KEY</code> or <code>XAI_API_KEY</code>. The model cannot invent a command.</p>
 
-    <h2 id="stock"><a href="#stock">Stock secureblue (mirrored)</a></h2>
+    <h2 id="stock"><a href="contributing/#stock">Stock secureblue (mirrored)</a></h2>
     <p>Their contributing guide — Discord, AI ban, pre-commit, test-build forks of <em>their</em> image recipes — is pulled daily. That process contributes to <strong>secureblue</strong>, not this overlay.</p>
     <p><a class="button" href="secureblue/contributing/">Their contributing (mirrored)</a></p>
     <p>Canonical: <a href="https://secureblue.dev/contributing">https://secureblue.dev/contributing</a></p>

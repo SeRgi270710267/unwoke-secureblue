@@ -7,12 +7,19 @@
   <meta name="color-scheme" content="dark">
   <title>Stock installers | Tutorials | Unwoke SecureBlue</title>
   <meta name="description" content="Every stock ujust install-* is intercepted so Unwoke locks are asked first. Nothing silent.">
+  <link rel="canonical" href="https://sergi270710267.github.io/unwoke-secureblue/tutorials/stock-installs/">
+  <meta property="og:title" content="Stock installers | Tutorials | Unwoke SecureBlue">
+  <meta property="og:description" content="Every stock ujust install-* is intercepted so Unwoke locks are asked first. Nothing silent.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sergi270710267.github.io/unwoke-secureblue/tutorials/stock-installs/">
+  <meta property="og:image" content="https://sergi270710267.github.io/unwoke-secureblue/assets/hero.jpg">
+  <meta name="twitter:card" content="summary_large_image">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css?v=23">
 </head>
 <body>
-  <a class="skip" href="#content">Skip to content</a>
+  <a class="skip" href="tutorials/stock-installs/#content">Skip to content</a>
   <header>
     <nav id="site-menu" aria-label="Primary">
       <ul class="nav-top">
@@ -55,7 +62,7 @@
   <main id="content">
     <p class="eyebrow">Apps</p>
     <h1>Stock installers, asked on Unwoke</h1>
-    <p><span class="chip">Asked, not silent</span> Same command names as stock. Their scripts would skip overlay locks (Flathub off, lockdown, toolbox stubs, temp noexec). We intercept them. Compose renames theirs to <code>NAME-stock</code>. Vendor yum-repos (Proton, IVPN, Mullvad, Tailscale) are watched and healed. Nothing auto-unlocks.</p>
+    <p><span class="chip">Asked, not silent</span> These are Unwoke wizards. Where stock still ships the same name, compose renames theirs to <code>NAME-stock</code> and our command asks first. secureblue 4.10 (Fedora 45, 2026-11-08) removed <code>ujust install-steam</code> and <code>ujust install-vpn</code>. Current stock also has no <code>install-docker</code> or <code>uninstall-docker</code>. Vendor yum-repos (Proton, IVPN, Mullvad, Tailscale) are watched and healed. Nothing auto-unlocks.</p>
     <div class="alert tip">
       <p><strong>Secure default.</strong> If you never install these, leave the locks. Typing the stock command still opens <em>our</em> wizard.</p>
     </div>
@@ -63,17 +70,17 @@
       <li>
         <h3>Steam</h3>
         <pre><code>ujust install-steam</code></pre>
-        <p>Flatpak (unfiltered Flathub) or Distrobox steambox. Asks Flathub/lockdown/temp/mic/BT or toolbox+userns. <a href="tutorials/steam/">Steam tutorial</a>.</p>
+        <p>Our wizard, not a stock script. Flatpak (unfiltered Flathub) or Distrobox steambox. Asks Flathub/lockdown/temp/mic/BT or toolbox+userns. <a href="tutorials/steam/">Steam tutorial</a>.</p>
       </li>
       <li>
         <h3>VPN</h3>
         <pre><code>ujust install-vpn</code></pre>
-        <p>Does <strong>not</strong> run stock’s layerer (that can disable Unbound). Menu: Proton / IVPN / Mullvad (WireGuard first) or Tailscale (asked extra repo). Same as <code>ujust install-proton</code> and friends.</p>
+        <p>Our menu. It does not call a stock layerer. Stock removed <code>install-vpn</code> in 4.10. Choices: Proton / IVPN / Mullvad (WireGuard first) or Tailscale (asked extra repo). Same as <code>ujust install-proton</code> and friends.</p>
       </li>
       <li>
         <h3>Docker</h3>
         <pre><code>ujust install-docker</code></pre>
-        <p>Intercepted. Prefers podman (already installed). Docker CE is a root-equivalent daemon. Asks leftover container userns first. Undo: leftover <code>ujust uninstall-docker</code>.</p>
+        <p>Our wizard. Prefers podman (already installed). Docker CE is a root-equivalent daemon. It only continues if a renamed helper <code>install-docker-stock</code> exists, and current stock does not ship one. There is no <code>ujust uninstall-docker</code> on Unwoke or on secureblue <code>live</code>.</p>
       </li>
       <li>
         <h3>Dangerzone</h3>

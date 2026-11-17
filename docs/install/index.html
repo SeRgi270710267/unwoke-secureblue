@@ -7,12 +7,19 @@
   <meta name="color-scheme" content="dark">
   <title>Install | Unwoke SecureBlue</title>
   <meta name="description" content="Install Unwoke SecureBlue from a USB ISO (no stock first) or rebase from Fedora Atomic, then reboot into the signed deployment.">
+  <link rel="canonical" href="https://sergi270710267.github.io/unwoke-secureblue/install/">
+  <meta property="og:title" content="Install | Unwoke SecureBlue">
+  <meta property="og:description" content="Install Unwoke SecureBlue from a USB ISO (no stock first) or rebase from Fedora Atomic, then reboot into the signed deployment.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sergi270710267.github.io/unwoke-secureblue/install/">
+  <meta property="og:image" content="https://sergi270710267.github.io/unwoke-secureblue/assets/hero.jpg">
+  <meta name="twitter:card" content="summary_large_image">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css?v=23">
 </head>
 <body>
-  <a class="skip" href="#content">Skip to content</a>
+  <a class="skip" href="install/#content">Skip to content</a>
   <header>
     <nav id="site-menu" aria-label="Primary">
       <ul class="nav-top">
@@ -56,10 +63,11 @@
   <main id="content">
     <h1>Install</h1>
     <p>Two ways in: a <strong>USB ISO of Unwoke</strong> (empty disk, no stock secureblue first), or a <strong>rebase</strong> if you already run Fedora Atomic / secureblue. After either path, their <a href="secureblue/post-install/">post-install</a> still applies.</p>
+    <p>The base is secureblue <code>:latest</code>. As of their 4.10 release (2026-11-08) that is <strong>Fedora 45</strong>. A machine already on an Unwoke <code>:latest</code> image gets the Fedora bump with the next signed update. Their desktop docs are ISO-first. Their IoT and ARM pages say <code>bootc switch</code>. Our signed path is still the two <code>rpm-ostree rebase</code> commands below: first-boot looks for an <code>ostree-unverified-registry:</code> origin and then stages <code>ostree-image-signed</code>. <code>bootc switch</code> does not run that step.</p>
     <p class="notice"><strong>Empty-disk USB encrypts by default</strong> (stock Anaconda leaves the box unchecked). You can still untick Encrypt. LUKS uses a 2&nbsp;GiB Argon2id memory cost so a stolen disk is harder to crack than stock’s installer default. The live installer talks NTS time (not fedora NTP in the clear).</p>
     <div class="factory-stamp" data-factory-stamp>Checking last green…</div>
 
-    <h2 id="pick"><a href="#pick">Pick an image</a></h2>
+    <h2 id="pick"><a href="install/#pick">Pick an image</a></h2>
     <p>Three questions. Same twelve images as before — you do not have to name them.</p>
     <div class="pick-grid">
       <fieldset>
@@ -110,11 +118,11 @@
     </details>
 
     <div id="path-usb" class="install-path">
-    <h2 id="usb"><a href="#usb">Empty disk: Unwoke USB ISO</a></h2>
+    <h2 id="usb"><a href="install/#usb">Empty disk: Unwoke USB ISO</a></h2>
     <p>This wraps the GHCR image you picked. You do <em>not</em> install stock secureblue first. GitHub will not host a ~4 GB file as a normal release, so the ISO lives as a GHCR package plus a 90-day Actions download. The live <strong>Anaconda</strong> installer is dark Unwoke navy. Search or the dash: <strong>Install Unwoke SecureBlue</strong> (stock hides that icon). The OS rebase path below has no Anaconda. How the baker sits on a clock: <a href="factory/#clock">Factory</a>.</p>
     <p id="iso-status" class="iso-status">Checking whether a USB ISO was published…</p>
     <p id="iso-actions" class="iso-actions" hidden>
-      <a class="button" id="iso-download" href="#">Download USB (GitHub login)</a>
+      <a class="button" id="iso-download" href="install/#">Download USB (GitHub login)</a>
       <span id="iso-hint" class="eyebrow">Artifact is the flashable file. GHCR <code>-iso</code> is oras below.</span>
     </p>
     <ol>
@@ -128,10 +136,12 @@
       </li>
       <li>Pull with <a href="https://oras.land/docs/installation">oras</a> (Linux/macOS) when the package exists:</li>
     </ol>
-<pre><code id="cmd-iso">oras pull ghcr.io/sergi270710267/unwoke-silverblue-trivalent-iso:latest
-cosign verify --key cosign.pub --insecure-ignore-tlog ghcr.io/sergi270710267/unwoke-silverblue-trivalent-iso:latest
+<pre><code id="cmd-iso">curl -fsSL -o cosign.pub https://raw.githubusercontent.com/SeRgi270710267/unwoke-secureblue/main/cosign.pub
+oras pull ghcr.io/sergi270710267/unwoke-silverblue-trivalent-iso:latest
+COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key cosign.pub --new-bundle-format=false --insecure-ignore-tlog ghcr.io/sergi270710267/unwoke-silverblue-trivalent-iso:latest
 cosign verify-blob --key cosign.pub --insecure-ignore-tlog --signature SHA256SUMS.sig SHA256SUMS
 sha256sum -c SHA256SUMS</code></pre>
+    <p>ISO signatures are not in the public Rekor log, so the ISO lines use <code>--insecure-ignore-tlog</code>. The OS image check below does not. <code>COSIGN_OCI_EXPERIMENTAL=0</code> and <code>--new-bundle-format=false</code> force our classic <code>.sig</code> tag. Without them, current cosign can select GitHub’s certificate attestation and fail with “expected key signature, not certificate.” Drop <code>--new-bundle-format=false</code> only if your cosign does not have that flag.</p>
     <ol start="3">
       <li id="flash-step">Flash with <span id="flash-tool">Rufus</span>. <strong>Not Ventoy.</strong></li>
       <li>Boot, install, encrypt the disk, join <code>wheel</code>. Enroll the <strong>secureblue</strong> Secure Boot key when prompted — the kernel is still theirs.</li>
@@ -143,22 +153,22 @@ sha256sum -c SHA256SUMS</code></pre>
     </div>
 
     <div id="path-rebase" class="install-path">
-    <h2 id="rebase"><a href="#rebase">Already on Atomic: rebase</a></h2>
+    <h2 id="rebase"><a href="install/#rebase">Already on Atomic: rebase</a></h2>
     <p>This switch cannot check our stamp yet (your PC does not have our key):</p>
 <pre><code id="cmd-unverified">rpm-ostree rebase ostree-unverified-registry:ghcr.io/sergi270710267/unwoke-silverblue-trivalent:latest
 systemctl reboot</code></pre>
 
-    <h2 id="signed"><a href="#signed">Signed deployment</a></h2>
+    <h2 id="signed"><a href="install/#signed">Signed deployment</a></h2>
     <p>After that reboot, a first-boot service queues the <em>signed</em> image. Reboot one more time when <code>rpm-ostree status</code> shows a staged signed deployment (or after a few minutes on the network). From then on, updates must match our <code>cosign.pub</code>.</p>
     <p>If it did not auto-stage (no network on first boot):</p>
 <pre><code id="cmd-signed">rpm-ostree rebase ostree-image-signed:docker://ghcr.io/sergi270710267/unwoke-silverblue-trivalent:latest
 systemctl reboot</code></pre>
     </div>
 
-    <h2 id="stock-iso"><a href="#stock-iso">Empty disk via stock ISO</a></h2>
+    <h2 id="stock-iso"><a href="install/#stock-iso">Empty disk via stock ISO</a></h2>
     <p>Still valid: flash a <a href="https://secureblue.dev/install">secureblue ISO</a>, encrypt, enroll their key, then rebase. Use this if you want their installer and do not want to wait for an Unwoke ISO build.</p>
 
-    <h2 id="after"><a href="#after">After install</a></h2>
+    <h2 id="after"><a href="install/#after">After install</a></h2>
     <p>You logged in. Do not open GNOME Settings looking for a store. Walk <a href="start/">After you log in</a> once — Unwoke setup, signed reboot, daily user, leftover stock. Command dump: <a href="post-install/">Post-install</a>. Their page only (mirrored daily): <a href="secureblue/post-install/">secureblue/post-install</a>.</p>
     <p><a class="button" href="start/">After you log in</a></p>
     <p>Same later: app grid → <strong>Unwoke setup</strong>, or <code>ujust setup</code>. If Bluetooth, Flathub, brew, webcam, WebGL, or the greeter is “broken,” it is a default lock — <code>ujust why</code>.</p>
@@ -176,8 +186,10 @@ ujust set-brave-bubblejail off  # if Origin has no GPU
 ujust set-trivalent-network-sandbox off  # if Trivalent clears cookies
 ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
 
-    <h2 id="verify"><a href="#verify">Verify an image</a></h2>
-<pre><code id="cmd-verify">cosign verify --key cosign.pub ghcr.io/sergi270710267/unwoke-silverblue-trivalent</code></pre>
+    <h2 id="verify"><a href="install/#verify">Verify an image</a></h2>
+    <p><code>cosign.pub</code> in the git repo (and on the <code>receipt</code> release) is <em>our</em> overlay key, not secureblue’s. The same two cosign flags as the USB check:</p>
+<pre><code id="cmd-verify">curl -fsSL -o cosign.pub https://raw.githubusercontent.com/SeRgi270710267/unwoke-secureblue/main/cosign.pub
+COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key cosign.pub --new-bundle-format=false ghcr.io/sergi270710267/unwoke-silverblue-trivalent</code></pre>
   </main>
 
   <footer>
@@ -221,10 +233,12 @@ ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
       signed.textContent =
         "rpm-ostree rebase ostree-image-signed:docker://ghcr.io/sergi270710267/" + name + ":latest\nsystemctl reboot";
       verify.textContent =
-        "cosign verify --key cosign.pub ghcr.io/sergi270710267/" + name;
+        "curl -fsSL -o cosign.pub https://raw.githubusercontent.com/SeRgi270710267/unwoke-secureblue/main/cosign.pub\n" +
+        "COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key cosign.pub --new-bundle-format=false ghcr.io/sergi270710267/" + name;
       iso.textContent =
+        "curl -fsSL -o cosign.pub https://raw.githubusercontent.com/SeRgi270710267/unwoke-secureblue/main/cosign.pub\n" +
         "oras pull ghcr.io/sergi270710267/" + name + "-iso:latest\n" +
-        "cosign verify --key cosign.pub --insecure-ignore-tlog ghcr.io/sergi270710267/" + name + "-iso:latest\n" +
+        "COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key cosign.pub --new-bundle-format=false --insecure-ignore-tlog ghcr.io/sergi270710267/" + name + "-iso:latest\n" +
         "cosign verify-blob --key cosign.pub --insecure-ignore-tlog --signature SHA256SUMS.sig SHA256SUMS\n" +
         "sha256sum -c SHA256SUMS";
       checkIso(name);
@@ -232,6 +246,18 @@ ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
       if (originWarn) {
         originWarn.hidden = document.querySelector('input[name="browser"]:checked').value !== "";
       }
+    }
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, (c) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[c]));
+    }
+    function ghUrl(u) {
+      try {
+        const x = new URL(u);
+        if (x.protocol === "https:" && x.hostname === "github.com") return x.href;
+      } catch (e) { /* ignore */ }
+      return "";
     }
     function applyOs() {
       const os = document.querySelector('input[name="os"]:checked').value;
@@ -305,7 +331,7 @@ ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
           "USB ISO package is public for <code>" + name + "</code>. Pull with oras below, then verify with <code>cosign.pub</code>.";
         const run = await lastGreenIsoRun();
         if (seq !== isoSeq) return;
-        if (run) runHref = run.html_url;
+        if (run) runHref = ghUrl(run.html_url);
       } else if (pkg) {
         html =
           "A <code>" + name + "-iso</code> package exists but is still private. Rebase below works. After the baker is green, the package must be Public (factory job tries this).";
@@ -313,9 +339,10 @@ ujust set-allow-browsers on ALLOW   # browserless only</code></pre>
         const run = await lastGreenIsoRun();
         if (seq !== isoSeq) return;
         if (run) {
-          runHref = run.html_url;
-          html =
-            "Last green USB bake: <a href=\"" + run.html_url + "\">Actions run</a> (GitHub login to download the artifact). The GHCR <code>-iso</code> package for this image is not listed yet — rebase still works.";
+          runHref = ghUrl(run.html_url);
+          html = runHref
+            ? "Last green USB bake: <a href=\"" + esc(runHref) + "\">Actions run</a> (GitHub login to download the artifact). The GHCR <code>-iso</code> package for this image is not listed yet — rebase still works."
+            : "Last green USB bake is on GitHub Actions (login to download the artifact). The GHCR <code>-iso</code> package for this image is not listed yet — rebase still works.";
         } else {
           html =
             "No USB ISO published yet. Use rebase below, or a stock secureblue ISO then rebase. The baker is separate and does not block the OS.";

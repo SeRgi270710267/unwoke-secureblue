@@ -7,12 +7,19 @@
   <meta name="color-scheme" content="dark">
   <title>Shipped first | Unwoke SecureBlue</title>
   <meta name="description" content="Official secureblue GitHub feature requests we shipped first. Tickets stay until they ship, then the card says they shipped after us. Open/closed refreshed on every site deploy.">
+  <link rel="canonical" href="https://sergi270710267.github.io/unwoke-secureblue/ahead/">
+  <meta property="og:title" content="Shipped first | Unwoke SecureBlue">
+  <meta property="og:description" content="Official secureblue GitHub feature requests we shipped first. Tickets stay until they ship, then the card says they shipped after us. Open/closed refreshed on every site deploy.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sergi270710267.github.io/unwoke-secureblue/ahead/">
+  <meta property="og:image" content="https://sergi270710267.github.io/unwoke-secureblue/assets/hero.jpg">
+  <meta name="twitter:card" content="summary_large_image">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=5" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css?v=23">
 </head>
 <body class="page-ahead">
-  <a class="skip" href="#content">Skip to content</a>
+  <a class="skip" href="ahead/#content">Skip to content</a>
   <header>
     <nav id="site-menu" aria-label="Primary">
       <ul class="nav-top">
@@ -68,7 +75,7 @@
     </div>
 
 <!-- feats-generated:start -->
-    <h2 id="still-ahead"><a href="#still-ahead">Still ahead of stock</a></h2>
+    <h2 id="still-ahead"><a href="ahead/#still-ahead">Still ahead of stock</a></h2>
     <p>Open [FEAT] tickets on their GitHub. That means requested, not shipped. Defaults here until they close the ticket.</p>
     <div class="feat-grid">
       <article class="feat-card feat-open">
@@ -189,15 +196,15 @@
         <p class="feat-links"><a href="https://github.com/secureblue/secureblue/issues/2526">Stock #2526</a> · <a href="https://github.com/SeRgi270710267/unwoke-secureblue/commit/2e4bf8f"><code>2e4bf8f</code></a> · <a href="install/">On Unwoke</a></p>
       </article>
     </div>
-    <h2 id="after"><a href="#after">They shipped after us</a></h2>
+    <h2 id="after"><a href="ahead/#after">They shipped after us</a></h2>
     <p>They closed the ticket after our ship date. The card stays. Review their PR; copy only if it is better.</p>
     <p class="feat-empty">None yet. When they close a ticket we already shipped, the factory moves it here automatically and opens a review issue. Tickets are never dropped.</p>
-    <h2 id="adopted"><a href="#adopted">We shipped first, then took their approach</a></h2>
+    <h2 id="adopted"><a href="ahead/#adopted">We shipped first, then took their approach</a></h2>
     <p>Human decision after review. We were first. We later copied their better patch and say so here.</p>
     <p class="feat-empty">None yet. If you copy their better patch, set adopted.on / note / commit in stock-feats.json. The factory will not copy it for you.</p>
 <!-- feats-generated:end -->
 
-    <h2 id="record"><a href="#record">The public mark</a></h2>
+    <h2 id="record"><a href="ahead/#record">The public mark</a></h2>
     <p>You cannot copyright “please default LUKS on.” Those sentences were already on their tracker. You <em>can</em> make a silent copy obvious. This mark is default-on, like the other overlay locks: bake fails if it is missing.</p>
     <ul>
       <li><strong>Dates.</strong> Git on <code>main</code> and this page. If they ship later, the card says after us.</li>
@@ -208,7 +215,7 @@
     </ul>
     <p>Plain text: <a href="ahead/SHIPPED-FIRST.txt"><code>SHIPPED-FIRST.txt</code></a>.</p>
 
-    <h2 id="rules"><a href="#rules">What this list is not</a></h2>
+    <h2 id="rules"><a href="ahead/#rules">What this list is not</a></h2>
     <p>We do not ship every request on their tracker. UKI, ARM, server images, kernel modules, TPM, and SELinux policy need their signed base — an overlay cannot honestly claim those. We also skip FEATs that would weaken the box (Safe Browsing off, unloading all audio, default system Flatpaks). Bugs that hit this overlay belong on <a href="stock-issues/">Workarounds</a>, not here.</p>
     <div class="start-cta">
       <a class="button" href="compared/">Compared to stock</a>

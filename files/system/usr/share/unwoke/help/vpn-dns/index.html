@@ -7,6 +7,13 @@
   <meta name="color-scheme" content="dark">
   <title>VPN without DNS leaks | Tutorials | Unwoke SecureBlue</title>
   <meta name="description" content="Use the VPN’s resolver. Skip Trivalent DoH and custom Unbound when tunneling.">
+  <link rel="canonical" href="https://sergi270710267.github.io/unwoke-secureblue/tutorials/vpn-dns/">
+  <meta property="og:title" content="VPN without DNS leaks | Tutorials | Unwoke SecureBlue">
+  <meta property="og:description" content="Use the VPN’s resolver. Skip Trivalent DoH and custom Unbound when tunneling.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sergi270710267.github.io/unwoke-secureblue/tutorials/vpn-dns/">
+  <meta property="og:image" content="https://sergi270710267.github.io/unwoke-secureblue/assets/hero.jpg">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../css/main.css">
 </head>
@@ -46,6 +53,17 @@
         <p>A well-packaged VPN uses the existing stack. If a vendor asks you to disable firewalld or SELinux, use another vendor.</p>
       </li>
     </ol>
+<!-- vendor-generated:start -->
+<div class="alert tip">
+<p><strong>From the vendor list</strong> (watched and healed twice a day).
+<code>ujust install-vendor NAME</code> or Setup → Strict apps. Group: <code>vpn-dns</code>.</p>
+<ul>
+<li><strong>Tailscale official Fedora repo</strong> (<code>tailscale_repo</code>, asked) — Official repo after you accept gpgcheck=1. <code>ujust install-vendor tailscale_repo</code></li>
+</ul>
+<p>Probe: <code>ujust check-vendor-installers</code>. New app = stanza in <code>vendor-installers.json</code>, not a one-off tutorial fork.</p>
+</div>
+<!-- vendor-generated:end -->
+
     <p>Canonical write-up: <a href="secureblue/post-install/">their post-install</a> (DNS + VPN warning). Overlay does not replace that.</p>
     <nav class="tutorial-nav" aria-label="Adjacent tutorials">
       <a href="../sites-broken/index.html">Previous: A site looks broken</a>

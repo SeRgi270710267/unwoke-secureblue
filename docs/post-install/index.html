@@ -7,12 +7,19 @@
   <meta name="color-scheme" content="dark">
   <title>Post-install | Unwoke SecureBlue</title>
   <meta name="description" content="After rebasing: signed deployment, overlay ujust, then stock secureblue post-install (mirrored).">
+  <link rel="canonical" href="https://sergi270710267.github.io/unwoke-secureblue/post-install/">
+  <meta property="og:title" content="Post-install | Unwoke SecureBlue">
+  <meta property="og:description" content="After rebasing: signed deployment, overlay ujust, then stock secureblue post-install (mirrored).">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sergi270710267.github.io/unwoke-secureblue/post-install/">
+  <meta property="og:image" content="https://sergi270710267.github.io/unwoke-secureblue/assets/hero.jpg">
+  <meta name="twitter:card" content="summary_large_image">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css?v=23">
 </head>
 <body>
-  <a class="skip" href="#content">Skip to content</a>
+  <a class="skip" href="post-install/#content">Skip to content</a>
   <header>
     <nav id="site-menu" aria-label="Primary">
       <ul class="nav-top">
@@ -58,7 +65,7 @@
     <p>Just logged in? The ordered walkthrough is <a href="start/">After you log in</a> (Unwoke setup, not GNOME Settings). This page is the command dump. Same slot as on <a href="https://secureblue.dev/post-install">secureblue.dev</a>. Overlay steps first, then theirs. Strict apps without a store: <code>ujust install-proton</code>, <code>ujust install-ivpn</code>, <code>ujust install-mullvad</code>, or <code>ujust install-vendor NAME</code>.</p>
     <p><a class="button" href="start/">After you log in</a></p>
 
-    <h2 id="overlay"><a href="#overlay">Unwoke SecureBlue</a></h2>
+    <h2 id="overlay"><a href="post-install/#overlay">Unwoke SecureBlue</a></h2>
     <ol>
       <li>After the first rebase reboot, a notification (and MOTD) says when the signed image is staged. It repeats every login and every 15 minutes until you reboot. App grid → Unwoke setup → Reboot now.</li>
       <li>A first-login window lists the locks. Nothing turns off unless you pick it. Hide it on login, or open <strong>Unwoke setup</strong> / <code>ujust setup</code> later. <code>ujust why</code> is “this is a lock, not a bug.” Stock leftover (Secure Boot key, kargs, USBGuard) does not change overlay locks. Tutorial buttons open <a href="tutorials/">Tutorials</a>.</li>
@@ -70,7 +77,7 @@ ujust unwoke-status
 ujust audit-unwoke
 ujust audit-secureblue</code></pre>
     <p>Full toggle table: <a href="features/#toggles">Features</a>. Restart the house browser after policy changes. If something “broke,” it is usually a default lock — the setup menu maps the usual ones and does <strong>not</strong> auto-unlock.</p>
-    <p><strong>Default off</strong> (stock has these on): Flathub, Homebrew, Bluetooth, toolbox/distrobox, camera/mic hardware, Fedora countme, connectivity-check, DHCP hostname, file thumbnails. <strong>Default on</strong> (loosen with <code>off</code>): Flatpak lockdown, Origin/Trivalent policy packs (including no hyperlink <code>ping</code>), Origin Bubblejail, isolation, extra sandbox, Trivalent Network Service Sandbox + referrer flags. <strong>Browserless only:</strong> host browsers stay blocked until <code>ujust set-allow-browsers on ALLOW</code>.</p>
+    <p><strong>Default off</strong> (stock has these on): Flathub, Homebrew, Bluetooth, toolbox/distrobox, camera/mic hardware, Fedora countme, connectivity-check, DHCP hostname, file thumbnails. <strong>Default on</strong> (loosen with <code>off</code> or <code>allow</code>): Flatpak lockdown, Origin/Trivalent policy packs (including no hyperlink <code>ping</code>), DevTools locked, Origin Bubblejail, isolation, extra sandbox, Trivalent Network Service Sandbox + referrer flags. <strong>Browserless only:</strong> host browsers stay blocked until <code>ujust set-allow-browsers on ALLOW</code>.</p>
     <div class="table-container">
       <table>
         <thead>
@@ -99,7 +106,7 @@ ujust audit-secureblue</code></pre>
           <tr><td>Bubblejail breaks GPU/audio (Origin)</td><td><code>ujust set-brave-bubblejail off</code></td></tr>
           <tr><td>Trivalent clears cookies on exit</td><td><code>ujust set-trivalent-network-sandbox off</code></td></tr>
           <tr><td>Need screen capture / JS optimizer</td><td><code>ujust set-brave-sandbox off</code></td></tr>
-          <tr><td>Need chrome://devtools locked</td><td><code>ujust set-brave-devtools lock</code></td></tr>
+          <tr><td>Need chrome://devtools (locked by default)</td><td><code>ujust set-brave-devtools allow</code></td></tr>
           <tr><td>Need Homebrew</td><td><code>ujust set-brew on</code></td></tr>
           <tr><td>Need webcam / mic</td><td><code>ujust set-camera-mic on</code></td></tr>
           <tr><td>Need wheel on the greeter</td><td><code>ujust set-admin-split off</code></td></tr>
@@ -110,7 +117,7 @@ ujust audit-secureblue</code></pre>
     </div>
     <p>Lock screen / wallpaper gallery: <a href="brand/">Brand</a>.</p>
 
-    <h2 id="stock"><a href="#stock">Stock secureblue (mirrored)</a></h2>
+    <h2 id="stock"><a href="post-install/#stock">Stock secureblue (mirrored)</a></h2>
     <p>You still do their post-install: enroll their Secure Boot key if the prompt did not appear, <code>ujust set-kargs-hardening</code> if you rebased instead of installing from their ISO, USBGuard, optional separate wheel account. Full text, updated daily from their repo:</p>
     <p><a class="button" href="secureblue/post-install/">Their post-install (mirrored)</a></p>
     <p>Canonical: <a href="https://secureblue.dev/post-install">https://secureblue.dev/post-install</a></p>

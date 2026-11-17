@@ -122,7 +122,7 @@ notes="${work}/NOTES.md"
   echo "systemctl reboot"
   echo '```'
   echo
-  echo "Then \`cosign verify --key cosign.pub ghcr.io/${OWNER}/unwoke-silverblue-trivalent\` (the \`cosign.pub\` attached here is the overlay key from this repo)."
+  echo "Then \`COSIGN_OCI_EXPERIMENTAL=0 cosign verify --key cosign.pub --new-bundle-format=false ghcr.io/${OWNER}/unwoke-silverblue-trivalent\` (the \`cosign.pub\` attached here is the overlay key from this repo, not secureblue’s). Drop \`--new-bundle-format=false\` only if your cosign does not have that flag."
   echo
   echo "- Images listed: **${ok}/${#NAMES[@]}** (cosign-verified)."
   echo "- Enroll **their** Secure Boot key. Not Ventoy. Not affiliated with secureblue."
