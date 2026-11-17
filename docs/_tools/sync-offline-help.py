@@ -10,6 +10,17 @@ DST = ROOT / "files" / "system" / "usr" / "share" / "unwoke" / "help"
 CSS = ROOT / "docs" / "css" / "main.css"
 LOGO = ROOT / "docs" / "assets" / "logo.svg"
 SITE = "https://sergi270710267.github.io/unwoke-secureblue"
+TOKEN = "UNWOKE-SHIPPED-FIRST"
+HTML_MARK = (
+    "<!-- Unwoke SecureBlue. Not affiliated with secureblue. "
+    "MIT License. Copyright (c) 2026 SeRgi270710267. "
+    f"{TOKEN}. -->\n"
+)
+CSS_MARK = (
+    "/* Unwoke SecureBlue. Not affiliated with secureblue. "
+    "MIT License. Copyright (c) 2026 SeRgi270710267. "
+    f"{TOKEN}. */\n"
+)
 
 
 def rewrite(html: str, depth: int, rel: Path) -> str:
@@ -99,7 +110,10 @@ def main() -> None:
 }
 """
     css_path = DST / "css" / "main.css"
-    css_path.write_text(css_path.read_text(encoding="utf-8") + override, encoding="utf-8", newline="\n")
+    css = css_path.read_text(encoding="utf-8") + override
+    if TOKEN not in css:
+        css = CSS_MARK + css
+    css_path.write_text(css, encoding="utf-8", newline="\n")
     if LOGO.exists():
         shutil.copy2(LOGO, DST / "assets" / "logo.svg")
     for src in SRC.rglob("index.html"):
@@ -107,7 +121,10 @@ def main() -> None:
         dest = DST / rel
         dest.parent.mkdir(parents=True, exist_ok=True)
         depth = 0 if rel.parent == Path(".") else 1
-        dest.write_text(rewrite(src.read_text(encoding="utf-8"), depth, rel), encoding="utf-8", newline="\n")
+        text = rewrite(src.read_text(encoding="utf-8"), depth, rel)
+        if TOKEN not in text:
+            text = HTML_MARK + text
+        dest.write_text(text, encoding="utf-8", newline="\n")
         print(dest.relative_to(ROOT))
 
 

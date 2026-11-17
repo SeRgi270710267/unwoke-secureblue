@@ -39,17 +39,17 @@ start-whonix:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/start-whonix.sh
 
-# Steam (stock Flatpak or Distrobox). Asks overlay locks. Nothing silent.
+# Steam Flatpak or Distrobox. Asks overlay locks. Stock removed this name in 4.10.
 install-steam:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/install-steam.sh
 
-# Stock install-vpn (IVPN/Mullvad/Proton/Tailscale) — WireGuard first, asked extra origin.
+# VPN menu (Proton/IVPN/Mullvad/Tailscale). WireGuard first. Stock removed this name in 4.10.
 install-vpn:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/install-vpn.sh
 
-# Stock install-docker. Root-equivalent daemon. Asks leftover userns. Prefer podman.
+# Docker prompt. Prefers podman. Stock has no install-docker. Asks leftover userns.
 install-docker:
     #!/usr/bin/bash
     exec /usr/libexec/unwoke/install-docker.sh

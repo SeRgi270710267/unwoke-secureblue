@@ -2,9 +2,10 @@
 # Unwoke SecureBlue. Not affiliated with secureblue.
 # MIT License. Copyright (c) 2026 SeRgi270710267.
 # UNWOKE-SHIPPED-FIRST
-# Wrap stock ujust install-steam. Steam is Flathub com.valvesoftware.Steam
-# (not verified). Overlay locks that stop it working like stock are asked.
-# Nothing auto-unlocks. Do not call stock set-flathub-unfiltered (fights our stamp).
+# Unwoke Steam wizard. secureblue 4.10 removed ujust install-steam.
+# Steam is Flathub com.valvesoftware.Steam (not verified).
+# Overlay locks are asked. Nothing auto-unlocks.
+# Do not call stock set-flathub-unfiltered (fights our stamp).
 set -euo pipefail
 
 TOGGLES="/usr/libexec/unwoke/toggles.sh"
@@ -40,9 +41,10 @@ grant_steam() {
 }
 
 echo
-echo "=== Steam (stock path: unfiltered Flathub Flatpak) ==="
-echo "Stock: ujust install-steam turns on unfiltered Flathub and installs"
-echo "${APP_ID}, then asks about Xwayland. Anti-cheat is leftover stock:"
+echo "=== Steam (unfiltered Flathub Flatpak) ==="
+echo "secureblue 4.10 removed ujust install-steam. Their FAQ is a manual Flatpak."
+echo "This wizard asks before overlay locks move, then installs ${APP_ID}."
+echo "Anti-cheat is leftover stock:"
 echo "  ujust set-anticheat-support"
 echo
 echo "Unwoke extras that stop Steam working as well as on stock:"
@@ -52,8 +54,8 @@ echo "  - Flatpak record lock also cuts Pulse for Flatpaks (silent games / no St
 echo "  - /tmp /dev/shm /var/tmp noexec (stock does not). Proton/Wine often exec from temp."
 echo "  - Camera/mic kernel lock → Steam Voice hardware."
 echo "  - Bluetooth service masked → wireless controllers."
-echo "Xwayland and 32-bit kargs are the same as stock (asked, not silent)."
-echo "Stock also offers Distrobox steambox (SteamVR). That needs toolbox wrappers on."
+echo "Xwayland and the 32-bit kernel arg are asked, not silent."
+echo "There is no ujust kargs-32bit. Distrobox steambox (SteamVR) needs toolbox wrappers on."
 echo "Nothing is flipped unless you say yes."
 echo
 echo "  1) Flatpak (unfiltered Flathub) — recommended"
@@ -152,7 +154,9 @@ if ask "Enable Xwayland (many games still need it; stock also asks)?" "n"; then
     ujust set-xwayland on || echo "set-xwayland failed; run it later"
   fi
 fi
-echo "32-bit games: ujust --choose  →  kargs-32bit (same as stock)."
+echo "32-bit games (stock FAQ; we do not run this unless you do):"
+echo "  rpm-ostree kargs --delete-if-present=\"ia32_emulation=0\""
+echo "  systemctl reboot"
 echo "Anti-cheat / mods needing ptrace: ujust set-anticheat-support (leftover stock)."
 echo "USBGuard blocking a dongle: Unwoke setup → leftover stock, or ujust setup-usbguard."
 echo

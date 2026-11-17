@@ -2,8 +2,9 @@
 # Unwoke SecureBlue. Not affiliated with secureblue.
 # MIT License. Copyright (c) 2026 SeRgi270710267.
 # UNWOKE-SHIPPED-FIRST
-# Stock ujust install-docker layers Docker CE (root-equivalent daemon).
-# Ask leftover container userns. Prefer podman (already on the image).
+# Unwoke Docker prompt. secureblue live has no ujust install-docker
+# and no ujust uninstall-docker. Prefer podman (already on the image).
+# Docker CE is a root-equivalent daemon. Ask leftover container userns.
 # Nothing silent.
 set -euo pipefail
 
@@ -16,10 +17,11 @@ ask() {
 }
 
 echo
-echo "=== Docker (stock ujust install-docker is intercepted) ==="
+echo "=== Docker ==="
 echo "Podman is already installed and is the Unwoke path. Docker CE is a"
-echo "root-equivalent daemon (group docker = root). Stock leftover:"
-echo "container-domain user namespaces. Undo later: ujust uninstall-docker"
+echo "root-equivalent daemon (group docker = root). Current stock has no"
+echo "ujust install-docker and no ujust uninstall-docker."
+echo "Container-domain user namespaces stay off unless you say yes."
 echo "Nothing silent."
 echo
 
@@ -38,6 +40,6 @@ if command -v ujust >/dev/null && ujust --summary 2>/dev/null | grep -qw install
   echo "Running stock install-docker after those questions."
   exec ujust install-docker-stock "$@"
 fi
-echo "Stock install-docker-stock is not on this image. Prefer podman."
-echo "If a leftover stock helper appears after rebase, run that then."
+echo "No install-docker helper on this image. Docker CE was not installed."
+echo "Prefer podman. There is no ujust uninstall-docker."
 exit 0

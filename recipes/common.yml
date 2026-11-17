@@ -30,8 +30,11 @@ modules:
         - gamemode
 
   # Do not dnf power-profiles-daemon (conflicts with Fedora tuned-ppd) or
-  # scx-scheds/scx-tools (not in Fedora 44). play-window.sh already uses
-  # powerprofilesctl if present and scxctl only if Fedora shipped it.
+  # scx-scheds/scx-tools. Those names are still absent from Fedora 45
+  # (Everything x86_64, 2026-11-17). The repo ships scx_layered, scx_rustland,
+  # and scx_rusty instead, and we do not install those. A dnf of the missing
+  # names failed every overlay bake from 173a7c4. play-window.sh already uses
+  # powerprofilesctl if present and scxctl only if it is already on the image.
 
   # Drop Bazaar and any GUI software store. Flavor files drop Trivalent if needed.
   - type: script
