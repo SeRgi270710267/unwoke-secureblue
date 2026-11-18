@@ -24,6 +24,11 @@ PUBLIC_SURFACES = (
 )
 LEAK_RE = re.compile(r"ghcr\.io/sergi270710267|rpm-ostree rebase", re.I)
 R2_PUBLIC_RE = re.compile(r"https://\S*r2\.dev", re.I)
+# One command. Separate hits for pages, deploy, and docs already exist
+# in this workflow, so those words alone are not a deploy.
+WRANGLER_DEPLOY_RE = re.compile(
+    r"wrangler@\d+\.\d+\.\d+[\"',\s]+pages[\"',\s]+deploy[\"',\s]+docs\b"
+)
 
 
 def problems_in_text(name: str, text: str) -> list[str]:
@@ -45,15 +50,8 @@ def problems_in_text(name: str, text: str) -> list[str]:
             found.append(f"{name}: Pages still uploads docs/")
         if "site-notice" not in text:
             found.append(f"{name}: Pages does not deploy the notice")
-        # The action or the pinned wrangler CLI. A comment that only names
-        # wrangler is not a deploy.
-        wrangler_cli = (
-            "wrangler@" in text
-            and re.search(r"\bpages\b", text)
-            and re.search(r"\bdeploy\b", text)
-            and re.search(r"\bdocs\b", text)
-        )
-        if "cloudflare/wrangler-action" not in text and not wrangler_cli:
+        # The action, or wrangler@<version> pages deploy docs as one command.
+        if "cloudflare/wrangler-action" not in text and not WRANGLER_DEPLOY_RE.search(text):
             found.append(f"{name}: gated site deploy is missing")
     if name.endswith("build.yml"):
         if "attest-build-provenance" in text:
@@ -139,11 +137,33 @@ def selftest() -> int:
         print("selftest: a wrangler CLI deploy was refused")
         print(problems_in_text("pages.yml", direct))
         ok = False
+    quoted = (
+        'path: site-notice\n'
+        '"wrangler@4.164.0",\n'
+        '"pages",\n'
+        '"deploy",\n'
+        '"docs",\n'
+    )
+    if problems_in_text("pages.yml", quoted):
+        print("selftest: a quoted wrangler argv was refused")
+        print(problems_in_text("pages.yml", quoted))
+        ok = False
+    scattered = (
+        "path: site-notice\n"
+        "uses: actions/deploy-pages@abc\n"
+        "run: python3 docs/_tools/generate-changelog.py\n"
+        "# wrangler@4.164.0 is not a deploy\n"
+    )
     if not any(
         item.endswith("gated site deploy is missing")
-        for item in problems_in_text("pages.yml", "path: site-notice\nwrangler is mentioned\n")
+        for item in problems_in_text("pages.yml", scattered)
     ):
-        print("selftest: a missing deploy was accepted")
+        print("selftest: scattered wrangler tokens were accepted")
+        ok = False
+    real = (ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
+    real_hits = [item for item in problems_in_text("pages.yml", real) if item.endswith("gated site deploy is missing")]
+    if real_hits:
+        print("selftest: the real pages deploy was refused")
         ok = False
     if not problems_in_text("publish-receipt.sh", "gh release upload receipt DIGESTS.txt\n"):
         print("selftest: a receipt upload was accepted")
