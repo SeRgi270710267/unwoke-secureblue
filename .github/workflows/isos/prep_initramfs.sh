@@ -12,6 +12,10 @@
 
 set -euo pipefail
 
+# Parent directory for the read-only GHCR auth mount. The mount itself
+# is not stored in the rootfs. The post hook removes this directory.
+mkdir -p /root/.config/containers
+
 ldconfig
 sed -i '/^install squashfs /d' /usr/lib/modprobe.d/secureblue.conf
 echo 'install squashfs /sbin/modprobe --ignore-install squashfs' > /etc/modprobe.d/zz-squashfs-override.conf

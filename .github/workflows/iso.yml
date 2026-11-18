@@ -166,6 +166,7 @@ jobs:
         env:
           IMAGE_REF: ${{ env.IMAGE_REF }}
           IMAGE_NAME: ${{ matrix.image }}
+          GITHUB_TOKEN: ${{ github.token }}
           COSIGN_PASSWORD: ""
           COSIGN_YES: "1"
           COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
@@ -174,6 +175,18 @@ jobs:
           export PATH="${HOME}/.local/bin:${PATH}"
           command -v just
           just --version
+          # The chroot podman pull does not see the host login. The auth
+          # file is mounted read-only and removed when this step ends.
+          AUTH=/var/tmp/unwoke-ghcr-auth.json
+          sudo rm -f "${AUTH}"
+          trap 'sudo rm -f "${AUTH}"' EXIT
+          if [[ -z "${GITHUB_TOKEN:-}" ]]; then
+            echo "iso: GITHUB_TOKEN is required to pull the private image" >&2
+            exit 1
+          fi
+          printf '%s\n' "${GITHUB_TOKEN}" | sudo podman login ghcr.io -u "${GITHUB_ACTOR}" --password-stdin --authfile "${AUTH}" >/dev/null
+          sudo chmod 600 "${AUTH}"
+          bash "${GITHUB_WORKSPACE}/.github/scripts/titanoboa-private-auth.sh" "${GITHUB_WORKSPACE}/titanoboa/Justfile"
           HOOK_POST="$(realpath .github/workflows/isos/prep_rootfs.generated.sh)"
           HOOK_PRE="$(realpath .github/workflows/isos/prep_initramfs.sh)"
           DEST_DIR="${GITHUB_WORKSPACE}/output"

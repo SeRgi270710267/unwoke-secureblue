@@ -18,6 +18,11 @@ if [[ "${IMAGE_REF}" == "@IMAGE_REF@" || -z "${IMAGE_REF}" ]]; then
   exit 1
 fi
 
+# The auth mount is gone when the chroot exits. Remove the empty parent
+# so the ISO does not ship a containers auth directory.
+rm -f /root/.config/containers/auth.json
+rmdir /root/.config/containers 2>/dev/null || true
+
 sed -i '/^install squashfs /d' /usr/lib/modprobe.d/secureblue.conf 2>/dev/null || true
 
 # Live session only: drop bulky fonts and leftover store bits; add Anaconda.
