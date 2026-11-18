@@ -155,20 +155,68 @@ jobs:
         run: |
           set -euo pipefail
           python3 - <<'PY'
+          import json
           import os
+          import re
           import subprocess
+          import urllib.error
+          import urllib.request
+
+          TOKEN_RE = re.compile(r"[A-Za-z0-9_-]{20,200}")
+          ACCOUNT_RE = re.compile(r"[0-9a-fA-F]{32}")
+
+          def unwrap(raw):
+              value = " ".join(raw.split())
+              changed = True
+              while changed:
+                  changed = False
+                  if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
+                      value = " ".join(value[1:-1].split())
+                      changed = True
+                  if value.lower().startswith("bearer "):
+                      value = " ".join(value[7:].split())
+                      changed = True
+              return "".join(value.split())
+
+          def require(name, raw, pattern):
+              value = unwrap(raw)
+              if not pattern.fullmatch(value):
+                  raise SystemExit(
+                      f"{name} cannot go in an Authorization header "
+                      f"(length {len(value)}). Paste only the value, "
+                      "with no quotes and no Bearer prefix."
+                  )
+              return value
+
+          token = require("CLOUDFLARE_API_TOKEN", os.environ.get("CLOUDFLARE_API_TOKEN", ""), TOKEN_RE)
+          account = require("CLOUDFLARE_ACCOUNT_ID", os.environ.get("CLOUDFLARE_ACCOUNT_ID", ""), ACCOUNT_RE)
+          project = unwrap(os.environ.get("PAGES_PROJECT", "")) or "unwoke-secureblue"
+          if not re.fullmatch(r"[A-Za-z0-9-]{1,60}", project):
+              raise SystemExit("pages project name refused")
+
+          request = urllib.request.Request(
+              "https://api.cloudflare.com/client/v4/user/tokens/verify",
+              headers={"Authorization": "Bearer " + token},
+          )
+          try:
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  print(f"token-verify http={response.status}")
+          except urllib.error.HTTPError as exc:
+              code = ""
+              try:
+                  body = json.loads(exc.read().decode("utf-8", "replace"))
+                  errors = body.get("errors") or []
+                  if errors:
+                      code = str(errors[0].get("code", ""))
+              except (json.JSONDecodeError, UnicodeError):
+                  code = ""
+              raise SystemExit(f"token-verify http={exc.code} code={code}") from None
 
           env = os.environ.copy()
-          for name in ("CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID"):
-              value = "".join(os.environ.get(name, "").split())
-              if not value:
-                  raise SystemExit(f"{name} is empty")
-              if any(ord(ch) < 33 or ord(ch) > 126 for ch in value):
-                  raise SystemExit(f"{name} has a character that cannot go in a header")
-              env[name] = value
-          project = "".join(os.environ.get("PAGES_PROJECT", "").split()) or "unwoke-secureblue"
-          if not project.replace("-", "").isalnum():
-              raise SystemExit("pages project name refused")
+          for extra in ("CLOUDFLARE_API_KEY", "CF_API_KEY", "CLOUDFLARE_EMAIL", "CF_EMAIL", "CF_API_TOKEN"):
+              env.pop(extra, None)
+          env["CLOUDFLARE_API_TOKEN"] = token
+          env["CLOUDFLARE_ACCOUNT_ID"] = account
           cmd = [
               "npx",
               "--yes",
