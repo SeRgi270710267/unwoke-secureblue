@@ -18,6 +18,17 @@ command -v cosign >/dev/null || { echo "cosign required" >&2; exit 1; }
 bash "${ROOT}/.github/scripts/install-crane.sh"
 export PATH="${HOME}/.local/bin:${PATH}"
 
+# install-crane logs crane in. Cosign reads the same registry, so log it
+# in with the same packages:read token. Do not print the token.
+if [[ -z "${GITHUB_TOKEN:-}" ]]; then
+  echo "inspect: GITHUB_TOKEN is required to read a private GHCR package" >&2
+  exit 1
+fi
+# Same username install-crane.sh uses. A publish PAT is the repository
+# owner, not GITHUB_ACTOR.
+login_user="${GHCR_LOGIN_USER:-${GITHUB_ACTOR:-unwoke}}"
+printf '%s\n' "${GITHUB_TOKEN}" | cosign login ghcr.io -u "${login_user}" --password-stdin >/dev/null
+
 ok=0
 for n in 1 2 3 4 5; do
   if crane digest "${IMG}" >/dev/null 2>&1; then
