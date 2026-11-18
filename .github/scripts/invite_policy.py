@@ -45,7 +45,15 @@ def problems_in_text(name: str, text: str) -> list[str]:
             found.append(f"{name}: Pages still uploads docs/")
         if "site-notice" not in text:
             found.append(f"{name}: Pages does not deploy the notice")
-        if "cloudflare/wrangler-action" not in text:
+        # The action or the pinned wrangler CLI. A comment that only names
+        # wrangler is not a deploy.
+        wrangler_cli = (
+            "wrangler@" in text
+            and re.search(r"\bpages\b", text)
+            and re.search(r"\bdeploy\b", text)
+            and re.search(r"\bdocs\b", text)
+        )
+        if "cloudflare/wrangler-action" not in text and not wrangler_cli:
             found.append(f"{name}: gated site deploy is missing")
     if name.endswith("build.yml"):
         if "attest-build-provenance" in text:
@@ -125,6 +133,17 @@ def selftest() -> int:
     if problems_in_text("pages.yml", notice):
         print("selftest: the notice upload was refused")
         print(problems_in_text("pages.yml", notice))
+        ok = False
+    direct = "path: site-notice\nnpx wrangler@4.164.0 pages deploy docs\n"
+    if problems_in_text("pages.yml", direct):
+        print("selftest: a wrangler CLI deploy was refused")
+        print(problems_in_text("pages.yml", direct))
+        ok = False
+    if not any(
+        item.endswith("gated site deploy is missing")
+        for item in problems_in_text("pages.yml", "path: site-notice\nwrangler is mentioned\n")
+    ):
+        print("selftest: a missing deploy was accepted")
         ok = False
     if not problems_in_text("publish-receipt.sh", "gh release upload receipt DIGESTS.txt\n"):
         print("selftest: a receipt upload was accepted")
