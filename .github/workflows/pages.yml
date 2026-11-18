@@ -168,6 +168,9 @@ jobs:
         if: steps.gate.outputs.deploy == 'go'
         uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4.1.3
         with:
+          # This action copies apiToken onto CLOUDFLARE_API_TOKEN, replacing the job environment.
+          apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy docs --project-name=${{ vars.CLOUDFLARE_PAGES_PROJECT || 'unwoke-secureblue' }} --branch=main --commit-dirty=true
 
   pages-alarm:
