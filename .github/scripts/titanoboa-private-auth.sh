@@ -14,27 +14,26 @@ patch_justfile() {
 import pathlib, sys
 path = pathlib.Path(sys.argv[1])
 text = path.read_text(encoding="utf-8")
-volume = (
-    "    --volume ' + git_root + ':/app \\\n"
-    "    --rootfs ' + git_root/rootfs + ' \\\n"
+# Only the container-embed recipe. The shared chroot() also runs the
+# post hook; a mount there would make `rm` hit a live read-only file.
+anchor = (
+    "    podman pull {{ container_image || image }}\n"
+    "    dnf install -y fuse-overlayfs\"\n"
+    "    chroot \"$CMD\"\n"
 )
-mount = (
-    "    --volume ' + git_root + ':/app \\\n"
-    "    --volume /var/tmp/unwoke-ghcr-auth.json:/root/.config/containers/auth.json:ro \\\n"
-    "    --rootfs ' + git_root/rootfs + ' \\\n"
-)
-pull = "    podman pull {{ container_image || image }}\n"
-authed = (
+replacement = (
     "    REGISTRY_AUTH_FILE=/root/.config/containers/auth.json "
     "podman pull {{ container_image || image }}\n"
+    "    dnf install -y fuse-overlayfs\"\n"
+    "    mkdir -p \"{{ git_root/rootfs }}/root/.config/containers\"\n"
+    "    touch \"{{ git_root/rootfs }}/root/.config/containers/auth.json\"\n"
+    "    chroot \"$CMD\" --volume /var/tmp/unwoke-ghcr-auth.json:/root/.config/containers/auth.json:ro\n"
+    "    rm -f \"{{ git_root/rootfs }}/root/.config/containers/auth.json\"\n"
+    "    rmdir \"{{ git_root/rootfs }}/root/.config/containers\" 2>/dev/null || true\n"
 )
-if volume not in text:
-    raise SystemExit("titanoboa-private-auth: chroot volume anchor missing")
-if pull not in text:
-    raise SystemExit("titanoboa-private-auth: podman pull anchor missing")
-if text.count(volume) != 1 or text.count(pull) != 1:
-    raise SystemExit("titanoboa-private-auth: anchor is not unique")
-text = text.replace(volume, mount, 1).replace(pull, authed, 1)
+if text.count(anchor) != 1:
+    raise SystemExit("titanoboa-private-auth: container-pull anchor is not unique")
+text = text.replace(anchor, replacement, 1)
 path.write_text(text, encoding="utf-8")
 PY
 }
@@ -46,14 +45,14 @@ selftest() {
     --volume ' + git_root + ':/app \
     --rootfs ' + git_root/rootfs + ' \
     podman pull {{ container_image || image }}
+    dnf install -y fuse-overlayfs"
+    chroot "$CMD"
 EOF
   patch_justfile "${tmp}"
-  grep -q 'unwoke-ghcr-auth.json:/root/.config/containers/auth.json:ro' "${tmp}"
-  grep -q 'REGISTRY_AUTH_FILE=/root/.config/containers/auth.json podman pull' "${tmp}"
-  if grep -c 'podman pull' "${tmp}" | grep -qx 1; then
-    :
-  else
-    echo "selftest FAIL pull count" >&2
+  grep -F -q 'chroot "$CMD" --volume /var/tmp/unwoke-ghcr-auth.json:/root/.config/containers/auth.json:ro' "${tmp}"
+  grep -F -q 'REGISTRY_AUTH_FILE=/root/.config/containers/auth.json podman pull' "${tmp}"
+  if [[ "$(grep -c 'unwoke-ghcr-auth.json' "${tmp}")" -ne 1 ]]; then
+    echo "selftest FAIL auth mount is not limited to the container pull" >&2
     rm -f "${tmp}"
     return 1
   fi

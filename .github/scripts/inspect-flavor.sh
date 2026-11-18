@@ -24,7 +24,10 @@ if [[ -z "${GITHUB_TOKEN:-}" ]]; then
   echo "inspect: GITHUB_TOKEN is required to read a private GHCR package" >&2
   exit 1
 fi
-printf '%s\n' "${GITHUB_TOKEN}" | cosign login ghcr.io -u "${GITHUB_ACTOR:-${OWNER}}" --password-stdin >/dev/null
+# Same username install-crane.sh uses. A publish PAT is the repository
+# owner, not GITHUB_ACTOR.
+login_user="${GHCR_LOGIN_USER:-${GITHUB_ACTOR:-unwoke}}"
+printf '%s\n' "${GITHUB_TOKEN}" | cosign login ghcr.io -u "${login_user}" --password-stdin >/dev/null
 
 ok=0
 for n in 1 2 3 4 5; do
