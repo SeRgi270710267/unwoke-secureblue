@@ -4,9 +4,9 @@
 Free R2 is 10 GB-month, 1M Class A ops, and 10M Class B ops. This stops
 at 9 GB and at 800k / 8M ops. It prints counts and byte totals only.
 
-A live ISO is about 4 GB. Twelve flavors do not fit. The served set is
-the two recommended Trivalent sticks, and each may use at most half of
-9 GB so two parallel jobs cannot cross the cap.
+A live ISO is about 4.8 GB. Twelve flavors do not fit. R2 stores one
+stick, unwoke-silverblue-trivalent, at most 5.5 GB. The 9 GB bucket cap
+stays. Other ISO jobs skip and their old objects are deleted.
 
     python3 .github/scripts/r2_iso.py --selftest
     python3 .github/scripts/r2_iso.py upload
@@ -26,14 +26,13 @@ from pathlib import Path
 
 # Decimal GB, matching Cloudflare's 10 GB-month line. Never store more than this.
 STORAGE_CAP = 9_000_000_000
+# One object. 5.5 GB. Silverblue Trivalent is about 4.8 GB. Kinoite is about 5.3 GB.
+OBJECT_CAP = 5_500_000_000
 # Free plan is 1_000_000 Class A and 10_000_000 Class B. Stop before either.
 OPS_A_CAP = 800_000
 OPS_B_CAP = 8_000_000
-# About 4 GB each. Both fit under 9 GB. The other ten flavors do not.
-FLAVORS = (
-    "unwoke-silverblue-trivalent",
-    "unwoke-kinoite-trivalent",
-)
+# Explicit allowlist. Env R2_ISO_IMAGES may name a subset, never a wider set.
+R2_ISO_IMAGES = ("unwoke-silverblue-trivalent",)
 ENDPOINT_PREFIX = "https://"
 ENDPOINT_SUFFIX = ".r2.cloudflarestorage.com"
 
@@ -58,10 +57,14 @@ class R2Error(Exception):
     pass
 
 
-def per_flavor_cap(cap: int = STORAGE_CAP, flavors: tuple[str, ...] = FLAVORS) -> int:
-    if not flavors:
-        raise R2Error("no flavors")
-    return cap // len(flavors)
+def allowlist() -> tuple[str, ...]:
+    raw = os.environ.get("R2_ISO_IMAGES", "").strip()
+    if not raw:
+        return R2_ISO_IMAGES
+    asked = tuple(part.strip() for part in raw.split(",") if part.strip())
+    if not asked or any(name not in R2_ISO_IMAGES for name in asked):
+        raise R2Error("R2_ISO_IMAGES is wider than the code allowlist")
+    return asked
 
 
 def plan_upload(
@@ -69,38 +72,42 @@ def plan_upload(
     flavor: str,
     new_files: dict[str, int],
     cap: int = STORAGE_CAP,
-    flavors: tuple[str, ...] = FLAVORS,
+    flavors: tuple[str, ...] = R2_ISO_IMAGES,
+    object_cap: int = OBJECT_CAP,
 ) -> dict:
     """Decide upload or skip. delete is empty unless the upload fits.
 
     objects are (key, size) already in the bucket. new_files maps the
-    destination key to the new size. Keys outside the served flavors are
-    pruned only when this upload fits, so a skip keeps the last good ISO.
+    destination key to the new size. Keys outside the allowlist are not
+    counted. They are deleted when this upload fits, or when the job is
+    for an image that is not allowlisted.
     """
+    outside = [key for key, _size in objects if key.split("/", 1)[0] not in flavors]
     if flavor not in flavors:
-        return {"action": "skip", "reason": "not-served", "delete": [], "projected": None}
+        return {"action": "skip", "reason": "not-served", "delete": outside, "projected": None}
     new_total = sum(new_files.values())
-    per = per_flavor_cap(cap, flavors)
     new_keys = set(new_files)
     remaining = 0
-    delete: list[str] = []
+    delete: list[str] = list(outside)
     for key, size in objects:
         top = key.split("/", 1)[0]
-        if top not in flavors or (top == flavor and key not in new_keys):
+        if top not in flavors:
+            continue
+        if top == flavor and key not in new_keys:
             delete.append(key)
             continue
         if key in new_keys:
             continue
         remaining += size
     projected = remaining + new_total
-    if new_total > per or projected > cap:
+    if new_total > object_cap or projected > cap:
         return {
             "action": "skip",
-            "reason": "over-flavor" if new_total > per else "over-bucket",
+            "reason": "over-object" if new_total > object_cap else "over-bucket",
             "delete": [],
             "projected": projected,
             "new_total": new_total,
-            "per": per,
+            "per": object_cap,
         }
     return {
         "action": "upload",
@@ -108,7 +115,7 @@ def plan_upload(
         "delete": delete,
         "projected": projected,
         "new_total": new_total,
-        "per": per,
+        "per": object_cap,
     }
 
 
@@ -279,11 +286,31 @@ def upload() -> int:
     if not flavor or "/" in flavor or flavor.startswith("."):
         print("r2: flavor name refused")
         return 1
+    try:
+        served = allowlist()
+    except R2Error as exc:
+        print(f"r2: {exc}")
+        return 1
+    if flavor not in served:
+        print(f"r2: {flavor} is not in R2_ISO_IMAGES ({', '.join(served)}); upload skipped")
+        if not _creds_ready():
+            print("r2: skipped leftover delete, credentials unset")
+            return 0
+        try:
+            _ensure_rclone()
+            bucket = _bucket()
+            outside = [key for key, _size in list_objects(bucket) if key.split("/", 1)[0] not in served]
+            for key in outside:
+                _delete_key(bucket, key)
+            total = sum(size for _key, size in list_objects(bucket))
+            print(f"r2: removed {len(outside)} objects outside the allowlist")
+            print(f"r2: bucket {total} bytes")
+        except (R2Error, subprocess.CalledProcessError, json.JSONDecodeError, OSError):
+            print("r2: leftover delete failed; upload still skipped")
+            return 0
+        return 0
     if not _creds_ready():
         print("r2: skipped, credentials unset")
-        return 0
-    if flavor not in FLAVORS:
-        print(f"r2: {flavor} is not served (free cap holds {len(FLAVORS)} sticks)")
         return 0
     try:
         files = _new_files(flavor)
@@ -297,7 +324,7 @@ def upload() -> int:
     try:
         _ensure_rclone()
         objects = list_objects(bucket)
-        decision = plan_upload(objects, flavor, files)
+        decision = plan_upload(objects, flavor, files, flavors=served)
     except (R2Error, subprocess.CalledProcessError, json.JSONDecodeError, OSError):
         print("r2: list failed; upload skipped")
         _alarm("open", f"R2 list failed for {flavor}. Nothing was uploaded.")
@@ -312,8 +339,8 @@ def upload() -> int:
             "open",
             f"{flavor} was not uploaded. Reason: {decision['reason']}. "
             f"Bytes: {decision.get('new_total')}. Projected: {projected}. "
-            f"Cap: {STORAGE_CAP}. Per flavor: {decision.get('per')}. "
-            "Served sticks: unwoke-silverblue-trivalent and unwoke-kinoite-trivalent. "
+            f"Cap: {STORAGE_CAP}. Per object: {decision.get('per')}. "
+            "Served stick: unwoke-silverblue-trivalent. "
             "Do not buy R2 storage.",
         )
         report_ops()
@@ -426,20 +453,16 @@ def selftest() -> int:
     ok = True
     cap = 9_000
     flavors = ("silver", "kinoite")
-    per = per_flavor_cap(cap, flavors)
-    if per != 4_500:
-        print("selftest FAIL per flavor")
-        ok = False
-    decision = plan_upload([], "silver", {"silver/latest.iso": 4_000}, cap, flavors)
+    decision = plan_upload([], "silver", {"silver/latest.iso": 4_000}, cap, flavors, 5_500)
     if decision["action"] != "upload" or decision["projected"] != 4_000:
         print("selftest FAIL empty upload")
         ok = False
-    decision = plan_upload([], "silver", {"silver/latest.iso": 4_600}, cap, flavors)
-    if decision["action"] != "skip" or decision["delete"]:
-        print("selftest FAIL over flavor")
+    decision = plan_upload([], "silver", {"silver/latest.iso": 5_501}, cap, flavors, 5_500)
+    if decision["action"] != "skip" or decision["reason"] != "over-object" or decision["delete"]:
+        print("selftest FAIL over object")
         ok = False
     objects = [("kinoite/latest.iso", 4_000), ("silver/old.iso", 4_000), ("nvidia/latest.iso", 4_000)]
-    decision = plan_upload(objects, "silver", {"silver/latest.iso": 4_000, "silver/SHA256SUMS": 10}, cap, flavors)
+    decision = plan_upload(objects, "silver", {"silver/latest.iso": 4_000, "silver/SHA256SUMS": 10}, cap, flavors, 5_500)
     if decision["action"] != "upload":
         print("selftest FAIL prune and replace")
         ok = False
@@ -452,12 +475,35 @@ def selftest() -> int:
     if decision["projected"] != 8_010:
         print("selftest FAIL projected")
         ok = False
+    only = ("unwoke-silverblue-trivalent",)
+    leftovers = [
+        ("unwoke-kinoite-trivalent/latest.iso", 5_285_187_584),
+        ("nvidia/latest.iso", 4_000_000_000),
+    ]
+    decision = plan_upload(
+        leftovers,
+        "unwoke-silverblue-trivalent",
+        {"unwoke-silverblue-trivalent/latest.iso": 4_785_299_456},
+        STORAGE_CAP,
+        only,
+        OBJECT_CAP,
+    )
+    if decision["action"] != "upload" or decision["projected"] != 4_785_299_456:
+        print("selftest FAIL silverblue ignores other sticks")
+        ok = False
+    if "unwoke-kinoite-trivalent/latest.iso" not in decision["delete"] or "nvidia/latest.iso" not in decision["delete"]:
+        print("selftest FAIL delete non-allowlist")
+        ok = False
+    decision = plan_upload([], "unwoke-kinoite-trivalent", {"unwoke-kinoite-trivalent/latest.iso": 100}, STORAGE_CAP, only, OBJECT_CAP)
+    if decision["reason"] != "not-served":
+        print("selftest FAIL kinoite skipped")
+        ok = False
     crowded = [("kinoite/latest.iso", 5_000)]
-    decision = plan_upload(crowded, "silver", {"silver/latest.iso": 4_500}, cap, flavors)
+    decision = plan_upload(crowded, "silver", {"silver/latest.iso": 4_500}, cap, flavors, 5_500)
     if decision["action"] != "skip" or decision["reason"] != "over-bucket":
         print("selftest FAIL over bucket")
         ok = False
-    decision = plan_upload([], "nvidia", {"nvidia/latest.iso": 100}, cap, flavors)
+    decision = plan_upload([], "nvidia", {"nvidia/latest.iso": 100}, cap, flavors, 5_500)
     if decision["reason"] != "not-served":
         print("selftest FAIL served set")
         ok = False
@@ -506,12 +552,27 @@ def selftest() -> int:
     if endpoint_ok("http://abc123def4567890.r2.cloudflarestorage.com"):
         print("selftest FAIL endpoint scheme")
         ok = False
-    if "unwoke-silverblue-trivalent" not in FLAVORS or "unwoke-kinoite-trivalent" not in FLAVORS:
-        print("selftest FAIL flavor names")
+    if R2_ISO_IMAGES != ("unwoke-silverblue-trivalent",):
+        print("selftest FAIL allowlist")
         ok = False
-    if len(FLAVORS) != 2 or STORAGE_CAP != 9_000_000_000:
+    if OBJECT_CAP != 5_500_000_000 or STORAGE_CAP != 9_000_000_000:
         print("selftest FAIL caps")
         ok = False
+    if OPS_A_CAP != 800_000 or OPS_B_CAP != 8_000_000:
+        print("selftest FAIL ops caps")
+        ok = False
+    previous = os.environ.get("R2_ISO_IMAGES")
+    os.environ["R2_ISO_IMAGES"] = "unwoke-kinoite-trivalent"
+    try:
+        allowlist()
+        print("selftest FAIL env widened the allowlist")
+        ok = False
+    except R2Error:
+        pass
+    if previous is None:
+        os.environ.pop("R2_ISO_IMAGES", None)
+    else:
+        os.environ["R2_ISO_IMAGES"] = previous
     print("r2 iso selftest " + ("ok" if ok else "FAILED"))
     return 0 if ok else 1
 
