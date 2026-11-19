@@ -20,12 +20,11 @@ GitHub Container Registry storage and bandwidth are currently free. GitHub's bil
 
 Cloudflare Pages on a `pages.dev` hostname is free. Cloudflare Access (Zero Trust) is free for 50 seats. This factory never buys a paid plan. The hard stop is 45. `invite-sync` refuses an allowlist with more than 45 people and does not call Cloudflare in that case. It prints only the count. The daily rehost job reads seat use and opens `zero-trust-seats` when that number is 45 or higher.
 
-R2 is free for 10 GB-month of storage, 1 million Class A operations, and 10 million Class B operations. Egress is free. This factory never buys R2. The storage stop is 9 GB. Before each upload the job lists the bucket. If the total plus the new files would pass 9 GB, it does not upload and opens `r2-free-tier`. A live ISO is about 4 GB, so all twelve flavors do not fit (about 48 GB). The site serves two sticks only, each capped at 4.5 GB so the two jobs can run together without passing 9 GB:
+R2 is free for 10 GB-month of storage, 1 million Class A operations, and 10 million Class B operations. Egress is free. This factory never buys R2. The storage stop is 9 GB. Before each upload the job lists the bucket. If the total plus the new files would pass 9 GB, it does not upload and opens `r2-free-tier`. A live ISO is about 4.8 GB, so all twelve flavors do not fit. The site serves one stick, capped at 5.5 GB (`5500000000` bytes). The allowlist is `R2_ISO_IMAGES` in `.github/scripts/r2_iso.py`:
 
 - `unwoke-silverblue-trivalent` (GNOME, recommended)
-- `unwoke-kinoite-trivalent` (KDE, recommended)
 
-NVIDIA, Origin, and browserless are not uploaded to R2. The daily job reads this month's R2 operations when the token can. It opens the same issue at 800,000 Class A or 8,000,000 Class B. If the log says `r2-ops=unknown`, the token cannot read analytics. A normal month is a few dozen Class A calls for the two sticks, plus one Class B call per download. That is far under the free limits. Do not enable the bucket's r2.dev hostname.
+`unwoke-kinoite-trivalent` is about 5.3 GB. It is built, and it is not uploaded. Any object whose name is not in that allowlist is deleted when an ISO job runs, and it is not counted toward the 9 GB cap. NVIDIA, Origin, and browserless are not uploaded to R2. The daily job reads this month's R2 operations when the token can. It opens the same issue at 800,000 Class A or 8,000,000 Class B. If the log says `r2-ops=unknown`, the token cannot read analytics. A normal month is a few dozen Class A calls for the one stick, plus one Class B call per download. That is far under the free limits. Do not enable the bucket's r2.dev hostname.
 
 A custom domain is optional. GitHub Enterprise is not required. GitHub Pages itself cannot hide a site on a free personal account. Who signed in: Zero Trust → Logs → Access. That view is free. It shows the login Access saw and the time. It does not show which file they downloaded.
 

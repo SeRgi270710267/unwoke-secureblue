@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#050a16">
   <meta name="color-scheme" content="dark">
   <title>USB downloads | Unwoke SecureBlue</title>
-  <meta name="description" content="Signed USB ISOs for the two recommended Trivalent sticks, after you sign in.">
+  <meta name="description" content="Signed USB ISO for Silverblue Trivalent, after you sign in.">
   <base href="/unwoke-secureblue/">
   <link rel="icon" href="assets/logo.svg?v=4" type="image/svg+xml">
   <link rel="stylesheet" href="css/main.css?v=23">
@@ -58,7 +58,7 @@
   <main id="content">
     <h1>USB downloads</h1>
     <p>These files are on this site only, after the same login as the rest of the docs. They are not a public release and not an Actions artifact.</p>
-    <p class="notice">The free store holds <strong>9&nbsp;GB</strong>. A stick is about 4&nbsp;GB, so only the two recommended Trivalent images are here: GNOME and KDE, no NVIDIA. NVIDIA, Brave Origin, and browserless are not offered as ISOs. Install those with <a href="install/#rebase">rebase</a>.</p>
+    <p class="notice">The free store holds <strong>9&nbsp;GB</strong>. This page has one stick, Silverblue Trivalent (GNOME), at most 5.5&nbsp;GB. Kinoite, NVIDIA, Brave Origin, and browserless are not offered as ISOs. Install those with <a href="install/#rebase">rebase</a>.</p>
 
     <h2 id="gnome"><a href="#gnome">GNOME · Trivalent</a></h2>
     <p><code>unwoke-silverblue-trivalent</code></p>
@@ -68,20 +68,12 @@
       <a class="button" href="/iso/unwoke-silverblue-trivalent/SHA256SUMS.sig">SHA256SUMS.sig</a>
     </p>
 
-    <h2 id="kde"><a href="#kde">KDE · Trivalent</a></h2>
-    <p><code>unwoke-kinoite-trivalent</code></p>
-    <p>
-      <a class="button" href="/iso/unwoke-kinoite-trivalent/latest.iso">Download ISO</a>
-      <a class="button" href="/iso/unwoke-kinoite-trivalent/SHA256SUMS">SHA256SUMS</a>
-      <a class="button" href="/iso/unwoke-kinoite-trivalent/SHA256SUMS.sig">SHA256SUMS.sig</a>
-    </p>
-
     <h2 id="check"><a href="#check">Check, then flash</a></h2>
     <p>Put the three files in one folder. The ISO must stay named <code>latest.iso</code>. That is the name inside <code>SHA256SUMS</code>. <code>cosign.pub</code> is in the public repository.</p>
 <pre><code>cosign verify-blob --key cosign.pub --insecure-ignore-tlog --signature SHA256SUMS.sig SHA256SUMS
 sha256sum -c SHA256SUMS</code></pre>
     <p><code>--insecure-ignore-tlog</code> skips the public log. It does not skip the signature. Then follow <a href="install/#flash-step">Install</a>: flash, boot, and start <strong>Install Unwoke SecureBlue</strong>.</p>
-    <p>A missing file means that stick has not been published yet, or it was over 4.5&nbsp;GB and was left off so the store stays inside 9&nbsp;GB.</p>
+    <p>A missing file means this stick has not been published yet, or it was over 5.5&nbsp;GB and was left off so the store stays inside 9&nbsp;GB.</p>
   </main>
 
   <footer>

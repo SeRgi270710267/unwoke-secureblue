@@ -141,6 +141,11 @@ jobs:
           test -f wrangler.toml
           grep -q 'binding = "ISOS"' wrangler.toml
           grep -q 'bucket_name = "unwoke-isos"' wrangler.toml
+          grep -q 'unwoke-silverblue-trivalent' 'functions/iso/[[path]].js'
+          if grep -q 'unwoke-kinoite-trivalent' 'functions/iso/[[path]].js'; then
+            echo "kinoite must not be served from /iso/" >&2
+            exit 1
+          fi
 
       # wrangler-action copies its apiToken input onto CLOUDFLARE_API_TOKEN.
       # An expression of the trimmed job env was empty, so Wrangler sent
@@ -228,7 +233,53 @@ jobs:
               "--branch=main",
               "--commit-dirty=true",
           ]
-          raise SystemExit(subprocess.call(cmd, env=env))
+          rc = subprocess.call(cmd, env=env)
+          if rc != 0:
+              raise SystemExit(rc)
+
+          def bucket_name(block):
+              if not isinstance(block, dict):
+                  return ""
+              buckets = block.get("r2_buckets")
+              if not isinstance(buckets, dict):
+                  return ""
+              item = buckets.get("ISOS")
+              if isinstance(item, dict):
+                  return str(item.get("name") or "")
+              if isinstance(item, str):
+                  return item
+              return ""
+
+          request = urllib.request.Request(
+              f"https://api.cloudflare.com/client/v4/accounts/{account}/pages/projects/{project}",
+              headers={"Authorization": "Bearer " + token},
+          )
+          try:
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  payload = json.loads(response.read().decode("utf-8"))
+          except urllib.error.HTTPError as exc:
+              code = ""
+              try:
+                  body = json.loads(exc.read().decode("utf-8", "replace"))
+                  errors = body.get("errors") or []
+                  if errors:
+                      code = str(errors[0].get("code", ""))
+              except (json.JSONDecodeError, UnicodeError, AttributeError):
+                  code = ""
+              raise SystemExit(f"pages-project http={exc.code} code={code}") from None
+          result = payload.get("result") if isinstance(payload, dict) else None
+          configs = result.get("deployment_configs") if isinstance(result, dict) else None
+          if not isinstance(configs, dict):
+              raise SystemExit("pages-project missing deployment_configs")
+          click = (
+              "Workers & Pages → unwoke-secureblue → Settings → Bindings → "
+              "add R2 bucket ISOS = unwoke-isos for both Production and Preview"
+          )
+          for name in ("production", "preview"):
+              got = bucket_name(configs.get(name))
+              print(f"r2-binding {name} ISOS={got or 'missing'}")
+              if got != "unwoke-isos":
+                  raise SystemExit(f"ISOS binding missing on {name}. {click}")
           PY
 
   pages-alarm:
