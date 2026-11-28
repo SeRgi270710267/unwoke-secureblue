@@ -1,5 +1,7 @@
 # Unwoke SecureBlue. Not affiliated with secureblue.
-# SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0. Copyright (c) 2026 SeRgi270710267.
+# SPDX-License-Identifier: LicenseRef-Unwoke-SA-1.0
+# Copyright (c) 2026 SeRgi270710267.
+# List data is copied from the Apache-2.0 secureblue snapshot.
 # UNWOKE-SHIPPED-FIRST
 # shellcheck shell=bash disable=SC2034,SC2088
 # Generated from the stock flatpak lockdown snapshot.
@@ -7,7 +9,7 @@
 
 share=('network' 'ipc')
 
-socket=('inherit-wayland-socket' 'gpg-agent' 'cups' 'pcsc' 'ssh-auth' 'system-bus' 'session-bus' 'pulseaudio' 'fallback-x11' 'x11')
+socket=('inherit-wayland-socket' 'gpg-agent' 'cups' 'pcsc' 'ssh-auth' 'system-bus' 'session-bus' 'pulseaudio' 'x11' 'fallback-x11')
 
 device=('all' 'shm' 'kvm' 'input' 'usb')
 
